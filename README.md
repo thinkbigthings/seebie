@@ -1,4 +1,4 @@
 seebie
 ======
 
-CBTI sleep calculator and diary
+CBTI sleep calculator for Android

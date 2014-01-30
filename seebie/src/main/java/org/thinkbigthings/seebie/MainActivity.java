@@ -1,7 +1,6 @@
 package org.thinkbigthings.seebie;
 
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +8,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
+
+
+// TODO set space indent to 2
+
+// TODO remove fragments and walk through tutorial again
+
+// TODO add guava, try use of Optional<T>
+
+// TODO gradle is broken from command line but builds from IDE,
+// figure that out then try to run unit tests
+
+// TODO look into google endpoint
+
 
 public class MainActivity extends Activity {
 
@@ -17,6 +28,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+       // Optional<String> optional;
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
