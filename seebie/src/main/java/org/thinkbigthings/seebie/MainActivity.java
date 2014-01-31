@@ -9,15 +9,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-
-// TODO set space indent to 2
-
 // TODO remove fragments and walk through tutorial again
 
 // TODO add guava, try use of Optional<T>
 
+// TODO add JodaTime
+
 // TODO gradle is broken from command line but builds from IDE,
 // figure that out then try to run unit tests
+// maybe need to use version of gradle it's packaged with, use project/gradlew?
+// can't seem to even run gradlew tasks to see about the android plugin
 
 // TODO look into google endpoint
 
