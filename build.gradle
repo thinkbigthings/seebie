@@ -1,3 +1,4 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
     repositories {
@@ -8,27 +9,8 @@ buildscript {
     }
 }
 
-apply plugin: 'android'
-
 allprojects {
     repositories {
         mavenCentral()
-    }
-}
-
-dependencies {
-   // compile("com.google.guava:guava.14.0.1")
-    //compile 'com.google.guava:guava.14.0.1'
-    compile group: 'com.google.guava', name: 'guava', version: '15.0'
-   // compile group: 'junit',            name: 'junit',        version: '4.10'
-}
-
-android {
-    compileSdkVersion 19
-    buildToolsVersion "19.0.1"
-   sourceSets {
-        main {
-            manifest.srcFile 'seebie/src/main/AndroidManifest.xml'
-        }
     }
 }

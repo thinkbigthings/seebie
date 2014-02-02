@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Seebie.iml" filepath="$PROJECT_DIR$/Seebie.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/android.iml" filepath="$PROJECT_DIR$/android/android.iml" />
       <module fileurl="file://$PROJECT_DIR$/seebie.iml" filepath="$PROJECT_DIR$/seebie.iml" />
-      <module fileurl="file://$PROJECT_DIR$/seebie/seebie-seebie.iml" filepath="$PROJECT_DIR$/seebie/seebie-seebie.iml" />
     </modules>
   </component>
 </project>

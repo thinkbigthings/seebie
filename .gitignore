@@ -16,7 +16,7 @@ bin/
 gen/
 
 # helpful suggestions from intellij
-.gradle
-/local.properties
-/.idea/workspace.xml
+#.gradle
+#local.properties
+#.idea/workspace.xml
 
