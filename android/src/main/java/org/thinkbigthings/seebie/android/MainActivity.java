@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.os.Build;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.google.common.base.Optional;
@@ -20,8 +21,11 @@ import com.google.common.base.Optional;
 
 
 // TODO work on a useful app: sleep efficiency calculator to start (or regular calculator)
-// follow up with grid layout
 // http://android-developers.blogspot.com/2011/11/new-layout-widgets-space-and-gridlayout.html
+// do I need to save state? what happens when I set time and navigate away and come back?
+
+// TODO try out new time picker
+// https://github.com/inteist/android-better-time-picker
 
 // TODO do custom settings activity, copy out of old project, be able to save settings to device
 
@@ -50,6 +54,8 @@ public class MainActivity extends Activity {
 
   public final static String EXTRA_MESSAGE = "org.thinkbigthings.seebie.android.MESSAGE";
 
+  private TimeCalculator calculator = new TimeCalculator();
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
 
@@ -63,6 +69,15 @@ public class MainActivity extends Activity {
     TimePicker picker2 = (TimePicker) findViewById(R.id.timePicker2);
     picker2.setCurrentHour(4);
     picker2.setCurrentMinute(30);
+
+    int minutes = calculator.getMinutesBetween(picker1.getCurrentHour(),
+        picker1.getCurrentMinute(),
+        picker2.getCurrentHour(),
+        picker2.getCurrentMinute());
+
+
+    TextView minutesDisplay = (TextView) findViewById(R.id.textView);
+    minutesDisplay.setText(Integer.toString(minutes));
 
   }
 

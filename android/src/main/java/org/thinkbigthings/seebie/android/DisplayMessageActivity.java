@@ -1,6 +1,7 @@
 package org.thinkbigthings.seebie.android;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.view.MenuItem;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import com.google.common.base.Optional;
 
 public class DisplayMessageActivity extends Activity {
 
@@ -33,6 +36,10 @@ public class DisplayMessageActivity extends Activity {
 
     // Set the text view as the activity layout
     setContentView(textView);
+  }
+
+  public Optional<ActionBar> getOptionalActionBar() {
+    return Optional.of(getActionBar());
   }
 
   @Override
