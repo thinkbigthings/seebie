@@ -16,6 +16,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="org.thinkbigthings.seebie.android.DisplayMessageActivity"
+            android:label="@string/title_activity_display_message"
+            android:parentActivityName="org.thinkbigthings.seebie.android.MainActivity" >
+            <!--for api < 16, use support library and this-->
+            <!--<meta-data-->
+                <!--android:name="android.support.PARENT_ACTIVITY"-->
+                <!--android:value="com.example.myfirstapp.MainActivity" />-->
+        </activity>
     </application>
 
 </manifest>

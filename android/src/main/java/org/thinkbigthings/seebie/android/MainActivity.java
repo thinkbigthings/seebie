@@ -3,6 +3,7 @@ package org.thinkbigthings.seebie.android;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,20 +11,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.EditText;
 
 import com.google.common.base.Optional;
 
-// TODO go through getting started tutorial again, replace fragment stuff with tutorial stuff
+// TODO go through getting started tutorial again
 // also check first project for notes
-// (if it doesn't work, can always revert! If so, can read up on the fragment docs
-// https://developer.android.com/training/basics/fragments/index.html
-
 
 // TODO work on a useful app: sleep efficiency calculator to start (or regular calculator)
 // follow up with grid layout
 // http://android-developers.blogspot.com/2011/11/new-layout-widgets-space-and-gridlayout.html
 
-
+// ActionBar API requires API level 11
 
 // TODO get pure unit test to work
 // Unlike on Eclipse or ADT Bundle, The new Android Studio doesn't require a separate android testing project.
@@ -39,10 +38,16 @@ import com.google.common.base.Optional;
 // https://coderwall.com/p/ybds4w
 
 
-// TODO save this note about making jodatime more efficient http://daniel-codes.blogspot.com/2013/08/joda-times-memory-issue-in-android.html
+// TODO read up on the fragment docs, I think this is recommended
+// https://developer.android.com/training/basics/fragments/index.html
+
+// TODO save this note about making jodatime more efficient
+// http://daniel-codes.blogspot.com/2013/08/joda-times-memory-issue-in-android.html
 
 
 public class MainActivity extends Activity {
+
+  public final static String EXTRA_MESSAGE = "org.thinkbigthings.seebie.android.MESSAGE";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +59,6 @@ public class MainActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    if (savedInstanceState == null) {
-      getFragmentManager().beginTransaction()
-          .add(R.id.container, new PlaceholderFragment())
-          .commit();
-    }
   }
 
 
@@ -82,19 +82,13 @@ public class MainActivity extends Activity {
     return super.onOptionsItemSelected(item);
   }
 
-  /**
-   * A placeholder fragment containing a simple view.
-   */
-  public static class PlaceholderFragment extends Fragment {
-
-    public PlaceholderFragment() {
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedState) {
-      View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-      return rootView;
-    }
+  // for button click
+  public void sendMessage(View view) {
+    Intent intent = new Intent(this, DisplayMessageActivity.class);
+    EditText editText = (EditText) findViewById(R.id.edit_message);
+    String message = editText.getText().toString();
+    intent.putExtra(EXTRA_MESSAGE, message);
+    startActivity(intent);
   }
 
 }
