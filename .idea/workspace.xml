@@ -15,11 +15,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a31c2cb3-5f06-4323-8e85-68e60c1d3258" name="Default" comment="added initial time pickers">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/DisplayMessageActivity.java" afterPath="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/DisplayMessageActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java" afterPath="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml" afterPath="$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/android/src/main/res/values/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Seebie.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -83,10 +79,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="MainActivity.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="MainActivity.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="80" column="33" selection-start="2649" selection-end="2649" vertical-scroll-proportion="0.0" vertical-offset="546" max-vertical-offset="1275">
+            <state line="65" column="0" selection-start="2345" selection-end="2345" vertical-scroll-proportion="0.71875" vertical-offset="405" max-vertical-offset="1350">
               <folding />
             </state>
           </provider>
@@ -131,10 +127,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="strings.xml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="strings.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/android/src/main/res/values/strings.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="0" selection-start="400" selection-end="400" vertical-scroll-proportion="0.18518518" vertical-offset="0" max-vertical-offset="729">
+            <state line="9" column="0" selection-start="400" selection-end="400" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="270">
               <folding />
             </state>
           </provider>
@@ -143,7 +139,7 @@
       <file leaf-file-name="activity_main.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="73" column="37" selection-start="2543" selection-end="2543" vertical-scroll-proportion="-23.076923" vertical-offset="495" max-vertical-offset="1245">
+            <state line="21" column="30" selection-start="686" selection-end="689" vertical-scroll-proportion="8.264151" vertical-offset="753" max-vertical-offset="1245">
               <folding>
                 <element signature="e#872#894#0" expanded="true" />
                 <element signature="e#1103#1124#0" expanded="true" />
@@ -533,10 +529,10 @@
         <option value="$PROJECT_DIR$/android/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/android/src/main/res/layout/activity_display_message.xml" />
         <option value="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/TimeCalculator.java" />
-        <option value="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java" />
         <option value="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/DisplayMessageActivity.java" />
         <option value="$PROJECT_DIR$/android/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml" />
+        <option value="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java" />
       </list>
     </option>
   </component>
@@ -966,7 +962,7 @@
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32936507" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32936507" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32936507" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
@@ -1312,16 +1308,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java">
+    <entry file="file://$PROJECT_DIR$/android/src/main/res/values/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="33" selection-start="2649" selection-end="2649" vertical-scroll-proportion="0.0" vertical-offset="546" max-vertical-offset="1275">
+        <state line="9" column="0" selection-start="400" selection-end="400" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="270">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="73" column="37" selection-start="2543" selection-end="2543" vertical-scroll-proportion="-23.076923" vertical-offset="495" max-vertical-offset="1245">
+        <state line="21" column="30" selection-start="686" selection-end="689" vertical-scroll-proportion="8.264151" vertical-offset="753" max-vertical-offset="1245">
           <folding>
             <element signature="e#872#894#0" expanded="true" />
             <element signature="e#1103#1124#0" expanded="true" />
@@ -1333,9 +1329,9 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/android/src/main/res/values/strings.xml">
+    <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="0" selection-start="400" selection-end="400" vertical-scroll-proportion="0.18518518" vertical-offset="0" max-vertical-offset="729">
+        <state line="65" column="0" selection-start="2345" selection-end="2345" vertical-scroll-proportion="0.71875" vertical-offset="405" max-vertical-offset="1350">
           <folding />
         </state>
       </provider>
