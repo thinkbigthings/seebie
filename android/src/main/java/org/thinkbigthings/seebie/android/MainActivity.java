@@ -15,14 +15,13 @@ import android.widget.EditText;
 
 import com.google.common.base.Optional;
 
-// TODO go through getting started tutorial again
-// also check first project for notes
+
 
 // TODO work on a useful app: sleep efficiency calculator to start (or regular calculator)
 // follow up with grid layout
 // http://android-developers.blogspot.com/2011/11/new-layout-widgets-space-and-gridlayout.html
 
-// ActionBar API requires API level 11
+// TODO do custom settings activity, copy out of old project, be able to save settings to device
 
 // TODO get pure unit test to work
 // Unlike on Eclipse or ADT Bundle, The new Android Studio doesn't require a separate android testing project.

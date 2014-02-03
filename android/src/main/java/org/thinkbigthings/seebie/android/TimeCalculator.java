@@ -6,7 +6,7 @@ import org.joda.time.Minutes;
 
 public class TimeCalculator {
 
-  public Duration getDurationMinutes(DateTime earlier, DateTime later) {
+  public Duration getDuration(DateTime earlier, DateTime later) {
     Minutes duration = Minutes.minutesBetween(earlier, later);
     return duration.toStandardDuration();
   }
