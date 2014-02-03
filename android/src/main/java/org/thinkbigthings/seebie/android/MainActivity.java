@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 import android.widget.EditText;
+import android.widget.GridLayout;
 
 import com.google.common.base.Optional;
 
@@ -52,8 +53,7 @@ public class MainActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
 
 
-    // Using Java 7, can't use try-with-resources for min sdk < 19, but other Java 7 features are fine
-    Optional<String> optionalString = Optional.of("some string");
+
 
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
