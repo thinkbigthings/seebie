@@ -20,12 +20,14 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 
-// TODO review grid layout, tidy up main grid
+// TODO review grid layout
 // http://android-developers.blogspot.com/2011/11/new-layout-widgets-space-and-gridlayout.html
 
-// TODO handle onStop(), should maintain state when navigate away from sleep session and back
+// TODO UI cleanup:
+// horizontal fill text entry components
+// set icon image
 
-// TODO set set icon image
+// TODO handle onStop(), should maintain state when navigate away from sleep session and back
 
 // TODO package app and deploy to phone, be able to install/uninstall/distribute it
 
