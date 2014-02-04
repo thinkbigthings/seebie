@@ -5,6 +5,8 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.MenuItem;
 import android.widget.DatePicker;
 import android.widget.TextView;
@@ -27,19 +29,16 @@ public class DisplayMessageActivity extends Activity {
 
     // Get the message from the intent
     Intent intent = getIntent();
-    String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+
+    SleepSession session = (SleepSession)intent.getSerializableExtra(MainActivity.SLEEP_SESSION);
 
     // Create the text view
     TextView textView = new TextView(this);
     textView.setTextSize(40);
-    textView.setText(message);
+    textView.setText(session.toString());
 
     // Set the text view as the activity layout
     setContentView(textView);
-  }
-
-  public Optional<ActionBar> getOptionalActionBar() {
-    return Optional.of(getActionBar());
   }
 
   @Override

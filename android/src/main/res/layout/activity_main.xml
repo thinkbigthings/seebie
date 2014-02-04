@@ -8,71 +8,61 @@
     android:useDefaultMargins="true"
     android:alignmentMode="alignBounds"
     android:columnOrderPreserved="false"
-
-    android:columnCount="3"
+    android:layout_gravity="fill_horizontal"
+    android:columnCount="2"
     >
 
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:text="@string/button_send"
+              android:text="@string/awake_in"
               android:layout_weight="1"
-              android:textSize="24dip"
-              android:layout_row="0"
-              android:layout_column="0"/>
-    <EditText android:id="@+id/edit_message"
+              android:textSize="24sp"/>
+    <EditText android:id="@+id/awake_in_minutes"
+              android:inputType="number"
               android:layout_weight="1"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:hint="@string/edit_message"
-              android:layout_row="0"
-              android:layout_column="1"/>
+              android:hint="@string/edit_message"/>
 
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:text="@string/button_send"
+              android:text="@string/awake_out"
               android:layout_weight="1"
-              android:textSize="24dip"
-              android:layout_row="1"
-              android:layout_column="0"/>
+              android:textSize="24sp"/>
+    <EditText android:id="@+id/awake_out_minutes"
+              android:inputType="number"
+              android:layout_weight="1"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:hint="@string/out_of_bed"/>
 
-    <TimePicker
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/timePicker"
-        android:layout_column="1"
-        android:layout_row="1"/>
 
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:text="@string/button_send"
+              android:text="@string/time_start"
               android:layout_weight="1"
-              android:textSize="24dip"
-              android:layout_row="2"
-              android:layout_column="0"/>
-
-
+              android:textSize="24sp"/>
     <TimePicker
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/timePicker2"
-        android:layout_row="2"
-        android:layout_column="1"/>
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:id="@+id/timePicker"
+            android:layout_column="1"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/textView"
-        android:layout_row="8"
-        android:layout_column="1"/>
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/time_finish"
+              android:layout_weight="1"
+              android:textSize="24sp"/>
+    <TimePicker
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:id="@+id/timePicker2"/>
 
+    <Space android:layout_width="wrap_content"
+           android:layout_height="wrap_content" />
     <Button android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_send"
-            android:layout_weight="1"
-            android:layout_column="1"
-            android:layout_row="9"
+            android:text="@string/calculate"
             android:onClick="sendMessage"/>
 
 </GridLayout>

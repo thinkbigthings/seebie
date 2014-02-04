@@ -2,11 +2,17 @@
 <resources>
 
     <string name="app_name">My First App</string>
-    <string name="edit_message">Enter a message</string>
+    <string name="edit_message">awake, in bed</string>
     <string name="button_send">Send</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_display_message">DisplayMessageActivity</string>
+    <string name="time_start">Start</string>
+    <string name="time_finish">Finish</string>
+    <string name="calculate">Calculate</string>
+    <string name="awake_in">Minutes</string>
+    <string name="awake_out">Minutes</string>
+    <string name="out_of_bed">awake, out of bed</string>
 
 
 </resources>

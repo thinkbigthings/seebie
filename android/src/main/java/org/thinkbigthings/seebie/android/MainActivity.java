@@ -17,17 +17,18 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 
 
-
-// TODO work on a useful app: sleep efficiency calculator to start (or regular calculator)
+// TODO work on a useful app: sleep efficiency calculator
 // http://android-developers.blogspot.com/2011/11/new-layout-widgets-space-and-gridlayout.html
-// do I need to save state? what happens when I set time and navigate away and come back?
+// do I need to save state? what happens when I set time and navigate away and come back? rotate screen?
 
-// TODO try out new time picker
+// TODO try out a new time picker
 // https://github.com/inteist/android-better-time-picker
 
 // TODO do custom settings activity, copy out of old project, be able to save settings to device
+// settings could be the default start and finish time
 
 // TODO get pure unit test to work
 // Unlike on Eclipse or ADT Bundle, The new Android Studio doesn't require a separate android testing project.
@@ -52,7 +53,7 @@ import com.google.common.base.Optional;
 
 public class MainActivity extends Activity {
 
-  public final static String EXTRA_MESSAGE = "org.thinkbigthings.seebie.android.MESSAGE";
+  public final static String SLEEP_SESSION = "org.thinkbigthings.seebie.android.sleepSession";
 
   private TimeCalculator calculator = new TimeCalculator();
 
@@ -69,18 +70,7 @@ public class MainActivity extends Activity {
     TimePicker picker2 = (TimePicker) findViewById(R.id.timePicker2);
     picker2.setCurrentHour(4);
     picker2.setCurrentMinute(30);
-
-    int minutes = calculator.getMinutesBetween(picker1.getCurrentHour(),
-        picker1.getCurrentMinute(),
-        picker2.getCurrentHour(),
-        picker2.getCurrentMinute());
-
-
-    TextView minutesDisplay = (TextView) findViewById(R.id.textView);
-    minutesDisplay.setText(Integer.toString(minutes));
-
   }
-
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -104,10 +94,29 @@ public class MainActivity extends Activity {
 
   // for button click
   public void sendMessage(View view) {
+
+    TimePicker picker1 = (TimePicker) findViewById(R.id.timePicker);
+    TimePicker picker2 = (TimePicker) findViewById(R.id.timePicker2);
+
+    int allMinutes = calculator.getMinutesBetween(picker1.getCurrentHour(),
+        picker1.getCurrentMinute(),
+        picker2.getCurrentHour(),
+        picker2.getCurrentMinute());
+
+    EditText awakeInBed = (EditText) findViewById(R.id.awake_in_minutes);
+    EditText awakeOutBed = (EditText) findViewById(R.id.awake_out_minutes);
+
+    String s1 = awakeInBed.getText().length() > 0 ? awakeInBed.getText().toString() : "0";
+    String s2 = awakeOutBed.getText().length() > 0 ? awakeOutBed.getText().toString() : "0";
+    int minutesAwakeInBed = Integer.parseInt(s1);
+    int minutesAwakeOutOfBed = Integer.parseInt(s2);
+
+    // TODO bed minutes must be >= 0
+
+    SleepSession session = new SleepSession(allMinutes, minutesAwakeInBed, minutesAwakeOutOfBed);
+
     Intent intent = new Intent(this, DisplayMessageActivity.class);
-    EditText editText = (EditText) findViewById(R.id.edit_message);
-    String message = editText.getText().toString();
-    intent.putExtra(EXTRA_MESSAGE, message);
+    intent.putExtra(SLEEP_SESSION, session);
     startActivity(intent);
   }
 
