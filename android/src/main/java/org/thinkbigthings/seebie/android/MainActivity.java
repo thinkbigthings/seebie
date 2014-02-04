@@ -20,9 +20,14 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 
-// TODO work on a useful app: sleep efficiency calculator
+// TODO review grid layout, tidy up main grid
 // http://android-developers.blogspot.com/2011/11/new-layout-widgets-space-and-gridlayout.html
-// do I need to save state? what happens when I set time and navigate away and come back? rotate screen?
+
+// TODO handle onStop(), should maintain state when navigate away from sleep session and back
+
+// TODO set app title and activity titles, set icon image
+
+// TODO package app and deploy to phone, be able to install/uninstall/distribute it
 
 // TODO try out a new time picker
 // https://github.com/inteist/android-better-time-picker
@@ -47,8 +52,7 @@ import com.google.common.base.Strings;
 // TODO read up on the fragment docs, I think this is recommended
 // https://developer.android.com/training/basics/fragments/index.html
 
-// TODO save this note about making jodatime more efficient
-// http://daniel-codes.blogspot.com/2013/08/joda-times-memory-issue-in-android.html
+// TODO save data to database
 
 
 public class MainActivity extends Activity {

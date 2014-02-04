@@ -44,9 +44,4 @@ public class SleepSession implements Serializable {
     double efficiency = (double) calculateMinutesInBedSleeping() / (double) calculateTotalMinutesInBed();
     return efficiency;
   }
-
-  public String toString() {
-    return "sleep time: " + calculateMinutesInBedSleeping() + ", efficiency: " + (calculateEfficiency() *100 + "%");
-  }
-
 }

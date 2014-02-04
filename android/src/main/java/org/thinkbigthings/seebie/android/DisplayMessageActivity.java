@@ -14,12 +14,15 @@ import android.widget.TimePicker;
 
 import com.google.common.base.Optional;
 
+import java.text.DecimalFormat;
+
 public class DisplayMessageActivity extends Activity {
 
   @SuppressLint("NewApi")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_display_message);
 
     // actionbar is only available in version 11 or greater
     // up is available in version 16 (4.1) or greater
@@ -32,13 +35,16 @@ public class DisplayMessageActivity extends Activity {
 
     SleepSession session = (SleepSession)intent.getSerializableExtra(MainActivity.SLEEP_SESSION);
 
-    // Create the text view
-    TextView textView = new TextView(this);
-    textView.setTextSize(40);
-    textView.setText(session.toString());
+    TextView totalSleepDisplay = (TextView)findViewById(R.id.total_sleep_display);
+    TextView efficiencyDisplay = (TextView)findViewById(R.id.efficiency_display);
 
-    // Set the text view as the activity layout
-    setContentView(textView);
+    int time = session.calculateMinutesInBedSleeping();
+
+    DecimalFormat format = new DecimalFormat("#.##");
+
+    totalSleepDisplay.setText("Sleep Time: " + time + " m, (" + format.format((double)time/60d) + " hrs)");
+    efficiencyDisplay.setText("Efficiency: " + format.format(session.calculateEfficiency()*100) + "%");
+
   }
 
   @Override
