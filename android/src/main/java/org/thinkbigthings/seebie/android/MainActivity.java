@@ -23,8 +23,6 @@ import com.google.common.base.Strings;
 // TODO review grid layout, tidy up main grid
 // http://android-developers.blogspot.com/2011/11/new-layout-widgets-space-and-gridlayout.html
 
-// TODO scroll layout when screen is horizontal
-
 // TODO handle onStop(), should maintain state when navigate away from sleep session and back
 
 // TODO set set icon image
