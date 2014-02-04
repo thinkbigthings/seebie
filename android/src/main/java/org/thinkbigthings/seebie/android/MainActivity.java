@@ -24,7 +24,6 @@ import com.google.common.base.Strings;
 // http://android-developers.blogspot.com/2011/11/new-layout-widgets-space-and-gridlayout.html
 
 // TODO UI cleanup:
-// horizontal fill text entry components
 // set icon image
 
 // TODO handle onStop(), should maintain state when navigate away from sleep session and back
@@ -36,6 +35,8 @@ import com.google.common.base.Strings;
 
 // TODO do custom settings activity, copy out of old project, be able to save settings to device
 // settings could be the default start and finish time
+
+// TODO help activity from menu, describe how the fields work
 
 // TODO get pure unit test to work
 // Unlike on Eclipse or ADT Bundle, The new Android Studio doesn't require a separate android testing project.

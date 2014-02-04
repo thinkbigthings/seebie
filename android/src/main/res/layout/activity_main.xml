@@ -16,11 +16,10 @@
         <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:text="@string/awake_in"
-                  android:layout_weight="1"
                   android:textSize="24sp"/>
         <EditText android:id="@+id/awake_in_minutes"
                   android:inputType="number"
-                  android:layout_weight="1"
+                  android:layout_gravity="fill_horizontal"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:hint="@string/edit_message"/>
@@ -28,11 +27,10 @@
         <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:text="@string/awake_out"
-                  android:layout_weight="1"
                   android:textSize="24sp"/>
         <EditText android:id="@+id/awake_out_minutes"
                   android:inputType="number"
-                  android:layout_weight="1"
+                  android:layout_gravity="fill_horizontal"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:hint="@string/out_of_bed"/>
@@ -62,9 +60,10 @@
                 android:id="@+id/timePicker2"/>
 
         <Space android:layout_width="wrap_content"
-               android:layout_height="wrap_content" />
+               android:layout_height="fill_parent" />
         <Button android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="80dp"
+                android:layout_gravity="fill_horizontal"
                 android:text="@string/calculate"
                 android:onClick="sendMessage"/>
 
