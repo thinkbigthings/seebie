@@ -20,7 +20,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 
-// TODO package app and deploy to phone, be able to install/uninstall/distribute it
 
 // TODO get pure unit test to work
 // Unlike on Eclipse or ADT Bundle, The new Android Studio doesn't require a separate android testing project.
@@ -34,6 +33,9 @@ import com.google.common.base.Strings;
 //
 // pure unit tests require more work to set up
 // https://coderwall.com/p/ybds4w
+
+// TODO package app and deploy to phone, be able to install/uninstall/distribute it
+// http://developer.android.com/tools/publishing/publishing_overview.html
 
 
 // TODO try out a new time picker
