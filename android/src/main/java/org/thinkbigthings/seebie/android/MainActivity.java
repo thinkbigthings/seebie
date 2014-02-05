@@ -20,21 +20,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 
-// TODO review grid layout
-// http://android-developers.blogspot.com/2011/11/new-layout-widgets-space-and-gridlayout.html
-
-// TODO handle onStop(), should maintain state when navigate away from sleep session and back
-
 // TODO package app and deploy to phone, be able to install/uninstall/distribute it
-
-// TODO try out a new time picker
-// https://github.com/inteist/android-better-time-picker
-
-// TODO do custom settings activity, be able to save settings to device
-// (see old project)
-// settings could be the default sleep session info
-
-// TODO make help activity from menu, describe how the fields work
 
 // TODO get pure unit test to work
 // Unlike on Eclipse or ADT Bundle, The new Android Studio doesn't require a separate android testing project.
@@ -50,8 +36,21 @@ import com.google.common.base.Strings;
 // https://coderwall.com/p/ybds4w
 
 
-// TODO read up on the fragment docs, I think this is recommended
+// TODO try out a new time picker
+// https://github.com/inteist/android-better-time-picker
+
+// TODO read up on the fragment docs, can use this for session entry and for settings/defaults
 // https://developer.android.com/training/basics/fragments/index.html
+
+// TODO do custom settings activity, be able to save settings to device
+// (see old project)
+// settings could be the default sleep session info
+
+// TODO make help activity from menu, describe how the fields work
+
+
+
+
 
 // TODO save data to database, be able to display history
 
@@ -68,13 +67,6 @@ public class MainActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    TimePicker picker1 = (TimePicker) findViewById(R.id.timePicker);
-    picker1.setCurrentHour(21);
-    picker1.setCurrentMinute(30);
-
-    TimePicker picker2 = (TimePicker) findViewById(R.id.timePicker2);
-    picker2.setCurrentHour(4);
-    picker2.setCurrentMinute(30);
   }
 
   @Override
@@ -115,8 +107,6 @@ public class MainActivity extends Activity {
     String s2 = awakeOutBed.getText().length() > 0 ? awakeOutBed.getText().toString() : "0";
     int minutesAwakeInBed = Integer.parseInt(s1);
     int minutesAwakeOutOfBed = Integer.parseInt(s2);
-
-    // TODO bed minutes must be >= 0
 
     SleepSession session = new SleepSession(allMinutes, minutesAwakeInBed, minutesAwakeOutOfBed);
 
