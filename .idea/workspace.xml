@@ -93,7 +93,7 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="0" selection-start="1415" selection-end="1415" vertical-scroll-proportion="0.4526749" vertical-offset="0" max-vertical-offset="1635">
+            <state line="70" column="4" selection-start="2311" selection-end="2311" vertical-scroll-proportion="0.38134432" vertical-offset="517" max-vertical-offset="1740">
               <folding />
             </state>
           </provider>
@@ -961,7 +961,7 @@
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="recentsLimit" value="5" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="0146BF4F0A00F00F" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="31161d3c" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Galaxy_Nexus_Virtual" />
     <property name="LayoutCode.rearrangeEntriesJava" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -1165,7 +1165,7 @@
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32936507" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="SLIDING" type="FLOATING" visible="false" weight="0.32936507" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="38" y="615" width="1440" height="249" />
+      <window_info id="Android" active="true" anchor="bottom" auto_hide="false" internal_type="SLIDING" type="FLOATING" visible="true" weight="0.32936507" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="38" y="615" width="1440" height="249" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
@@ -1634,7 +1634,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="0" selection-start="1415" selection-end="1415" vertical-scroll-proportion="0.4526749" vertical-offset="0" max-vertical-offset="1635">
+        <state line="70" column="4" selection-start="2311" selection-end="2311" vertical-scroll-proportion="0.38134432" vertical-offset="517" max-vertical-offset="1740">
           <folding />
         </state>
       </provider>

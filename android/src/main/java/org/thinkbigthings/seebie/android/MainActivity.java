@@ -68,7 +68,14 @@ public class MainActivity extends Activity {
 
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    
+    TimePicker picker1 = (TimePicker) findViewById(R.id.timePicker);
+    picker1.setCurrentHour(21);
+    picker1.setCurrentMinute(30);
 
+    TimePicker picker2 = (TimePicker) findViewById(R.id.timePicker2);
+    picker2.setCurrentHour(4);
+    picker2.setCurrentMinute(30);
   }
 
   @Override
