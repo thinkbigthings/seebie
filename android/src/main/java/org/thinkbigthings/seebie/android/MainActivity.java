@@ -23,9 +23,6 @@ import com.google.common.base.Strings;
 // TODO review grid layout
 // http://android-developers.blogspot.com/2011/11/new-layout-widgets-space-and-gridlayout.html
 
-// TODO UI cleanup:
-// set icon image
-
 // TODO handle onStop(), should maintain state when navigate away from sleep session and back
 
 // TODO package app and deploy to phone, be able to install/uninstall/distribute it
@@ -33,10 +30,11 @@ import com.google.common.base.Strings;
 // TODO try out a new time picker
 // https://github.com/inteist/android-better-time-picker
 
-// TODO do custom settings activity, copy out of old project, be able to save settings to device
-// settings could be the default start and finish time
+// TODO do custom settings activity, be able to save settings to device
+// (see old project)
+// settings could be the default sleep session info
 
-// TODO help activity from menu, describe how the fields work
+// TODO make help activity from menu, describe how the fields work
 
 // TODO get pure unit test to work
 // Unlike on Eclipse or ADT Bundle, The new Android Studio doesn't require a separate android testing project.
@@ -55,7 +53,7 @@ import com.google.common.base.Strings;
 // TODO read up on the fragment docs, I think this is recommended
 // https://developer.android.com/training/basics/fragments/index.html
 
-// TODO save data to database
+// TODO save data to database, be able to display history
 
 
 public class MainActivity extends Activity {

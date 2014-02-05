@@ -8,16 +8,16 @@ public class TimeCalculator {
 
   public int getMinutesBetween(int hourStart, int minuteStart, int hourEnd, int minuteEnd) {
 
-    if(0 > hourStart || hourStart > 23) {
+    if(hourStart < 0 || 23 < hourStart) {
       throw new IllegalArgumentException("must be 0-23: " + hourStart);
     }
-    if(0 > hourEnd || hourEnd > 23) {
+    if(hourEnd < 0 || 23 < hourEnd) {
       throw new IllegalArgumentException("must be 0-23: " + hourEnd);
     }
-    if(0 > minuteStart || minuteStart > 59) {
+    if(minuteStart < 0 || 59 < minuteStart) {
       throw new IllegalArgumentException("must be 0-59: " + minuteStart);
     }
-    if(0 > minuteEnd || minuteEnd > 59) {
+    if(minuteEnd < 0 || 59 < minuteEnd) {
       throw new IllegalArgumentException("must be 0-59: " + minuteEnd);
     }
 
