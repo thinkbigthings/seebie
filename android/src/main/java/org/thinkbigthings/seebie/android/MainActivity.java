@@ -20,20 +20,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 
-
-// TODO get pure unit test to work
-// Unlike on Eclipse or ADT Bundle, The new Android Studio doesn't require a separate android testing project.
-// official docs http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Testing
-// but this is for Android runtime tests
-//
-// alternative test runner to run android tests
-// http://robolectric.org/ and https://github.com/novoda/robolectric-plugin
-// http://www.element84.com/easy-testing-with-android-studio.html
-// using mockito instead of Android tests ends up with you writing a reverse implementation of the entire Android system
-//
-// pure unit tests require more work to set up
-// https://coderwall.com/p/ybds4w
-
 // TODO package app and deploy to phone, be able to install/uninstall/distribute it
 // http://developer.android.com/tools/publishing/publishing_overview.html
 
