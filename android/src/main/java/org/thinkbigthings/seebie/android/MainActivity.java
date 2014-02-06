@@ -22,6 +22,9 @@ import com.google.common.base.Strings;
 
 
 // TODO get pure unit test to work
+// my stackoverflow question
+// http://stackoverflow.com/questions/21592528/how-to-set-up-unit-tests-for-android-gradle
+
 // Unlike on Eclipse or ADT Bundle, The new Android Studio doesn't require a separate android testing project.
 // official docs http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Testing
 // but this is for Android runtime tests
@@ -33,8 +36,15 @@ import com.google.common.base.Strings;
 //
 // pure unit tests require more work to set up
 // https://coderwall.com/p/ybds4w
+// http://www.peterfriese.de/android-testing-with-robolectric/
 
-// TODO package app and deploy to phone, be able to install/uninstall/distribute it
+// TODO clean up git
+// move icon notes to SE google doc, start new section on android
+// remove workspace file and bundled gradle
+// update README
+
+// TODO package app, be able to install/uninstall/distribute it
+// requires keystore
 // http://developer.android.com/tools/publishing/publishing_overview.html
 
 
@@ -43,6 +53,8 @@ import com.google.common.base.Strings;
 
 // TODO read up on the fragment docs, can use this for session entry and for settings/defaults
 // https://developer.android.com/training/basics/fragments/index.html
+
+// TODO rethink the SleepSession data, maybe should store times/dates?
 
 // TODO do custom settings activity, be able to save settings to device
 // (see old project)
@@ -68,7 +80,7 @@ public class MainActivity extends Activity {
 
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    
+
     TimePicker picker1 = (TimePicker) findViewById(R.id.timePicker);
     picker1.setCurrentHour(21);
     picker1.setCurrentMinute(30);

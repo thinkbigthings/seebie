@@ -21,9 +21,50 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
+    // http://stackoverflow.com/questions/20699147/gradle-build-fails-on-lint-task
+    // run lint checks but won't abort build
+    // otherwise the build fails and it won't say why
+    lintOptions {
+        abortOnError false
+    }
+}
+
+// unit testing for POJOs, since this is not built in to android projects
+sourceSets {
+    // Note that just declaring this sourceset creates two configurations.
+    unitTest {
+        java.srcDir file('src/test/java')
+        resources.srcDir file('src/test/resources')
+    }
 }
 
 dependencies {
     compile 'joda-time:joda-time:2.3'
     compile 'com.google.guava:guava:15.0'
+    instrumentTestCompile'junit:junit:4.11'
+    unitTestCompile 'junit:junit:4.11'
 }
+
+
+configurations {
+    unitTestCompile.extendsFrom instrumentTestCompile
+    unitTestRuntime.extendsFrom instrumentTestRuntime
+}
+
+task testPojo(type: Test, dependsOn: assemble){
+    description = "Run pojo unit tests (located in src/test/java...)."
+    testClassesDir = sourceSets.unitTest.output.classesDir
+
+    android.sourceSets.main.java.srcDirs.each { dir ->
+        def buildDir = dir.getAbsolutePath().split('/')
+        buildDir =  (buildDir[0..(buildDir.length - 4)] + ['build', 'classes', 'debug']).join('/')
+
+        sourceSets.unitTest.compileClasspath += files(buildDir)
+        sourceSets.unitTest.runtimeClasspath += files(buildDir)
+    }
+
+    classpath = sourceSets.unitTest.runtimeClasspath
+}
+
+check.dependsOn testPojo

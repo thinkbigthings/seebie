@@ -3,7 +3,6 @@
 
     <string name="app_name">Seebie</string>
     <string name="edit_message">awake, in bed</string>
-    <string name="button_send">Send</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">Sleep Entry</string>
     <string name="title_activity_display_message">Sleep Summary</string>
