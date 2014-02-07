@@ -7,6 +7,11 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
+        // actionbar (getActionBar()) is only available in version 11 or greater
+        // using fragments without the support library is version  11 or greater
+        // betterpicker is version 14 (4.0) or greater
+        // up is available in version 16 (4.1) or greater (getActionBar().setDisplayHomeAsUpEnabled(true))
+        // Using Java 7, can't use try-with-resources for min sdk < 19, but other Java 7 features are fine
         versionCode 1
         versionName "1.0"
     }
@@ -26,4 +31,5 @@ android {
 dependencies {
     compile 'joda-time:joda-time:2.3'
     compile 'com.google.guava:guava:15.0'
+    compile 'com.doomonafireball.betterpickers:library:1.5.2'
 }

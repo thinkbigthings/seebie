@@ -19,29 +19,7 @@ import android.widget.TimePicker;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
-
-// TODO package app and deploy to phone, be able to install/uninstall/distribute it
-// http://developer.android.com/tools/publishing/publishing_overview.html
-
-
-// TODO try out a new time picker
-// https://github.com/inteist/android-better-time-picker
-
-// TODO read up on the fragment docs, can use this for session entry and for settings/defaults
-// https://developer.android.com/training/basics/fragments/index.html
-
-// TODO do custom settings activity, be able to save settings to device
-// (see old project)
-// settings could be the default sleep session info
-
-// TODO make help activity from menu, describe how the fields work
-
-
-
-
-
-// TODO save data to database, be able to display history
-
+import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
 
 public class MainActivity extends Activity {
 
@@ -62,6 +40,7 @@ public class MainActivity extends Activity {
     TimePicker picker2 = (TimePicker) findViewById(R.id.timePicker2);
     picker2.setCurrentHour(4);
     picker2.setCurrentMinute(30);
+    
   }
 
   @Override
