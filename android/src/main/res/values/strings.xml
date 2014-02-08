@@ -2,17 +2,14 @@
 <resources>
 
     <string name="app_name">Seebie</string>
-    <string name="edit_message">awake, in bed</string>
-    <string name="button_send">Send</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">Sleep Entry</string>
     <string name="title_activity_display_message">Sleep Summary</string>
     <string name="time_start">Start</string>
     <string name="time_finish">Finish</string>
     <string name="calculate">Calculate</string>
-    <string name="awake_in">Minutes</string>
-    <string name="awake_out">Minutes</string>
-    <string name="out_of_bed">awake, out of bed</string>
+    <string name="awake_in">Minutes awake in bed</string>
+    <string name="awake_out">Minutes out of bed</string>
 
 
 </resources>
