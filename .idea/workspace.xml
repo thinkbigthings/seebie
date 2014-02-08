@@ -26,14 +26,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a31c2cb3-5f06-4323-8e85-68e60c1d3258" name="Default" comment="added initial time pickers">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/library_1_5_2.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/support_v4_19_0_1.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__joda_time_2_3.xml" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__guava_15_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/library_2_4_0.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/DisplayMessageActivity.java" afterPath="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/DisplayMessageActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/android/src/main/AndroidManifest.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java" afterPath="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/android.iml" afterPath="$PROJECT_DIR$/android/android.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/build.gradle" afterPath="$PROJECT_DIR$/android/build.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml" afterPath="$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Seebie.iws" />
@@ -101,8 +96,12 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="42" column="4" selection-start="1298" selection-end="1298" vertical-scroll-proportion="0.47325101" vertical-offset="0" max-vertical-offset="1185">
-              <folding />
+            <state line="39" column="59" selection-start="1644" selection-end="1644" vertical-scroll-proportion="0.4273743" vertical-offset="279" max-vertical-offset="2055">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#2162#2808#0" expanded="true" />
+                <element signature="e#2801#2802#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -128,28 +127,7 @@
       <file leaf-file-name="SleepSession.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/SleepSession.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="45" column="3" selection-start="1252" selection-end="1252" vertical-scroll-proportion="0.0" vertical-offset="675" max-vertical-offset="795">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="activity_display_message.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_display_message.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="49" selection-start="609" selection-end="609" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="345">
-              <folding />
-            </state>
-          </provider>
-          <provider editor-type-id="android-designer">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AndroidManifest.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/android/src/main/AndroidManifest.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="34" selection-start="210" selection-end="210" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="540">
+            <state line="45" column="3" selection-start="1252" selection-end="1252" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="660">
               <folding />
             </state>
           </provider>
@@ -176,7 +154,7 @@
       <file leaf-file-name="DisplayMessageActivity.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/DisplayMessageActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="0" selection-start="705" selection-end="705" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="720">
+            <state line="25" column="0" selection-start="705" selection-end="705" vertical-scroll-proportion="0.0" vertical-offset="375" max-vertical-offset="930">
               <folding />
             </state>
           </provider>
@@ -185,7 +163,7 @@
       <file leaf-file-name="build.gradle" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/android/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="33" column="13" selection-start="1069" selection-end="1101" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="615">
+            <state line="33" column="61" selection-start="1117" selection-end="1117" vertical-scroll-proportion="0.0" vertical-offset="495" max-vertical-offset="615">
               <folding />
             </state>
           </provider>
@@ -727,11 +705,11 @@
         <option value="$PROJECT_DIR$/android/src/main/res/layout/activity_display_message.xml" />
         <option value="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/SleepSession.java" />
         <option value="$PROJECT_DIR$/android/src/main/res/values/strings.xml" />
-        <option value="$PROJECT_DIR$/android/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/TimeCalculator.java" />
-        <option value="$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml" />
         <option value="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/DisplayMessageActivity.java" />
         <option value="$PROJECT_DIR$/android/build.gradle" />
+        <option value="$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml" />
+        <option value="$PROJECT_DIR$/android/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java" />
       </list>
     </option>
@@ -794,7 +772,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -889,6 +866,62 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Seebie" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="seebie" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="android" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="layout" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Seebie" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="seebie" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="android" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="java" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -899,6 +932,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -916,7 +950,7 @@
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="recentsLimit" value="5" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="31161d3c" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="0146BF4F0A00F00F" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Galaxy_Nexus_Virtual" />
     <property name="LayoutCode.rearrangeEntriesJava" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -952,19 +986,6 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method />
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -990,6 +1011,19 @@
       <envs />
       <properties />
       <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -1119,7 +1153,7 @@
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32936507" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="SLIDING" type="FLOATING" visible="false" weight="0.32936507" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="38" y="615" width="1440" height="249" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="SLIDING" type="FLOATING" visible="true" weight="0.32936507" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="38" y="615" width="1440" height="249" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
@@ -1128,6 +1162,7 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.329375" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32936507" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Documentation" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="97" y="125" width="1406" height="677" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329375" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32936507" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32936507" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1150,24 +1185,14 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="40" selection-start="2766" selection-end="2766" vertical-scroll-proportion="0.0" vertical-offset="960" max-vertical-offset="1140">
-          <folding />
-        </state>
-      </provider>
+    <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_display_message.xml">
       <provider editor-type-id="android-designer">
         <state />
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_display_message.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="0" selection-start="323" selection-end="323" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="195">
           <folding />
         </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/AndroidManifest.xml">
@@ -1192,19 +1217,23 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state line="21" column="30" selection-start="686" selection-end="689" vertical-scroll-proportion="0.0" vertical-offset="753" max-vertical-offset="1245">
           <folding />
         </state>
       </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="47" column="13" selection-start="1763" selection-end="1763" vertical-scroll-proportion="0.0" vertical-offset="705" max-vertical-offset="1275">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2162#2808#0" expanded="true" />
+            <element signature="e#2801#2802#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1216,13 +1245,13 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_display_message.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="0" selection-start="323" selection-end="323" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="195">
           <folding />
         </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/AndroidManifest.xml">
@@ -1247,19 +1276,23 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state line="49" column="28" selection-start="1751" selection-end="1751" vertical-scroll-proportion="0.0" vertical-offset="735" max-vertical-offset="1410">
           <folding />
         </state>
       </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="2" column="0" selection-start="44" selection-end="44" vertical-scroll-proportion="0.0" vertical-offset="30" max-vertical-offset="1485">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2162#2808#0" expanded="true" />
+            <element signature="e#2801#2802#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1271,13 +1304,13 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_display_message.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="0" selection-start="323" selection-end="323" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="195">
           <folding />
         </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/AndroidManifest.xml">
@@ -1309,19 +1342,23 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state line="17" column="15" selection-start="724" selection-end="724" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="345">
           <folding />
         </state>
       </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="32" column="39" selection-start="1201" selection-end="1201" vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="1590">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2162#2808#0" expanded="true" />
+            <element signature="e#2801#2802#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1354,19 +1391,23 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="25" selection-start="328" selection-end="328" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="195">
           <folding />
         </state>
       </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="0" selection-start="373" selection-end="373" vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="1590">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2162#2808#0" expanded="true" />
+            <element signature="e#2801#2802#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1399,19 +1440,23 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="25" selection-start="328" selection-end="328" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="195">
           <folding />
         </state>
       </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="0" selection-start="393" selection-end="393" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="1440">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2162#2808#0" expanded="true" />
+            <element signature="e#2801#2802#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1425,7 +1470,11 @@
     <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="12" column="0" selection-start="332" selection-end="332" vertical-scroll-proportion="0.0" vertical-offset="135" max-vertical-offset="1110">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2162#2808#0" expanded="true" />
+            <element signature="e#2801#2802#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1469,13 +1518,6 @@
         <state line="2304" column="5" selection-start="98863" selection-end="98863" vertical-scroll-proportion="0.20833333" vertical-offset="32510" max-vertical-offset="73380" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/SleepSession.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="3" selection-start="1252" selection-end="1252" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="735">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/res/values/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="13" column="45" selection-start="612" selection-end="612" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="360">
@@ -1484,18 +1526,11 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_display_message.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="49" selection-start="609" selection-end="609" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="345">
-          <folding />
-        </state>
-      </provider>
       <provider editor-type-id="android-designer">
         <state />
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/android/src/main/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="34" selection-start="210" selection-end="210" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="540">
+        <state line="11" column="49" selection-start="609" selection-end="609" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="345">
           <folding />
         </state>
       </provider>
@@ -1507,16 +1542,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="9" selection-start="522" selection-end="522" vertical-scroll-proportion="0.0" vertical-offset="195" max-vertical-offset="1125">
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/DisplayMessageActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="25" column="0" selection-start="705" selection-end="705" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="720">
@@ -1524,17 +1549,50 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/android/src/main/res/layout/activity_main.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="80" column="36" selection-start="3385" selection-end="3385" vertical-scroll-proportion="-15.0" vertical-offset="810" max-vertical-offset="1500">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/android/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="13" selection-start="1069" selection-end="1101" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="615">
+        <state line="33" column="61" selection-start="1117" selection-end="1117" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="615">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/android/build/exploded-bundles/ComDoomonafireballBetterpickersLibrary152.aar/classes.jar!/com/doomonafireball/betterpickers/datepicker/DatePickerBuilder.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="9" selection-start="663" selection-end="663" vertical-scroll-proportion="-9.0" vertical-offset="0" max-vertical-offset="630" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/android/src/main/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="89" selection-start="1019" selection-end="1019" vertical-scroll-proportion="0.43209878" vertical-offset="0" max-vertical-offset="729">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/SleepSession.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="3" selection-start="1252" selection-end="1252" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="660">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/org/thinkbigthings/seebie/android/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="4" selection-start="1298" selection-end="1298" vertical-scroll-proportion="0.47325101" vertical-offset="0" max-vertical-offset="1185">
-          <folding />
+        <state line="39" column="59" selection-start="1644" selection-end="1644" vertical-scroll-proportion="0.4273743" vertical-offset="279" max-vertical-offset="2055">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2162#2808#0" expanded="true" />
+            <element signature="e#2801#2802#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
