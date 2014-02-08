@@ -24,7 +24,6 @@ public class MainActivity extends FragmentActivity {
 
   public final static String SLEEP_SESSION = "org.thinkbigthings.seebie.android.sleepSession";
 
-  private TimeCalculator calculator = new TimeCalculator();
   private TimedSleepSession currentSession = new TimedSleepSession();
 
   private NumberPickerDialogFragment.NumberPickerDialogHandler awakeInBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
