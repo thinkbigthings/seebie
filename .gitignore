@@ -17,6 +17,7 @@ gen/
 
 # helpful suggestions from intellij
 #.gradle
+.gradle/1.9/taskArtifacts/cache.properties.lock
 #local.properties
-#.idea/workspace.xml
+.idea/workspace.xml
 
