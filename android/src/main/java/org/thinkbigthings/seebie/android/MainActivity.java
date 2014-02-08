@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TimePicker;
 
 import com.doomonafireball.betterpickers.radialtimepicker.RadialPickerLayout;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
@@ -16,6 +15,7 @@ import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog
 import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 // TODO figure out how to use betterpickers without the support fragments, would like to use latest fragments
 
@@ -96,12 +96,35 @@ public class MainActivity extends FragmentActivity {
     startDateButton.setOnClickListener(startDateClick);
 
     Button finishDateButton = (Button) findViewById(R.id.finishDate);
-   finishDateButton.setOnClickListener(finishDateClick);
+    finishDateButton.setOnClickListener(finishDateClick);
+
+    updateDisplay();
+  }
+
+  private void updateDisplay() {
+    Button startButton = (Button) findViewById(R.id.startTime);
+    startButton.setText(DateTimeFormat.shortTime().print(currentSession.getStartTime()));
+
+    Button finishButton = (Button) findViewById(R.id.finishTime);
+    finishButton.setText(DateTimeFormat.shortTime().print(currentSession.getFinishTime()));
+
+    Button startDateButton = (Button) findViewById(R.id.startDate);
+    startDateButton.setText(DateTimeFormat.shortDate().print(currentSession.getStartTime()));
+
+    Button finishDateButton = (Button) findViewById(R.id.finishDate);
+    finishDateButton.setText(DateTimeFormat.shortDate().print(currentSession.getFinishTime()));
+
+    EditText awakeInBed = (EditText) findViewById(R.id.awake_in_minutes);
+    awakeInBed.setText(String.valueOf(currentSession.getMinutesAwakeInBed()));
+
+    EditText awakeOutBed = (EditText) findViewById(R.id.awake_out_minutes);
+    awakeOutBed.setText(String.valueOf(currentSession.getMinutesAwakeOutOfBed()));
   }
 
   @Override
   public void onRestoreInstanceState(Bundle savedInstance) {
     currentSession = (TimedSleepSession)savedInstance.getSerializable(SLEEP_SESSION);
+    updateDisplay();
   }
 
   @Override
