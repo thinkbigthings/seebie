@@ -29,26 +29,36 @@ public class MainActivity extends FragmentActivity {
   private TimedSleepSession currentSession = new TimedSleepSession();
 
   private NumberPickerDialogFragment.NumberPickerDialogHandler awakeInBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
-    @Override public void onDialogNumberSet(int i, int i2, double v, boolean b, double v2) {
-      //currentSession.withStartTime(hour, minute);
+    @Override public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative, double fullNumber) {
+      currentSession.withMinutesAwakeInBed(number);
       updateDisplay();
     }
   };
   private NumberPickerDialogFragment.NumberPickerDialogHandler awakeOutOfBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
-    @Override public void onDialogNumberSet(int i, int i2, double v, boolean b, double v2) {
-      //currentSession.withStartTime(hour, minute);
+    @Override public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative, double fullNumber) {
+      currentSession.withMinutesAwakeOutOfBed(number);
       updateDisplay();
     }
   };
   private View.OnClickListener awakeInBedClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
-      NumberPickerBuilder npb = new NumberPickerBuilder().setFragmentManager(getSupportFragmentManager());
+      NumberPickerBuilder npb = new NumberPickerBuilder()
+          .setFragmentManager(getSupportFragmentManager())
+          .setStyleResId(R.style.BetterPickersDialogFragment)
+          .setDecimalVisibility(View.GONE)
+          .setPlusMinusVisibility(View.GONE)
+          .addNumberPickerDialogHandler(awakeInBedCallback);
       npb.show();
     }
   };
   private View.OnClickListener awakeOutOfBedClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
-      NumberPickerBuilder npb = new NumberPickerBuilder().setFragmentManager(getSupportFragmentManager());
+      NumberPickerBuilder npb = new NumberPickerBuilder()
+          .setFragmentManager(getSupportFragmentManager())
+          .setStyleResId(R.style.BetterPickersDialogFragment)
+          .setDecimalVisibility(View.GONE)
+          .setPlusMinusVisibility(View.GONE)
+          .addNumberPickerDialogHandler(awakeOutOfBedCallback);
       npb.show();
     }
   };
@@ -116,22 +126,29 @@ public class MainActivity extends FragmentActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    Button startButton = (Button) findViewById(R.id.startTime);
-    startButton.setOnClickListener(startClick);
-
-    Button finishButton = (Button) findViewById(R.id.finishTime);
-    finishButton.setOnClickListener(finishClick);
-
-    Button startDateButton = (Button) findViewById(R.id.startDate);
-    startDateButton.setOnClickListener(startDateClick);
-
-    Button finishDateButton = (Button) findViewById(R.id.finishDate);
-    finishDateButton.setOnClickListener(finishDateClick);
+    setButtonClickListener(R.id.timeInBedAwake, awakeInBedClickListener);
+    setButtonClickListener(R.id.timeOutOfBedAwake, awakeOutOfBedClickListener);
+    setButtonClickListener(R.id.startDate, startDateClick);
+    setButtonClickListener(R.id.startTime, startClick);
+    setButtonClickListener(R.id.finishDate, finishDateClick);
+    setButtonClickListener(R.id.finishTime, finishClick);
 
     updateDisplay();
   }
 
+  private void setButtonClickListener(int id, View.OnClickListener listener) {
+    Button button = (Button) findViewById(id);
+    button.setOnClickListener(listener);
+  }
+
   private void updateDisplay() {
+
+    Button awakeInBed = (Button) findViewById(R.id.timeInBedAwake);
+    awakeInBed.setText(String.valueOf(currentSession.getMinutesAwakeInBed()));
+
+    Button awakeOutBed = (Button) findViewById(R.id.timeOutOfBedAwake);
+    awakeOutBed.setText(String.valueOf(currentSession.getMinutesAwakeOutOfBed()));
+
     Button startButton = (Button) findViewById(R.id.startTime);
     startButton.setText(DateTimeFormat.shortTime().print(currentSession.getStartTime()));
 
@@ -144,11 +161,6 @@ public class MainActivity extends FragmentActivity {
     Button finishDateButton = (Button) findViewById(R.id.finishDate);
     finishDateButton.setText(DateTimeFormat.shortDate().print(currentSession.getFinishTime()));
 
-    EditText awakeInBed = (EditText) findViewById(R.id.awake_in_minutes);
-    awakeInBed.setText(String.valueOf(currentSession.getMinutesAwakeInBed()));
-
-    EditText awakeOutBed = (EditText) findViewById(R.id.awake_out_minutes);
-    awakeOutBed.setText(String.valueOf(currentSession.getMinutesAwakeOutOfBed()));
   }
 
   @Override
@@ -183,14 +195,6 @@ public class MainActivity extends FragmentActivity {
   }
 
   public void sendMessage(View view) {
-
-    EditText awakeInBed = (EditText) findViewById(R.id.awake_in_minutes);
-    EditText awakeOutBed = (EditText) findViewById(R.id.awake_out_minutes);
-    String s1 = awakeInBed.getText().length() > 0 ? awakeInBed.getText().toString() : "0";
-    String s2 = awakeOutBed.getText().length() > 0 ? awakeOutBed.getText().toString() : "0";
-
-    currentSession.withMinutesAwakeInBed(Long.parseLong(s1)).withMinutesAwakeOutOfBed(Long.parseLong(s2));
-
     Intent intent = new Intent(this, DisplayMessageActivity.class);
     intent.putExtra(SLEEP_SESSION, currentSession);
     startActivity(intent);
