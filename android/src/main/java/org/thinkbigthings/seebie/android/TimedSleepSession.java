@@ -8,6 +8,8 @@ import java.io.Serializable;
 // TODO try out Parcelable
 // http://stackoverflow.com/questions/2736389/how-to-pass-object-from-one-activity-to-another-in-android
 
+// TODO consider making this class immutable (see behavior of DateTime)
+
 public class TimedSleepSession implements Serializable {
 
   private long minutesAwakeInBed = 0L;
@@ -28,22 +30,22 @@ public class TimedSleepSession implements Serializable {
     return this;
   }
   public TimedSleepSession withStartTime(int hour, int minute) {
-    startTime.withHourOfDay(hour).withMinuteOfHour(minute);
+    startTime = startTime.withHourOfDay(hour).withMinuteOfHour(minute);
     return this;
   }
 
   public TimedSleepSession withStartDate(int year, int month, int day) {
-    startTime.withYear(year).withMonthOfYear(month).withDayOfMonth(day);
+    startTime = startTime.withYear(year).withMonthOfYear(month).withDayOfMonth(day);
     return this;
   }
 
   public TimedSleepSession withFinishTime(int hour, int minute) {
-    finishTime.withHourOfDay(hour).withMinuteOfHour(minute);
+    finishTime = finishTime.withHourOfDay(hour).withMinuteOfHour(minute);
     return this;
   }
 
   public TimedSleepSession withFinishDate(int year, int month, int day) {
-    finishTime.withYear(year).withMonthOfYear(month).withDayOfMonth(day);
+    finishTime = finishTime.withYear(year).withMonthOfYear(month).withDayOfMonth(day);
     return this;
   }
   public DateTime getStartTime() {

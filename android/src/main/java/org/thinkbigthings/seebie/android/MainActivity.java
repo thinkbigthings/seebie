@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.doomonafireball.betterpickers.numberpicker.NumberPickerBuilder;
+import com.doomonafireball.betterpickers.numberpicker.NumberPickerDialogFragment;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialPickerLayout;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
 
@@ -26,21 +28,48 @@ public class MainActivity extends FragmentActivity {
   private TimeCalculator calculator = new TimeCalculator();
   private TimedSleepSession currentSession = new TimedSleepSession();
 
-  private RadialTimePickerDialog.OnTimeSetListener startTimeListener = new RadialTimePickerDialog.OnTimeSetListener() {
-    @Override public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
-      currentSession.withStartTime(hour, minute);
+  private NumberPickerDialogFragment.NumberPickerDialogHandler awakeInBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
+    @Override public void onDialogNumberSet(int i, int i2, double v, boolean b, double v2) {
+      //currentSession.withStartTime(hour, minute);
+      updateDisplay();
     }
   };
-  private RadialTimePickerDialog.OnTimeSetListener finishTimeListener = new RadialTimePickerDialog.OnTimeSetListener() {
+  private NumberPickerDialogFragment.NumberPickerDialogHandler awakeOutOfBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
+    @Override public void onDialogNumberSet(int i, int i2, double v, boolean b, double v2) {
+      //currentSession.withStartTime(hour, minute);
+      updateDisplay();
+    }
+  };
+  private View.OnClickListener awakeInBedClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      NumberPickerBuilder npb = new NumberPickerBuilder().setFragmentManager(getSupportFragmentManager());
+      npb.show();
+    }
+  };
+  private View.OnClickListener awakeOutOfBedClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      NumberPickerBuilder npb = new NumberPickerBuilder().setFragmentManager(getSupportFragmentManager());
+      npb.show();
+    }
+  };
+
+  private RadialTimePickerDialog.OnTimeSetListener startTimeCallback = new RadialTimePickerDialog.OnTimeSetListener() {
+    @Override public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
+      currentSession.withStartTime(hour, minute);
+      updateDisplay();
+    }
+  };
+  private RadialTimePickerDialog.OnTimeSetListener finishTimeCallback = new RadialTimePickerDialog.OnTimeSetListener() {
     @Override public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
       currentSession.withFinishTime(hour, minute);
+      updateDisplay();
     }
   };
   private View.OnClickListener startClick = new View.OnClickListener() {
     @Override public void onClick(View v) {
       DateTime time= currentSession.getStartTime();
       RadialTimePickerDialog dialog;
-      dialog = RadialTimePickerDialog.newInstance(startTimeListener, time.getHourOfDay(), time.getMinuteOfHour(), false);
+      dialog = RadialTimePickerDialog.newInstance(startTimeCallback, time.getHourOfDay(), time.getMinuteOfHour(), false);
       dialog.show(getSupportFragmentManager(), null);
     }
   };
@@ -48,26 +77,27 @@ public class MainActivity extends FragmentActivity {
     @Override public void onClick(View v) {
       DateTime time= currentSession.getFinishTime();
       RadialTimePickerDialog dialog;
-      dialog = RadialTimePickerDialog.newInstance(finishTimeListener, time.getHourOfDay(), time.getMinuteOfHour(), false);
+      dialog = RadialTimePickerDialog.newInstance(finishTimeCallback, time.getHourOfDay(), time.getMinuteOfHour(), false);
       dialog.show(getSupportFragmentManager(), null);
     }
   };
-  private CalendarDatePickerDialog.OnDateSetListener startDateListener = new CalendarDatePickerDialog.OnDateSetListener() {
+  private CalendarDatePickerDialog.OnDateSetListener startDateCallback = new CalendarDatePickerDialog.OnDateSetListener() {
     @Override public void onDateSet(CalendarDatePickerDialog calendarDatePickerDialog, int year, int month, int day) {
       currentSession.withStartDate(year, month, day);
+      updateDisplay();
     }
   };
-
-  private CalendarDatePickerDialog.OnDateSetListener finishDateListener = new CalendarDatePickerDialog.OnDateSetListener() {
+  private CalendarDatePickerDialog.OnDateSetListener finishDateCallback = new CalendarDatePickerDialog.OnDateSetListener() {
     @Override public void onDateSet(CalendarDatePickerDialog calendarDatePickerDialog, int year, int month, int day) {
       currentSession.withFinishDate(year, month, day);
+      updateDisplay();
     }
   };
   private View.OnClickListener startDateClick = new View.OnClickListener() {
     @Override public void onClick(View v) {
       DateTime time= currentSession.getStartTime();
       CalendarDatePickerDialog calendarDatePickerDialog = CalendarDatePickerDialog
-            .newInstance(startDateListener, time.getYear(), time.getMonthOfYear(), time.getDayOfMonth());
+            .newInstance(startDateCallback, time.getYear(), time.getMonthOfYear(), time.getDayOfMonth());
         calendarDatePickerDialog.show(getSupportFragmentManager(), null);
     }
   };
@@ -75,7 +105,7 @@ public class MainActivity extends FragmentActivity {
     @Override public void onClick(View v) {
       DateTime time= currentSession.getFinishTime();
       CalendarDatePickerDialog calendarDatePickerDialog = CalendarDatePickerDialog
-          .newInstance(finishDateListener, time.getYear(), time.getMonthOfYear(), time.getDayOfMonth());
+          .newInstance(finishDateCallback, time.getYear(), time.getMonthOfYear(), time.getDayOfMonth());
       calendarDatePickerDialog.show(getSupportFragmentManager(), null);
     }
   };
