@@ -28,12 +28,12 @@ public class DisplayMessageActivity extends Activity {
 
     Intent intent = getIntent();
 
-    SleepSession session = (SleepSession)intent.getSerializableExtra(MainActivity.SLEEP_SESSION);
+    TimedSleepSession session = (TimedSleepSession)intent.getSerializableExtra(MainActivity.SLEEP_SESSION);
 
     TextView totalSleepDisplay = (TextView)findViewById(R.id.total_sleep_display);
     TextView efficiencyDisplay = (TextView)findViewById(R.id.efficiency_display);
 
-    int time = session.calculateMinutesInBedSleeping();
+    long time = session.calculateMinutesInBedSleeping();
 
     DecimalFormat format = new DecimalFormat("#.##");
 

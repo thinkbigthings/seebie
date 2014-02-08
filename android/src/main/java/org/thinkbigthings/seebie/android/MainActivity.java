@@ -1,84 +1,112 @@
 package org.thinkbigthings.seebie.android;
 
-import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridLayout;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialPickerLayout;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
-import com.doomonafireball.betterpickers.timepicker.TimePickerBuilder;
-import com.doomonafireball.betterpickers.timepicker.TimePickerDialogFragment;
-import com.google.common.base.Optional;
-import com.google.common.base.Strings;
 
 import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
 
 import org.joda.time.DateTime;
 
 // TODO figure out how to use betterpickers without the support fragments, would like to use latest fragments
-public class MainActivity extends FragmentActivity implements CalendarDatePickerDialog.OnDateSetListener, RadialTimePickerDialog.OnTimeSetListener {
+
+public class MainActivity extends FragmentActivity {
 
   public final static String SLEEP_SESSION = "org.thinkbigthings.seebie.android.sleepSession";
 
   private TimeCalculator calculator = new TimeCalculator();
+  private TimedSleepSession currentSession = new TimedSleepSession();
+
+  private RadialTimePickerDialog.OnTimeSetListener startTimeListener = new RadialTimePickerDialog.OnTimeSetListener() {
+    @Override public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
+      currentSession.withStartTime(hour, minute);
+    }
+  };
+  private RadialTimePickerDialog.OnTimeSetListener finishTimeListener = new RadialTimePickerDialog.OnTimeSetListener() {
+    @Override public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
+      currentSession.withFinishTime(hour, minute);
+    }
+  };
+  private View.OnClickListener startClick = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      DateTime time= currentSession.getStartTime();
+      RadialTimePickerDialog dialog;
+      dialog = RadialTimePickerDialog.newInstance(startTimeListener, time.getHourOfDay(), time.getMinuteOfHour(), false);
+      dialog.show(getSupportFragmentManager(), null);
+    }
+  };
+  private View.OnClickListener finishClick = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      DateTime time= currentSession.getFinishTime();
+      RadialTimePickerDialog dialog;
+      dialog = RadialTimePickerDialog.newInstance(finishTimeListener, time.getHourOfDay(), time.getMinuteOfHour(), false);
+      dialog.show(getSupportFragmentManager(), null);
+    }
+  };
+  private CalendarDatePickerDialog.OnDateSetListener startDateListener = new CalendarDatePickerDialog.OnDateSetListener() {
+    @Override public void onDateSet(CalendarDatePickerDialog calendarDatePickerDialog, int year, int month, int day) {
+      currentSession.withStartDate(year, month, day);
+    }
+  };
+
+  private CalendarDatePickerDialog.OnDateSetListener finishDateListener = new CalendarDatePickerDialog.OnDateSetListener() {
+    @Override public void onDateSet(CalendarDatePickerDialog calendarDatePickerDialog, int year, int month, int day) {
+      currentSession.withFinishDate(year, month, day);
+    }
+  };
+  private View.OnClickListener startDateClick = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      DateTime time= currentSession.getStartTime();
+      CalendarDatePickerDialog calendarDatePickerDialog = CalendarDatePickerDialog
+            .newInstance(startDateListener, time.getYear(), time.getMonthOfYear(), time.getDayOfMonth());
+        calendarDatePickerDialog.show(getSupportFragmentManager(), null);
+    }
+  };
+  private View.OnClickListener finishDateClick = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      DateTime time= currentSession.getFinishTime();
+      CalendarDatePickerDialog calendarDatePickerDialog = CalendarDatePickerDialog
+          .newInstance(finishDateListener, time.getYear(), time.getMonthOfYear(), time.getDayOfMonth());
+      calendarDatePickerDialog.show(getSupportFragmentManager(), null);
+    }
+  };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
 
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    
-    TimePicker picker1 = (TimePicker) findViewById(R.id.timePicker);
-    picker1.setCurrentHour(21);
-    picker1.setCurrentMinute(30);
 
-    TimePicker picker2 = (TimePicker) findViewById(R.id.timePicker2);
-    picker2.setCurrentHour(4);
-    picker2.setCurrentMinute(30);
+    Button startButton = (Button) findViewById(R.id.startTime);
+    startButton.setOnClickListener(startClick);
 
-    Button button = (Button) findViewById(R.id.button);
+    Button finishButton = (Button) findViewById(R.id.finishTime);
+    finishButton.setOnClickListener(finishClick);
 
-    button.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+    Button startDateButton = (Button) findViewById(R.id.startDate);
+    startDateButton.setOnClickListener(startDateClick);
 
-        RadialTimePickerDialog dialog;
-        dialog = RadialTimePickerDialog.newInstance(MainActivity.this, 21, 30, false);
-        dialog.show(getSupportFragmentManager(), null);
-
-//        DateTime now = DateTime.now();
-//        CalendarDatePickerDialog calendarDatePickerDialog;
-//        calendarDatePickerDialog = CalendarDatePickerDialog
-//            .newInstance(MainActivity.this, now.getYear(), now.getMonthOfYear(), now.getDayOfMonth());
-//        calendarDatePickerDialog.show(getSupportFragmentManager(), "fragment_date_picker_name");
-      }
-    });
-
+    Button finishDateButton = (Button) findViewById(R.id.finishDate);
+   finishDateButton.setOnClickListener(finishDateClick);
   }
-  @Override
-  public void onTimeSet(RadialPickerLayout radialPickerLayout, int i, int i2) {
 
-  }
   @Override
-  public void onDateSet(CalendarDatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
-    String text = "Year: " + year + "\nMonth: " + monthOfYear + "\nDay: " + dayOfMonth;
+  public void onRestoreInstanceState(Bundle savedInstance) {
+    currentSession = (TimedSleepSession)savedInstance.getSerializable(SLEEP_SESSION);
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle savedInstance) {
+    savedInstance.putSerializable(SLEEP_SESSION, currentSession);
   }
 
   @Override
@@ -101,29 +129,17 @@ public class MainActivity extends FragmentActivity implements CalendarDatePicker
     return super.onOptionsItemSelected(item);
   }
 
-  // for button click
   public void sendMessage(View view) {
-
-    TimePicker picker1 = (TimePicker) findViewById(R.id.timePicker);
-    TimePicker picker2 = (TimePicker) findViewById(R.id.timePicker2);
-
-    int allMinutes = calculator.getMinutesBetween(picker1.getCurrentHour(),
-        picker1.getCurrentMinute(),
-        picker2.getCurrentHour(),
-        picker2.getCurrentMinute());
 
     EditText awakeInBed = (EditText) findViewById(R.id.awake_in_minutes);
     EditText awakeOutBed = (EditText) findViewById(R.id.awake_out_minutes);
-
     String s1 = awakeInBed.getText().length() > 0 ? awakeInBed.getText().toString() : "0";
     String s2 = awakeOutBed.getText().length() > 0 ? awakeOutBed.getText().toString() : "0";
-    int minutesAwakeInBed = Integer.parseInt(s1);
-    int minutesAwakeOutOfBed = Integer.parseInt(s2);
 
-    SleepSession session = new SleepSession(allMinutes, minutesAwakeInBed, minutesAwakeOutOfBed);
+    currentSession.withMinutesAwakeInBed(Long.parseLong(s1)).withMinutesAwakeOutOfBed(Long.parseLong(s2));
 
     Intent intent = new Intent(this, DisplayMessageActivity.class);
-    intent.putExtra(SLEEP_SESSION, session);
+    intent.putExtra(SLEEP_SESSION, currentSession);
     startActivity(intent);
   }
 

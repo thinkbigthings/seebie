@@ -14,6 +14,12 @@ public class SleepSession implements Serializable {
   private final int minutesAwakeInBed;
   private final int minutesAwakeOutOfBed;
 
+  public SleepSession(int allMinutes, int minutesAwakeInBed, int minutesAwakeOutOfBed) {
+    this.allMinutes = allMinutes;
+    this.minutesAwakeInBed = minutesAwakeInBed;
+    this.minutesAwakeOutOfBed = minutesAwakeOutOfBed;
+  }
+
   public int getAllMinutes() {
     return allMinutes;
   }
@@ -24,12 +30,6 @@ public class SleepSession implements Serializable {
 
   public int getMinutesAwakeOutOfBed() {
     return minutesAwakeOutOfBed;
-  }
-
-  public SleepSession(int allMinutes, int minutesAwakeInBed, int minutesAwakeOutOfBed) {
-    this.allMinutes = allMinutes;
-    this.minutesAwakeInBed = minutesAwakeInBed;
-    this.minutesAwakeOutOfBed = minutesAwakeOutOfBed;
   }
 
   public int calculateTotalMinutesInBed() {
