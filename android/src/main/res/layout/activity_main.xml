@@ -89,7 +89,7 @@
                 android:layout_gravity="fill_horizontal"
                 android:layout_columnSpan="3"
                 android:text="@string/calculate"
-                android:onClick="sendMessage"
+                android:onClick="calculate"
                 android:layout_column="0"/>
 
     </GridLayout>
