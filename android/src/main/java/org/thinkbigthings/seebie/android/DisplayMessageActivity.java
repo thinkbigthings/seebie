@@ -24,27 +24,21 @@ public class DisplayMessageActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_display_message);
 
-    // actionbar is only available in version 11 or greater
-    // up is available in version 16 (4.1) or greater
-    // Using Java 7, can't use try-with-resources for min sdk < 19, but other Java 7 features are fine
-
     getActionBar().setDisplayHomeAsUpEnabled(true);
 
-    // Get the message from the intent
     Intent intent = getIntent();
 
-    SleepSession session = (SleepSession)intent.getSerializableExtra(MainActivity.SLEEP_SESSION);
+    TimedSleepSession session = (TimedSleepSession)intent.getSerializableExtra(MainActivity.SLEEP_SESSION);
 
     TextView totalSleepDisplay = (TextView)findViewById(R.id.total_sleep_display);
     TextView efficiencyDisplay = (TextView)findViewById(R.id.efficiency_display);
 
-    int time = session.calculateMinutesInBedSleeping();
+    long time = session.calculateMinutesInBedSleeping();
 
     DecimalFormat format = new DecimalFormat("#.##");
 
     totalSleepDisplay.setText("Sleep Time: " + time + " m, (" + format.format((double)time/60d) + " hrs)");
     efficiencyDisplay.setText("Efficiency: " + format.format(session.calculateEfficiency()*100) + "%");
-
   }
 
   @Override

@@ -1,67 +1,164 @@
 package org.thinkbigthings.seebie.android;
 
-import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
-import android.widget.EditText;
-import android.widget.GridLayout;
-import android.widget.TextView;
-import android.widget.TimePicker;
+import android.widget.Button;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Strings;
+import com.doomonafireball.betterpickers.numberpicker.NumberPickerBuilder;
+import com.doomonafireball.betterpickers.numberpicker.NumberPickerDialogFragment;
+import com.doomonafireball.betterpickers.radialtimepicker.RadialPickerLayout;
+import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
 
+import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
 
-// TODO package app and deploy to phone, be able to install/uninstall/distribute it
-// http://developer.android.com/tools/publishing/publishing_overview.html
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
+// TODO figure out how to use betterpickers without the support fragments, would like to use latest fragments
 
-// TODO try out a new time picker
-// https://github.com/inteist/android-better-time-picker
-
-// TODO read up on the fragment docs, can use this for session entry and for settings/defaults
-// https://developer.android.com/training/basics/fragments/index.html
-
-// TODO do custom settings activity, be able to save settings to device
-// (see old project)
-// settings could be the default sleep session info
-
-// TODO make help activity from menu, describe how the fields work
-
-
-
-
-
-// TODO save data to database, be able to display history
-
-
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 
   public final static String SLEEP_SESSION = "org.thinkbigthings.seebie.android.sleepSession";
 
   private TimeCalculator calculator = new TimeCalculator();
+  private TimedSleepSession currentSession = new TimedSleepSession();
+
+  private NumberPickerDialogFragment.NumberPickerDialogHandler awakeInBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
+    @Override public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative, double fullNumber) {
+      currentSession.withMinutesAwakeInBed(number);
+      updateDisplay();
+    }
+  };
+  private NumberPickerDialogFragment.NumberPickerDialogHandler awakeOutOfBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
+    @Override public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative, double fullNumber) {
+      currentSession.withMinutesAwakeOutOfBed(number);
+      updateDisplay();
+    }
+  };
+  private RadialTimePickerDialog.OnTimeSetListener startTimeCallback = new RadialTimePickerDialog.OnTimeSetListener() {
+    @Override public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
+      currentSession.withStartTime(hour, minute);
+      updateDisplay();
+    }
+  };
+  private RadialTimePickerDialog.OnTimeSetListener finishTimeCallback = new RadialTimePickerDialog.OnTimeSetListener() {
+    @Override public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
+      currentSession.withFinishTime(hour, minute);
+      updateDisplay();
+    }
+  };
+  private CalendarDatePickerDialog.OnDateSetListener startDateCallback = new CalendarDatePickerDialog.OnDateSetListener() {
+    @Override public void onDateSet(CalendarDatePickerDialog calendarDatePickerDialog, int year, int month, int day) {
+      currentSession.withStartDate(year, month, day);
+      updateDisplay();
+    }
+  };
+  private CalendarDatePickerDialog.OnDateSetListener finishDateCallback = new CalendarDatePickerDialog.OnDateSetListener() {
+    @Override public void onDateSet(CalendarDatePickerDialog calendarDatePickerDialog, int year, int month, int day) {
+      currentSession.withFinishDate(year, month, day);
+      updateDisplay();
+    }
+  };
+  private View.OnClickListener awakeInBedClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      NumberPickerBuilder npb = new NumberPickerBuilder()
+          .setFragmentManager(getSupportFragmentManager())
+          .setStyleResId(R.style.BetterPickersDialogFragment)
+          .setDecimalVisibility(View.GONE)
+          .setPlusMinusVisibility(View.GONE)
+          .addNumberPickerDialogHandler(awakeInBedCallback);
+      npb.show();
+    }
+  };
+  private View.OnClickListener awakeOutOfBedClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      NumberPickerBuilder npb = new NumberPickerBuilder()
+          .setFragmentManager(getSupportFragmentManager())
+          .setStyleResId(R.style.BetterPickersDialogFragment)
+          .setDecimalVisibility(View.GONE)
+          .setPlusMinusVisibility(View.GONE)
+          .addNumberPickerDialogHandler(awakeOutOfBedCallback);
+      npb.show();
+    }
+  };
+  private View.OnClickListener startDateClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      DateTime time= currentSession.getStartTime();
+      CalendarDatePickerDialog calendarDatePickerDialog = CalendarDatePickerDialog
+          .newInstance(startDateCallback, time.getYear(), time.getMonthOfYear(), time.getDayOfMonth());
+      calendarDatePickerDialog.show(getSupportFragmentManager(), null);
+    }
+  };
+  private View.OnClickListener startTimeClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      DateTime time= currentSession.getStartTime();
+      RadialTimePickerDialog dialog;
+      dialog = RadialTimePickerDialog.newInstance(startTimeCallback, time.getHourOfDay(), time.getMinuteOfHour(), false);
+      dialog.show(getSupportFragmentManager(), null);
+    }
+  };
+  private View.OnClickListener finishDateClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      DateTime time= currentSession.getFinishTime();
+      CalendarDatePickerDialog calendarDatePickerDialog = CalendarDatePickerDialog
+          .newInstance(finishDateCallback, time.getYear(), time.getMonthOfYear(), time.getDayOfMonth());
+      calendarDatePickerDialog.show(getSupportFragmentManager(), null);
+    }
+  };
+  private View.OnClickListener finishTimeClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      DateTime time= currentSession.getFinishTime();
+      RadialTimePickerDialog dialog;
+      dialog = RadialTimePickerDialog.newInstance(finishTimeCallback, time.getHourOfDay(), time.getMinuteOfHour(), false);
+      dialog.show(getSupportFragmentManager(), null);
+    }
+  };
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
 
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    
-    TimePicker picker1 = (TimePicker) findViewById(R.id.timePicker);
-    picker1.setCurrentHour(21);
-    picker1.setCurrentMinute(30);
 
-    TimePicker picker2 = (TimePicker) findViewById(R.id.timePicker2);
-    picker2.setCurrentHour(4);
-    picker2.setCurrentMinute(30);
+    setButtonClickListener(R.id.timeInBedAwake, awakeInBedClickListener);
+    setButtonClickListener(R.id.timeOutOfBedAwake, awakeOutOfBedClickListener);
+    setButtonClickListener(R.id.startDate, startDateClickListener);
+    setButtonClickListener(R.id.startTime, startTimeClickListener);
+    setButtonClickListener(R.id.finishDate, finishDateClickListener);
+    setButtonClickListener(R.id.finishTime, finishTimeClickListener);
+
+    updateDisplay();
+  }
+
+  private void setButtonClickListener(int id, View.OnClickListener listener) {
+    Button button = (Button) findViewById(id);
+    button.setOnClickListener(listener);
+  }
+
+  private void updateDisplay() {
+
+    ((Button) findViewById(R.id.timeInBedAwake)).setText(String.valueOf(currentSession.getMinutesAwakeInBed()));
+    ((Button) findViewById(R.id.timeOutOfBedAwake)).setText(String.valueOf(currentSession.getMinutesAwakeOutOfBed()));
+    ((Button) findViewById(R.id.startDate)).setText(DateTimeFormat.shortDate().print(currentSession.getStartTime()));
+    ((Button) findViewById(R.id.startTime)).setText(DateTimeFormat.shortTime().print(currentSession.getStartTime()));
+    ((Button) findViewById(R.id.finishDate)).setText(DateTimeFormat.shortDate().print(currentSession.getFinishTime()));
+    ((Button) findViewById(R.id.finishTime)).setText(DateTimeFormat.shortTime().print(currentSession.getFinishTime()));
+  }
+
+  @Override
+  public void onRestoreInstanceState(Bundle savedInstance) {
+    currentSession = (TimedSleepSession)savedInstance.getSerializable(SLEEP_SESSION);
+    updateDisplay();
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle savedInstance) {
+    savedInstance.putSerializable(SLEEP_SESSION, currentSession);
   }
 
   @Override
@@ -84,30 +181,11 @@ public class MainActivity extends Activity {
     return super.onOptionsItemSelected(item);
   }
 
-  // for button click
-  public void sendMessage(View view) {
-
-    TimePicker picker1 = (TimePicker) findViewById(R.id.timePicker);
-    TimePicker picker2 = (TimePicker) findViewById(R.id.timePicker2);
-
-    int allMinutes = calculator.getMinutesBetween(picker1.getCurrentHour(),
-        picker1.getCurrentMinute(),
-        picker2.getCurrentHour(),
-        picker2.getCurrentMinute());
-
-    EditText awakeInBed = (EditText) findViewById(R.id.awake_in_minutes);
-    EditText awakeOutBed = (EditText) findViewById(R.id.awake_out_minutes);
-
-    String s1 = awakeInBed.getText().length() > 0 ? awakeInBed.getText().toString() : "0";
-    String s2 = awakeOutBed.getText().length() > 0 ? awakeOutBed.getText().toString() : "0";
-    int minutesAwakeInBed = Integer.parseInt(s1);
-    int minutesAwakeOutOfBed = Integer.parseInt(s2);
-
-    SleepSession session = new SleepSession(allMinutes, minutesAwakeInBed, minutesAwakeOutOfBed);
-
+  public void calculate(View view) {
     Intent intent = new Intent(this, DisplayMessageActivity.class);
-    intent.putExtra(SLEEP_SESSION, session);
+    intent.putExtra(SLEEP_SESSION, currentSession);
     startActivity(intent);
   }
+
 
 }
