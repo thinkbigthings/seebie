@@ -141,12 +141,23 @@ public class MainActivity extends FragmentActivity {
 
   private void updateDisplay() {
 
-    ((Button) findViewById(R.id.timeInBedAwake)).setText(String.valueOf(currentSession.getMinutesAwakeInBed()));
-    ((Button) findViewById(R.id.timeOutOfBedAwake)).setText(String.valueOf(currentSession.getMinutesAwakeOutOfBed()));
-    ((Button) findViewById(R.id.startDate)).setText(DateTimeFormat.forPattern("EEE").print(currentSession.getStartTime()));
-    ((Button) findViewById(R.id.startTime)).setText(DateTimeFormat.shortTime().print(currentSession.getStartTime()));
-    ((Button) findViewById(R.id.finishDate)).setText(DateTimeFormat.forPattern("EEE").print(currentSession.getFinishTime()));
-    ((Button) findViewById(R.id.finishTime)).setText(DateTimeFormat.shortTime().print(currentSession.getFinishTime()));
+    String display;
+
+    display = "Awake in bed for " + currentSession.getMinutesAwakeInBed() + " minutes";
+    ((Button) findViewById(R.id.timeInBedAwake)).setText(display);
+
+    display = "Awake out of bed for " + currentSession.getMinutesAwakeOutOfBed() + " minutes";
+    ((Button) findViewById(R.id.timeOutOfBedAwake)).setText(display);
+
+    display = "Got into bed at "+ DateTimeFormat.shortTime().print(currentSession.getStartTime());
+    ((Button) findViewById(R.id.startTime)).setText(display);
+
+    ((Button) findViewById(R.id.startDate)).setText(DateTimeFormat.forPattern("EEEE").print(currentSession.getStartTime()));
+
+    display = "Got up for the day at "+ DateTimeFormat.shortTime().print(currentSession.getFinishTime());
+    ((Button) findViewById(R.id.finishTime)).setText(display);
+
+    ((Button) findViewById(R.id.finishDate)).setText(DateTimeFormat.forPattern("EEEE").print(currentSession.getFinishTime()));
   }
 
   @Override

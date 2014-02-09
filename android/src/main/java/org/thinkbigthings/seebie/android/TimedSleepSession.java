@@ -8,8 +8,6 @@ import java.io.Serializable;
 // TODO try out Parcelable
 // http://stackoverflow.com/questions/2736389/how-to-pass-object-from-one-activity-to-another-in-android
 
-// TODO consider making this class immutable (see behavior of DateTime)
-
 public class TimedSleepSession implements Serializable {
 
   private long minutesAwakeInBed = 0L;

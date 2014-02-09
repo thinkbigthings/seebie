@@ -8,8 +8,5 @@
     <string name="time_start">Start</string>
     <string name="time_finish">Finish</string>
     <string name="calculate">Calculate</string>
-    <string name="awake_in">Minutes awake in bed</string>
-    <string name="awake_out">Minutes out of bed</string>
-
 
 </resources>
