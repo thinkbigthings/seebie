@@ -143,9 +143,9 @@ public class MainActivity extends FragmentActivity {
 
     ((Button) findViewById(R.id.timeInBedAwake)).setText(String.valueOf(currentSession.getMinutesAwakeInBed()));
     ((Button) findViewById(R.id.timeOutOfBedAwake)).setText(String.valueOf(currentSession.getMinutesAwakeOutOfBed()));
-    ((Button) findViewById(R.id.startDate)).setText(DateTimeFormat.shortDate().print(currentSession.getStartTime()));
+    ((Button) findViewById(R.id.startDate)).setText(DateTimeFormat.forPattern("EEE").print(currentSession.getStartTime()));
     ((Button) findViewById(R.id.startTime)).setText(DateTimeFormat.shortTime().print(currentSession.getStartTime()));
-    ((Button) findViewById(R.id.finishDate)).setText(DateTimeFormat.shortDate().print(currentSession.getFinishTime()));
+    ((Button) findViewById(R.id.finishDate)).setText(DateTimeFormat.forPattern("EEE").print(currentSession.getFinishTime()));
     ((Button) findViewById(R.id.finishTime)).setText(DateTimeFormat.shortTime().print(currentSession.getFinishTime()));
   }
 
