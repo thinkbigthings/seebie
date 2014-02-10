@@ -71,18 +71,19 @@
                 android:layout_height="wrap_content"
                 android:text="Saturday"
                 android:id="@+id/finishDate"/>
-
         </LinearLayout>
 
-
-
-
-        <Button android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:layout_gravity="fill_horizontal"
-                android:layout_columnSpan="3"
-                android:text="@string/calculate"
-                android:onClick="calculate"/>
-
+        <TextView android:id="@+id/total_sleep_display"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_columnSpan="3"
+                  android:text="Total Sleep is 420 minutes"
+                  android:textSize="24sp"/>
+        <TextView android:id="@+id/efficiency_display"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_columnSpan="3"
+                  android:text="Efficiency is 90%"
+                  android:textSize="24sp"/>
     </GridLayout>
 </ScrollView>

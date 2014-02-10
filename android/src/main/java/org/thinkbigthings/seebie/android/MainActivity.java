@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.doomonafireball.betterpickers.numberpicker.NumberPickerBuilder;
 import com.doomonafireball.betterpickers.numberpicker.NumberPickerDialogFragment;
@@ -17,6 +18,8 @@ import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDi
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+
+import java.text.DecimalFormat;
 
 // TODO figure out how to use betterpickers without the support fragments, would like to use latest fragments
 
@@ -158,6 +161,14 @@ public class MainActivity extends FragmentActivity {
     ((Button) findViewById(R.id.finishTime)).setText(display);
 
     ((Button) findViewById(R.id.finishDate)).setText(DateTimeFormat.forPattern("EEEE").print(currentSession.getFinishTime()));
+
+    TextView totalSleepDisplay = (TextView)findViewById(R.id.total_sleep_display);
+    TextView efficiencyDisplay = (TextView)findViewById(R.id.efficiency_display);
+    long time = currentSession.calculateMinutesInBedSleeping();
+    DecimalFormat format = new DecimalFormat("#.##");
+    totalSleepDisplay.setText("Sleep Time: " + time + " m, (" + format.format((double)time/60d) + " hrs)");
+    efficiencyDisplay.setText("Efficiency: " + format.format(currentSession.calculateEfficiency()*100) + "%");
+
   }
 
   @Override
@@ -190,12 +201,5 @@ public class MainActivity extends FragmentActivity {
     }
     return super.onOptionsItemSelected(item);
   }
-
-  public void calculate(View view) {
-    Intent intent = new Intent(this, DisplayMessageActivity.class);
-    intent.putExtra(SLEEP_SESSION, currentSession);
-    startActivity(intent);
-  }
-
 
 }
