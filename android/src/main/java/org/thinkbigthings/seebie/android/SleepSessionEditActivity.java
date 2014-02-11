@@ -112,7 +112,7 @@ public class SleepSessionEditActivity extends FragmentActivity {
   protected void onCreate(Bundle savedInstanceState) {
 
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
+    setContentView(R.layout.activity_sleep_session_edit);
 
     setButtonClickListener(R.id.timeInBedAwake, awakeInBedClickListener);
     setButtonClickListener(R.id.timeOutOfBedAwake, awakeOutOfBedClickListener);
@@ -121,7 +121,6 @@ public class SleepSessionEditActivity extends FragmentActivity {
     setButtonClickListener(R.id.finishTime, finishTimeClickListener);
 
     Intent intent = getIntent();
-
     currentSession = (SleepSession)intent.getSerializableExtra(SleepSessionEditActivity.SLEEP_SESSION);
 
     updateDisplay();
@@ -170,6 +169,21 @@ public class SleepSessionEditActivity extends FragmentActivity {
   @Override
   public void onSaveInstanceState(Bundle savedInstance) {
     savedInstance.putSerializable(SLEEP_SESSION, currentSession);
+  }
+
+  public void onCancel(View button) {
+    Intent intent = new Intent(this, SleepSessionListingActivity.class);
+    startActivity(intent);
+  }
+
+  public void onSave(View button) {
+    saveCurrentSleepSession();
+    Intent intent = new Intent(this, SleepSessionListingActivity.class);
+    startActivity(intent);
+  }
+
+  public void saveCurrentSleepSession() {
+
   }
 
   @Override

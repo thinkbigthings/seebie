@@ -64,6 +64,35 @@
                 android:text="Efficiency is 90%"
                 android:textSize="24sp"/>
 
+             <LinearLayout
+                android:layout_marginTop="40dp"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:paddingLeft="100dp"
+                android:paddingRight="0dp"
+                android:orientation="horizontal"
+                android:layout_gravity="center_vertical|center_horizontal"
+                 >
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancel"
+                    android:id="@+id/cancelButton"
+                    android:layout_gravity="right"
+                    android:layout_weight="1"
+                    android:onClick="onCancel"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Save"
+                    android:layout_gravity="right"
+                    android:id="@+id/saveButton"
+                    android:layout_weight="1"
+                    android:onClick="onSave"/>
+            </LinearLayout>
+
         </LinearLayout>
 
 
