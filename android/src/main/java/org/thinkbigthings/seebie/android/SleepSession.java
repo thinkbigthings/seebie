@@ -14,6 +14,7 @@ import java.io.Serializable;
 
 public class SleepSession implements Serializable {
 
+  private long id = 1L;
   private long minutesAwakeInBed = 0L;
   private long minutesAwakeOutOfBed = 0L;
   private LocalTime startTime;
@@ -23,7 +24,8 @@ public class SleepSession implements Serializable {
     finishTime = new DateTime().withHourOfDay(4).withMinuteOfHour(30);
     startTime = finishTime.minusMinutes(420).toLocalTime();
   }
-  public SleepSession(Long finish, Long durationMinutes, Long minutesAwakeIn, Long minutesOut) {
+  public SleepSession(Long inId, Long finish, Long durationMinutes, Long minutesAwakeIn, Long minutesOut) {
+    id = inId;
     finishTime = new DateTime(finish);
     startTime = finishTime.minusMinutes(durationMinutes.intValue()).toLocalTime();
     minutesAwakeInBed = minutesAwakeIn;
@@ -81,5 +83,9 @@ public class SleepSession implements Serializable {
   public double calculateEfficiency() {
     double efficiency = (double) calculateMinutesInBedSleeping() / (double) calculateTotalMinutesInBed();
     return efficiency;
+  }
+
+  public Long getId() {
+    return id;
   }
 }

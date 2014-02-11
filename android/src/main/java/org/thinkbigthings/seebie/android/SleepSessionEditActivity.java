@@ -1,6 +1,8 @@
 package org.thinkbigthings.seebie.android;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -184,6 +186,27 @@ public class SleepSessionEditActivity extends FragmentActivity {
 
   public void saveCurrentSleepSession() {
 
+//    // TODO call getWritableDatabase() or getReadableDatabase() in a background thread
+//    // such as with AsyncTask or IntentService.
+//
+//    DatabaseOpenHelper dbhelper = new DatabaseOpenHelper(this);
+//    SQLiteDatabase db = dbhelper.getWritableDatabase();
+//    db.beginTransaction();
+//
+//    // mapping from domain object to database record
+//    ContentValues values = new ContentValues();
+//    values.put(DatabaseContract.SleepSession.COLUMN_NAME_ALL_MINUTES, currentSession.calculateAllMinutes());
+//    values.put(DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME, currentSession.getFinishTime().getMillis());
+//    values.put(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_IN, currentSession.getMinutesAwakeInBed());
+//    values.put(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_OUT, currentSession.getMinutesAwakeOutOfBed());
+//
+//    // The first argument for insert() is simply the table name.
+//    // The second argument provides the name of a column in which the framework can insert NULL
+//    // in the event that the ContentValues is empty (if you instead set this to "null",
+//    // then the framework will not insert a row when there are no values).
+//    db.insert(DatabaseContract.SleepSession.TABLE_NAME, "null", values);
+//
+//    db.endTransaction();
   }
 
   @Override
