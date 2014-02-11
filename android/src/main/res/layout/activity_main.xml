@@ -18,72 +18,55 @@
               android:layout_height="fill_parent"
               android:paddingLeft="0dp"
               android:paddingRight="0dp"
-              android:orientation="horizontal" >
+              android:orientation="vertical" >
 
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Got into bed at 9:30 PM"
                 android:id="@+id/startTime"/>
 
             <Button
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Friday"
-                android:id="@+id/startDate"/>
-
-        </LinearLayout>
-
-
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="fill_horizontal"
-            android:text="Awake in bed for 0 minutes"
-            android:id="@+id/timeInBedAwake"
-            android:layout_columnSpan="3" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="fill_horizontal"
-            android:text="Awake out of bed for 0 minutes"
-            android:id="@+id/timeOutOfBedAwake"
-            android:layout_columnSpan="3"/>
-
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:paddingLeft="0dp"
-            android:paddingRight="0dp"
-            android:orientation="horizontal" >
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:text="Awake in bed for 0 minutes"
+                android:id="@+id/timeInBedAwake" />
 
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Awake out of bed for 0 minutes"
+                android:id="@+id/timeOutOfBedAwake"/>
+
+            <Button
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Got up for the day at 4:30 AM"
                 android:id="@+id/finishTime"/>
 
             <Button
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Saturday"
+                android:layout_gravity="fill_horizontal"
+                android:text="Saturday, February 10th"
                 android:id="@+id/finishDate"/>
+
+            <TextView
+                android:id="@+id/total_sleep_display"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total Sleep is 420 minutes"
+                android:textSize="24sp"/>
+            <TextView
+                android:id="@+id/efficiency_display"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Efficiency is 90%"
+                android:textSize="24sp"/>
+
         </LinearLayout>
 
-        <TextView android:id="@+id/total_sleep_display"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_columnSpan="3"
-                  android:text="Total Sleep is 420 minutes"
-                  android:textSize="24sp"/>
-        <TextView android:id="@+id/efficiency_display"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_columnSpan="3"
-                  android:text="Efficiency is 90%"
-                  android:textSize="24sp"/>
+
+
     </GridLayout>
 </ScrollView>

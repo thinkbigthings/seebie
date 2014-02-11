@@ -17,6 +17,7 @@ import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog
 import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 
 import java.text.DecimalFormat;
@@ -27,7 +28,7 @@ public class MainActivity extends FragmentActivity {
 
   public final static String SLEEP_SESSION = "org.thinkbigthings.seebie.android.sleepSession";
 
-  private TimedSleepSession currentSession = new TimedSleepSession();
+  private SleepSession currentSession = new SleepSession();
 
   private NumberPickerDialogFragment.NumberPickerDialogHandler awakeInBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
     @Override public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative, double fullNumber) {
@@ -50,12 +51,6 @@ public class MainActivity extends FragmentActivity {
   private RadialTimePickerDialog.OnTimeSetListener finishTimeCallback = new RadialTimePickerDialog.OnTimeSetListener() {
     @Override public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
       currentSession.withFinishTime(hour, minute);
-      updateDisplay();
-    }
-  };
-  private CalendarDatePickerDialog.OnDateSetListener startDateCallback = new CalendarDatePickerDialog.OnDateSetListener() {
-    @Override public void onDateSet(CalendarDatePickerDialog calendarDatePickerDialog, int year, int month, int day) {
-      currentSession.withStartDate(year, month, day);
       updateDisplay();
     }
   };
@@ -87,17 +82,9 @@ public class MainActivity extends FragmentActivity {
       npb.show();
     }
   };
-  private View.OnClickListener startDateClickListener = new View.OnClickListener() {
-    @Override public void onClick(View v) {
-      DateTime time= currentSession.getStartTime();
-      CalendarDatePickerDialog calendarDatePickerDialog = CalendarDatePickerDialog
-          .newInstance(startDateCallback, time.getYear(), time.getMonthOfYear(), time.getDayOfMonth());
-      calendarDatePickerDialog.show(getSupportFragmentManager(), null);
-    }
-  };
   private View.OnClickListener startTimeClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
-      DateTime time= currentSession.getStartTime();
+      LocalTime time= currentSession.getStartTime();
       RadialTimePickerDialog dialog;
       dialog = RadialTimePickerDialog.newInstance(startTimeCallback, time.getHourOfDay(), time.getMinuteOfHour(), false);
       dialog.show(getSupportFragmentManager(), null);
@@ -129,7 +116,6 @@ public class MainActivity extends FragmentActivity {
 
     setButtonClickListener(R.id.timeInBedAwake, awakeInBedClickListener);
     setButtonClickListener(R.id.timeOutOfBedAwake, awakeOutOfBedClickListener);
-    setButtonClickListener(R.id.startDate, startDateClickListener);
     setButtonClickListener(R.id.startTime, startTimeClickListener);
     setButtonClickListener(R.id.finishDate, finishDateClickListener);
     setButtonClickListener(R.id.finishTime, finishTimeClickListener);
@@ -155,12 +141,12 @@ public class MainActivity extends FragmentActivity {
     display = "Got into bed at "+ DateTimeFormat.shortTime().print(currentSession.getStartTime());
     ((Button) findViewById(R.id.startTime)).setText(display);
 
-    ((Button) findViewById(R.id.startDate)).setText(DateTimeFormat.forPattern("EEEE").print(currentSession.getStartTime()));
-
     display = "Got up for the day at "+ DateTimeFormat.shortTime().print(currentSession.getFinishTime());
     ((Button) findViewById(R.id.finishTime)).setText(display);
 
-    ((Button) findViewById(R.id.finishDate)).setText(DateTimeFormat.forPattern("EEEE").print(currentSession.getFinishTime()));
+    display = "On " + DateTimeFormat.forPattern("EEEE").print(currentSession.getFinishTime())  + " "
+                    + DateTimeFormat.shortDate().print(currentSession.getFinishTime());
+    ((Button) findViewById(R.id.finishDate)).setText(display);
 
     TextView totalSleepDisplay = (TextView)findViewById(R.id.total_sleep_display);
     TextView efficiencyDisplay = (TextView)findViewById(R.id.efficiency_display);
@@ -173,7 +159,7 @@ public class MainActivity extends FragmentActivity {
 
   @Override
   public void onRestoreInstanceState(Bundle savedInstance) {
-    currentSession = (TimedSleepSession)savedInstance.getSerializable(SLEEP_SESSION);
+    currentSession = (SleepSession)savedInstance.getSerializable(SLEEP_SESSION);
     updateDisplay();
   }
 
