@@ -24,7 +24,7 @@ import java.text.DecimalFormat;
 
 // TODO figure out how to use betterpickers without the support fragments, would like to use latest fragments
 
-public class MainActivity extends FragmentActivity {
+public class SleepSessionEditActivity extends FragmentActivity {
 
   public final static String SLEEP_SESSION = "org.thinkbigthings.seebie.android.sleepSession";
 
@@ -119,6 +119,10 @@ public class MainActivity extends FragmentActivity {
     setButtonClickListener(R.id.startTime, startTimeClickListener);
     setButtonClickListener(R.id.finishDate, finishDateClickListener);
     setButtonClickListener(R.id.finishTime, finishTimeClickListener);
+
+    Intent intent = getIntent();
+
+    currentSession = (SleepSession)intent.getSerializableExtra(SleepSessionEditActivity.SLEEP_SESSION);
 
     updateDisplay();
   }

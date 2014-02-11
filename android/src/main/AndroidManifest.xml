@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="org.thinkbigthings.seebie.android.MainActivity"
+            android:name="org.thinkbigthings.seebie.android.SleepSessionListingActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,9 +17,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.thinkbigthings.seebie.android.DisplayMessageActivity"
+            android:name=".SleepSessionEditActivity"
             android:label="@string/title_activity_display_message"
-            android:parentActivityName="org.thinkbigthings.seebie.android.MainActivity" >
+            android:parentActivityName=".SleepSessionListingActivity" >
         </activity>
     </application>
 

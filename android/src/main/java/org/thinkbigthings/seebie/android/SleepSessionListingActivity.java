@@ -1,22 +1,16 @@
 package org.thinkbigthings.seebie.android;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.view.MenuItem;
-import android.widget.DatePicker;
+import android.view.View;
 import android.widget.TextView;
-import android.widget.TimePicker;
-
-import com.google.common.base.Optional;
 
 import java.text.DecimalFormat;
 
-public class DisplayMessageActivity extends Activity {
+public class SleepSessionListingActivity extends Activity {
 
   @SuppressLint("NewApi")
   @Override
@@ -26,19 +20,13 @@ public class DisplayMessageActivity extends Activity {
 
     getActionBar().setDisplayHomeAsUpEnabled(true);
 
-    Intent intent = getIntent();
 
-    TimedSleepSession session = (TimedSleepSession)intent.getSerializableExtra(MainActivity.SLEEP_SESSION);
+  }
 
-    TextView totalSleepDisplay = (TextView)findViewById(R.id.total_sleep_display);
-    TextView efficiencyDisplay = (TextView)findViewById(R.id.efficiency_display);
-
-    long time = session.calculateMinutesInBedSleeping();
-
-    DecimalFormat format = new DecimalFormat("#.##");
-
-    totalSleepDisplay.setText("Sleep Time: " + time + " m, (" + format.format((double)time/60d) + " hrs)");
-    efficiencyDisplay.setText("Efficiency: " + format.format(session.calculateEfficiency()*100) + "%");
+  public void onNewSleepSessionClick(View button) {
+    Intent intent = new Intent(this, SleepSessionEditActivity.class);
+    intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, new SleepSession());
+    startActivity(intent);
   }
 
   @Override
