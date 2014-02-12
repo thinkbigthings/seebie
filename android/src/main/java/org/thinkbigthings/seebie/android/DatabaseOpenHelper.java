@@ -20,7 +20,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
           DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_IN + NUMBER_TYPE + COMMA_SEP +
           DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_OUT + NUMBER_TYPE + COMMA_SEP +
           DatabaseContract.SleepSession.COLUMN_NAME_ALL_MINUTES + NUMBER_TYPE + COMMA_SEP +
-          DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME + NUMBER_TYPE + COMMA_SEP +
+          DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME + NUMBER_TYPE +
           " )";
 
   private static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + DatabaseContract.SleepSession.TABLE_NAME;
