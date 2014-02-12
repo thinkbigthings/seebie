@@ -1,6 +1,8 @@
 package org.thinkbigthings.seebie.android;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -193,9 +195,28 @@ public class SleepSessionEditActivity extends FragmentActivity {
   }
 
   public void onDelete(View button) {
-    deleteCurrentSleepSession();
-    Intent intent = new Intent(this, SleepSessionListingActivity.class);
-    startActivity(intent);
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+    builder.setMessage("Delete this sleep session?")
+            .setTitle("Confirm")
+            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                deleteCurrentSleepSession();
+                Intent intent = new Intent(SleepSessionEditActivity.this, SleepSessionListingActivity.class);
+                startActivity(intent);
+              }
+            })
+        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+          }
+        });
+
+    AlertDialog dialog = builder.create();
+    dialog.show();
+
   }
 
   public void onCancel(View button) {
