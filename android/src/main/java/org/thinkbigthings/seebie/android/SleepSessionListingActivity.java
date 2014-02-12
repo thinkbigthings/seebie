@@ -9,6 +9,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+
+import org.joda.time.format.DateTimeFormat;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.thinkbigthings.seebie.android.DatabaseContract.*;
 
@@ -29,11 +36,28 @@ public class SleepSessionListingActivity extends Activity {
     helper = new DatabaseOpenHelper(this);
     readableDatabase = helper.getReadableDatabase();
 
-    loadSessionsFromDatabase();
-
+    List<SleepSession> sessions = loadSessionsFromDatabase();
+    LinearLayout sessionLayout = ((LinearLayout) findViewById(R.id.sessionLayout));
+    for(final SleepSession currentSession : sessions) {
+      String display = DateTimeFormat.forPattern("EEEE").print(currentSession.getFinishTime())  + " "
+          + DateTimeFormat.shortDate().print(currentSession.getFinishTime());
+      Button sessionButton= new Button(this);
+      sessionButton.setText(display);
+      sessionButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          Intent intent = new Intent(SleepSessionListingActivity.this, SleepSessionEditActivity.class);
+          intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, currentSession);
+          startActivity(intent);
+        }
+      });
+      sessionLayout.addView(sessionButton);
+    }
   }
 
-  private void loadSessionsFromDatabase() {
+  private List<SleepSession> loadSessionsFromDatabase() {
+
+    List<SleepSession> sessions= new ArrayList<>();
 
     // Define a projection that specifies which columns from the database
     // you will actually use after this query.
@@ -51,8 +75,6 @@ public class SleepSessionListingActivity extends Activity {
     readableDatabase.beginTransaction();
     try {
 
-
-
       Cursor cursor = readableDatabase.query(
           DatabaseContract.SleepSession.TABLE_NAME, // The table to query
           columns,                                  // The columns to return
@@ -60,7 +82,8 @@ public class SleepSessionListingActivity extends Activity {
           null,                                     // The values for the WHERE clause
           null,                                     // don't group the rows
           null,                                     // don't filter by row groups
-          sortOrder                                 // The sort order
+          sortOrder,                                 // The sort order
+          "10"                                      // limit
       );
 
       cursor.moveToFirst();
@@ -71,7 +94,7 @@ public class SleepSessionListingActivity extends Activity {
           Long am = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_ALL_MINUTES));
           Long ai = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_IN));
           Long ao = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_OUT));
-          SleepSession found = new SleepSession(id, ft, am, am, ao);
+          sessions.add(new SleepSession(id, ft, am, ai, ao));
         } while(cursor.moveToNext());
       }
 
@@ -84,6 +107,8 @@ public class SleepSessionListingActivity extends Activity {
     finally {
       readableDatabase.endTransaction();
     }
+
+    return sessions;
 
   }
 

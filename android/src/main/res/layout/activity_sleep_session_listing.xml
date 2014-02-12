@@ -13,4 +13,13 @@
         android:id="@+id/button"
         android:layout_gravity="center_horizontal"
         android:onClick="onNewSleepSessionClick"/>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:orientation="vertical"
+        android:id="@+id/sessionLayout">
+
+    </LinearLayout>
 </LinearLayout>
