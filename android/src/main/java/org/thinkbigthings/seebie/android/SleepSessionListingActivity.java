@@ -48,6 +48,7 @@ public class SleepSessionListingActivity extends Activity {
         public void onClick(View v) {
           Intent intent = new Intent(SleepSessionListingActivity.this, SleepSessionEditActivity.class);
           intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, currentSession);
+          intent.putExtra(SleepSessionEditActivity.CREATE_OR_UPDATE, "UPDATE");
           startActivity(intent);
         }
       });
@@ -75,16 +76,8 @@ public class SleepSessionListingActivity extends Activity {
     readableDatabase.beginTransaction();
     try {
 
-      Cursor cursor = readableDatabase.query(
-          DatabaseContract.SleepSession.TABLE_NAME, // The table to query
-          columns,                                  // The columns to return
-          null,                                     // The columns for the WHERE clause, null for ALL
-          null,                                     // The values for the WHERE clause
-          null,                                     // don't group the rows
-          null,                                     // don't filter by row groups
-          sortOrder,                                 // The sort order
-          "10"                                      // limit
-      );
+      Cursor cursor = readableDatabase.query(DatabaseContract.SleepSession.TABLE_NAME,
+          columns,null, null, null, null, sortOrder, "10");
 
       cursor.moveToFirst();
       if(cursor.getCount() > 0) {
@@ -121,6 +114,7 @@ public class SleepSessionListingActivity extends Activity {
   public void onNewSleepSessionClick(View button) {
     Intent intent = new Intent(this, SleepSessionEditActivity.class);
     intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, new SleepSession());
+    intent.putExtra(SleepSessionEditActivity.CREATE_OR_UPDATE, SleepSessionEditActivity.CREATE);
     startActivity(intent);
   }
 

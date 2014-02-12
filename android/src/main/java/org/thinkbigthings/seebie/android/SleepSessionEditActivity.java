@@ -29,8 +29,8 @@ import java.text.DecimalFormat;
 public class SleepSessionEditActivity extends FragmentActivity {
 
   public final static String SLEEP_SESSION = "org.thinkbigthings.seebie.android.sleepSession";
-
-  private SleepSession currentSession = new SleepSession();
+  public final static String CREATE_OR_UPDATE = "org.thinkbigthings.seebie.android.sleepSession.createOrUpdate";
+  public final static String CREATE = "CREATE";
 
   private NumberPickerDialogFragment.NumberPickerDialogHandler awakeInBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
     @Override public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative, double fullNumber) {
@@ -109,6 +109,8 @@ public class SleepSessionEditActivity extends FragmentActivity {
     }
   };
 
+  private SleepSession currentSession;
+  private boolean isCreate;
   private DatabaseOpenHelper helper;
   private SQLiteDatabase writableDatabase;
 
@@ -126,6 +128,7 @@ public class SleepSessionEditActivity extends FragmentActivity {
 
     Intent intent = getIntent();
     currentSession = (SleepSession)intent.getSerializableExtra(SleepSessionEditActivity.SLEEP_SESSION);
+    isCreate = CREATE.equals(intent.getStringExtra(SleepSessionEditActivity.CREATE_OR_UPDATE));
 
     updateDisplay();
 
@@ -210,11 +213,14 @@ public class SleepSessionEditActivity extends FragmentActivity {
     writableDatabase.beginTransaction();
 
     try {
-      // The first argument for insert() is simply the table name.
-      // The second argument provides the name of a column in which the framework can insert NULL
-      // in the event that the ContentValues is empty (if you instead set this to "null",
-      // then the framework will not insert a row when there are no values).
-      writableDatabase.insert(DatabaseContract.SleepSession.TABLE_NAME, "null", values);
+      if(isCreate) {
+        writableDatabase.insert(DatabaseContract.SleepSession.TABLE_NAME, null, values);
+      }
+      else {
+        String whereIdEquals = "_ID = ?";
+        String[] currentId = new String[]{currentSession.getId().toString()};
+        writableDatabase.update(DatabaseContract.SleepSession.TABLE_NAME, values, whereIdEquals, currentId);
+      }
       writableDatabase.setTransactionSuccessful();
     }
     catch(Exception ex) {
