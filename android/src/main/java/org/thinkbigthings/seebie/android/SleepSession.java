@@ -14,7 +14,7 @@ import java.io.Serializable;
 
 public class SleepSession implements Serializable {
 
-  private long id = 1L;
+  private long id = 0L;
   private long minutesAwakeInBed = 0L;
   private long minutesAwakeOutOfBed = 0L;
   private LocalTime startTime;

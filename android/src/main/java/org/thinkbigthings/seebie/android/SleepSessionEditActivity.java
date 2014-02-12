@@ -177,6 +177,8 @@ public class SleepSessionEditActivity extends FragmentActivity {
     totalSleepDisplay.setText("Sleep Time: " + time + " m, (" + format.format((double)time/60d) + " hrs)");
     efficiencyDisplay.setText("Efficiency: " + format.format(currentSession.calculateEfficiency()*100) + "%");
 
+    ((Button) findViewById(R.id.deleteButton)).setVisibility(isCreate ? View.INVISIBLE : View.VISIBLE);
+
   }
 
   @Override
@@ -190,6 +192,12 @@ public class SleepSessionEditActivity extends FragmentActivity {
     savedInstance.putSerializable(SLEEP_SESSION, currentSession);
   }
 
+  public void onDelete(View button) {
+    deleteCurrentSleepSession();
+    Intent intent = new Intent(this, SleepSessionListingActivity.class);
+    startActivity(intent);
+  }
+
   public void onCancel(View button) {
     Intent intent = new Intent(this, SleepSessionListingActivity.class);
     startActivity(intent);
@@ -199,6 +207,24 @@ public class SleepSessionEditActivity extends FragmentActivity {
     saveCurrentSleepSession();
     Intent intent = new Intent(this, SleepSessionListingActivity.class);
     startActivity(intent);
+  }
+
+  public void deleteCurrentSleepSession() {
+    writableDatabase.beginTransaction();
+
+    try {
+      String whereIdEquals = "_ID = ?";
+      String[] currentId = new String[]{currentSession.getId().toString()};
+      writableDatabase.delete(DatabaseContract.SleepSession.TABLE_NAME, whereIdEquals, currentId);
+      writableDatabase.setTransactionSuccessful();
+    }
+    catch(Exception ex) {
+      String cause = ex.getMessage();
+      throw ex;
+    }
+    finally {
+      writableDatabase.endTransaction();
+    }
   }
 
   public void saveCurrentSleepSession() {
