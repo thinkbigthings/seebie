@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 
 import org.joda.time.format.DateTimeFormat;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,21 +40,32 @@ public class SleepSessionListingActivity extends Activity {
     List<SleepSession> sessions = loadSessionsFromDatabase();
     LinearLayout sessionLayout = ((LinearLayout) findViewById(R.id.sessionLayout));
     for(final SleepSession currentSession : sessions) {
-      String display = DateTimeFormat.forPattern("EEEE").print(currentSession.getFinishTime())  + " "
-          + DateTimeFormat.shortDate().print(currentSession.getFinishTime());
-      Button sessionButton= new Button(this);
-      sessionButton.setText(display);
-      sessionButton.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-          Intent intent = new Intent(SleepSessionListingActivity.this, SleepSessionEditActivity.class);
-          intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, currentSession);
-          intent.putExtra(SleepSessionEditActivity.CREATE_OR_UPDATE, "UPDATE");
-          startActivity(intent);
-        }
-      });
-      sessionLayout.addView(sessionButton);
+      sessionLayout.addView(createSleepSessionButton(currentSession));
     }
+  }
+
+  private Button createSleepSessionButton(final SleepSession currentSession) {
+
+    long time = currentSession.calculateMinutesInBedSleeping();
+    long min = time % 60;
+    String minString = min < 10 ? minString = "0" + min : String.valueOf(min);
+    String sleepTime = time / 60 + ":" + minString;
+
+    String display = DateTimeFormat.forPattern("EEEE").print(currentSession.getFinishTime())  + " "
+        + DateTimeFormat.shortDate().print(currentSession.getFinishTime()) + " "
+        + "(" + sleepTime + ")";
+    Button sessionButton= new Button(this);
+    sessionButton.setText(display);
+    sessionButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent intent = new Intent(SleepSessionListingActivity.this, SleepSessionEditActivity.class);
+        intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, currentSession);
+        intent.putExtra(SleepSessionEditActivity.CREATE_OR_UPDATE, "UPDATE");
+        startActivity(intent);
+      }
+    });
+    return sessionButton;
   }
 
   private List<SleepSession> loadSessionsFromDatabase() {
