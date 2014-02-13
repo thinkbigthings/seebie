@@ -70,6 +70,7 @@ public class SleepSessionEditActivity extends FragmentActivity {
       NumberPickerBuilder npb = new NumberPickerBuilder()
           .setFragmentManager(getSupportFragmentManager())
           .setStyleResId(R.style.BetterPickersDialogFragment)
+          .setLabelText("minutes")
           .setDecimalVisibility(View.GONE)
           .setPlusMinusVisibility(View.GONE)
           .addNumberPickerDialogHandler(awakeInBedCallback);
@@ -81,6 +82,7 @@ public class SleepSessionEditActivity extends FragmentActivity {
       NumberPickerBuilder npb = new NumberPickerBuilder()
           .setFragmentManager(getSupportFragmentManager())
           .setStyleResId(R.style.BetterPickersDialogFragment)
+          .setLabelText("minutes")
           .setDecimalVisibility(View.GONE)
           .setPlusMinusVisibility(View.GONE)
           .addNumberPickerDialogHandler(awakeOutOfBedCallback);
@@ -185,7 +187,7 @@ public class SleepSessionEditActivity extends FragmentActivity {
     totalSleepDisplay.setText("Sleep Time " + time / 60 + " hours " + time % 60 + " minutes");
     efficiencyDisplay.setText("Efficiency " + format.format(currentSession.calculateEfficiency()*100) + "%");
 
-    ((Button) findViewById(R.id.deleteButton)).setVisibility(isCreate ? View.INVISIBLE : View.VISIBLE);
+    ((Button) findViewById(R.id.deleteButton)).setVisibility(isCreate ? View.GONE : View.VISIBLE);
 
   }
 
