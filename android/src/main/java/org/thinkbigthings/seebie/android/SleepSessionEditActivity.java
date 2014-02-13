@@ -37,34 +37,28 @@ public class SleepSessionEditActivity extends FragmentActivity {
   private NumberPickerDialogFragment.NumberPickerDialogHandler awakeInBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
     @Override public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative, double fullNumber) {
       currentSession.withMinutesAwakeInBed(number);
-      updateDisplay();
+      updateDisplay(currentSession, isCreate);
     }
   };
   private NumberPickerDialogFragment.NumberPickerDialogHandler awakeOutOfBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
     @Override public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative, double fullNumber) {
       currentSession.withMinutesAwakeOutOfBed(number);
-      updateDisplay();
+      updateDisplay(currentSession, isCreate);
     }
   };
   private RadialTimePickerDialog.OnTimeSetListener startTimeCallback = new RadialTimePickerDialog.OnTimeSetListener() {
     @Override public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
       currentSession.withStartTime(hour, minute);
-      updateDisplay();
+      updateDisplay(currentSession, isCreate);
     }
   };
   private RadialTimePickerDialog.OnTimeSetListener finishTimeCallback = new RadialTimePickerDialog.OnTimeSetListener() {
     @Override public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
       currentSession.withFinishTime(hour, minute);
-      updateDisplay();
+      updateDisplay(currentSession, isCreate);
     }
   };
-  private CalendarDatePickerDialog.OnDateSetListener finishDateCallback = new CalendarDatePickerDialog.OnDateSetListener() {
-    @Override public void onDateSet(CalendarDatePickerDialog calendarDatePickerDialog, int year, int month, int day) {
-      // JodaTime month is one-based, betterpickers is zero-based like Java Calendar
-      currentSession.withFinishDate(year, month + 1, day);
-      updateDisplay();
-    }
-  };
+
   private View.OnClickListener awakeInBedClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
       NumberPickerBuilder npb = new NumberPickerBuilder()
@@ -97,12 +91,24 @@ public class SleepSessionEditActivity extends FragmentActivity {
       dialog.show(getSupportFragmentManager(), null);
     }
   };
+
+  private static class JodaDatePickerDialog extends CalendarDatePickerDialog {
+    public static CalendarDatePickerDialog newInstance(CalendarDatePickerDialog.OnDateSetListener listener, DateTime date) {
+      // JodaTime month is one-based, betterpickers is zero-based like Java Calendar
+      return CalendarDatePickerDialog.newInstance(listener, date.getYear(), date.getMonthOfYear() - 1, date.getDayOfMonth());
+    }
+  };
+  private CalendarDatePickerDialog.OnDateSetListener finishDateCallback = new CalendarDatePickerDialog.OnDateSetListener() {
+    @Override public void onDateSet(CalendarDatePickerDialog calendarDatePickerDialog, int year, int month, int day) {
+      // JodaTime month is one-based, betterpickers is zero-based like Java Calendar
+      currentSession.withFinishDate(year, month + 1, day);
+      updateDisplay(currentSession, isCreate);
+    }
+  };
   private View.OnClickListener finishDateClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
       DateTime time= currentSession.getFinishTime();
-      // JodaTime month is one-based, betterpickers is zero-based like Java Calendar
-      CalendarDatePickerDialog calendarDatePickerDialog = CalendarDatePickerDialog
-          .newInstance(finishDateCallback, time.getYear(), time.getMonthOfYear() - 1, time.getDayOfMonth());
+      CalendarDatePickerDialog calendarDatePickerDialog = JodaDatePickerDialog.newInstance(finishDateCallback, time);
       calendarDatePickerDialog.show(getSupportFragmentManager(), null);
     }
   };
@@ -136,7 +142,7 @@ public class SleepSessionEditActivity extends FragmentActivity {
     currentSession = (SleepSession)intent.getSerializableExtra(SleepSessionEditActivity.SLEEP_SESSION);
     isCreate = CREATE.equals(intent.getStringExtra(SleepSessionEditActivity.CREATE_OR_UPDATE));
 
-    updateDisplay();
+    updateDisplay(currentSession, isCreate);
 
     // TODO call getWritableDatabase() or getReadableDatabase() in a background thread
     // such as with AsyncTask or IntentService.
@@ -159,47 +165,47 @@ public class SleepSessionEditActivity extends FragmentActivity {
     button.setOnClickListener(listener);
   }
 
-  private void updateDisplay() {
+  private void updateDisplay(SleepSession session, boolean create) {
 
     String display;
 
-    display = "Awake in bed for " + currentSession.getMinutesAwakeInBed() + " minutes";
+    display = "Awake in bed for " + session.getMinutesAwakeInBed() + " minutes";
     ((Button) findViewById(R.id.timeInBedAwake)).setText(display);
 
-    display = "Awake out of bed for " + currentSession.getMinutesAwakeOutOfBed() + " minutes";
+    display = "Awake out of bed for " + session.getMinutesAwakeOutOfBed() + " minutes";
     ((Button) findViewById(R.id.timeOutOfBedAwake)).setText(display);
 
-    display = "Got into bed at "+ DateTimeFormat.shortTime().print(currentSession.getStartTime());
+    display = "Got into bed at "+ DateTimeFormat.shortTime().print(session.getStartTime());
     ((Button) findViewById(R.id.startTime)).setText(display);
 
-    display = "Got up for the day at "+ DateTimeFormat.shortTime().print(currentSession.getFinishTime());
+    display = "Got up for the day at "+ DateTimeFormat.shortTime().print(session.getFinishTime());
     ((Button) findViewById(R.id.finishTime)).setText(display);
 
-    display = "On " + DateTimeFormat.forPattern("EEEE").print(currentSession.getFinishTime())  + " "
+    display = "On " + DateTimeFormat.forPattern("EEEE").print(session.getFinishTime())  + " "
                     + DateTimeFormat.shortDate().print(currentSession.getFinishTime());
     ((Button) findViewById(R.id.finishDate)).setText(display);
 
     TextView totalSleepDisplay = (TextView)findViewById(R.id.total_sleep_display);
     TextView efficiencyDisplay = (TextView)findViewById(R.id.efficiency_display);
-    long time = currentSession.calculateMinutesInBedSleeping();
+    long time = session.calculateMinutesInBedSleeping();
     DecimalFormat format = new DecimalFormat("#.#");
     //format.format((double)time/60d) + " hrs)"
     totalSleepDisplay.setText("Sleep Time " + time / 60 + " hours " + time % 60 + " minutes");
-    efficiencyDisplay.setText("Efficiency " + format.format(currentSession.calculateEfficiency()*100) + "%");
+    efficiencyDisplay.setText("Efficiency " + format.format(session.calculateEfficiency()*100) + "%");
 
-    ((Button) findViewById(R.id.deleteButton)).setVisibility(isCreate ? View.GONE : View.VISIBLE);
-
+    ((Button) findViewById(R.id.deleteButton)).setVisibility(create ? View.GONE : View.VISIBLE);
   }
 
   @Override
   public void onRestoreInstanceState(Bundle savedInstance) {
     currentSession = (SleepSession)savedInstance.getSerializable(SLEEP_SESSION);
-    updateDisplay();
+    updateDisplay(currentSession, isCreate);
   }
 
   @Override
   public void onSaveInstanceState(Bundle savedInstance) {
     savedInstance.putSerializable(SLEEP_SESSION, currentSession);
+    savedInstance.putString(CREATE_OR_UPDATE, isCreate ? "CREATE" : "UPDATE");
   }
 
   public void onDelete(View button) {
