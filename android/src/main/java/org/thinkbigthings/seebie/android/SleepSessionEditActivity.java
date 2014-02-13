@@ -60,7 +60,8 @@ public class SleepSessionEditActivity extends FragmentActivity {
   };
   private CalendarDatePickerDialog.OnDateSetListener finishDateCallback = new CalendarDatePickerDialog.OnDateSetListener() {
     @Override public void onDateSet(CalendarDatePickerDialog calendarDatePickerDialog, int year, int month, int day) {
-      currentSession.withFinishDate(year, month, day);
+      // JodaTime month is one-based, betterpickers is zero-based like Java Calendar
+      currentSession.withFinishDate(year, month + 1, day);
       updateDisplay();
     }
   };
@@ -94,11 +95,12 @@ public class SleepSessionEditActivity extends FragmentActivity {
       dialog.show(getSupportFragmentManager(), null);
     }
   };
+  // JodaTime month is one-based, betterpickers is zero-based like Java Calendar
   private View.OnClickListener finishDateClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
       DateTime time= currentSession.getFinishTime();
       CalendarDatePickerDialog calendarDatePickerDialog = CalendarDatePickerDialog
-          .newInstance(finishDateCallback, time.getYear(), time.getMonthOfYear(), time.getDayOfMonth());
+          .newInstance(finishDateCallback, time.getYear(), time.getMonthOfYear() - 1, time.getDayOfMonth());
       calendarDatePickerDialog.show(getSupportFragmentManager(), null);
     }
   };
@@ -136,6 +138,9 @@ public class SleepSessionEditActivity extends FragmentActivity {
 
     // TODO call getWritableDatabase() or getReadableDatabase() in a background thread
     // such as with AsyncTask or IntentService.
+
+    // TODO see how to handle this with the database
+    // http://awiden.wordpress.com/2010/03/26/database-mangement-and-the-activity-lifecycle/
     helper = new DatabaseOpenHelper(this);
     writableDatabase = helper.getWritableDatabase();
 
