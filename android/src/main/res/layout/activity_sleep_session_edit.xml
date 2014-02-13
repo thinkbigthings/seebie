@@ -2,38 +2,29 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_dark">
-    <GridLayout
-        android:layout_width="match_parent"
+    android:background="@android:color/background_dark"
+    android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:useDefaultMargins="true"
-        android:alignmentMode="alignBounds"
-        android:columnOrderPreserved="false"
-        android:layout_gravity="fill_horizontal"
-        android:columnCount="3"
-        >
-
-        <LinearLayout
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:paddingLeft="10dp"
-              android:paddingRight="10dp"
-              android:orientation="vertical" >
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:orientation="vertical" >
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left|center_vertical"
                 android:text="Got into bed at 9:30 PM"
-                android:drawableRight="@drawable/ic_action_edit"
+                android:drawableRight="@android:drawable/ic_menu_edit"
                 style="?android:attr/borderlessButtonStyle"
                 android:id="@+id/startTime"/>
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:gravity="left|center_vertical"
-                android:drawableRight="@drawable/ic_action_edit"
+                android:drawableRight="@android:drawable/ic_menu_edit"
                 android:text="Awake in bed for 0 minutes"
                 style="?android:attr/borderlessButtonStyle"
                 android:id="@+id/timeInBedAwake" />
@@ -44,14 +35,14 @@
                 android:gravity="left|center_vertical"
                 android:text="Awake out of bed for 0 minutes"
                 style="?android:attr/borderlessButtonStyle"
-                android:drawableRight="@drawable/ic_action_edit"
+                android:drawableRight="@android:drawable/ic_menu_edit"
                 android:id="@+id/timeOutOfBedAwake"/>
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left|center_vertical"
-                android:drawableRight="@drawable/ic_action_edit"
+                android:drawableRight="@android:drawable/ic_menu_edit"
                 style="?android:attr/borderlessButtonStyle"
                 android:text="Got up for the day at 4:30 AM"
                 android:id="@+id/finishTime"/>
@@ -60,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left|center_vertical"
-                android:drawableRight="@drawable/ic_action_edit"
+                android:drawableRight="@android:drawable/ic_menu_edit"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_gravity="fill_horizontal"
                 android:text="Saturday, February 10th"
@@ -83,49 +74,50 @@
                 android:textSize="24sp"/>
 
              <LinearLayout
-                android:layout_marginTop="30dp"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="40dp"
                 android:paddingLeft="0dp"
                 android:paddingRight="0dp"
+                android:layout_marginTop="60dp"
                 android:orientation="horizontal"
-                android:gravity="right">
+                android:background="@android:drawable/bottom_bar"
+                 >
 
                  <Button
+                     android:id="@+id/deleteButton"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
+                     android:layout_weight="1"
+                     android:drawableLeft="@android:drawable/ic_menu_delete"
                      android:text="Delete"
-                     android:id="@+id/deleteButton"
-                     android:layout_gravity="left"
+                     android:textSize="20dp"
                      android:onClick="onDelete"
-                     android:background="@android:color/black"
-                     android:layout_marginRight="50dp"
-                     android:textColor="@android:color/holo_red_light"/>
+                     android:background="@android:color/transparent"
+                     android:textColor="@android:color/holo_red_dark"/>
 
                  <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableLeft="@android:drawable/ic_menu_close_clear_cancel"
                     android:text="Cancel"
-                    android:id="@+id/cancelButton"
-                    android:layout_gravity="right"
+                    android:textSize="20dp"
                     android:onClick="onCancel"
-                    android:background="@android:color/black"
-                    android:layout_marginRight="10dp"
-                    android:textColor="@android:color/darker_gray"/>
+                    android:background="@android:color/transparent"
+                    android:textColor="@android:color/background_dark"/>
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableLeft="@android:drawable/presence_online"
                     android:text="Save"
-                    android:id="@+id/saveButton"
+                    android:textSize="20dp"
                     android:onClick="onSave"
-                    android:background="@android:color/background_dark"
-                    android:textColor="@android:color/holo_green_dark"/>
+                    android:background="@android:color/transparent"
+                    android:textColor="@android:color/background_dark"/>
             </LinearLayout>
 
         </LinearLayout>
 
-
-
-    </GridLayout>
 </ScrollView>
