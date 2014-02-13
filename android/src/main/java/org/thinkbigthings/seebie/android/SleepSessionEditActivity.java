@@ -95,10 +95,10 @@ public class SleepSessionEditActivity extends FragmentActivity {
       dialog.show(getSupportFragmentManager(), null);
     }
   };
-  // JodaTime month is one-based, betterpickers is zero-based like Java Calendar
   private View.OnClickListener finishDateClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
       DateTime time= currentSession.getFinishTime();
+      // JodaTime month is one-based, betterpickers is zero-based like Java Calendar
       CalendarDatePickerDialog calendarDatePickerDialog = CalendarDatePickerDialog
           .newInstance(finishDateCallback, time.getYear(), time.getMonthOfYear() - 1, time.getDayOfMonth());
       calendarDatePickerDialog.show(getSupportFragmentManager(), null);
@@ -180,9 +180,10 @@ public class SleepSessionEditActivity extends FragmentActivity {
     TextView totalSleepDisplay = (TextView)findViewById(R.id.total_sleep_display);
     TextView efficiencyDisplay = (TextView)findViewById(R.id.efficiency_display);
     long time = currentSession.calculateMinutesInBedSleeping();
-    DecimalFormat format = new DecimalFormat("#.##");
-    totalSleepDisplay.setText("Sleep Time: " + time + " m, (" + format.format((double)time/60d) + " hrs)");
-    efficiencyDisplay.setText("Efficiency: " + format.format(currentSession.calculateEfficiency()*100) + "%");
+    DecimalFormat format = new DecimalFormat("#.#");
+    //format.format((double)time/60d) + " hrs)"
+    totalSleepDisplay.setText("Sleep Time " + time / 60 + " hours " + time % 60 + " minutes");
+    efficiencyDisplay.setText("Efficiency " + format.format(currentSession.calculateEfficiency()*100) + "%");
 
     ((Button) findViewById(R.id.deleteButton)).setVisibility(isCreate ? View.INVISIBLE : View.VISIBLE);
 
