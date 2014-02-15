@@ -110,7 +110,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:drawableStart="@android:drawable/presence_online"
+                    android:drawableStart="@android:drawable/ic_menu_add"
                     android:text="Save"
                     android:textSize="20dp"
                     android:onClick="onSave"

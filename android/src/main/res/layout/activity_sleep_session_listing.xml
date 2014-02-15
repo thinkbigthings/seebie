@@ -5,14 +5,6 @@
               android:layout_height="match_parent"
               android:orientation="vertical" >
 
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Sleep Session"
-        android:id="@+id/button"
-        android:layout_gravity="center_horizontal"
-        android:onClick="onNewSleepSessionClick"/>
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

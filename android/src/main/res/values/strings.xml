@@ -21,5 +21,6 @@
     <string name="_delete_this_session">Delete this sleep session?</string>
     <string name="_delete">Delete</string>
     <string name="_cancel">Cancel</string>
+    <string name="new_session">New Sleep Sessio</string>
 
 </resources>
