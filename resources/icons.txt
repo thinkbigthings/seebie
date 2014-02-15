@@ -1,16 +1,3 @@
 http://findicons.com/icon/download/197579/sleep_png/256/png
 license was "unknwn license"
 
-official android iconography notes
-http://developer.android.com/design/style/iconography.html
-sizes in default project are mdpi, hdpi, x, xx
-48, 72, 96, 144
-
-other fully free icons:
-http://developer.android.com/design/downloads/index.html
-http://getbootstrap.com/components/
-
-Gimp notes:
-Select -> By Color -> Click on icon to select the non transparent part
-Windows -> Dockable Dialogs -> Colors to get the color editor (set FG/BG)
-Edit -> Fill with FG Color (to set the color of what you selected)

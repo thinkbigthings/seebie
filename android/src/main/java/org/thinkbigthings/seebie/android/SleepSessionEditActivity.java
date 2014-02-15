@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -64,7 +65,7 @@ public class SleepSessionEditActivity extends FragmentActivity {
       NumberPickerBuilder npb = new NumberPickerBuilder()
           .setFragmentManager(getSupportFragmentManager())
           .setStyleResId(R.style.BetterPickersDialogFragment)
-          .setLabelText("minutes")
+          .setLabelText(getResources().getString(R.string.minutes))
           .setDecimalVisibility(View.GONE)
           .setPlusMinusVisibility(View.GONE)
           .addNumberPickerDialogHandler(awakeInBedCallback);
@@ -76,7 +77,7 @@ public class SleepSessionEditActivity extends FragmentActivity {
       NumberPickerBuilder npb = new NumberPickerBuilder()
           .setFragmentManager(getSupportFragmentManager())
           .setStyleResId(R.style.BetterPickersDialogFragment)
-          .setLabelText("minutes")
+          .setLabelText(getResources().getString(R.string.minutes))
           .setDecimalVisibility(View.GONE)
           .setPlusMinusVisibility(View.GONE)
           .addNumberPickerDialogHandler(awakeOutOfBedCallback);
@@ -161,27 +162,30 @@ public class SleepSessionEditActivity extends FragmentActivity {
 
     String display;
     SleepSession.Format formatter = new SleepSession.Format();
+    Resources res = getResources();
 
-    display = "Awake in bed for " + session.getMinutesAwakeInBed() + " minutes";
+    display = String.format(res.getString(R.string._edit_sleep_timeInBedAwake), session.getMinutesAwakeOutOfBed());
     ((Button) findViewById(R.id.timeInBedAwake)).setText(display);
 
-    display = "Awake out of bed for " + session.getMinutesAwakeOutOfBed() + " minutes";
+    display = String.format(res.getString(R.string._edit_sleep_timeOutOfBedAwake), session.getMinutesAwakeOutOfBed());
     ((Button) findViewById(R.id.timeOutOfBedAwake)).setText(display);
 
-    display = "Got into bed at "+ DateTimeFormat.shortTime().print(session.getStartTime());
+    display = String.format(res.getString(R.string._edit_sleep_startTime),  DateTimeFormat.shortTime().print(session.getStartTime()));
     ((Button) findViewById(R.id.startTime)).setText(display);
 
-    display = "Got up for the day at "+ DateTimeFormat.shortTime().print(session.getFinishTime());
+    display = String.format(res.getString(R.string._edit_sleep_finishTime), DateTimeFormat.shortTime().print(session.getFinishTime()));
     ((Button) findViewById(R.id.finishTime)).setText(display);
 
-    display = "On " + formatter.day(currentSession);
+    display = String.format(res.getString(R.string._edit_sleep_finishDate), formatter.day(session));
     ((Button) findViewById(R.id.finishDate)).setText(display);
 
     TextView totalSleepDisplay = (TextView)findViewById(R.id.total_sleep_display);
-    TextView efficiencyDisplay = (TextView)findViewById(R.id.efficiency_display);
+    display = String.format(res.getString(R.string._edit_sleep_duration), formatter.duration(session));
+    totalSleepDisplay.setText(display);
 
-    totalSleepDisplay.setText("Sleep Duration (hr:min) " + formatter.duration(currentSession));
-    efficiencyDisplay.setText("Efficiency " + formatter.efficiency(currentSession));
+    TextView efficiencyDisplay = (TextView)findViewById(R.id.efficiency_display);
+    display = String.format(res.getString(R.string._edit_sleep_efficiency), formatter.efficiency(session));
+    efficiencyDisplay.setText(display);
 
     ((Button) findViewById(R.id.deleteButton)).setVisibility(create ? View.GONE : View.VISIBLE);
   }
@@ -201,10 +205,10 @@ public class SleepSessionEditActivity extends FragmentActivity {
   public void onDelete(View button) {
 
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-    builder.setMessage("Delete this sleep session?")
-            .setTitle("Confirm")
-            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+    Resources res = getResources();
+    builder.setMessage(res.getString(R.string._delete_this_session))
+            .setTitle(res.getString(R.string._confirm))
+            .setPositiveButton(res.getString(R.string._delete), new DialogInterface.OnClickListener() {
               @Override
               public void onClick(DialogInterface dialog, int which) {
                 deleteCurrentSleepSession();
@@ -212,7 +216,7 @@ public class SleepSessionEditActivity extends FragmentActivity {
                 startActivity(intent);
               }
             })
-        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        .setNegativeButton(res.getString(R.string._cancel), new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
           }

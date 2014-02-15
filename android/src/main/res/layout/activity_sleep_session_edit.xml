@@ -88,7 +88,7 @@
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
                      android:layout_weight="1"
-                     android:drawableLeft="@android:drawable/ic_menu_delete"
+                     android:drawableStart="@android:drawable/ic_menu_delete"
                      android:text="Delete"
                      android:textSize="20dp"
                      android:onClick="onDelete"
@@ -99,7 +99,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:drawableLeft="@android:drawable/ic_menu_close_clear_cancel"
+                    android:drawableStart="@android:drawable/ic_menu_close_clear_cancel"
                     android:text="Cancel"
                     android:textSize="20dp"
                     android:onClick="onCancel"
@@ -110,12 +110,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:drawableLeft="@android:drawable/presence_online"
+                    android:drawableStart="@android:drawable/presence_online"
                     android:text="Save"
                     android:textSize="20dp"
                     android:onClick="onSave"
-                    android:background="@android:color/transparent"
-                    android:textColor="@android:color/background_dark"/>
+                    android:textColor="@android:color/black"
+                    android:background="@android:color/transparent"/>
             </LinearLayout>
 
         </LinearLayout>

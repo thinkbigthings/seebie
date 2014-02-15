@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -39,6 +40,7 @@ public class SleepSessionListingActivity extends Activity {
     SleepSession.Format format = new SleepSession.Format();
     Button sessionButton= new Button(this);
     sessionButton.setText(format.title(currentSession));
+    sessionButton.setGravity(Gravity.LEFT);;
     sessionButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
