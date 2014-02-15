@@ -168,6 +168,7 @@ public class SleepSessionEditActivity extends FragmentActivity {
   private void updateDisplay(SleepSession session, boolean create) {
 
     String display;
+    SleepSession.Format formatter = new SleepSession.Format();
 
     display = "Awake in bed for " + session.getMinutesAwakeInBed() + " minutes";
     ((Button) findViewById(R.id.timeInBedAwake)).setText(display);
@@ -181,17 +182,14 @@ public class SleepSessionEditActivity extends FragmentActivity {
     display = "Got up for the day at "+ DateTimeFormat.shortTime().print(session.getFinishTime());
     ((Button) findViewById(R.id.finishTime)).setText(display);
 
-    display = "On " + DateTimeFormat.forPattern("EEEE").print(session.getFinishTime())  + " "
-                    + DateTimeFormat.shortDate().print(currentSession.getFinishTime());
+    display = "On " + formatter.day(currentSession);
     ((Button) findViewById(R.id.finishDate)).setText(display);
 
     TextView totalSleepDisplay = (TextView)findViewById(R.id.total_sleep_display);
     TextView efficiencyDisplay = (TextView)findViewById(R.id.efficiency_display);
-    long time = session.calculateMinutesInBedSleeping();
-    DecimalFormat format = new DecimalFormat("#.#");
-    //format.format((double)time/60d) + " hrs)"
-    totalSleepDisplay.setText("Sleep Time " + time / 60 + " hours " + time % 60 + " minutes");
-    efficiencyDisplay.setText("Efficiency " + format.format(session.calculateEfficiency()*100) + "%");
+
+    totalSleepDisplay.setText("Sleep Duration (hr:min) " + formatter.duration(currentSession));
+    efficiencyDisplay.setText("Efficiency " + formatter.efficiency(currentSession));
 
     ((Button) findViewById(R.id.deleteButton)).setVisibility(create ? View.GONE : View.VISIBLE);
   }

@@ -4,8 +4,10 @@ import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.LocalTime;
 import org.joda.time.Minutes;
+import org.joda.time.format.DateTimeFormat;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 
 // TODO try out Parcelable
 // http://stackoverflow.com/questions/2736389/how-to-pass-object-from-one-activity-to-another-in-android
@@ -88,4 +90,39 @@ public class SleepSession implements Serializable {
   public Long getId() {
     return id;
   }
+
+  public static class Format {
+
+    public String title(SleepSession session) {
+      String sleepTime = duration(session);
+      String display = DateTimeFormat.forPattern("EEEE").print(session.getFinishTime())  + " "
+          + DateTimeFormat.shortDate().print(session.getFinishTime()) + " "
+          + "(" + sleepTime + ")";
+      return display;
+    }
+
+    public String day(SleepSession session) {
+      return DateTimeFormat.forPattern("EEEE").print(session.getFinishTime())  + " "
+            + DateTimeFormat.shortDate().print(session.getFinishTime());
+    }
+
+    public String efficiency(SleepSession session) {
+      DecimalFormat number = new DecimalFormat("#.#");
+      long time = session.calculateMinutesInBedSleeping();
+      return number.format(session.calculateEfficiency()*100) + "%";
+    }
+
+    public String duration(SleepSession session) {
+      long time = session.calculateMinutesInBedSleeping();
+      long min = time % 60;
+      String minString = min < 10 ? minString = "0" + min : String.valueOf(min);
+      return time / 60 + ":" + minString;
+    }
+
+
+
+  }
+
+
+
 }

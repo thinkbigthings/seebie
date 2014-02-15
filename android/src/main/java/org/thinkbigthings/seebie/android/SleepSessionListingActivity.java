@@ -2,7 +2,6 @@ package org.thinkbigthings.seebie.android;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,13 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import org.joda.time.format.DateTimeFormat;
-
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.thinkbigthings.seebie.android.DatabaseContract.*;
 
 public class SleepSessionListingActivity extends Activity {
 
@@ -46,16 +40,9 @@ public class SleepSessionListingActivity extends Activity {
 
   private Button createSleepSessionButton(final SleepSession currentSession) {
 
-    long time = currentSession.calculateMinutesInBedSleeping();
-    long min = time % 60;
-    String minString = min < 10 ? minString = "0" + min : String.valueOf(min);
-    String sleepTime = time / 60 + ":" + minString;
-
-    String display = DateTimeFormat.forPattern("EEEE").print(currentSession.getFinishTime())  + " "
-        + DateTimeFormat.shortDate().print(currentSession.getFinishTime()) + " "
-        + "(" + sleepTime + ")";
+    SleepSession.Format format = new SleepSession.Format();
     Button sessionButton= new Button(this);
-    sessionButton.setText(display);
+    sessionButton.setText(format.title(currentSession));
     sessionButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -89,10 +76,9 @@ public class SleepSessionListingActivity extends Activity {
     try {
 
       Cursor cursor = readableDatabase.query(DatabaseContract.SleepSession.TABLE_NAME,
-          columns,null, null, null, null, sortOrder, "10");
+          columns,null, null, null, null, sortOrder, String.valueOf(7));
 
-      cursor.moveToFirst();
-      if(cursor.getCount() > 0) {
+      if(cursor.moveToFirst()) {
         do {
           Long id = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession._ID));
           Long ft = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME));
