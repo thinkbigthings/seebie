@@ -123,8 +123,7 @@ public class SleepSessionEditActivity extends FragmentActivity {
 
   private SleepSession currentSession;
   private boolean isCreate;
-  private DatabaseOpenHelper helper;
-  private SQLiteDatabase writableDatabase;
+  private GeneralDAO<SleepSession> dao;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -144,20 +143,13 @@ public class SleepSessionEditActivity extends FragmentActivity {
 
     updateDisplay(currentSession, isCreate);
 
-    // TODO call getWritableDatabase() or getReadableDatabase() in a background thread
-    // such as with AsyncTask or IntentService.
-
-    // TODO see how to handle this with the database
-    // http://awiden.wordpress.com/2010/03/26/database-mangement-and-the-activity-lifecycle/
-    helper = new DatabaseOpenHelper(this);
-    writableDatabase = helper.getWritableDatabase();
-
+    dao = new GeneralDAO<SleepSession>(new DatabaseOpenHelper(this));
   }
 
   @Override
   public void onDestroy() {
     super.onDestroy();
-    helper.close();
+    dao.close();
   }
 
   private void setButtonClickListener(int id, View.OnClickListener listener) {
@@ -243,21 +235,9 @@ public class SleepSessionEditActivity extends FragmentActivity {
   }
 
   public void deleteCurrentSleepSession() {
-    writableDatabase.beginTransaction();
-
-    try {
-      String whereIdEquals = "_ID = ?";
-      String[] currentId = new String[]{currentSession.getId().toString()};
-      writableDatabase.delete(DatabaseContract.SleepSession.TABLE_NAME, whereIdEquals, currentId);
-      writableDatabase.setTransactionSuccessful();
-    }
-    catch(Exception ex) {
-      String cause = ex.getMessage();
-      throw ex;
-    }
-    finally {
-      writableDatabase.endTransaction();
-    }
+    String whereIdEquals = "_ID = ?";
+    String[] currentId = new String[]{currentSession.getId().toString()};
+    dao.delete(DatabaseContract.SleepSession.TABLE_NAME, whereIdEquals, currentId);
   }
 
   public void saveCurrentSleepSession() {
@@ -269,25 +249,13 @@ public class SleepSessionEditActivity extends FragmentActivity {
     values.put(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_IN, currentSession.getMinutesAwakeInBed());
     values.put(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_OUT, currentSession.getMinutesAwakeOutOfBed());
 
-    writableDatabase.beginTransaction();
-
-    try {
-      if(isCreate) {
-        writableDatabase.insert(DatabaseContract.SleepSession.TABLE_NAME, null, values);
-      }
-      else {
-        String whereIdEquals = "_ID = ?";
-        String[] currentId = new String[]{currentSession.getId().toString()};
-        writableDatabase.update(DatabaseContract.SleepSession.TABLE_NAME, values, whereIdEquals, currentId);
-      }
-      writableDatabase.setTransactionSuccessful();
+    if(isCreate) {
+      dao.create(DatabaseContract.SleepSession.TABLE_NAME, values);
     }
-    catch(Exception ex) {
-      String cause = ex.getMessage();
-      throw ex;
-    }
-    finally {
-      writableDatabase.endTransaction();
+    else {
+      String whereIdEquals = "_ID = ?";
+      String[] currentId = new String[]{currentSession.getId().toString()};
+      dao.update(DatabaseContract.SleepSession.TABLE_NAME, values, whereIdEquals, currentId);
     }
 
   }

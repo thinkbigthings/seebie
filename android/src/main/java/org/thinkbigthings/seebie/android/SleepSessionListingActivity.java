@@ -16,8 +16,7 @@ import java.util.List;
 
 public class SleepSessionListingActivity extends Activity {
 
-  private DatabaseOpenHelper helper;
-  private SQLiteDatabase readableDatabase;
+  private GeneralDAO<SleepSession> dao;
 
   @SuppressLint("NewApi")
   @Override
@@ -26,10 +25,7 @@ public class SleepSessionListingActivity extends Activity {
 
     setContentView(R.layout.activity_sleep_session_listing);
 
-    // TODO call getWritableDatabase() or getReadableDatabase() in a background thread
-    // such as with AsyncTask or IntentService.
-    helper = new DatabaseOpenHelper(this);
-    readableDatabase = helper.getReadableDatabase();
+    dao = new GeneralDAO<SleepSession>(new DatabaseOpenHelper(this));
 
     List<SleepSession> sessions = loadSessionsFromDatabase();
     LinearLayout sessionLayout = ((LinearLayout) findViewById(R.id.sessionLayout));
@@ -57,8 +53,6 @@ public class SleepSessionListingActivity extends Activity {
 
   private List<SleepSession> loadSessionsFromDatabase() {
 
-    List<SleepSession> sessions= new ArrayList<>();
-
     // Define a projection that specifies which columns from the database
     // you will actually use after this query.
     String[] columns = {
@@ -69,44 +63,28 @@ public class SleepSessionListingActivity extends Activity {
         DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_OUT
     };
 
+    GeneralDAO.CursorReader<SleepSession> reader = new GeneralDAO.CursorReader() {
+      @Override
+      public SleepSession read(Cursor cursor) {
+        Long id = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession._ID));
+        Long ft = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME));
+        Long am = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_ALL_MINUTES));
+        Long ai = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_IN));
+        Long ao = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_OUT));
+        return new SleepSession(id, ft, am, ai, ao);
+      }
+    };
     // How you want the results sorted in the resulting Cursor
     String sortOrder = DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME + " DESC";
-
-    readableDatabase.beginTransaction();
-    try {
-
-      Cursor cursor = readableDatabase.query(DatabaseContract.SleepSession.TABLE_NAME,
-          columns,null, null, null, null, sortOrder, String.valueOf(7));
-
-      if(cursor.moveToFirst()) {
-        do {
-          Long id = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession._ID));
-          Long ft = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME));
-          Long am = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_ALL_MINUTES));
-          Long ai = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_IN));
-          Long ao = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_OUT));
-          sessions.add(new SleepSession(id, ft, am, ai, ao));
-        } while(cursor.moveToNext());
-      }
-
-      readableDatabase.setTransactionSuccessful();
-    }
-    catch(Exception ex) {
-      String cause = ex.getMessage();
-      throw ex;
-    }
-    finally {
-      readableDatabase.endTransaction();
-    }
+    List<SleepSession> sessions = dao.read(reader, DatabaseContract.SleepSession.TABLE_NAME, columns, sortOrder, 7L);
 
     return sessions;
-
   }
 
   @Override
   public void onDestroy() {
     super.onDestroy();
-    helper.close();
+    dao.close();
   }
 
   public void onNewSleepSessionClick(View button) {
