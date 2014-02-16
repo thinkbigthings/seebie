@@ -98,6 +98,11 @@ public class SleepSessionListingActivity extends Activity {
     startActivity(intent);
   }
 
+  private void openSettings() {
+    Intent intent = new Intent(this, SettingsActivity.class);
+    startActivity(intent);
+  }
+
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu items for use in the action bar
@@ -114,11 +119,13 @@ public class SleepSessionListingActivity extends Activity {
         onNewSleepSessionClick();
         return true;
       case R.id.action_settings:
-//        openSettings();
+        openSettings();
         return true;
       default:
         return super.onOptionsItemSelected(item);
     }
   }
+
+
 
 }

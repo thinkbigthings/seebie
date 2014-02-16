@@ -130,6 +130,9 @@ public class SleepSessionEditActivity extends FragmentActivity {
   protected void onCreate(Bundle savedInstanceState) {
 
     super.onCreate(savedInstanceState);
+
+    getActionBar().setDisplayHomeAsUpEnabled(true);
+    
     setContentView(R.layout.activity_sleep_session_edit);
 
     setButtonClickListener(R.id.timeInBedAwake, awakeInBedClickListener);
