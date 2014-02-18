@@ -37,18 +37,17 @@ public class SleepSessionListingActivity extends Activity {
     }
   }
 
-  private Button createSleepSessionButton(final SleepSession currentSession) {
+  private Button createSleepSessionButton(final SleepSession session) {
 
     SleepSession.Format format = new SleepSession.Format();
     Button sessionButton= new Button(this);
-    sessionButton.setText(format.title(currentSession));
+    sessionButton.setText(format.title(session));
     sessionButton.setGravity(Gravity.LEFT);;
     sessionButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        Intent intent = new Intent(SleepSessionListingActivity.this, SleepSessionEditActivity.class);
-        intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, currentSession);
-        intent.putExtra(SleepSessionEditActivity.CREATE_OR_UPDATE, "UPDATE");
+        Intent intent = new Intent(SleepSessionListingActivity.this, DayDetailActivity.class);
+        intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, session);
         startActivity(intent);
       }
     });
@@ -92,9 +91,8 @@ public class SleepSessionListingActivity extends Activity {
   }
 
   public void onNewSleepSessionClick() {
-    Intent intent = new Intent(this, SleepSessionEditActivity.class);
+    Intent intent = new Intent(this, SleepSessionNewActivity.class);
     intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, new SleepSession());
-    intent.putExtra(SleepSessionEditActivity.CREATE_OR_UPDATE, SleepSessionEditActivity.CREATE);
     startActivity(intent);
   }
 
@@ -125,7 +123,5 @@ public class SleepSessionListingActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
   }
-
-
 
 }

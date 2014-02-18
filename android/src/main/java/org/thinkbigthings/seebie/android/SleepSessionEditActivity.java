@@ -32,31 +32,29 @@ import java.text.DecimalFormat;
 public class SleepSessionEditActivity extends FragmentActivity {
 
   public final static String SLEEP_SESSION = "org.thinkbigthings.seebie.android.sleepSession";
-  public final static String CREATE_OR_UPDATE = "org.thinkbigthings.seebie.android.sleepSession.createOrUpdate";
-  public final static String CREATE = "CREATE";
 
   private NumberPickerDialogFragment.NumberPickerDialogHandler awakeInBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
     @Override public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative, double fullNumber) {
       currentSession.withMinutesAwakeInBed(number);
-      updateDisplay(currentSession, isCreate);
+      updateDisplay(currentSession);
     }
   };
   private NumberPickerDialogFragment.NumberPickerDialogHandler awakeOutOfBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
     @Override public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative, double fullNumber) {
       currentSession.withMinutesAwakeOutOfBed(number);
-      updateDisplay(currentSession, isCreate);
+      updateDisplay(currentSession);
     }
   };
   private RadialTimePickerDialog.OnTimeSetListener startTimeCallback = new RadialTimePickerDialog.OnTimeSetListener() {
     @Override public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
       currentSession.withStartTime(hour, minute);
-      updateDisplay(currentSession, isCreate);
+      updateDisplay(currentSession);
     }
   };
   private RadialTimePickerDialog.OnTimeSetListener finishTimeCallback = new RadialTimePickerDialog.OnTimeSetListener() {
     @Override public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
       currentSession.withFinishTime(hour, minute);
-      updateDisplay(currentSession, isCreate);
+      updateDisplay(currentSession);
     }
   };
 
@@ -103,7 +101,7 @@ public class SleepSessionEditActivity extends FragmentActivity {
     @Override public void onDateSet(CalendarDatePickerDialog calendarDatePickerDialog, int year, int month, int day) {
       // JodaTime month is one-based, betterpickers is zero-based like Java Calendar
       currentSession.withFinishDate(year, month + 1, day);
-      updateDisplay(currentSession, isCreate);
+      updateDisplay(currentSession);
     }
   };
   private View.OnClickListener finishDateClickListener = new View.OnClickListener() {
@@ -122,9 +120,8 @@ public class SleepSessionEditActivity extends FragmentActivity {
     }
   };
 
-  private SleepSession currentSession;
-  private boolean isCreate;
-  private GeneralDAO<SleepSession> dao;
+  protected SleepSession currentSession;
+  protected GeneralDAO<SleepSession> dao;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -143,9 +140,8 @@ public class SleepSessionEditActivity extends FragmentActivity {
 
     Intent intent = getIntent();
     currentSession = (SleepSession)intent.getSerializableExtra(SleepSessionEditActivity.SLEEP_SESSION);
-    isCreate = CREATE.equals(intent.getStringExtra(SleepSessionEditActivity.CREATE_OR_UPDATE));
 
-    updateDisplay(currentSession, isCreate);
+    updateDisplay(currentSession);
 
     dao = new GeneralDAO<SleepSession>(new DatabaseOpenHelper(this));
   }
@@ -161,7 +157,7 @@ public class SleepSessionEditActivity extends FragmentActivity {
     button.setOnClickListener(listener);
   }
 
-  private void updateDisplay(SleepSession session, boolean create) {
+  private void updateDisplay(SleepSession session) {
 
     String display;
     SleepSession.Format formatter = new SleepSession.Format();
@@ -189,62 +185,31 @@ public class SleepSessionEditActivity extends FragmentActivity {
     TextView efficiencyDisplay = (TextView)findViewById(R.id.efficiency_display);
     display = String.format(res.getString(R.string._edit_sleep_efficiency), formatter.efficiency(session));
     efficiencyDisplay.setText(display);
-
-    ((Button) findViewById(R.id.deleteButton)).setVisibility(create ? View.GONE : View.VISIBLE);
   }
 
   @Override
   public void onRestoreInstanceState(Bundle savedInstance) {
     currentSession = (SleepSession)savedInstance.getSerializable(SLEEP_SESSION);
-    updateDisplay(currentSession, isCreate);
+    updateDisplay(currentSession);
   }
 
   @Override
   public void onSaveInstanceState(Bundle savedInstance) {
     savedInstance.putSerializable(SLEEP_SESSION, currentSession);
-    savedInstance.putString(CREATE_OR_UPDATE, isCreate ? "CREATE" : "UPDATE");
-  }
-
-  public void onDelete(View button) {
-
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    Resources res = getResources();
-    builder.setMessage(res.getString(R.string._delete_this_session))
-            .setTitle(res.getString(R.string._confirm))
-            .setPositiveButton(res.getString(R.string._delete), new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-                deleteCurrentSleepSession();
-                Intent intent = new Intent(SleepSessionEditActivity.this, SleepSessionListingActivity.class);
-                startActivity(intent);
-              }
-            })
-        .setNegativeButton(res.getString(R.string._cancel), new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-          }
-        });
-
-    AlertDialog dialog = builder.create();
-    dialog.show();
-
   }
 
   public void onCancel(View button) {
-    Intent intent = new Intent(this, SleepSessionListingActivity.class);
+    Intent intent = new Intent(this, DayDetailActivity.class);
+    intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, currentSession);
     startActivity(intent);
   }
 
   public void onSave(View button) {
     saveCurrentSleepSession();
-    Intent intent = new Intent(this, SleepSessionListingActivity.class);
-    startActivity(intent);
-  }
+    Intent intent = new Intent(this, DayDetailActivity.class);
+    intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, currentSession);
 
-  public void deleteCurrentSleepSession() {
-    String whereIdEquals = "_ID = ?";
-    String[] currentId = new String[]{currentSession.getId().toString()};
-    dao.delete(DatabaseContract.SleepSession.TABLE_NAME, whereIdEquals, currentId);
+    startActivity(intent);
   }
 
   public void saveCurrentSleepSession() {
@@ -256,32 +221,9 @@ public class SleepSessionEditActivity extends FragmentActivity {
     values.put(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_IN, currentSession.getMinutesAwakeInBed());
     values.put(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_OUT, currentSession.getMinutesAwakeOutOfBed());
 
-    if(isCreate) {
-      dao.create(DatabaseContract.SleepSession.TABLE_NAME, values);
-    }
-    else {
-      String whereIdEquals = "_ID = ?";
-      String[] currentId = new String[]{currentSession.getId().toString()};
-      dao.update(DatabaseContract.SleepSession.TABLE_NAME, values, whereIdEquals, currentId);
-    }
-
-  }
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    return super.onCreateOptionsMenu(menu);
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    int id = item.getItemId();
-    if (id == R.id.action_settings) {
-      return true;
-    }
-    return super.onOptionsItemSelected(item);
+    String whereIdEquals = "_ID = ?";
+    String[] currentId = new String[]{currentSession.getId().toString()};
+    dao.update(DatabaseContract.SleepSession.TABLE_NAME, values, whereIdEquals, currentId);
   }
 
 }

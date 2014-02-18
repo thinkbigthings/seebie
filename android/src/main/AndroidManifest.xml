@@ -17,8 +17,18 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".SleepSessionNewActivity"
+            android:label="@string/new_session"
+            android:parentActivityName=".SleepSessionListingActivity" >
+        </activity>
+        <activity
             android:name=".SleepSessionEditActivity"
-            android:label="@string/title_activity_display_message"
+            android:label="@string/edit_sleep_session"
+            android:parentActivityName=".DayDetailActivity" >
+        </activity>
+        <activity
+            android:name=".DayDetailActivity"
+            android:label="@string/edit_sleep_session"
             android:parentActivityName=".SleepSessionListingActivity" >
         </activity>
         <activity

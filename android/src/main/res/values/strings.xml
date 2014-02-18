@@ -3,10 +3,10 @@
 
     <string name="app_name">Seebie</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_main">Sleep Entry</string>
-    <string name="title_activity_display_message">Sleep Summary</string>
-    <string name="time_start">Start</string>
-    <string name="time_finish">Finish</string>
+    <string name="edit_sleep_session">Edit Sleep Session</string>
+    <string name="details">Details</string>
+    <string name="start">Start</string>
+    <string name="finish">Finish</string>
     <string name="minutes">minutes</string>
 
     <string name="_edit_sleep_timeInBedAwake">Awake in bed for %d minutes</string>
@@ -21,6 +21,6 @@
     <string name="_delete_this_session">Delete this sleep session?</string>
     <string name="_delete">Delete</string>
     <string name="_cancel">Cancel</string>
-    <string name="new_session">New Sleep Sessio</string>
+    <string name="new_session">New Sleep Session</string>
 
 </resources>
