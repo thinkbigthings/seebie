@@ -2,7 +2,6 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_dark"
     android:fillViewport="true">
     <LinearLayout
         android:layout_width="fill_parent"
@@ -15,7 +14,6 @@
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:orientation="horizontal"
-            android:background="@android:drawable/bottom_bar"
             >
             <!--android:drawableStart="@android:drawable/ic_menu_close_clear_cancel"-->
 
@@ -25,10 +23,7 @@
                 android:layout_weight="1"
                 android:drawableStart="@drawable/ic_action_cancel"
                 android:text="Cancel"
-                android:textSize="20dp"
-                android:onClick="onCancel"
-                android:background="@android:color/transparent"
-                android:textColor="@android:color/background_dark"/>
+                android:onClick="onCancel"/>
 
             <Button
                 android:layout_width="wrap_content"
@@ -36,10 +31,8 @@
                 android:layout_weight="1"
                 android:drawableStart="@drawable/ic_action_accept"
                 android:text="Save"
-                android:textSize="20dp"
                 android:onClick="onSave"
-                android:textColor="@android:color/black"
-                android:background="@android:color/transparent"/>
+                />
         </LinearLayout>
 
         <Button
