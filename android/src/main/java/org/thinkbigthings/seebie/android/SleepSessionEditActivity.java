@@ -167,7 +167,7 @@ public class SleepSessionEditActivity extends FragmentActivity {
     SleepSession.Format formatter = new SleepSession.Format();
     Resources res = getResources();
 
-    display = String.format(res.getString(R.string._edit_sleep_timeInBedAwake), session.getMinutesAwakeOutOfBed());
+    display = String.format(res.getString(R.string._edit_sleep_timeInBedAwake), session.getMinutesAwakeInBed());
     ((Button) findViewById(R.id.timeInBedAwake)).setText(display);
 
     display = String.format(res.getString(R.string._edit_sleep_timeOutOfBedAwake), session.getMinutesAwakeOutOfBed());
