@@ -13,6 +13,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
+            android:paddingBottom="20dp"
             android:orientation="horizontal"
             >
             <!--android:drawableStart="@android:drawable/ic_menu_close_clear_cancel"-->
@@ -41,8 +42,8 @@
                 android:gravity="left|center_vertical"
                 android:text="Got into bed at 9:30 PM"
                 android:drawableRight="@android:drawable/ic_menu_edit"
-                style="?android:attr/borderlessButtonStyle"
-                android:id="@+id/startTime"/>
+                android:id="@+id/startTime"
+                android:textSize="20dp"/>
 
             <Button
                 android:layout_width="match_parent"
@@ -50,36 +51,38 @@
                 android:gravity="left|center_vertical"
                 android:drawableRight="@android:drawable/ic_menu_edit"
                 android:text="Awake in bed for 0 minutes"
-                style="?android:attr/borderlessButtonStyle"
-                android:id="@+id/timeInBedAwake" />
+                android:id="@+id/timeInBedAwake"
+                android:textSize="20dp" />
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left|center_vertical"
                 android:text="Awake out of bed for 0 minutes"
-                style="?android:attr/borderlessButtonStyle"
                 android:drawableRight="@android:drawable/ic_menu_edit"
-                android:id="@+id/timeOutOfBedAwake"/>
+                android:id="@+id/timeOutOfBedAwake"
+                android:textSize="20dp"/>
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left|center_vertical"
                 android:drawableRight="@android:drawable/ic_menu_edit"
-                style="?android:attr/borderlessButtonStyle"
                 android:text="Got up for the day at 4:30 AM"
-                android:id="@+id/finishTime"/>
+                android:id="@+id/finishTime"
+                android:textSize="20dp"/>
 
-            <Button
+        <!--style="?android:attr/borderlessButtonStyle"-->
+
+        <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left|center_vertical"
                 android:drawableRight="@android:drawable/ic_menu_edit"
-                style="?android:attr/borderlessButtonStyle"
                 android:layout_gravity="fill_horizontal"
                 android:text="Saturday, February 10th"
-                android:id="@+id/finishDate"/>
+                android:id="@+id/finishDate"
+                android:textSize="20dp"/>
 
             <TextView
                 android:id="@+id/total_sleep_display"
