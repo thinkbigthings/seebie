@@ -50,7 +50,6 @@ public class SleepSessionNewActivity extends SleepSessionEditActivity {
     values.put(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_OUT, currentSession.getMinutesAwakeOutOfBed());
 
     dao.create(DatabaseContract.SleepSession.TABLE_NAME, values);
-
   }
 
 }
