@@ -10,7 +10,7 @@
     <string name="minutes">minutes</string>
 
     <string name="_edit_sleep_timeInBedAwake">Awake in bed for %d minutes</string>
-    <string name="_edit_sleep_timeOutOfBedAwake">Awake out of bed for %d minutes</string>
+    <string name="_edit_sleep_timeOutOfBedAwake">Awake out of bed %d minutes</string>
     <string name="_edit_sleep_startTime">Got into bed at %s</string>
     <string name="_edit_sleep_finishTime">Got up for the day at %s</string>
     <string name="_edit_sleep_finishDate">On %s</string>

@@ -60,19 +60,19 @@ public class DayDetailActivity extends FragmentActivity {
     Resources res = getResources();
 
     display = String.format(res.getString(R.string._edit_sleep_timeInBedAwake), session.getMinutesAwakeInBed());
-    ((Button) findViewById(R.id.timeInBedAwake)).setText(display);
+    ((TextView) findViewById(R.id.timeInBedAwake)).setText(display);
 
     display = String.format(res.getString(R.string._edit_sleep_timeOutOfBedAwake), session.getMinutesAwakeOutOfBed());
-    ((Button) findViewById(R.id.timeOutOfBedAwake)).setText(display);
+    ((TextView) findViewById(R.id.timeOutOfBedAwake)).setText(display);
 
     display = String.format(res.getString(R.string._edit_sleep_startTime),  DateTimeFormat.shortTime().print(session.getStartTime()));
-    ((Button) findViewById(R.id.startTime)).setText(display);
+    ((TextView) findViewById(R.id.startTime)).setText(display);
 
     display = String.format(res.getString(R.string._edit_sleep_finishTime), DateTimeFormat.shortTime().print(session.getFinishTime()));
-    ((Button) findViewById(R.id.finishTime)).setText(display);
+    ((TextView) findViewById(R.id.finishTime)).setText(display);
 
     display = String.format(res.getString(R.string._edit_sleep_finishDate), formatter.day(session));
-    ((Button) findViewById(R.id.finishDate)).setText(display);
+    ((TextView) findViewById(R.id.finishDate)).setText(display);
 
     TextView totalSleepDisplay = (TextView)findViewById(R.id.total_sleep_display);
     display = String.format(res.getString(R.string._edit_sleep_duration), formatter.duration(session));

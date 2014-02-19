@@ -28,7 +28,7 @@
         </activity>
         <activity
             android:name=".DayDetailActivity"
-            android:label="@string/edit_sleep_session"
+            android:label="@string/details"
             android:parentActivityName=".SleepSessionListingActivity" >
         </activity>
         <activity
