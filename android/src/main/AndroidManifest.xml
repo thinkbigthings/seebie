@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="org.thinkbigthings.seebie.android.SleepSessionListingActivity"
+            android:name=".DailyListingActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,22 +19,22 @@
         <activity
             android:name=".SleepSessionNewActivity"
             android:label="@string/new_session"
-            android:parentActivityName=".SleepSessionListingActivity" >
+            android:parentActivityName=".DailyListingActivity" >
         </activity>
         <activity
             android:name=".SleepSessionEditActivity"
             android:label="@string/edit_sleep_session"
-            android:parentActivityName=".DayDetailActivity" >
+            android:parentActivityName=".DailyDetailActivity" >
         </activity>
         <activity
-            android:name=".DayDetailActivity"
+            android:name=".DailyDetailActivity"
             android:label="@string/details"
-            android:parentActivityName=".SleepSessionListingActivity" >
+            android:parentActivityName=".DailyListingActivity" >
         </activity>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/action_settings"
-            android:parentActivityName=".SleepSessionListingActivity" >
+            android:parentActivityName=".DailyListingActivity" >
         </activity>
     </application>
 

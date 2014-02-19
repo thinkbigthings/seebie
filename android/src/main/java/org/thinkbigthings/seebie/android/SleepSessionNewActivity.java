@@ -2,22 +2,8 @@ package org.thinkbigthings.seebie.android;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
-import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
-import com.doomonafireball.betterpickers.numberpicker.NumberPickerBuilder;
-import com.doomonafireball.betterpickers.numberpicker.NumberPickerDialogFragment;
-import com.doomonafireball.betterpickers.radialtimepicker.RadialPickerLayout;
-import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalTime;
-import org.joda.time.format.DateTimeFormat;
 
 public class SleepSessionNewActivity extends SleepSessionEditActivity {
 
@@ -30,13 +16,13 @@ public class SleepSessionNewActivity extends SleepSessionEditActivity {
   }
 
   public void onCancel(View button) {
-    Intent intent = new Intent(this, SleepSessionListingActivity.class);
+    Intent intent = new Intent(this, DailyListingActivity.class);
     startActivity(intent);
   }
 
   public void onSave(View button) {
     saveCurrentSleepSession();
-    Intent intent = new Intent(this, SleepSessionListingActivity.class);
+    Intent intent = new Intent(this, DailyListingActivity.class);
     startActivity(intent);
   }
 

@@ -1,7 +1,6 @@
 package org.thinkbigthings.seebie.android;
 
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -10,21 +9,11 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
-import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDialog;
-import com.doomonafireball.betterpickers.numberpicker.NumberPickerBuilder;
-import com.doomonafireball.betterpickers.numberpicker.NumberPickerDialogFragment;
-import com.doomonafireball.betterpickers.radialtimepicker.RadialPickerLayout;
-import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 
-public class DayDetailActivity extends FragmentActivity {
+public class DailyDetailActivity extends FragmentActivity {
 
 
   private SleepSession currentSession;
@@ -37,7 +26,7 @@ public class DayDetailActivity extends FragmentActivity {
 
     getActionBar().setDisplayHomeAsUpEnabled(true);
     
-    setContentView(R.layout.activity_day_detail);
+    setContentView(R.layout.activity_daily_detail);
 
     Intent intent = getIntent();
     currentSession = (SleepSession)intent.getSerializableExtra(SleepSessionEditActivity.SLEEP_SESSION);
@@ -121,7 +110,7 @@ public class DayDetailActivity extends FragmentActivity {
   }
 
   public void onEdit() {
-    Intent intent = new Intent(DayDetailActivity.this, SleepSessionEditActivity.class);
+    Intent intent = new Intent(DailyDetailActivity.this, SleepSessionEditActivity.class);
     intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, currentSession);
     startActivity(intent);
   }
@@ -136,7 +125,7 @@ public class DayDetailActivity extends FragmentActivity {
           @Override
           public void onClick(DialogInterface dialog, int which) {
             deleteCurrentSleepSession();
-            Intent intent = new Intent(DayDetailActivity.this, SleepSessionListingActivity.class);
+            Intent intent = new Intent(DailyDetailActivity.this, DailyListingActivity.class);
             startActivity(intent);
           }
         })

@@ -1,15 +1,10 @@
 package org.thinkbigthings.seebie.android;
 
-import android.app.AlertDialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,8 +19,6 @@ import com.doomonafireball.betterpickers.calendardatepicker.CalendarDatePickerDi
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
-
-import java.text.DecimalFormat;
 
 // TODO figure out how to use betterpickers without the support fragments, would like to use latest fragments
 
@@ -183,14 +176,14 @@ public class SleepSessionEditActivity extends FragmentActivity {
   }
 
   public void onCancel(View button) {
-    Intent intent = new Intent(this, DayDetailActivity.class);
+    Intent intent = new Intent(this, DailyDetailActivity.class);
     intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, currentSession);
     startActivity(intent);
   }
 
   public void onSave(View button) {
     saveCurrentSleepSession();
-    Intent intent = new Intent(this, DayDetailActivity.class);
+    Intent intent = new Intent(this, DailyDetailActivity.class);
     intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, currentSession);
 
     startActivity(intent);

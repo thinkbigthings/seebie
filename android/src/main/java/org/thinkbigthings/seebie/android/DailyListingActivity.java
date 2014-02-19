@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
@@ -14,10 +13,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class SleepSessionListingActivity extends Activity {
+public class DailyListingActivity extends Activity {
 
   private GeneralDAO<SleepSession> dao;
 
@@ -26,7 +24,7 @@ public class SleepSessionListingActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_sleep_session_listing);
+    setContentView(R.layout.activity_daily_listing);
 
     dao = new GeneralDAO<SleepSession>(new DatabaseOpenHelper(this));
 
@@ -46,7 +44,7 @@ public class SleepSessionListingActivity extends Activity {
     sessionButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        Intent intent = new Intent(SleepSessionListingActivity.this, DayDetailActivity.class);
+        Intent intent = new Intent(DailyListingActivity.this, DailyDetailActivity.class);
         intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, session);
         startActivity(intent);
       }
