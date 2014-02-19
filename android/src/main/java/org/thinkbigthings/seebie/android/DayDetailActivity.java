@@ -75,7 +75,8 @@ public class DayDetailActivity extends FragmentActivity {
     ((TextView) findViewById(R.id.finishDate)).setText(display);
 
     TextView totalSleepDisplay = (TextView)findViewById(R.id.total_sleep_display);
-    display = String.format(res.getString(R.string._edit_sleep_duration), formatter.duration(session));
+    String[] hrMin = formatter.duration(session);
+    display = String.format(res.getString(R.string._edit_sleep_duration), hrMin[0], hrMin[1]);
     totalSleepDisplay.setText(display);
 
     TextView efficiencyDisplay = (TextView)findViewById(R.id.efficiency_display);

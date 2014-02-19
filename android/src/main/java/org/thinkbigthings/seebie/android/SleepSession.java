@@ -94,10 +94,10 @@ public class SleepSession implements Serializable {
   public static class Format {
 
     public String title(SleepSession session) {
-      String sleepTime = duration(session);
+      String[] sleepTime = duration(session);
       String display = DateTimeFormat.forPattern("EEEE").print(session.getFinishTime())  + " "
           + DateTimeFormat.shortDate().print(session.getFinishTime()) + " "
-          + "(" + sleepTime + ")";
+          + "(" + sleepTime[0] + ":" + sleepTime[1] + ")";
       return display;
     }
 
@@ -112,11 +112,12 @@ public class SleepSession implements Serializable {
       return number.format(session.calculateEfficiency()*100) + "%";
     }
 
-    public String duration(SleepSession session) {
+    public String[] duration(SleepSession session) {
       long time = session.calculateMinutesInBedSleeping();
       long min = time % 60;
       String minString = min < 10 ? minString = "0" + min : String.valueOf(min);
-      return time / 60 + ":" + minString;
+      String hrString = String.valueOf(time / 60);
+      return new String[]{hrString, minString};
     }
 
 
