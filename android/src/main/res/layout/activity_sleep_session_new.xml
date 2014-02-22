@@ -43,6 +43,7 @@
             android:text="Got into bed at 9:30 PM"
             android:drawableRight="@android:drawable/ic_menu_edit"
             android:id="@+id/startTime"
+            android:onClick="onStartTimeClick"
             android:textSize="20dp"/>
 
         <Button
