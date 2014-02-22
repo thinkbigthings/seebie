@@ -26,55 +26,64 @@ public class SleepSessionEditFragment extends Fragment {
   private SleepSessionChangeListener mCallback;
   private SleepSession currentSession;
 
-  protected NumberPickerDialogFragment.NumberPickerDialogHandler awakeInBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
+  private NumberPickerDialogFragment.NumberPickerDialogHandler awakeInBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
     @Override public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative, double fullNumber) {
       update(currentSession.withMinutesAwakeInBed(number));
     }
   };
-  protected NumberPickerDialogFragment.NumberPickerDialogHandler awakeOutOfBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
+  private NumberPickerDialogFragment.NumberPickerDialogHandler awakeOutOfBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
     @Override public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative, double fullNumber) {
       update(currentSession.withMinutesAwakeOutOfBed(number));
     }
   };
-  protected RadialTimePickerDialog.OnTimeSetListener startTimeCallback = new RadialTimePickerDialog.OnTimeSetListener() {
+  private RadialTimePickerDialog.OnTimeSetListener startTimeCallback = new RadialTimePickerDialog.OnTimeSetListener() {
     @Override public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
       update(currentSession.withStartTime(hour, minute));
     }
   };
-  protected RadialTimePickerDialog.OnTimeSetListener finishTimeCallback = new RadialTimePickerDialog.OnTimeSetListener() {
+  private RadialTimePickerDialog.OnTimeSetListener finishTimeCallback = new RadialTimePickerDialog.OnTimeSetListener() {
     @Override public void onTimeSet(RadialPickerLayout radialPickerLayout, int hour, int minute) {
       update(currentSession.withFinishTime(hour, minute));
     }
   };
 
-  public void onAwakeInBedClick(View view) {
-    NumberPickerBuilder npb = new NumberPickerBuilder()
-        .setFragmentManager(getChildFragmentManager())
-        .setStyleResId(R.style.BetterPickersDialogFragment)
-        .setLabelText(getResources().getString(R.string.minutes))
-        .setDecimalVisibility(View.GONE)
-        .setPlusMinusVisibility(View.GONE)
-        .addNumberPickerDialogHandler(awakeInBedCallback);
-    npb.show();
-  }
+  private View.OnClickListener awakeInBedClickListener = new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      NumberPickerBuilder npb = new NumberPickerBuilder()
+          .setFragmentManager(getChildFragmentManager())
+          .setStyleResId(R.style.BetterPickersDialogFragment)
+          .setLabelText(getResources().getString(R.string.minutes))
+          .setDecimalVisibility(View.GONE)
+          .setPlusMinusVisibility(View.GONE)
+          .addNumberPickerDialogHandler(awakeInBedCallback);
+      npb.show();
+    }
+  };
 
-  public void onAwakeOutOfBedClick(View v) {
-    NumberPickerBuilder npb = new NumberPickerBuilder()
-        .setFragmentManager(getChildFragmentManager())
-        .setStyleResId(R.style.BetterPickersDialogFragment)
-        .setLabelText(getResources().getString(R.string.minutes))
-        .setDecimalVisibility(View.GONE)
-        .setPlusMinusVisibility(View.GONE)
-        .addNumberPickerDialogHandler(awakeOutOfBedCallback);
-    npb.show();
-  }
+  private View.OnClickListener awakeOutOfBedClickListener = new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      NumberPickerBuilder npb = new NumberPickerBuilder()
+          .setFragmentManager(getChildFragmentManager())
+          .setStyleResId(R.style.BetterPickersDialogFragment)
+          .setLabelText(getResources().getString(R.string.minutes))
+          .setDecimalVisibility(View.GONE)
+          .setPlusMinusVisibility(View.GONE)
+          .addNumberPickerDialogHandler(awakeOutOfBedCallback);
+      npb.show();
+    }
+  };
 
-  public void onStartTimeClick(View view) {
-    LocalTime time= currentSession.getStartTime();
-    RadialTimePickerDialog dialog;
-    dialog = RadialTimePickerDialog.newInstance(startTimeCallback, time.getHourOfDay(), time.getMinuteOfHour(), false);
-    dialog.show(getChildFragmentManager(), null);
-  }
+  private View.OnClickListener startTimeClickListener = new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      LocalTime time= currentSession.getStartTime();
+      RadialTimePickerDialog dialog;
+      dialog = RadialTimePickerDialog.newInstance(startTimeCallback, time.getHourOfDay(), time.getMinuteOfHour(), false);
+      dialog.show(getChildFragmentManager(), null);
+    }
+  };
 
   protected static class JodaDatePickerDialog extends CalendarDatePickerDialog {
     public static CalendarDatePickerDialog newInstance(CalendarDatePickerDialog.OnDateSetListener listener, DateTime date) {
@@ -90,18 +99,27 @@ public class SleepSessionEditFragment extends Fragment {
       updateDisplay(currentSession);
     }
   };
-  public void onFinishDateClick(View view) {
-    DateTime time= currentSession.getFinishTime();
-    CalendarDatePickerDialog calendarDatePickerDialog = JodaDatePickerDialog.newInstance(finishDateCallback, time);
-    calendarDatePickerDialog.show(getChildFragmentManager(), null);
-  }
 
-  public void onFinishTimeClick(View view){
-    DateTime time= currentSession.getFinishTime();
-    RadialTimePickerDialog dialog;
-    dialog = RadialTimePickerDialog.newInstance(finishTimeCallback, time.getHourOfDay(), time.getMinuteOfHour(), false);
-    dialog.show(getChildFragmentManager(), null);
-  }
+
+  private View.OnClickListener finishDateClickListener = new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      DateTime time= currentSession.getFinishTime();
+      CalendarDatePickerDialog calendarDatePickerDialog = JodaDatePickerDialog.newInstance(finishDateCallback, time);
+      calendarDatePickerDialog.show(getChildFragmentManager(), null);
+    }
+  };
+
+  private View.OnClickListener finishTimeClickListener = new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      DateTime time= currentSession.getFinishTime();
+      RadialTimePickerDialog dialog;
+      dialog = RadialTimePickerDialog.newInstance(finishTimeCallback, time.getHourOfDay(), time.getMinuteOfHour(), false);
+      dialog.show(getChildFragmentManager(), null);
+    }
+  };
+
 
   @Override
   public void onAttach(Activity activity) {
@@ -117,7 +135,14 @@ public class SleepSessionEditFragment extends Fragment {
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    currentSession = ((SleepSessionEditActivityWithFragment)getActivity()).getSession();
+
+    findViewById(R.id.timeInBedAwake).setOnClickListener(awakeInBedClickListener);
+    findViewById(R.id.timeOutOfBedAwake).setOnClickListener(awakeOutOfBedClickListener);
+    findViewById(R.id.startTime).setOnClickListener(startTimeClickListener);
+    findViewById(R.id.finishTime).setOnClickListener(finishTimeClickListener);
+    findViewById(R.id.finishDate).setOnClickListener(finishDateClickListener);
+
+    currentSession = new SleepSession(((SleepSessionEditActivityWithFragment)getActivity()).getSession());
     updateDisplay(currentSession);
   }
 
@@ -127,7 +152,7 @@ public class SleepSessionEditFragment extends Fragment {
   }
 
   public View findViewById(int id) {
-    return getView().findViewById(id);
+    return getActivity().findViewById(id);
   }
 
   private void update(SleepSession session) {
