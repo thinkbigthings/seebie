@@ -110,7 +110,7 @@ public class DailyDetailActivity extends FragmentActivity {
   }
 
   public void onEdit() {
-    Intent intent = new Intent(DailyDetailActivity.this, SleepSessionEditActivity.class);
+    Intent intent = new Intent(DailyDetailActivity.this, SleepSessionEditActivityWithFragment.class);
     intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, currentSession);
     startActivity(intent);
   }

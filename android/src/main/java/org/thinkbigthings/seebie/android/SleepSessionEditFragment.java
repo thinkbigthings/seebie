@@ -116,9 +116,9 @@ public class SleepSessionEditFragment  extends Fragment {
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    currentSession = ((SleepSessionEditActivityWithFragment)getActivity()).getSession();
     return inflater.inflate(R.layout.fragment_sleep_session_edit, container, false);
   }
-
 
   public SleepSession getCurrentSession() {
     return currentSession;

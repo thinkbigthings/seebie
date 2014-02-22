@@ -32,8 +32,8 @@ public class SleepSessionEditActivityWithFragment extends FragmentActivity imple
 
     Intent intent = getIntent();
     currentSession = (SleepSession)intent.getSerializableExtra(SleepSessionEditActivityWithFragment.SLEEP_SESSION);
-    SleepSessionEditFragment editorFrag = (SleepSessionEditFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_editor);
-    editorFrag.setCurrentSession(currentSession);
+//    SleepSessionEditFragment editorFrag = (SleepSessionEditFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_editor);
+//    editorFrag.setCurrentSession(currentSession);
 
     dao = new GeneralDAO<SleepSession>(new DatabaseOpenHelper(this));
   }
@@ -49,9 +49,13 @@ public class SleepSessionEditActivityWithFragment extends FragmentActivity imple
   public void onRestoreInstanceState(Bundle savedInstance) {
     currentSession = (SleepSession)savedInstance.getSerializable(SLEEP_SESSION);
 
-    SleepSessionEditFragment editorFrag = (SleepSessionEditFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_editor);
-    editorFrag.setCurrentSession(currentSession);
+/*    SleepSessionEditFragment editorFrag = (SleepSessionEditFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_editor);
+    editorFrag.setCurrentSession(currentSession);*/
 
+  }
+
+  public SleepSession getSession() {
+    return currentSession;
   }
 
   @Override

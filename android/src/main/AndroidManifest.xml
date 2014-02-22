@@ -22,7 +22,7 @@
             android:parentActivityName=".DailyListingActivity" >
         </activity>
         <activity
-            android:name=".SleepSessionEditActivity"
+            android:name=".SleepSessionEditActiv"
             android:label="@string/edit_sleep_session"
             android:parentActivityName=".DailyDetailActivity" >
         </activity>
