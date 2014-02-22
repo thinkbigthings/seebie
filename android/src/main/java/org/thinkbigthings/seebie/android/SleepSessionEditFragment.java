@@ -21,7 +21,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 
-public class SleepSessionEditFragment  extends Fragment {
+public class SleepSessionEditFragment extends Fragment {
 
   private SleepSessionChangeListener mCallback;
   private SleepSession currentSession;
@@ -115,18 +115,15 @@ public class SleepSessionEditFragment  extends Fragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public void onActivityCreated(Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
     currentSession = ((SleepSessionEditActivityWithFragment)getActivity()).getSession();
-    return inflater.inflate(R.layout.fragment_sleep_session_edit, container, false);
-  }
-
-  public SleepSession getCurrentSession() {
-    return currentSession;
-  }
-
-  public void setCurrentSession(SleepSession session) {
-    currentSession = session;
     updateDisplay(currentSession);
+  }
+
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.fragment_sleep_session_edit, container, false);
   }
 
   public View findViewById(int id) {
