@@ -46,7 +46,12 @@ public class SleepSessionEditFragment extends Fragment {
       update(currentSession.withFinishTime(hour, minute));
     }
   };
-
+  private CalendarDatePickerDialog.OnDateSetListener finishDateCallback = new CalendarDatePickerDialog.OnDateSetListener() {
+    @Override public void onDateSet(CalendarDatePickerDialog calendarDatePickerDialog, int year, int month, int day) {
+      // JodaTime month is one-based, betterpickers is zero-based like Java Calendar
+      update(currentSession.withFinishDate(year, month + 1, day));
+    }
+  };
   private View.OnClickListener awakeInBedClickListener = new View.OnClickListener() {
     @Override
     public void onClick(View v) {
@@ -91,15 +96,6 @@ public class SleepSessionEditFragment extends Fragment {
       return CalendarDatePickerDialog.newInstance(listener, date.getYear(), date.getMonthOfYear() - 1, date.getDayOfMonth());
     }
   };
-
-  protected CalendarDatePickerDialog.OnDateSetListener finishDateCallback = new CalendarDatePickerDialog.OnDateSetListener() {
-    @Override public void onDateSet(CalendarDatePickerDialog calendarDatePickerDialog, int year, int month, int day) {
-      // JodaTime month is one-based, betterpickers is zero-based like Java Calendar
-      currentSession.withFinishDate(year, month + 1, day);
-      updateDisplay(currentSession);
-    }
-  };
-
 
   private View.OnClickListener finishDateClickListener = new View.OnClickListener() {
     @Override
