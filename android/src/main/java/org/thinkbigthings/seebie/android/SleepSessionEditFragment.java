@@ -49,7 +49,7 @@ public class SleepSessionEditFragment  extends Fragment {
 
   public void onAwakeInBedClick(View view) {
     NumberPickerBuilder npb = new NumberPickerBuilder()
-        .setFragmentManager(getFragmentManager())
+        .setFragmentManager(getChildFragmentManager())
         .setStyleResId(R.style.BetterPickersDialogFragment)
         .setLabelText(getResources().getString(R.string.minutes))
         .setDecimalVisibility(View.GONE)
@@ -60,7 +60,7 @@ public class SleepSessionEditFragment  extends Fragment {
 
   public void onAwakeOutOfBedClick(View v) {
     NumberPickerBuilder npb = new NumberPickerBuilder()
-        .setFragmentManager(getFragmentManager())
+        .setFragmentManager(getChildFragmentManager())
         .setStyleResId(R.style.BetterPickersDialogFragment)
         .setLabelText(getResources().getString(R.string.minutes))
         .setDecimalVisibility(View.GONE)
@@ -73,7 +73,7 @@ public class SleepSessionEditFragment  extends Fragment {
     LocalTime time= currentSession.getStartTime();
     RadialTimePickerDialog dialog;
     dialog = RadialTimePickerDialog.newInstance(startTimeCallback, time.getHourOfDay(), time.getMinuteOfHour(), false);
-    dialog.show(getFragmentManager(), null);
+    dialog.show(getChildFragmentManager(), null);
   }
 
   protected static class JodaDatePickerDialog extends CalendarDatePickerDialog {
@@ -93,14 +93,14 @@ public class SleepSessionEditFragment  extends Fragment {
   public void onFinishDateClick(View view) {
     DateTime time= currentSession.getFinishTime();
     CalendarDatePickerDialog calendarDatePickerDialog = JodaDatePickerDialog.newInstance(finishDateCallback, time);
-    calendarDatePickerDialog.show(getFragmentManager(), null);
+    calendarDatePickerDialog.show(getChildFragmentManager(), null);
   }
 
   public void onFinishTimeClick(View view){
     DateTime time= currentSession.getFinishTime();
     RadialTimePickerDialog dialog;
     dialog = RadialTimePickerDialog.newInstance(finishTimeCallback, time.getHourOfDay(), time.getMinuteOfHour(), false);
-    dialog.show(getFragmentManager(), null);
+    dialog.show(getChildFragmentManager(), null);
   }
 
   @Override
@@ -126,6 +126,7 @@ public class SleepSessionEditFragment  extends Fragment {
 
   public void setCurrentSession(SleepSession session) {
     currentSession = session;
+    updateDisplay(currentSession);
   }
 
   public View findViewById(int id) {
@@ -136,6 +137,7 @@ public class SleepSessionEditFragment  extends Fragment {
     mCallback.onSessionChanged(currentSession);
     updateDisplay(session);
   }
+
   private void updateDisplay(SleepSession session) {
 
     String display;

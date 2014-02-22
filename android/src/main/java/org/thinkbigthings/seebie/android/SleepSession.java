@@ -33,6 +33,13 @@ public class SleepSession implements Serializable {
     minutesAwakeInBed = minutesAwakeIn;
     minutesAwakeOutOfBed = minutesOut;
   }
+  public SleepSession(SleepSession toCopy) {
+    id = toCopy.id;
+    minutesAwakeInBed = toCopy.minutesAwakeInBed;
+    minutesAwakeOutOfBed = toCopy.minutesAwakeOutOfBed;
+    startTime = toCopy.startTime;
+    finishTime = toCopy.finishTime;
+  }
   public SleepSession withMinutesAwakeInBed(long minutes) {
     minutesAwakeInBed = minutes;
     return this;
