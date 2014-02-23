@@ -90,8 +90,7 @@ public class SleepSession implements Serializable {
   }
 
   public double calculateEfficiency() {
-    double efficiency = (double) calculateMinutesInBedSleeping() / (double) calculateTotalMinutesInBed();
-    return efficiency;
+    return (double) calculateMinutesInBedSleeping() / (double) calculateTotalMinutesInBed();
   }
 
   public Long getId() {
@@ -115,14 +114,13 @@ public class SleepSession implements Serializable {
 
     public String efficiency(SleepSession session) {
       DecimalFormat number = new DecimalFormat("#.#");
-      long time = session.calculateMinutesInBedSleeping();
       return number.format(session.calculateEfficiency()*100) + "%";
     }
 
     public String[] duration(SleepSession session) {
       long time = session.calculateMinutesInBedSleeping();
       long min = time % 60;
-      String minString = min < 10 ? minString = "0" + min : String.valueOf(min);
+      String minString = min < 10 ? "0" + min : String.valueOf(min);
       String hrString = String.valueOf(time / 60);
       return new String[]{hrString, minString};
     }
