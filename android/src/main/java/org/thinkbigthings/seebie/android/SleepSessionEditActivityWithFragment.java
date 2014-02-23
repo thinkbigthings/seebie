@@ -10,9 +10,6 @@ import android.view.View;
 
 public class SleepSessionEditActivityWithFragment extends FragmentActivity implements HasSleepSession {
 
-  public final static String SLEEP_SESSION = "org.thinkbigthings.seebie.android.sleepSession";
-
-
   protected SleepSession currentSession;
   protected GeneralDAO<SleepSession> dao;
 
@@ -26,9 +23,9 @@ public class SleepSessionEditActivityWithFragment extends FragmentActivity imple
     setContentView(R.layout.activity_sleep_session_edit_with_fragment);
 
     Intent intent = getIntent();
-    currentSession = (SleepSession)intent.getSerializableExtra(SleepSessionEditActivityWithFragment.SLEEP_SESSION);
+    currentSession = (SleepSession)intent.getSerializableExtra(IntentKey.SLEEP_SESSION);
 
-    dao = new GeneralDAO<SleepSession>(new DatabaseOpenHelper(this));
+    dao = new GeneralDAO<>(new DatabaseOpenHelper(this));
   }
 
   @Override
@@ -40,24 +37,24 @@ public class SleepSessionEditActivityWithFragment extends FragmentActivity imple
 
   @Override
   public void onRestoreInstanceState(Bundle savedInstance) {
-    currentSession = (SleepSession)savedInstance.getSerializable(SLEEP_SESSION);
+    currentSession = (SleepSession)savedInstance.getSerializable(IntentKey.SLEEP_SESSION);
   }
 
   @Override
   public void onSaveInstanceState(Bundle savedInstance) {
-    savedInstance.putSerializable(SLEEP_SESSION, currentSession);
+    savedInstance.putSerializable(IntentKey.SLEEP_SESSION, currentSession);
   }
 
   public void onCancel(View button) {
     Intent intent = new Intent(this, DailyDetailActivity.class);
-    intent.putExtra(SleepSessionEditActivityWithFragment.SLEEP_SESSION, currentSession);
+    intent.putExtra(IntentKey.SLEEP_SESSION, currentSession);
     startActivity(intent);
   }
 
   public void onSave(View button) {
     saveCurrentSleepSession();
     Intent intent = new Intent(this, DailyDetailActivity.class);
-    intent.putExtra(SleepSessionEditActivityWithFragment.SLEEP_SESSION, currentSession);
+    intent.putExtra(IntentKey.SLEEP_SESSION, currentSession);
 
     startActivity(intent);
   }
