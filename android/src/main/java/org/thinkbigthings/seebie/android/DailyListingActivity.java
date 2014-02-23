@@ -26,7 +26,7 @@ public class DailyListingActivity extends Activity {
 
     setContentView(R.layout.activity_daily_listing);
 
-    dao = new GeneralDAO<SleepSession>(new DatabaseOpenHelper(this));
+    dao = new GeneralDAO<>(new DatabaseOpenHelper(this));
 
     List<SleepSession> sessions = loadSessionsFromDatabase();
     LinearLayout sessionLayout = ((LinearLayout) findViewById(R.id.sessionLayout));
@@ -40,12 +40,15 @@ public class DailyListingActivity extends Activity {
     SleepSession.Format format = new SleepSession.Format();
     Button sessionButton= new Button(this);
     sessionButton.setText(format.title(session));
-    sessionButton.setGravity(Gravity.LEFT);;
+    sessionButton.setGravity(Gravity.LEFT);
+
+//    android:drawableRight="@android:drawable/ic_media_play"
+
     sessionButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
         Intent intent = new Intent(DailyListingActivity.this, DailyDetailActivity.class);
-        intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, session);
+        intent.putExtra(IntentKey.SLEEP_SESSION, session);
         startActivity(intent);
       }
     });
@@ -90,7 +93,7 @@ public class DailyListingActivity extends Activity {
 
   public void onNewSleepSessionClick() {
     Intent intent = new Intent(this, SleepSessionNewActivityWithFragment.class);
-    intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, new SleepSession());
+    intent.putExtra(IntentKey.SLEEP_SESSION, new SleepSession());
     startActivity(intent);
   }
 
