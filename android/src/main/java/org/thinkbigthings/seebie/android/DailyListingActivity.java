@@ -80,7 +80,7 @@ public class DailyListingActivity extends Activity {
     };
     // How you want the results sorted in the resulting Cursor
     String sortOrder = DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME + " DESC";
-    List<SleepSession> sessions = dao.read(reader, DatabaseContract.SleepSession.TABLE_NAME, columns, sortOrder, 7L);
+    List<SleepSession> sessions = dao.read(reader, DatabaseContract.SleepSession.TABLE_NAME, columns, sortOrder, 365L);
 
     return sessions;
   }

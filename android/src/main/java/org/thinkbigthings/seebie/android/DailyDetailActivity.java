@@ -29,7 +29,7 @@ public class DailyDetailActivity extends FragmentActivity {
     setContentView(R.layout.activity_daily_detail);
 
     Intent intent = getIntent();
-    currentSession = (SleepSession)intent.getSerializableExtra(SleepSessionEditActivity.SLEEP_SESSION);
+    currentSession = (SleepSession)intent.getSerializableExtra(IntentKey.SLEEP_SESSION);
 
     updateDisplay(currentSession);
 
@@ -75,13 +75,13 @@ public class DailyDetailActivity extends FragmentActivity {
 
   @Override
   public void onRestoreInstanceState(Bundle savedInstance) {
-    currentSession = (SleepSession)savedInstance.getSerializable(SleepSessionEditActivity.SLEEP_SESSION);
+    currentSession = (SleepSession)savedInstance.getSerializable(IntentKey.SLEEP_SESSION);
     updateDisplay(currentSession);
   }
 
   @Override
   public void onSaveInstanceState(Bundle savedInstance) {
-    savedInstance.putSerializable(SleepSessionEditActivity.SLEEP_SESSION, currentSession);
+    savedInstance.putSerializable(IntentKey.SLEEP_SESSION, currentSession);
   }
 
   @Override
@@ -111,7 +111,7 @@ public class DailyDetailActivity extends FragmentActivity {
 
   public void onEdit() {
     Intent intent = new Intent(DailyDetailActivity.this, SleepSessionEditActivityWithFragment.class);
-    intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, currentSession);
+    intent.putExtra(IntentKey.SLEEP_SESSION, currentSession);
     startActivity(intent);
   }
 
