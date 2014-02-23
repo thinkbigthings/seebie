@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SleepSessionNewActivity"
+            android:name=".SleepSessionNewActivityWithFragment"
             android:label="@string/new_session"
             android:parentActivityName=".DailyListingActivity" >
         </activity>

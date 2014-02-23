@@ -89,7 +89,7 @@ public class DailyListingActivity extends Activity {
   }
 
   public void onNewSleepSessionClick() {
-    Intent intent = new Intent(this, SleepSessionNewActivity.class);
+    Intent intent = new Intent(this, SleepSessionNewActivityWithFragment.class);
     intent.putExtra(SleepSessionEditActivity.SLEEP_SESSION, new SleepSession());
     startActivity(intent);
   }
