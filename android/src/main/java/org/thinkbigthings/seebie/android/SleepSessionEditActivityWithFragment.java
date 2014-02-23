@@ -8,18 +8,13 @@ import android.view.View;
 
 // TODO figure out how to use betterpickers without the support fragments, would like to use latest fragments
 
-public class SleepSessionEditActivityWithFragment extends FragmentActivity implements SleepSessionEditFragment.SleepSessionChangeListener {
+public class SleepSessionEditActivityWithFragment extends FragmentActivity implements HasSleepSession {
 
   public final static String SLEEP_SESSION = "org.thinkbigthings.seebie.android.sleepSession";
 
 
   protected SleepSession currentSession;
   protected GeneralDAO<SleepSession> dao;
-
-  @Override
-  public void onSessionChanged(SleepSession update) {
-    currentSession = new SleepSession(update);
-  }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -46,10 +41,6 @@ public class SleepSessionEditActivityWithFragment extends FragmentActivity imple
   @Override
   public void onRestoreInstanceState(Bundle savedInstance) {
     currentSession = (SleepSession)savedInstance.getSerializable(SLEEP_SESSION);
-  }
-
-  public SleepSession getSession() {
-    return currentSession;
   }
 
   @Override
@@ -85,4 +76,13 @@ public class SleepSessionEditActivityWithFragment extends FragmentActivity imple
     dao.update(DatabaseContract.SleepSession.TABLE_NAME, values, whereIdEquals, currentId);
   }
 
+  @Override
+  public SleepSession getSleepSession() {
+    return currentSession;
+  }
+
+  @Override
+  public void setSleepSession(SleepSession update) {
+    currentSession = new SleepSession(update);
+  }
 }

@@ -125,8 +125,7 @@ public class DailyDetailActivity extends FragmentActivity {
           @Override
           public void onClick(DialogInterface dialog, int which) {
             deleteCurrentSleepSession();
-            Intent intent = new Intent(DailyDetailActivity.this, DailyListingActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(DailyDetailActivity.this, DailyListingActivity.class));
           }
         })
         .setNegativeButton(res.getString(R.string._cancel), new DialogInterface.OnClickListener() {

@@ -23,7 +23,7 @@ import org.joda.time.format.DateTimeFormat;
 
 public class SleepSessionEditFragment extends Fragment {
 
-  private SleepSessionChangeListener mCallback;
+  private HasSleepSession mCallback;
   private SleepSession currentSession;
 
   private NumberPickerDialogFragment.NumberPickerDialogHandler awakeInBedCallback = new NumberPickerDialogFragment.NumberPickerDialogHandler() {
@@ -122,7 +122,7 @@ public class SleepSessionEditFragment extends Fragment {
     super.onAttach(activity);
 
     try {
-      mCallback = (SleepSessionChangeListener) activity;
+      mCallback = (HasSleepSession) activity;
     } catch (ClassCastException e) {
       throw new ClassCastException(activity.toString() + " must implement SleepSessionChangeListener");
     }
@@ -138,7 +138,7 @@ public class SleepSessionEditFragment extends Fragment {
     findViewById(R.id.finishTime).setOnClickListener(finishTimeClickListener);
     findViewById(R.id.finishDate).setOnClickListener(finishDateClickListener);
 
-    currentSession = new SleepSession(((SleepSessionEditActivityWithFragment)getActivity()).getSession());
+    currentSession = new SleepSession(((HasSleepSession)getActivity()).getSleepSession());
     updateDisplay(currentSession);
   }
 
@@ -152,7 +152,7 @@ public class SleepSessionEditFragment extends Fragment {
   }
 
   private void update(SleepSession session) {
-    mCallback.onSessionChanged(currentSession);
+    mCallback.setSleepSession(currentSession);
     updateDisplay(session);
   }
 
@@ -187,7 +187,4 @@ public class SleepSessionEditFragment extends Fragment {
     efficiencyDisplay.setText(display);
   }
 
-  public interface SleepSessionChangeListener {
-    void onSessionChanged(SleepSession update);
-  }
 }
