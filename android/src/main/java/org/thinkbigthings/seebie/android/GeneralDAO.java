@@ -17,7 +17,7 @@ public class GeneralDAO<T> {
     // TODO call getWritableDatabase() or getReadableDatabase() in a background thread
     // such as with AsyncTask or IntentService.
 
-    // TODO see how to handle Action with the database
+    // TODO see how to handle database stuff with an Activity
     // http://awiden.wordpress.com/2010/03/26/database-mangement-and-the-activity-lifecycle/
 
     database = helper.getWritableDatabase();
