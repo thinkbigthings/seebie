@@ -22,9 +22,9 @@ public class DailyListingAdapter extends CursorAdapter {
     }
   };
 
-  public DailyListingAdapter(Context context, Cursor c, int flags) {
-    // TODO use CursorLoader instead of deprecated flags
-    super(context, c, flags);
+  public DailyListingAdapter(Context context, Cursor c) {
+    // TODO use CursorLoader
+    super(context, c);
   }
 
   @Override

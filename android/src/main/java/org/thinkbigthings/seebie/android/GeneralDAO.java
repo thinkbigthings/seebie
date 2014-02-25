@@ -43,7 +43,7 @@ public class GeneralDAO<T> {
   }
 
   public List<T> read(CursorReader<T> reader, String tableName, String[] columns, String sortOrder, long limit) {
-    List<T> results = new ArrayList<T>();
+    List<T> results = new ArrayList<>();
     database.beginTransaction();
     try {
       Cursor cursor = database.query(tableName, columns, null, null, null, null, sortOrder, String.valueOf(limit));
