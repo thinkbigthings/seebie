@@ -10,14 +10,28 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import java.util.List;
 
 public class DailyListingActivity extends Activity {
 
   private GeneralDAO<SleepSession> dao;
+
+  private final GeneralDAO.CursorReader<SleepSession> reader = new GeneralDAO.CursorReader<SleepSession>() {
+    @Override
+    public SleepSession read(Cursor cursor) {
+      Long id = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession._ID));
+      Long ft = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME));
+      Long am = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_ALL_MINUTES));
+      Long ai = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_IN));
+      Long ao = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_OUT));
+      return new SleepSession(id, ft, am, ai, ao);
+    }
+  };
 
   @SuppressLint("NewApi")
   @Override
@@ -28,61 +42,33 @@ public class DailyListingActivity extends Activity {
 
     dao = new GeneralDAO<>(new DatabaseOpenHelper(this));
 
-    List<SleepSession> sessions = loadSessionsFromDatabase();
     LinearLayout sessionLayout = ((LinearLayout) findViewById(R.id.sessionLayout));
-    for(final SleepSession currentSession : sessions) {
-      sessionLayout.addView(createSleepSessionButton(currentSession));
-    }
-  }
 
-  private Button createSleepSessionButton(final SleepSession session) {
+    DailyListingAdapter adapter = new DailyListingAdapter(this, getListingCursor());
+    ListView list = new ListView(this);
+    list.setAdapter(adapter);
+    sessionLayout.addView(list);
 
-    SleepSession.Format format = new SleepSession.Format();
-    Button sessionButton= new Button(this);
-    sessionButton.setText(format.title(session));
-    sessionButton.setGravity(Gravity.LEFT);
-
-//    android:drawableRight="@android:drawable/ic_media_play"
-
-    sessionButton.setOnClickListener(new View.OnClickListener() {
+    list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
-      public void onClick(View v) {
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        SleepSession session = dao.findById(id, reader, DatabaseContract.SleepSession.TABLE_NAME, DatabaseContract.SleepSession.ALL_COLUMNS);
         Intent intent = new Intent(DailyListingActivity.this, DailyDetailActivity.class);
         intent.putExtra(IntentKey.SLEEP_SESSION, session);
         startActivity(intent);
       }
     });
-    return sessionButton;
+
   }
 
-  private List<SleepSession> loadSessionsFromDatabase() {
-
+  private Cursor getListingCursor() {
     // Define a projection that specifies which columns from the database
     // you will actually use after this query.
-    String[] columns = {
-        DatabaseContract.SleepSession._ID,
-        DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME,
-        DatabaseContract.SleepSession.COLUMN_NAME_ALL_MINUTES,
-        DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_IN,
-        DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_OUT
-    };
+    String[] columns = DatabaseContract.SleepSession.ALL_COLUMNS;
 
-    GeneralDAO.CursorReader<SleepSession> reader = new GeneralDAO.CursorReader() {
-      @Override
-      public SleepSession read(Cursor cursor) {
-        Long id = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession._ID));
-        Long ft = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME));
-        Long am = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_ALL_MINUTES));
-        Long ai = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_IN));
-        Long ao = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_OUT));
-        return new SleepSession(id, ft, am, ai, ao);
-      }
-    };
     // How you want the results sorted in the resulting Cursor
     String sortOrder = DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME + " DESC";
-    List<SleepSession> sessions = dao.read(reader, DatabaseContract.SleepSession.TABLE_NAME, columns, sortOrder, 365L);
-
-    return sessions;
+    return dao.createCursor(DatabaseContract.SleepSession.TABLE_NAME, columns, sortOrder, 365L);
   }
 
   @Override

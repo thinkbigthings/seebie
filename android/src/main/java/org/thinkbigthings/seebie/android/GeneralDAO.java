@@ -42,11 +42,24 @@ public class GeneralDAO<T> {
     }
   }
 
+  public Cursor createCursor(String tableName, String[] columns, String sortOrder, long limit) {
+    return database.query(tableName, columns, null, null, null, null, sortOrder, String.valueOf(limit));
+  }
+
+  public T findById(Long id, CursorReader<T> reader, String tableName, String[] columns) {
+    String whereIdEquals = "_ID = ?";
+    String[] byId = new String[]{id.toString()};
+    return read(reader, tableName, columns, whereIdEquals, byId, null, 1L).iterator().next();
+  }
+
   public List<T> read(CursorReader<T> reader, String tableName, String[] columns, String sortOrder, long limit) {
+    return read(reader, tableName, columns, null, null, sortOrder, limit);
+  }
+  public List<T> read(CursorReader<T> reader, String tableName, String[] columns, String selection, String[] selectionArgs, String sortOrder, long limit) {
     List<T> results = new ArrayList<>();
     database.beginTransaction();
     try {
-      Cursor cursor = database.query(tableName, columns, null, null, null, null, sortOrder, String.valueOf(limit));
+      Cursor cursor = database.query(tableName, columns, selection, selectionArgs, null, sortOrder, String.valueOf(limit));
       if(cursor.moveToFirst()) {
         do {
           results.add(reader.read(cursor));

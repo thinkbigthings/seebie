@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.TextView;
 
 public class DailyListingAdapter extends CursorAdapter {
 
@@ -25,21 +26,32 @@ public class DailyListingAdapter extends CursorAdapter {
   public DailyListingAdapter(Context context, Cursor c) {
     // TODO use CursorLoader
     super(context, c);
+
   }
 
   @Override
   public View newView(Context context, Cursor cursor, ViewGroup parent) {
-    Button button = new Button(context);
+    TextView button = new TextView(context);
     button.setGravity(Gravity.LEFT);
+    button.setHeight(128);
+    button.setTextSize(24);
+
+    // if it's a button, set clickable/focusable/focusableInTouchMode to false
+
 //    android:drawableRight="@android:drawable/ic_media_play"
     return button;
+  }
+  @Override
+  public boolean isEnabled(int position)
+  {
+    return true;
   }
 
   @Override
   public void bindView(View view, Context context, Cursor cursor) {
     SleepSession session = reader.read(cursor);
     SleepSession.Format format = new SleepSession.Format();
-    ((Button)view).setText(format.title(session));
+    ((TextView)view).setText(format.title(session));
   }
 
 
