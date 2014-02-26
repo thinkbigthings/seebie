@@ -42,14 +42,9 @@ public class DailyListingActivity extends Activity {
 
     dao = new GeneralDAO<>(new DatabaseOpenHelper(this));
 
-    LinearLayout sessionLayout = ((LinearLayout) findViewById(R.id.sessionLayout));
-
-    DailyListingAdapter adapter = new DailyListingAdapter(this, getListingCursor());
-    ListView list = new ListView(this);
-    list.setAdapter(adapter);
-    sessionLayout.addView(list);
-
-    list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    ListView listing = ((ListView) findViewById(R.id.listing));
+    listing.setAdapter(new DailyListingAdapter(this, getListingCursor()));
+    listing.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         SleepSession session = dao.findById(id, reader, DatabaseContract.SleepSession.TABLE_NAME, DatabaseContract.SleepSession.ALL_COLUMNS);
