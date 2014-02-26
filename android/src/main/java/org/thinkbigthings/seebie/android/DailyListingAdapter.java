@@ -3,10 +3,12 @@ package org.thinkbigthings.seebie.android;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class DailyListingAdapter extends CursorAdapter {
@@ -31,16 +33,13 @@ public class DailyListingAdapter extends CursorAdapter {
 
   @Override
   public View newView(Context context, Cursor cursor, ViewGroup parent) {
-    TextView button = new TextView(context);
-    button.setGravity(Gravity.LEFT);
-    button.setHeight(128);
-    button.setTextSize(24);
-
-    // if it's a button, set clickable/focusable/focusableInTouchMode to false
-
-//    android:drawableRight="@android:drawable/ic_media_play"
-    return button;
+    // if it's a button, set clickable/focusable/focusableInTouchMode to false (otherwise it grabs click events from listview)
+    // use LayoutInflater when inflating inside an adapter
+    LayoutInflater inflater = LayoutInflater.from(context);
+    return inflater.inflate(R.layout.activity_daily_listing_row, parent, false);
   }
+
+  // TODO do I still need this method?
   @Override
   public boolean isEnabled(int position)
   {
@@ -51,9 +50,7 @@ public class DailyListingAdapter extends CursorAdapter {
   public void bindView(View view, Context context, Cursor cursor) {
     SleepSession session = reader.read(cursor);
     SleepSession.Format format = new SleepSession.Format();
-    ((TextView)view).setText(format.title(session));
+    ((TextView)view.findViewById(R.id.dailyListingRow)).setText(format.title(session));
   }
-
-
 
 }
