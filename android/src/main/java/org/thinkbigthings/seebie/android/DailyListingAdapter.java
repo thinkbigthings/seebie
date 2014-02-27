@@ -43,8 +43,8 @@ public class DailyListingAdapter extends CursorAdapter {
   public void bindView(View view, Context context, Cursor cursor) {
     SleepSession session = reader.read(cursor);
     SleepSession.Format format = new SleepSession.Format();
-    ((TextView)view.findViewById(R.id.primaryListingRow)).setText(format.title(session));
-    ((TextView)view.findViewById(R.id.secondaryListingRow)).setText(format.summary(session));
+    ((TextView)view.findViewById(R.id.primaryListingRow)).setText(format.date(session));
+    ((TextView)view.findViewById(R.id.secondaryListingRow)).setText("Slept " + format.summary(session));
   }
 
 }
