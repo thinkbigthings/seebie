@@ -39,18 +39,12 @@ public class DailyListingAdapter extends CursorAdapter {
     return inflater.inflate(R.layout.activity_daily_listing_row, parent, false);
   }
 
-  // TODO do I still need this method?
-  @Override
-  public boolean isEnabled(int position)
-  {
-    return true;
-  }
-
   @Override
   public void bindView(View view, Context context, Cursor cursor) {
     SleepSession session = reader.read(cursor);
     SleepSession.Format format = new SleepSession.Format();
-    ((TextView)view.findViewById(R.id.dailyListingRow)).setText(format.title(session));
+    ((TextView)view.findViewById(R.id.primaryListingRow)).setText(format.title(session));
+    ((TextView)view.findViewById(R.id.secondaryListingRow)).setText(format.summary(session));
   }
 
 }

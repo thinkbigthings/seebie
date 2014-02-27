@@ -100,11 +100,15 @@ public class SleepSession implements Serializable {
   public static class Format {
 
     public String title(SleepSession session) {
-      String[] sleepTime = duration(session);
-      String display = DateTimeFormat.forPattern("EEEE").print(session.getFinishTime())  + " "
-          + DateTimeFormat.shortDate().print(session.getFinishTime()) + " "
-          + "(" + sleepTime[0] + ":" + sleepTime[1] + ")";
+      String display =  DateTimeFormat.forPattern("EEEE").print(session.getFinishTime())  + ", "
+                      + DateTimeFormat.forPattern("MMM").print(session.getFinishTime())  + " "
+                      + DateTimeFormat.forPattern("d").print(session.getFinishTime());
       return display;
+    }
+
+    public String summary(SleepSession session) {
+      String[] sleepTime = duration(session);
+      return sleepTime[0] + "hr " + sleepTime[1] + "m";
     }
 
     public String day(SleepSession session) {

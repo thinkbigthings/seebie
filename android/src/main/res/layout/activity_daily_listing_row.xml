@@ -1,23 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingLeft="10dp"
+              android:paddingRight="10dp"
+              android:orientation="horizontal"
     >
-
-    <TextView  xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="left|center_vertical"
-        android:textSize="24dp"
-        android:height="72dp"
-        android:layout_gravity="fill_horizontal"
-        android:text="Saturday, February 10th"
-        android:drawableRight="@android:drawable/ic_media_play"
-        android:id="@+id/dailyListingRow" />
+        android:layout_weight="1"
+        android:orientation="vertical"
+        >
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left|bottom"
+            android:textSize="24dp"
+            android:height="36dp"
+            android:layout_gravity="fill_horizontal"
+            android:text="Saturday, Feb 10"
+            android:textColor="@android:color/primary_text_dark"
+            android:id="@+id/primaryListingRow" />
+        <TextView
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:gravity="left|top"
+                   android:textSize="16dp"
+                   android:height="28dp"
+                   android:layout_gravity="fill_horizontal"
+                   android:text="Slept 7hr 14m"
+                   android:id="@+id/secondaryListingRow"
+                   android:textColor="@android:color/secondary_text_dark"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:gravity="center_vertical"
+        android:layout_gravity="fill_horizontal"
+        android:drawableRight="@android:drawable/ic_media_play"
+        android:textColor="@android:color/primary_text_dark"
+        android:id="@+id/primaryListingRow" />
 </LinearLayout>
