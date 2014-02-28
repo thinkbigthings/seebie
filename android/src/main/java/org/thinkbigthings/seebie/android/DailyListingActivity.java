@@ -38,6 +38,8 @@ public class DailyListingActivity extends Activity {
 
     setContentView(R.layout.activity_daily_listing);
 
+    final int navIndex = getIntent().getIntExtra(IntentKey.NAV_FILTER, 0);
+
     dao = new GeneralDAO<>(new DatabaseOpenHelper(this));
 
     SpinnerAdapter navSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array._nav_spinner, android.R.layout.simple_spinner_dropdown_item);
@@ -45,14 +47,31 @@ public class DailyListingActivity extends Activity {
     ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
       @Override
       public boolean onNavigationItemSelected(int position, long itemId) {
-
+        if(position == navIndex) {
+          return true;
+        }
+        if(position == 0) {
+          Intent intent = new Intent(DailyListingActivity.this, DailyListingActivity.class);
+          intent.putExtra(IntentKey.NAV_FILTER, position);
+          startActivity(intent);
+        }
+        if(position == 1) {
+          Intent intent = new Intent(DailyListingActivity.this, DailyListingActivity.class);
+          intent.putExtra(IntentKey.NAV_FILTER, position);
+          startActivity(intent);
+        }
+        if(position == 2) {
+          Intent intent = new Intent(DailyListingActivity.this, DailyListingActivity.class);
+          intent.putExtra(IntentKey.NAV_FILTER, position);
+          startActivity(intent);
+        }
         return true;
       }
     };
 
     getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
     getActionBar().setListNavigationCallbacks(navSpinnerAdapter, navigationListener);
-    getActionBar().setSelectedNavigationItem(0);
+    getActionBar().setSelectedNavigationItem(navIndex);
 
 
     ListView listing = ((ListView) findViewById(R.id.listing));
