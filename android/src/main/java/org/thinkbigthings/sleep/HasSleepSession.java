@@ -1,4 +1,4 @@
-package org.thinkbigthings.seebie.android;
+package org.thinkbigthings.sleep;
 
 public interface HasSleepSession {
   public SleepSession getSleepSession();

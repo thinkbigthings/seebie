@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import org.joda.time.format.DateTimeFormat;
+import org.thinkbigthings.sleep.SleepSession;
+import org.thinkbigthings.sleep.SleepSessionFormat;
 
 public class DailyDetailActivity extends FragmentActivity {
 
@@ -45,7 +47,7 @@ public class DailyDetailActivity extends FragmentActivity {
   private void updateDisplay(SleepSession session) {
 
     String display;
-    SleepSession.Format formatter = new SleepSession.Format();
+    SleepSessionFormat formatter = new SleepSessionFormat();
     Resources res = getResources();
 
     display = String.format(res.getString(R.string._edit_sleep_timeInBedAwake), session.getMinutesAwakeInBed());

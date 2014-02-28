@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
+import org.thinkbigthings.sleep.HasSleepSession;
+import org.thinkbigthings.sleep.SleepSession;
+
 // TODO figure out how to use betterpickers without the support fragments, would like to use latest fragments
 
 public class SleepSessionEditActivityWithFragment extends FragmentActivity implements HasSleepSession {

@@ -15,6 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SpinnerAdapter;
 
+import org.thinkbigthings.sleep.SleepSession;
+
 public class DailyListingActivity extends Activity {
 
   private GeneralDAO<SleepSession> dao;

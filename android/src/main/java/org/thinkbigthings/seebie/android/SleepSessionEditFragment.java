@@ -20,6 +20,9 @@ import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
+import org.thinkbigthings.sleep.HasSleepSession;
+import org.thinkbigthings.sleep.SleepSession;
+import org.thinkbigthings.sleep.SleepSessionFormat;
 
 public class SleepSessionEditFragment extends Fragment {
 
@@ -159,7 +162,7 @@ public class SleepSessionEditFragment extends Fragment {
   private void updateDisplay(SleepSession session) {
 
     String display;
-    SleepSession.Format formatter = new SleepSession.Format();
+    SleepSessionFormat formatter = new SleepSessionFormat();
     Resources res = getResources();
 
     display = String.format(res.getString(R.string._edit_sleep_timeInBedAwake), session.getMinutesAwakeInBed());

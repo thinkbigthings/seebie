@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
+import org.thinkbigthings.sleep.HasSleepSession;
+import org.thinkbigthings.sleep.SleepSession;
+
 public class SleepSessionNewActivityWithFragment extends FragmentActivity implements HasSleepSession {
 
   protected SleepSession currentSession;

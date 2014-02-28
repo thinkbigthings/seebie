@@ -2,14 +2,14 @@ package org.thinkbigthings.seebie.android;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CursorAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
+
+import org.thinkbigthings.sleep.SleepSession;
+import org.thinkbigthings.sleep.SleepSessionFormat;
 
 public class DailyListingAdapter extends CursorAdapter {
 
@@ -42,7 +42,7 @@ public class DailyListingAdapter extends CursorAdapter {
   @Override
   public void bindView(View view, Context context, Cursor cursor) {
     SleepSession session = reader.read(cursor);
-    SleepSession.Format format = new SleepSession.Format();
+    SleepSessionFormat format = new SleepSessionFormat();
     ((TextView)view.findViewById(R.id.primaryListingRow)).setText(format.date(session));
     ((TextView)view.findViewById(R.id.secondaryListingRow)).setText("Slept " + format.summary(session));
   }
