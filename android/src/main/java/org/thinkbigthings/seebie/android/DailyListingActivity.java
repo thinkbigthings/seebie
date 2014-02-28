@@ -6,19 +6,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SpinnerAdapter;
-
-import java.util.List;
 
 public class DailyListingActivity extends Activity {
 
@@ -47,22 +42,18 @@ public class DailyListingActivity extends Activity {
 
     SpinnerAdapter navSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array._nav_spinner, android.R.layout.simple_spinner_dropdown_item);
 
-//    ActionBar.OnNavigationListener mOnNavigationListener = new ActionBar.OnNavigationListener() {
-//      private String[] strings = getResources().getStringArray(R.array._nav_spinner);
-//
-//      @Override
-//      public boolean onNavigationItemSelected(int position, long itemId) {
-//        // Create new fragment from our own Fragment class
-//        ListContentFragment newFragment = new ListContentFragment();
-//        FragmentTransaction ft = openFragmentTransaction();
-//        // Replace whatever is in the fragment container with this fragment
-//        //  and give the fragment a tag name equal to the string at the position selected
-//        ft.replace(R.id.fragment_container, newFragment, strings[position]);
-//        // Apply changes
-//        ft.commit();
-//        return true;
-//      }
-//    };
+    ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
+      @Override
+      public boolean onNavigationItemSelected(int position, long itemId) {
+
+        return true;
+      }
+    };
+
+    getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+    getActionBar().setListNavigationCallbacks(navSpinnerAdapter, navigationListener);
+    getActionBar().setSelectedNavigationItem(0);
+
 
     ListView listing = ((ListView) findViewById(R.id.listing));
     listing.setAdapter(new DailyListingAdapter(this, getListingCursor()));
