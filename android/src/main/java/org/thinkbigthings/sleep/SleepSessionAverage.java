@@ -8,6 +8,7 @@ public class SleepSessionAverage {
   private int averageMinutesAwakeInBed = 0;
   private int averageMinutesAwakeOutOfBed = 0;
   private int averageMinutesSleeping = 0;
+  private int nightsOutOfBed = 0;
 
   // can use this for weeks/months/etc
   public SleepSessionAverage(Collection<SleepSession> sessions) {
@@ -16,6 +17,7 @@ public class SleepSessionAverage {
       averageMinutesAwakeInBed += session.getMinutesAwakeInBed();
       averageMinutesAwakeOutOfBed += session.getMinutesAwakeOutOfBed();
       averageMinutesSleeping += session.calculateMinutesSleeping();
+      nightsOutOfBed += (session.getMinutesAwakeOutOfBed() == 0) ? 0 : 1;
     }
 
     averageEfficiency /= sessions.size();
@@ -38,5 +40,9 @@ public class SleepSessionAverage {
 
   public int getAverageMinutesSleeping() {
     return averageMinutesSleeping;
+  }
+
+  public int getNightsOutOfBed() {
+    return nightsOutOfBed;
   }
 }

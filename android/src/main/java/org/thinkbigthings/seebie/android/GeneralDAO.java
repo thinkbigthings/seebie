@@ -52,9 +52,6 @@ public class GeneralDAO<T> {
     return read(reader, tableName, columns, whereIdEquals, byId, null, 1L).iterator().next();
   }
 
-  public List<T> read(CursorReader<T> reader, String tableName, String[] columns, String sortOrder, long limit) {
-    return read(reader, tableName, columns, null, null, sortOrder, limit);
-  }
   public List<T> read(CursorReader<T> reader, String tableName, String[] columns, String selection, String[] selectionArgs, String sortOrder, long limit) {
     List<T> results = new ArrayList<>();
     database.beginTransaction();
