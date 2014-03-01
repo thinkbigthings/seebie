@@ -77,16 +77,19 @@ public class DailyListingActivity extends Activity {
 
 
     ListView listing = ((ListView) findViewById(R.id.listing));
-    listing.setAdapter(new DailyListingAdapter(this, getListingCursor()));
-    listing.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        SleepSession session = dao.findById(id, reader, DatabaseContract.SleepSession.TABLE_NAME, DatabaseContract.SleepSession.ALL_COLUMNS);
-        Intent intent = new Intent(DailyListingActivity.this, DailyDetailActivity.class);
-        intent.putExtra(IntentKey.SLEEP_SESSION, session);
-        startActivity(intent);
-      }
-    });
+
+    listing.setAdapter(new WeeklyListingAdapter(this, getListingCursor()));
+
+//    listing.setAdapter(new DailyListingAdapter(this, getListingCursor()));
+//    listing.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//      @Override
+//      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//        SleepSession session = dao.findById(id, reader, DatabaseContract.SleepSession.TABLE_NAME, DatabaseContract.SleepSession.ALL_COLUMNS);
+//        Intent intent = new Intent(DailyListingActivity.this, DailyDetailActivity.class);
+//        intent.putExtra(IntentKey.SLEEP_SESSION, session);
+//        startActivity(intent);
+//      }
+//    });
 
   }
 
@@ -97,7 +100,8 @@ public class DailyListingActivity extends Activity {
 
     // How you want the results sorted in the resulting Cursor
     String sortOrder = DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME + " DESC";
-    return dao.createCursor(DatabaseContract.SleepSession.TABLE_NAME, columns, sortOrder, 365L);
+    Cursor cursor = dao.createCursor(DatabaseContract.SleepSession.TABLE_NAME, columns, sortOrder, 365L);
+    return cursor;
   }
 
   @Override

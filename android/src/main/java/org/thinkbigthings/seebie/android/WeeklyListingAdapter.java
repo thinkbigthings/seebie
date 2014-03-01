@@ -28,19 +28,23 @@ public class WeeklyListingAdapter extends CursorAdapter {
   };
 
   // assumes records returned by the Cursor are sorted by date
-  private GeneralDAO.CursorReader<SleepSessionAverage> reader = new GeneralDAO.CursorReader<SleepSessionAverage>() {
+  private GeneralDAO.CursorReader<SleepSessionAverage> weekReader = new GeneralDAO.CursorReader<SleepSessionAverage>() {
     @Override
     public SleepSessionAverage read(Cursor cursor) {
       SleepSessionAverage averages = new SleepSessionAverage();
       do {
-        SleepSession session = singleSessionReader.read(cursor);
-        averages.with(session);
-        if(session.getFinishTime().getDayOfWeek() == DateTimeConstants.MONDAY) {
+        if(cursor.isLast()) {
           break;
         }
-        cursor.moveToNext();
+        SleepSession session = singleSessionReader.read(cursor);
+        averages.with(session);
+        int monday = DateTimeConstants.MONDAY;
+        int currentDay = session.getFinishTime().getDayOfWeek();
+        if( currentDay == monday) {
+          break;
+        }
       }
-      while(!cursor.isLast());
+      while(cursor.moveToNext());
 
       return averages;
     }
@@ -61,9 +65,8 @@ public class WeeklyListingAdapter extends CursorAdapter {
 
   @Override
   public void bindView(View view, Context context, Cursor cursor) {
-    SleepSessionAverage averages = reader.read(cursor);
-    SleepSessionFormat format = new SleepSessionFormat();
-    ((TextView)view.findViewById(R.id.primaryListingRow)).setText("Week Ending ");
+    SleepSessionAverage averages = weekReader.read(cursor);
+    ((TextView)view.findViewById(R.id.primaryListingRow)).setText("Week Ending " + averages.getLatestDateTime());
     ((TextView)view.findViewById(R.id.secondaryListingRow)).setText("Slept " + averages.getAverageMinutesSleeping()+"m");
   }
 
