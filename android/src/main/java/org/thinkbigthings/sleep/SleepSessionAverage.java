@@ -1,7 +1,5 @@
 package org.thinkbigthings.sleep;
 
-import java.util.Collection;
-
 public class SleepSessionAverage {
 
   private double averageEfficiency = 0;
@@ -9,21 +7,20 @@ public class SleepSessionAverage {
   private int averageMinutesAwakeOutOfBed = 0;
   private int averageMinutesSleeping = 0;
   private int nightsOutOfBed = 0;
+  private int numberSleepSessions = 0;
 
-  // can use this for weeks/months/etc
-  public SleepSessionAverage(Collection<SleepSession> sessions) {
-    for(SleepSession session : sessions) {
-      averageEfficiency += session.calculateEfficiency();
-      averageMinutesAwakeInBed += session.getMinutesAwakeInBed();
-      averageMinutesAwakeOutOfBed += session.getMinutesAwakeOutOfBed();
-      averageMinutesSleeping += session.calculateMinutesSleeping();
-      nightsOutOfBed += (session.getMinutesAwakeOutOfBed() == 0) ? 0 : 1;
-    }
+  public SleepSessionAverage with(SleepSession session) {
 
-    averageEfficiency /= sessions.size();
-    averageMinutesAwakeInBed /= sessions.size();
-    averageMinutesAwakeOutOfBed/= sessions.size();
-    averageMinutesSleeping /= sessions.size();
+    numberSleepSessions++;
+
+    averageEfficiency = ((numberSleepSessions * averageEfficiency) + session.calculateEfficiency()) / numberSleepSessions;
+    averageEfficiency = ((numberSleepSessions * averageMinutesAwakeInBed) + session.getMinutesAwakeInBed()) / numberSleepSessions;
+    averageEfficiency = ((numberSleepSessions * averageMinutesAwakeOutOfBed) + session.getMinutesAwakeOutOfBed()) / numberSleepSessions;
+    averageEfficiency = ((numberSleepSessions * averageMinutesSleeping) + session.calculateMinutesSleeping()) / numberSleepSessions;
+
+    nightsOutOfBed += (session.getMinutesAwakeOutOfBed() == 0) ? 0 : 1;
+
+    return this;
   }
 
   public double getAverageEfficiency() {
