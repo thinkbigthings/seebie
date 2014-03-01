@@ -78,18 +78,18 @@ public class DailyListingActivity extends Activity {
 
     ListView listing = ((ListView) findViewById(R.id.listing));
 
-    listing.setAdapter(new WeeklyListingAdapter(this, getListingCursor()));
+//    listing.setAdapter(new WeeklyListingAdapter(this, getListingCursor()));
 
-//    listing.setAdapter(new DailyListingAdapter(this, getListingCursor()));
-//    listing.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//      @Override
-//      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        SleepSession session = dao.findById(id, reader, DatabaseContract.SleepSession.TABLE_NAME, DatabaseContract.SleepSession.ALL_COLUMNS);
-//        Intent intent = new Intent(DailyListingActivity.this, DailyDetailActivity.class);
-//        intent.putExtra(IntentKey.SLEEP_SESSION, session);
-//        startActivity(intent);
-//      }
-//    });
+    listing.setAdapter(new DailyListingAdapter(this, getListingCursor()));
+    listing.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        SleepSession session = dao.findById(id, reader, DatabaseContract.SleepSession.TABLE_NAME, DatabaseContract.SleepSession.ALL_COLUMNS);
+        Intent intent = new Intent(DailyListingActivity.this, DailyDetailActivity.class);
+        intent.putExtra(IntentKey.SLEEP_SESSION, session);
+        startActivity(intent);
+      }
+    });
 
   }
 

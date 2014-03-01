@@ -8,8 +8,8 @@ public class SleepSessionFormat {
 
   public String date(SleepSession session) {
     String display =  DateTimeFormat.forPattern("MMMM").print(session.getFinishTime()) + " "
-                    + DateTimeFormat.forPattern("d").print(session.getFinishTime()) + " "
-                    + "(" + DateTimeFormat.forPattern("EEE").print(session.getFinishTime()) + ")";
+                    + DateTimeFormat.forPattern("d").print(session.getFinishTime()) + ", "
+                    + DateTimeFormat.forPattern("EEEE").print(session.getFinishTime());
     return display;
   }
 

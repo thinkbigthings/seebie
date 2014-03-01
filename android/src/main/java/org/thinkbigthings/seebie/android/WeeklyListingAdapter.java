@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
@@ -13,7 +15,7 @@ import org.thinkbigthings.sleep.SleepSession;
 import org.thinkbigthings.sleep.SleepSessionAverage;
 import org.thinkbigthings.sleep.SleepSessionFormat;
 
-public class WeeklyListingAdapter extends CursorAdapter {
+public class WeeklyListingAdapter extends BaseAdapter {
 
   private GeneralDAO.CursorReader<SleepSession> singleSessionReader = new GeneralDAO.CursorReader<SleepSession>() {
     @Override
@@ -52,22 +54,41 @@ public class WeeklyListingAdapter extends CursorAdapter {
 
   public WeeklyListingAdapter(Context context, Cursor c) {
     // TODO use CursorLoader
-    super(context, c);
+    super();
+  }
+
+//  @Override
+//  public View newView(Context context, Cursor cursor, ViewGroup parent) {
+//    // if it's a button, set clickable/focusable/focusableInTouchMode to false (otherwise it grabs click events from listview)
+//    // use LayoutInflater when inflating inside an adapter
+//    LayoutInflater inflater = LayoutInflater.from(context);
+//    return inflater.inflate(R.layout.activity_daily_listing_row, parent, false);
+//  }
+//
+//  @Override
+//  public void bindView(View view, Context context, Cursor cursor) {
+//    SleepSessionAverage averages = weekReader.read(cursor);
+//    ((TextView)view.findViewById(R.id.primaryListingRow)).setText("Week Ending " + averages.getLatestDateTime());
+//    ((TextView)view.findViewById(R.id.secondaryListingRow)).setText("Slept " + averages.getAverageMinutesSleeping()+"m");
+//  }
+
+  @Override
+  public int getCount() {
+    return 0;
   }
 
   @Override
-  public View newView(Context context, Cursor cursor, ViewGroup parent) {
-    // if it's a button, set clickable/focusable/focusableInTouchMode to false (otherwise it grabs click events from listview)
-    // use LayoutInflater when inflating inside an adapter
-    LayoutInflater inflater = LayoutInflater.from(context);
-    return inflater.inflate(R.layout.activity_daily_listing_row, parent, false);
+  public Object getItem(int position) {
+    return null;
   }
 
   @Override
-  public void bindView(View view, Context context, Cursor cursor) {
-    SleepSessionAverage averages = weekReader.read(cursor);
-    ((TextView)view.findViewById(R.id.primaryListingRow)).setText("Week Ending " + averages.getLatestDateTime());
-    ((TextView)view.findViewById(R.id.secondaryListingRow)).setText("Slept " + averages.getAverageMinutesSleeping()+"m");
+  public long getItemId(int position) {
+    return 0;
   }
 
+  @Override
+  public View getView(int position, View convertView, ViewGroup parent) {
+    return null;
+  }
 }
