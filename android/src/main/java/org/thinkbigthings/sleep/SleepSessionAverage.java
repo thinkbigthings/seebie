@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 
 public class SleepSessionAverage {
 
+  private long id = 0;
   private double averageEfficiency = 0;
   private int averageMinutesAwakeInBed = 0;
   private int averageMinutesAwakeOutOfBed = 0;
@@ -24,9 +25,16 @@ public class SleepSessionAverage {
     averageMinutesSleeping = (int) (((oldNumber * averageMinutesSleeping) + session.calculateMinutesSleeping()) / newNumber);
     numberSleepSessions = newNumber;
     nightsOutOfBed += (session.getMinutesAwakeOutOfBed() == 0) ? 0 : 1;
-    latestDateTime = (latestDateTime == null || session.getFinishTime().isAfter(latestDateTime)) ? session.getFinishTime() : latestDateTime;
+
+    boolean isCurrentSessionLatest = latestDateTime == null || session.getFinishTime().isAfter(latestDateTime);
+    latestDateTime = isCurrentSessionLatest ? session.getFinishTime() : latestDateTime;
+    id = isCurrentSessionLatest ? session.getId() : id;
 
     return this;
+  }
+
+  public long getId() {
+    return id;
   }
 
   public double getAverageEfficiency() {

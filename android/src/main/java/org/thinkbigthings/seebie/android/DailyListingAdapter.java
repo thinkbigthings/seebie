@@ -13,22 +13,11 @@ import org.thinkbigthings.sleep.SleepSessionFormat;
 
 public class DailyListingAdapter extends CursorAdapter {
 
-  private GeneralDAO.CursorReader<SleepSession> reader = new GeneralDAO.CursorReader<SleepSession>() {
-    @Override
-    public SleepSession read(Cursor cursor) {
-      Long id = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession._ID));
-      Long ft = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME));
-      Long am = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_ALL_MINUTES));
-      Long ai = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_IN));
-      Long ao = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseContract.SleepSession.COLUMN_NAME_MINUTES_AWAKE_OUT));
-      return new SleepSession(id, ft, am, ai, ao);
-    }
-  };
+  CursorReaderSleepSession singleSessionReader = new CursorReaderSleepSession();
 
   public DailyListingAdapter(Context context, Cursor c) {
     // TODO use CursorLoader
     super(context, c);
-
   }
 
   @Override
@@ -41,7 +30,7 @@ public class DailyListingAdapter extends CursorAdapter {
 
   @Override
   public void bindView(View view, Context context, Cursor cursor) {
-    SleepSession session = reader.read(cursor);
+    SleepSession session = singleSessionReader.read(cursor);
     SleepSessionFormat format = new SleepSessionFormat();
     ((TextView)view.findViewById(R.id.primaryListingRow)).setText(format.date(session));
     ((TextView)view.findViewById(R.id.secondaryListingRow)).setText("Slept " + format.summary(session));
