@@ -56,7 +56,7 @@ public class GeneralDAO<T> {
     List<T> results = new ArrayList<>();
     database.beginTransaction();
     try {
-      Cursor cursor = database.query(tableName, columns, selection, selectionArgs, null, sortOrder, String.valueOf(limit));
+      Cursor cursor = database.query(tableName, columns, selection, selectionArgs, null, null, sortOrder, String.valueOf(limit));
       if(cursor.moveToFirst()) {
         do {
           results.add(reader.read(cursor));

@@ -13,6 +13,10 @@ public class SleepSessionAverage {
   private int numberSleepSessions = 0;
   private DateTime latestDateTime = null;
 
+  public SleepSessionAverage() {
+
+  }
+
   public SleepSessionAverage with(SleepSession session) {
 
     int oldNumber = numberSleepSessions;

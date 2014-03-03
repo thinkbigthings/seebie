@@ -16,10 +16,14 @@ import android.widget.ListView;
 import android.widget.SpinnerAdapter;
 
 import org.thinkbigthings.sleep.SleepSession;
+import org.thinkbigthings.sleep.SleepSessionAverage;
+
+import java.util.List;
 
 public class DailyListingActivity extends Activity {
 
   private GeneralDAO<SleepSession> dao;
+  private GeneralDAO<SleepSessionAverage> weeklyDao;
 
   private final GeneralDAO.CursorReader<SleepSession> reader = new GeneralDAO.CursorReader<SleepSession>() {
     @Override
@@ -43,6 +47,7 @@ public class DailyListingActivity extends Activity {
     final int navIndex = getIntent().getIntExtra(IntentKey.NAV_FILTER, 0);
 
     dao = new GeneralDAO<>(new DatabaseOpenHelper(this));
+    weeklyDao = new GeneralDAO<>(new DatabaseOpenHelper(this));
 
     SpinnerAdapter navSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array._nav_spinner, android.R.layout.simple_spinner_dropdown_item);
 
@@ -78,7 +83,8 @@ public class DailyListingActivity extends Activity {
 
     ListView listing = ((ListView) findViewById(R.id.listing));
 
-//    listing.setAdapter(new WeeklyListingAdapter(this, getListingCursor()));
+//    List<SleepSessionAverage> averages = getWeeklyAverages();
+//    listing.setAdapter(new WeeklyListingAdapter(this, R.layout.activity_daily_listing_row, R.id.primaryListingRow, averages));
 
     listing.setAdapter(new DailyListingAdapter(this, getListingCursor()));
     listing.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -91,6 +97,15 @@ public class DailyListingActivity extends Activity {
       }
     });
 
+  }
+
+  private List<SleepSessionAverage> getWeeklyAverages() {
+    String[] columns = DatabaseContract.SleepSession.ALL_COLUMNS;
+    String sortOrder = DatabaseContract.SleepSession.COLUMN_NAME_FINISH_TIME + " DESC";
+    CursorReaderAverageWeekly weeklyReader = new CursorReaderAverageWeekly();
+    //CursorReader<T> reader, String tableName, String[] columns, String selection, String[] selectionArgs, String sortOrder, long limit
+    List<SleepSessionAverage> averages = weeklyDao.read(weeklyReader, DatabaseContract.SleepSession.TABLE_NAME, columns, null, null,  sortOrder, 52L);
+    return averages;
   }
 
   private Cursor getListingCursor() {

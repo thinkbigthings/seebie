@@ -17,7 +17,7 @@ public class CursorReaderAverageWeekly implements GeneralDAO.CursorReader<SleepS
 
     SleepSessionAverage averages = new SleepSessionAverage();
     do {
-      if(cursor.isLast()) {
+      if(cursor.isAfterLast()) {
         break;
       }
       SleepSession session = singleSessionReader.read(cursor);
