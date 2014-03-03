@@ -4,7 +4,6 @@
     <string-array name="_nav_spinner">
         <item>Daily</item>
         <item>Weekly</item>
-        <item>Monthly</item>
     </string-array>
 
     <string name="app_name">Seebie</string>

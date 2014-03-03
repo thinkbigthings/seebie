@@ -6,6 +6,17 @@ import java.text.DecimalFormat;
 
 public class SleepSessionFormat {
 
+  public String date(SleepSessionAverage session) {
+    String display =  "Week Ending " + DateTimeFormat.forPattern("MMMM").print(session.getLatestDateTime()) + " "
+        + DateTimeFormat.forPattern("d").print(session.getLatestDateTime());
+    return display;
+  }
+
+  public String summary(SleepSessionAverage session) {
+    String[] sleepTime = duration(session.getAverageMinutesSleeping());
+    return sleepTime[0] + "hr " + sleepTime[1] + "m";
+  }
+
   public String date(SleepSession session) {
     String display =  DateTimeFormat.forPattern("MMMM").print(session.getFinishTime()) + " "
                     + DateTimeFormat.forPattern("d").print(session.getFinishTime()) + ", "
@@ -29,11 +40,13 @@ public class SleepSessionFormat {
   }
 
   public String[] duration(SleepSession session) {
-    long time = session.calculateMinutesSleeping();
-    long min = time % 60;
-    String minString = min < 10 ? "0" + min : String.valueOf(min);
-    String hrString = String.valueOf(time / 60);
-    return new String[]{hrString, minString};
+    return duration(session.calculateMinutesSleeping());
   }
 
+  public String[] duration(long minutes) {
+    long min = minutes % 60;
+    String minString = min < 10 ? "0" + min : String.valueOf(min);
+    String hrString = String.valueOf(minutes / 60);
+    return new String[]{hrString, minString};
+  }
 }

@@ -10,6 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import org.thinkbigthings.sleep.SleepSessionAverage;
+import org.thinkbigthings.sleep.SleepSessionFormat;
 
 import java.util.List;
 
@@ -27,8 +28,9 @@ public class WeeklyListingAdapter extends ArrayAdapter<SleepSessionAverage> {
 
     SleepSessionAverage averages = this.getItem(position);
 
-    ((TextView)rowView.findViewById(R.id.primaryListingRow)).setText(String.valueOf(averages.getLatestDateTime().getDayOfMonth()));
-    ((TextView)rowView.findViewById(R.id.secondaryListingRow)).setText("Slept " + averages.getAverageMinutesSleeping());
+    SleepSessionFormat formatter = new SleepSessionFormat();
+    ((TextView)rowView.findViewById(R.id.primaryListingRow)).setText(formatter.date(averages));
+    ((TextView)rowView.findViewById(R.id.secondaryListingRow)).setText("Average " + formatter.summary(averages));
 
     return rowView;
   }

@@ -22,9 +22,10 @@ public class CursorReaderAverageWeekly implements GeneralDAO.CursorReader<SleepS
       }
       SleepSession session = singleSessionReader.read(cursor);
       averages.with(session);
-      int monday = DateTimeConstants.MONDAY;
+      int monday = DateTimeConstants.TUESDAY;
       int currentDay = session.getFinishTime().getDayOfWeek();
       if( currentDay == monday) {
+        cursor.moveToNext();
         break;
       }
     }
