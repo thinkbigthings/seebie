@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Seebie</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+      <link href="css/bootstrap.css" type="text/css" rel="stylesheet">
+      <link href="css/bootstrap-responsive.css" type="text/css" rel="stylesheet">
+      <link href="css/seebie.css" type="text/css" rel="stylesheet">
+      <!--<link href="/css/bootstrap-responsive.min.css" type="text/css" rel="stylesheet">-->
+      
+      <!--<link href="/resources/favicon.ico" type="image/x-icon" rel="shortcut icon" />-->
+      <!--<script type="text/javascript" src="/resources/js/handlebars-1.0.rc.2.js"></script>-->
+
+      <script src="js/jquery/jquery.js" type="text/javascript" ></script>
+      <script src="js/jsgp.js" type="text/javascript" ></script>
+      <script src="js/application.js" type="text/javascript" ></script>
+      <script src="js/datajs-1.1.2.min.js" type="text/javascript" ></script>
+      <script src="js/bootstrap.js"></script>
+      <script src="js/jsgp.js"></script>
+      <script src="js/json2.js"></script>
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+
+  </head>
+   
+    <body>
+        
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <div class="nav-collapse collapse">
+              <ul class="nav">
+                <li id="homeNav"><a href="/">Home</a></li>
+                <li id="recordNav"><a href="/journal_entry.html">Record</a></li>
+                <li id="reviewNav"><a href="/summary.html">Review</a></li>
+                <li id="aboutNav"><a href="/about.html">About</a></li>
+              </ul>
+
+            </div><!--/.nav-collapse -->
+          </div>
+        </div>
+      </div>
+
+    <div class="container">
+        
+        <table class="week-summary table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Thursday</th>
+                <th>Friday</th>
+                <th>Saturday</th>
+                <th>Sunday</th>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>AVERAGES</th>
+              </tr>
+            </thead>
+        </table>
+        <table class="week-summary table subtable">
+            <thead>
+              <tr>
+                <th>Sleep Restriction</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Prescribed TTB</td>
+                    <td>9:30 PM</td>
+                    <td>9:30 PM</td>
+                    <td>9:30 PM</td>
+                    <td>9:30 PM</td>
+                    <td>9:30 PM</td>
+                    <td>9:30 PM</td>
+                    <td>9:30 PM</td>
+                    <td>9:30 PM</td>
+                </tr>
+                <tr>
+                    <td>Prescribed TOB</td>
+                    <td>4:15 AM</td>
+                    <td>4:15 AM</td>
+                    <td>4:15 AM</td>
+                    <td>4:15 AM</td>
+                    <td>4:15 AM</td>
+                    <td>4:15 AM</td>
+                    <td>4:15 AM</td>
+                    <td>4:15 AM</td>
+                </tr>
+                <tr>
+                    <td>Sleep Opp. Pres.</td>
+                    <td>405</td>
+                    <td>405</td>
+                    <td>405</td>
+                    <td>405</td>
+                    <td>405</td>
+                    <td>405</td>
+                    <td>405</td>
+                    <td>405</td>
+                </tr>
+                <tr>
+                    <td>Sleep Opp. Actual</td>
+                    <td>410</td>
+                    <td>410</td>
+                    <td>410</td>
+                    <td>420</td>
+                    <td>405</td>
+                    <td>405</td>
+                    <td>405</td>
+                    <td>409</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="week-summary table subtable">
+            <thead>
+              <tr>
+                <th>Yesterday</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Nap Durations</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Sleep Effects</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>OTC Meds</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Presc. Meds</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>Ambien 5 mg</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <table class="week-summary table subtable">
+            <thead>
+              <tr>
+                <th>Actual TTB</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Time</td>
+                    <td>9:15 PM</td>
+                    <td>9:40 PM</td>
+                    <td>9:00 PM</td>
+                    <td>8:45 PM</td>
+                    <td>9:30 PM</td>
+                    <td>9:05 PM</td>
+                    <td>9:00 PM</td>
+                    <td>9:11 PM</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <table class="week-summary table subtable">
+            <thead>
+              <tr>
+                <th>Sleep Continuity</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Sleep Latency</td>
+                    <td>2</td>
+                    <td>5</td>
+                    <td>5</td>
+                    <td>2</td>
+                    <td class="highlight">40</td>
+                    <td>2</td>
+                    <td>5</td>
+                    <td>98.71</td>
+                </tr>
+                <tr>
+                    <td># Awakenings</td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>3</td>
+                    <td>3</td>
+                    <td>3</td>
+                    <td>2</td>
+                    <td>2.57</td>
+                </tr>
+                <tr>
+                    <td>Awake TIB</td>
+                    <td>10</td>
+                    <td>15</td>
+                    <td>30</td>
+                    <td>15</td>
+                    <td>15</td>
+                    <td class="highlight">50</td>
+                    <td>10</td>
+                    <td>20.71</td>
+                </tr>
+                <tr>
+                    <td>Awake TOB</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>20</td>
+                    <td>0</td>
+                    <td>3</td>
+                </tr>
+                <tr>
+                    <td>Sleep Quality</td>
+                    <td>4</td>
+                    <td>5</td>
+                    <td>4</td>
+                    <td>4</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>4</td>
+                    <td>4</td>
+                </tr>
+                <tr>
+                    <td>Efficiency</td>
+                    <td>95.85%</td>
+                    <td>93.90%</td>
+                    <td>90.24%</td>
+                    <td>95.95%</td>
+                    <td>86.42%</td>
+                    <td>87.16%</td>
+                    <td>96.30%</td>
+                    <td>92.26%</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <table class="week-summary table subtable">
+            <thead>
+              <tr>
+                <th>Final Awakening</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Time Awake</td>
+                    <td>4:00 AM</td>
+                    <td>4:25 AM</td>
+                    <td>3:45 AM</td>
+                    <td>3:45 AM</td>
+                    <td>4:15 AM</td>
+                    <td>3:50 AM</td>
+                    <td>3:45 AM</td>
+                    <td>3:58 AM</td>
+                </tr>
+                <tr>
+                    <td>Out of Bed</td>
+                    <td>4:05 AM</td>
+                    <td>4:30 AM</td>
+                    <td>3:50 AM</td>
+                    <td>3:50 AM</td>
+                    <td>4:20 AM</td>
+                    <td>3:55 AM</td>
+                    <td>3:50 AM</td>
+                    <td>4:03 AM</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        
+        <footer>
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms & Conditions</a>
+          <p>&copy; Seebie 2014</p>
+        </footer>
+
+    </div> <!-- /container -->
+      <link href='http://fonts.googleapis.com/css?family=Raleway:300,900' rel='stylesheet' type='text/css'>
+
+</body>
+</html>
