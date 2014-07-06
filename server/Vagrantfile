@@ -1,0 +1,117 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+
+$script = <<SCRIPT
+
+# The simple and dumb way to create idempotency in your provisioner 
+# is to touch ~/.VM_PROVISIONED at the end of your provisioning 
+# (provided everything was successful)
+# and check for its existence at the beginning via [ -e ~/.VM_PROVISIONED ]
+
+if [ ! -f ~/.VM_PROVISIONED ] ; then
+
+    export DEBIAN_FRONTEND=noninteractive
+
+    apt-get -q -y update
+    apt-get -q -y install emacs
+
+    apt-get -q -y install mysql-server
+    apt-get -q -y install mysql-client
+
+    cp /vagrant/database/my.cnf /etc/mysql/my.cnf
+    service mysql restart
+    sleep 15
+
+    # port must line up with what's exposed in the Vagrantfile
+    mysqladmin -u root password root
+    mysql --user=root --password=root --host=localhost --port=13306 information_schema < /vagrant/database/empty_schema.sql
+    mysql --user=root --password=root --host=localhost --port=13306 information_schema < /vagrant/database/init.sql
+    mysql --user=root --password=root --host=localhost --port=13306 appdb < /vagrant/database/database.sql
+
+    # connect from command line outside vagrant with this
+    # mysql --user=dbuser --password=dbuserpassword --host=127.0.0.1 --protocol=TCP --port=13306
+
+    touch ~/.VM_PROVISIONED
+fi
+
+SCRIPT
+
+
+Vagrant.configure("2") do |config|
+  # All Vagrant configuration is done here. The most common configuration
+  # options are documented and commented below. For a complete reference,
+  # please see the online documentation at vagrantup.com.
+
+  config.vm.box = "dev-ubuntu-13.10"
+
+  # The url from where the 'config.vm.box' box will be fetched if it
+  # doesn't already exist on the user's system.
+  #  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+  config.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/saucy/current/saucy-server-cloudimg-i386-vagrant-disk1.box"
+
+  config.vm.provision :shell, :inline => $script
+
+  # cloned from https://github.com/opscode-cookbooks/java
+  # modified ./cookbooks/java/attributes/default.rb... set default['java']['jdk_version'] = '7'
+  # config.vm.provision :chef_solo do |chef|
+    # chef.add_recipe "java"
+    # chef.add_recipe "scripts"
+    # can add multiple recipes here
+  # end
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine
+  config.vm.network :forwarded_port, guest: 3306, host: 13306
+  config.vm.network :forwarded_port, guest: 8443, host: 8443
+
+
+  config.ssh.forward_x11 = "false"
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  config.vm.network :private_network, ip: "192.168.33.10"
+
+  # Create a public network, which is generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network :public_network
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  # config.vm.synced_folder "../data", "/vagrant_data"
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # This is for VirtualBox:
+ config.vm.provider :virtualbox do |vb|
+   # Don't boot with headless mode
+   vb.gui = false
+
+   # Use VBoxManage to customize the VM. For example to change memory:
+   vb.customize ["modifyvm", :id, "--memory", "1024"]
+ end
+
+  #
+  # View the documentation for the provider you're using for more
+  # information on available options.
+
+
+  # Enable provisioning with chef solo, specifying a cookbooks path, roles
+  # path, and data_bags path (all relative to this Vagrantfile), and adding
+  # some recipes and/or roles.
+  #
+  # config.vm.provision :chef_solo do |chef|
+  #   chef.cookbooks_path = "../my-recipes/cookbooks"
+  #   chef.roles_path = "../my-recipes/roles"
+  #   chef.data_bags_path = "../my-recipes/data_bags"
+  #   chef.add_recipe "mysql"
+  #   chef.add_role "web"
+  #
+  #   # You may also specify custom JSON attributes:
+  #   chef.json = { :mysql_password => "foo" }
+  # end
+
+end

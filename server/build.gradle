@@ -1,0 +1,120 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "http://repo.spring.io/snapshot" }
+        maven { url "http://repo.spring.io/milestone" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.2.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+
+jar {
+    baseName = 'boot'
+    version = '0.0.1-SNAPSHOT'
+}
+
+compileJava {
+    // allows java 8 reflection for method parameters, useful for spring security el
+    options.compilerArgs=['-parameters', '-Xlint:all']
+}
+
+sourceCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+    maven { url "http://repo.spring.io/snapshot" }
+    maven { url "http://repo.spring.io/milestone" }
+}
+
+dependencies {
+    compile("com.fasterxml.jackson.core:jackson-databind")
+    compile("javax.inject:javax.inject:1")
+    compile("mysql:mysql-connector-java:5.1.30")
+    compile('org.apache.httpcomponents:httpclient:4.3.2')
+    compile("org.hibernate:hibernate-validator:4.2.0.Final")    
+    compile("org.springframework.boot:spring-boot-starter-actuator:1.0.2.RELEASE")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa:1.0.2.RELEASE")
+    compile("org.springframework.boot:spring-boot-starter-security:1.0.2.RELEASE")
+    compile("org.springframework.boot:spring-boot-starter-web:1.0.2.RELEASE")
+    compile("org.springframework.hateoas:spring-hateoas:0.10.0.RELEASE")
+
+    testCompile("junit:junit:4.11")
+    testCompile('org.mockito:mockito-all:1.9.5')
+}
+
+// stuff for integration tests
+// can also try this http://selimober.com/blog/2014/01/24/separate-unit-and-integration-tests-using-gradle/
+// but I think it's the same thing
+sourceSets {
+    intTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+        }
+    }
+}
+
+configurations {
+    intTestCompile.extendsFrom testCompile
+    intTestRuntime.extendsFrom testRuntime
+}
+
+task intTest(type:Test){
+    description = "Run integration tests (located in src/intTest/...)."
+    testClassesDir = project.sourceSets.intTest.output.classesDir
+    classpath = project.sourceSets.intTest.runtimeClasspath
+}
+
+//test {
+    // you can run tests in parallel by setting this property greater than one.
+    // it will fork a new jvm to run tests in parallel so this is only advantageous if
+    // the speedup from parallel test execution is greater than the hit of starting N JVM's.
+    // maxParallelForks = 1;
+//}
+
+
+// make dependent calls in gradle: 
+// vagrant, dbload, build jar, run jar (in debug), ping server url until ready, run intTest
+// http://www.gradle.org/docs/current/dsl/org.gradle.api.tasks.Exec.html
+// http://fbflex.wordpress.com/2013/03/14/gradle-madness-execwait-a-task-that-waits-for-commandline-calls-to-be-ready
+
+// could do this as a gradle plugin
+task vagrantUp(type:Exec) {
+  workingDir '.'
+  commandLine 'vagrant', 'up'
+}
+
+// TODO call vagrant -c commands with scripts to remove host dependency on bash
+// and only reference them from Vagrantfile too so the mysql commands are in one place
+
+task resetDatabase(type:Exec) {
+  workingDir '.'
+  commandLine 'bin/load.sh'
+}
+
+// could use gradle rest plugin or regular code to remove bash dependency
+task pingServer(type:Exec) {
+  workingDir '.'
+  commandLine 'bin/ready.sh', 'https://localhost:9000/health'
+}
+
+// would like to actually deploy app to vm and run there
+// https://github.com/int128/gradle-ssh-plugin
+task runApp(type:Exec) {
+  workingDir '.'
+  commandLine 'bin/app.sh', 'restart'
+}
+
+resetDatabase.dependsOn vagrantUp
+runApp.dependsOn resetDatabase
+runApp.mustRunAfter build
+pingServer.dependsOn runApp
+intTest.dependsOn pingServer
+
+
+
