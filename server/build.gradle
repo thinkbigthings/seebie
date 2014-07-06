@@ -13,7 +13,7 @@ apply plugin: 'java'
 apply plugin: 'spring-boot'
 
 jar {
-    baseName = 'boot'
+    baseName = 'seebie-server'
     version = '0.0.1-SNAPSHOT'
 }
 
@@ -42,7 +42,8 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-security:1.0.2.RELEASE")
     compile("org.springframework.boot:spring-boot-starter-web:1.0.2.RELEASE")
     compile("org.springframework.hateoas:spring-hateoas:0.10.0.RELEASE")
-
+    compile 'joda-time:joda-time:2.3'
+    
     testCompile("junit:junit:4.11")
     testCompile('org.mockito:mockito-all:1.9.5')
 }
