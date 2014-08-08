@@ -1,14 +1,18 @@
-package org.thinkbigthings.sleep;
+package org.thinkbigthings.sleep.old;
 
-import org.joda.time.format.DateTimeFormat;
-
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import org.joda.time.format.DateTimeFormat;
 
 public class SleepSessionFormat {
 
+  public static final DateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
+  public static final DateFormat TIME_FORMAT = new SimpleDateFormat("hh:mm a");
+  
   public String date(SleepSessionAverage session) {
-    String display =  "Week Ending " + DateTimeFormat.forPattern("MMMM").print(session.getLatestDateTime()) + " "
-        + DateTimeFormat.forPattern("d").print(session.getLatestDateTime());
+    String display =  "Week Ending " + DateTimeFormat.forPattern("MMMM").print(session.getLatestDate()) + " "
+        + DateTimeFormat.forPattern("d").print(session.getLatestDate());
     return display;
   }
 

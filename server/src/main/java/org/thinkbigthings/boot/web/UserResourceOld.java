@@ -1,25 +1,6 @@
 package org.thinkbigthings.boot.web;
 
-import java.io.UnsupportedEncodingException;
-//import javax.inject.Inject;
-//import javax.validation.Valid;
-//import org.containerless.assembler.UserPageResourceAssembler;
-//import org.containerless.domain.User;
-//import org.containerless.service.UserService;
-//import org.springframework.data.domain.Page;
-//import org.springframework.data.domain.Pageable;
-//import org.springframework.hateoas.PagedResources;
-//import org.springframework.hateoas.Resource;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.validation.BindingResult;
-//import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestMethod;
-//import org.springframework.web.bind.annotation.ResponseBody;
 
-//@Controller
-//@RequestMapping(value = "/resources/user")
 public class UserResourceOld
 {
 //

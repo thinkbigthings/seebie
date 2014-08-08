@@ -1,6 +1,6 @@
-package org.thinkbigthings.sleep;
+package org.thinkbigthings.sleep.old;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 public class SleepSessionAverage {
 
@@ -11,7 +11,7 @@ public class SleepSessionAverage {
   private int averageMinutesSleeping = 0;
   private int nightsOutOfBed = 0;
   private int numberSleepSessions = 0;
-  private DateTime latestDateTime = null;
+  private LocalDate latestDate = null;
 
   public SleepSessionAverage() {
 
@@ -30,8 +30,8 @@ public class SleepSessionAverage {
     numberSleepSessions = newNumber;
     nightsOutOfBed += (session.getMinutesAwakeOutOfBed() == 0) ? 0 : 1;
 
-    boolean isCurrentSessionLatest = latestDateTime == null || session.getFinishTime().isAfter(latestDateTime);
-    latestDateTime = isCurrentSessionLatest ? session.getFinishTime() : latestDateTime;
+    boolean isCurrentSessionLatest = latestDate == null || session.getFinishDate().isAfter(latestDate);
+    latestDate = isCurrentSessionLatest ? session.getFinishDate() : latestDate;
     id = isCurrentSessionLatest ? session.getId() : id;
 
     return this;
@@ -61,7 +61,7 @@ public class SleepSessionAverage {
     return nightsOutOfBed;
   }
 
-  public DateTime getLatestDateTime() {
-    return latestDateTime;
+  public LocalDate getLatestDate() {
+    return latestDate;
   }
 }

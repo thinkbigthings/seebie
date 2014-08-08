@@ -40,7 +40,6 @@ or java -jar build/libs/seebie-server-[version].jar
 unit tests run with "gradle test".
 
 generate coverage report with "gradle test jacocoTestReport"
-(tests need to have been run before jacocoTestReport can run)
 
 integration tests run with "gradle intTest"
 The task automatically launches the database and web servers

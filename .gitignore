@@ -22,3 +22,4 @@ gen/
 .idea/workspace.xml
 
 
+/android-project/.nb-gradle/profiles/private/

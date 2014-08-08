@@ -1,4 +1,4 @@
-package org.thinkbigthings.sleep;
+package org.thinkbigthings.sleep.old;
 
 public interface HasSleepSession {
   public SleepSession getSleepSession();

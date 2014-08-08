@@ -1,32 +1,52 @@
-package org.thinkbigthings.sleep;
+package org.thinkbigthings.sleep.old;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.joda.time.Minutes;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import org.joda.time.LocalDate;
 
-// TODO does this handle daylight savings time? Should I be storing the startTime as a DateTime?
+// TODO does this handle daylight savings time? Leap minutes?
+// if need timezone can use Joda's DateMidnight
 
 public class SleepSession implements Serializable {
 
+  public static final long serialVersionUID = 1L;
+  
   private long id = 0L;
   private long minutesAwakeInBed = 0L;
   private long minutesAwakeOutOfBed = 0L;
   private LocalTime startTime;
-  private DateTime finishTime;
+  private LocalTime finishTime;
+  private LocalDate finishDate = new LocalDate();
 
   public SleepSession() {
-    finishTime = new DateTime().withHourOfDay(4).withMinuteOfHour(30);
-    startTime = finishTime.minusMinutes(420).toLocalTime();
+    finishTime = new LocalTime().withHourOfDay(4).withMinuteOfHour(30);
+    startTime = finishTime.minusMinutes(420);
   }
-  public SleepSession(Long inId, Long finish, Long durationMinutes, Long minutesAwakeIn, Long minutesOut) {
-    id = inId;
-    finishTime = new DateTime(finish);
-    startTime = finishTime.minusMinutes(durationMinutes.intValue()).toLocalTime();
-    minutesAwakeInBed = minutesAwakeIn;
-    minutesAwakeOutOfBed = minutesOut;
+
+  public static SleepSession fromIntData(int startHr, int startMin, int endHr, int endMin, int awakeIn, int awakeOut) throws ParseException {
+      SleepSession session = new SleepSession();
+      session.withStartTime(startHr, startMin);
+      session.withFinishTime(endHr,   endMin);
+      session.withMinutesAwakeInBed(awakeIn);
+      session.withMinutesAwakeOutOfBed(awakeOut);
+      return session;
   }
+  
+  public static SleepSession fromLongData(Long inId, Long finish, Long durationMinutes, Long minutesAwakeIn, Long minutesOut) {
+      SleepSession session = new SleepSession();
+      session.id = inId;
+      session.finishTime = new DateTime(finish).toLocalTime();
+      session.finishDate = new DateTime(finish).toLocalDate();
+      session.startTime = session.finishTime.minusMinutes(durationMinutes.intValue());
+      session.minutesAwakeInBed = minutesAwakeIn;
+      session.minutesAwakeOutOfBed = minutesOut;
+      return session;
+  }
+  
   public SleepSession(SleepSession toCopy) {
     id = toCopy.id;
     minutesAwakeInBed = toCopy.minutesAwakeInBed;
@@ -53,14 +73,17 @@ public class SleepSession implements Serializable {
   }
 
   public SleepSession withFinishDate(int year, int month, int day) {
-    finishTime = finishTime.withYear(year).withMonthOfYear(month).withDayOfMonth(day);
+    finishDate = finishDate.withYear(year).withMonthOfYear(month).withDayOfMonth(day);
     return this;
   }
   public LocalTime getStartTime() {
     return startTime;
   }
-  public DateTime getFinishTime() {
+  public LocalTime getFinishTime() {
     return finishTime;
+  }
+  public LocalDate getFinishDate() {
+    return finishDate;
   }
   public long getMinutesAwakeInBed() {
     return minutesAwakeInBed;
@@ -69,19 +92,27 @@ public class SleepSession implements Serializable {
   public long getMinutesAwakeOutOfBed() {
     return minutesAwakeOutOfBed;
   }
+  
+  /**
+   * 
+   * @return number of minutes from start time to finish time 
+   */
 
   public long calculateAllMinutes() {
-    long totalMinutes = Minutes.minutesBetween(startTime, finishTime.toLocalTime()).getMinutes();
-    totalMinutes += (60*24);
+    long totalMinutes = Minutes.minutesBetween(startTime, finishTime).getMinutes();
+    totalMinutes = totalMinutes < 0 ? totalMinutes + 1440 : totalMinutes;
     return totalMinutes;
   }
+
   public long calculateTotalMinutesInBed() {
     return calculateAllMinutes() - minutesAwakeOutOfBed;
   }
 
+
   public long calculateMinutesSleeping() {
     return calculateTotalMinutesInBed() - minutesAwakeInBed;
   }
+
 
   public double calculateEfficiency() {
     return (double) calculateMinutesSleeping() / (double) calculateTotalMinutesInBed();
