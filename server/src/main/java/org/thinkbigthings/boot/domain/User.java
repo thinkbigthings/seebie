@@ -70,6 +70,10 @@ public class User implements UserDetails, Identifiable<Long> {
    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
    private Set<Role> roles = new HashSet<>();
 
+   @ManyToMany(fetch = FetchType.LAZY)
+   @JoinTable(name = "user_sleep", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "sleep_id"))
+   private Set<SleepSession> sleepSessions = new HashSet<>();
+   
    @Temporal(value = TemporalType.TIMESTAMP)
    private Date registration = new Date();
 
@@ -150,6 +154,16 @@ public class User implements UserDetails, Identifiable<Long> {
       this.roles = roles;
    }
 
+   public Set<SleepSession> getSleepSessions()
+   {
+      return sleepSessions;
+   }
+
+   public void setSleepSessions(Set<SleepSession> sessions)
+   {
+      this.sleepSessions = sessions;
+   }
+   
    public String getDisplayName()
    {
       return displayName;

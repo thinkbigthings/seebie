@@ -23,10 +23,6 @@ public class SleepSessionDaily implements SleepStatistics, Serializable {
       this( DATE_TIME_FORMAT.parseDateTime(endStr).toDate(), mt, mib, mob, 0);
    }
 
-   public SleepSessionDaily(DateTime f, int t, int ib, int ob, int naps) {
-      this(f.toDate(), t, ib, ob, naps);
-   }
-   
    public SleepSessionDaily(Date f, int t, int ib, int ob, int naps) {
       totalMinutes = t;
       finish = f;

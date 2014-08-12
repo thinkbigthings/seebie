@@ -30,7 +30,7 @@ public class SleepSessionGroupingsTest {
       for (int i = 0; i < 10; i++) {
          DateTime date = first.plusDays(i);
          lastRecordedDay = date.toDate();
-         allData.add(new SleepSessionDaily(date, 480, 0, 0, 0));
+         allData.add(new SleepSessionDaily(lastRecordedDay, 480, 0, 0, 0));
       }
       
       groups = new SleepSessionGroupings(allData);
@@ -38,8 +38,7 @@ public class SleepSessionGroupingsTest {
    
    @Test
    public void testRanges() throws Exception {
-      DateTime sessionDate = format.parseDateTime("2014-12-23 05:30 AM EST");
-      SleepStatistics daily = new SleepSessionDaily(sessionDate, 480, 0, 0, 0);
+      SleepStatistics daily = new SleepSessionDaily("2014-12-23 05:30 AM EST", 480, 0, 0);
       
       // outside lower
       assertFalse(groups.isInRange(daily, format.parseDateTime("2014-12-20 05:30 AM EST").toDate(), format.parseDateTime("2014-12-21 05:30 AM EST").toDate()));
