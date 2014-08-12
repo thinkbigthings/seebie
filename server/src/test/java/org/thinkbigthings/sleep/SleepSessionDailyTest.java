@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -35,10 +36,19 @@ public class SleepSessionDailyTest {
     }
     
     @Test
-    public void testCalculateChangeStart() throws Exception {
+    public void testChangeStart() throws Exception {
       // what if finish time is 1PM and they want to switch the start from 11AM that morning to 11PM the night before...
       assertEquals(2*60,  session.withFinishTime(13, 5).withStartTime(11, 5).getAllMinutes());
       assertEquals(14*60, session.withFinishTime(13, 5).withStartTime(23, 5).getAllMinutes());
+    }
+    
+    @Test
+    public void testTimeZones() throws Exception {
+       
+      SleepSessionDaily s1 = new SleepSessionDaily("2014-09-02 07:00 AM EST", 420,  0,  0);
+      SleepSessionDaily s2 = new SleepSessionDaily("2014-09-02 07:00 AM PST", 420,  0,  0);
+      
+       Assert.assertNotEquals(s1.getEnd(), s2.getEnd());
     }
     
     @Test

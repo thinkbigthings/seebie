@@ -49,7 +49,7 @@ public class SleepAverages implements SleepStatistics {
    }
 
    @Override
-   public long getAllMinutes() {
+   public int getAllMinutes() {
       return allMinutes;
    }
 
@@ -59,12 +59,12 @@ public class SleepAverages implements SleepStatistics {
    }
 
    @Override
-   public long getMinutesSleeping() {
+   public int getMinutesSleeping() {
       return minutesSleeping;
    }
 
    @Override
-   public long getMinutesInBed() {
+   public int getMinutesInBed() {
       return minutesInBed;
    }
 

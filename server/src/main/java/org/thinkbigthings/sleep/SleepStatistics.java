@@ -14,12 +14,12 @@ public interface SleepStatistics extends Comparable<SleepStatistics> {
    
    Date getEnd();
 
-   long getAllMinutes();
+   int getAllMinutes();
 
    double getEfficiency();
 
-   long getMinutesSleeping();
+   int getMinutesSleeping();
 
-   long getMinutesInBed();
+   int getMinutesInBed();
 
 }

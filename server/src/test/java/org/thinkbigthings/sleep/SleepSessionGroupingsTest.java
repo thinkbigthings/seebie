@@ -3,7 +3,6 @@ package org.thinkbigthings.sleep;
 import java.util.ArrayList;
 import java.util.List;
 import org.joda.time.DateTime;
-import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -31,10 +30,27 @@ public class SleepSessionGroupingsTest {
       for (int i = 0; i < 10; i++) {
          DateTime date = first.plusDays(i);
          lastRecordedDay = date.toDate();
-         allData.add(new SleepSessionDaily(date, Minutes.minutes(480), Minutes.ZERO, Minutes.ZERO, Minutes.ZERO));
+         allData.add(new SleepSessionDaily(date, 480, 0, 0, 0));
       }
       
       groups = new SleepSessionGroupings(allData);
+   }
+   
+   @Test
+   public void testRanges() throws Exception {
+      DateTime sessionDate = format.parseDateTime("2014-12-23 05:30 AM EST");
+      SleepStatistics daily = new SleepSessionDaily(sessionDate, 480, 0, 0, 0);
+      
+      // outside lower
+      assertFalse(groups.isInRange(daily, format.parseDateTime("2014-12-20 05:30 AM EST").toDate(), format.parseDateTime("2014-12-21 05:30 AM EST").toDate()));
+      
+      // on lower edge, middle, upper edge
+      assertTrue(groups.isInRange(daily, format.parseDateTime("2014-12-23 05:30 AM EST").toDate(), format.parseDateTime("2014-12-25 05:30 AM EST").toDate()));
+      assertTrue(groups.isInRange(daily, format.parseDateTime("2014-12-22 05:30 AM EST").toDate(), format.parseDateTime("2014-12-25 05:30 AM EST").toDate()));
+      assertTrue(groups.isInRange(daily, format.parseDateTime("2014-12-20 05:30 AM EST").toDate(), format.parseDateTime("2014-12-23 05:30 AM EST").toDate()));
+      
+      // outside upper
+      assertFalse(groups.isInRange(daily, format.parseDateTime("2014-12-24 05:30 AM EST").toDate(), format.parseDateTime("2014-12-25 05:30 AM EST").toDate()));
    }
 
    @Test

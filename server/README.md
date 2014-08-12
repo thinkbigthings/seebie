@@ -44,6 +44,7 @@ generate coverage report with "gradle test jacocoTestReport"
 
 integration tests run with "gradle intTest"
 The task automatically launches the database and web servers
+The jar has to have already been built for the test to work.
 
 ## Database
 

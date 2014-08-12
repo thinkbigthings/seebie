@@ -3,9 +3,7 @@ package org.thinkbigthings.sleep;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
-import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
 public class SleepSessionGroupings {
@@ -34,8 +32,8 @@ public class SleepSessionGroupings {
 
    private List<SleepStatistics> sessions;
    
-   public SleepSessionGroupings(List<SleepStatistics> inSessions) {
-      sessions = new ArrayList<>(inSessions);
+   public SleepSessionGroupings(List<SleepStatistics> allSessions) {
+      sessions = new ArrayList<>(allSessions);
    }
 
    /**
@@ -46,7 +44,6 @@ public class SleepSessionGroupings {
     * @return true if the session's date component (i.e. ignoring time) is in the interval specified by the date components of the parameters (endpoints inclusive).
     */
    public boolean isInRange(SleepStatistics session, Date from, Date until) {
-      // Interval v = new Interval(new DateTime(from), new DateTime(until));
       boolean afterOrAtBeginning = DAY_COMPARATOR.compare(from, session.getEnd())  <= 0;
       boolean beforeOrAtEnd      = DAY_COMPARATOR.compare(session.getEnd(), until) <= 0;
       return afterOrAtBeginning && beforeOrAtEnd;
