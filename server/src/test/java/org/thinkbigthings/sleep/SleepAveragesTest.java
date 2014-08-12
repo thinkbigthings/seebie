@@ -49,7 +49,7 @@ public class SleepAveragesTest {
 
     @Test
     public void testCalculateLatest() throws Exception {
-        assertEquals(expectedLatest, averages.getEnd());
+        assertEquals(expectedLatest, averages.getTimeOutOfBed());
     }
 
     @Test

@@ -34,8 +34,8 @@ public class SleepAverages implements SleepStatistics {
          sumAllMinutes += stats.getAllMinutes();
          sumMinutesSleeping += stats.getMinutesSleeping();
          sumMinutesInBed += stats.getMinutesInBed();
-         latestEnding = (latestEnding == null) ? stats.getEnd() : latestEnding;
-         latestEnding = latestEnding.after(stats.getEnd()) ? latestEnding : stats.getEnd();
+         latestEnding = (latestEnding == null) ? stats.getTimeOutOfBed() : latestEnding;
+         latestEnding = latestEnding.after(stats.getTimeOutOfBed()) ? latestEnding : stats.getTimeOutOfBed();
       }
 
       efficiency = sumEfficiency / (double) numberSleepSessions;
@@ -69,7 +69,7 @@ public class SleepAverages implements SleepStatistics {
    }
 
    @Override
-   public Date getEnd() {
+   public Date getTimeOutOfBed() {
       return latestEnding;
    }
 

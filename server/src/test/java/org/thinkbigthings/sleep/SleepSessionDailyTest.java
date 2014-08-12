@@ -48,7 +48,7 @@ public class SleepSessionDailyTest {
       SleepSessionDaily s1 = new SleepSessionDaily("2014-09-02 07:00 AM EST", 420,  0,  0);
       SleepSessionDaily s2 = new SleepSessionDaily("2014-09-02 07:00 AM PST", 420,  0,  0);
       
-       Assert.assertNotEquals(s1.getEnd(), s2.getEnd());
+       Assert.assertNotEquals(s1.getTimeOutOfBed(), s2.getTimeOutOfBed());
     }
     
     @Test

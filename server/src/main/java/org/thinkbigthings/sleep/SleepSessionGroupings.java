@@ -44,8 +44,8 @@ public class SleepSessionGroupings {
     * @return true if the session's date component (i.e. ignoring time) is in the interval specified by the date components of the parameters (endpoints inclusive).
     */
    public boolean isInRange(SleepStatistics session, Date from, Date until) {
-      boolean afterOrAtBeginning = DAY_COMPARATOR.compare(from, session.getEnd())  <= 0;
-      boolean beforeOrAtEnd      = DAY_COMPARATOR.compare(session.getEnd(), until) <= 0;
+      boolean afterOrAtBeginning = DAY_COMPARATOR.compare(from, session.getTimeOutOfBed())  <= 0;
+      boolean beforeOrAtEnd      = DAY_COMPARATOR.compare(session.getTimeOutOfBed(), until) <= 0;
       return afterOrAtBeginning && beforeOrAtEnd;
    }
    
@@ -60,7 +60,7 @@ public class SleepSessionGroupings {
       
       return sessions.stream()
                      .filter((s)-> isInRange(s, from, until))
-                     .collect(Collectors.groupingBy(s -> groupSize.getEndOfGroup(s.getEnd())))
+                     .collect(Collectors.groupingBy(s -> groupSize.getEndOfGroup(s.getTimeOutOfBed())))
                      .values()
                      .stream()
                      .map(list -> new SleepAverages(list))

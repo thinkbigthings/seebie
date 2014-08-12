@@ -82,7 +82,7 @@ public class SleepSessionDaily implements SleepStatistics, Serializable {
    }
 
    @Override
-   public Date getEnd() {
+   public Date getTimeOutOfBed() {
       return finish;
    }
    

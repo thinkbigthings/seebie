@@ -5,14 +5,14 @@ import java.util.Date;
 
 public interface SleepStatistics extends Comparable<SleepStatistics> {
 
-   public static final Comparator<SleepStatistics> COMPARATOR = (s1, s2)-> s1.getEnd().compareTo(s2.getEnd());
+   public static final Comparator<SleepStatistics> COMPARATOR = (s1, s2)-> s1.getTimeOutOfBed().compareTo(s2.getTimeOutOfBed());
    
    @Override
    default int compareTo(SleepStatistics other) {
       return COMPARATOR.compare(this, other);
    }
    
-   Date getEnd();
+   Date getTimeOutOfBed();
 
    int getAllMinutes();
 
