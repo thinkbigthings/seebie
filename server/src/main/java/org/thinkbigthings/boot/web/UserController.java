@@ -17,6 +17,9 @@ import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
+import java.util.Set;
+import org.thinkbigthings.boot.domain.SleepSession;
+
 @Controller
 public class UserController {
 
@@ -41,7 +44,7 @@ public class UserController {
     @RequestMapping(value = "/user/current", method = GET, produces = {"application/json"})
     @PreAuthorize("isAuthenticated()")
     public @ResponseBody User getCurrentUser(@AuthenticationPrincipal User currentUser) {
-      return currentUser;
+      return service.getUserById(currentUser.getId());
     }
     
     // can also pass as a parameter @AuthenticationPrincipal User currentUser
@@ -72,4 +75,19 @@ public class UserController {
       return service.registerNewUser(newUser);
     }
     
+    @RequestMapping(value = "/user/{id}/sleep", method = GET, produces = {"application/json"})
+    @PreAuthorize("isAuthenticated() and (principal.id == #id or hasRole('ADMIN'))")
+    public @ResponseBody Set<SleepSession> getSleepSessions(@PathVariable Long id) {
+      return service.getUserById(id).getSleepSessions();
+    }
+    
+    @RequestMapping(value = "/user/{id}/sleep", method = POST, produces = {"application/json"})
+    @PreAuthorize("isAuthenticated() and (principal.id == #id or hasRole('ADMIN'))")
+    public @ResponseBody boolean createSleepSession(@PathVariable Long id, @RequestBody @Valid SleepSession session, BindingResult binding) {
+      if (binding.hasErrors()) {
+         throw new InvalidRequestBodyException("Validation of incoming object failed at " + binding.getNestedPath());
+      }
+      service.createSleepSession(id, session);
+      return true;
+    }
 }

@@ -1,6 +1,7 @@
 package org.thinkbigthings.boot.service;
 
 import java.util.List;
+import org.thinkbigthings.boot.domain.SleepSession;
 import org.thinkbigthings.boot.domain.User;
 
 public interface UserServiceInterface {
@@ -9,5 +10,6 @@ public interface UserServiceInterface {
     User registerNewUser(User newUser);
     User updateUser(User userData);
     List<User> getUsers();
+    boolean createSleepSession(Long userId, SleepSession sleep);
     
 }
