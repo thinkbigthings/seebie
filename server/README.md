@@ -18,12 +18,12 @@ Running the application requires a running database.
 You can run the database distributed with this project with "vagrant up"
 See the database section for more details.
 
+Recommended way of running this application during development is with "gradle bootRun" after running "vagrant up"
+
 Recommended way of running this application in production and live testing is with the scripts provided in the bin folder.
 Run bin/app.sh to see all the options.
 You can start with: bin/app.sh start
 You can stop with:  bin/app.sh stop
-
-Recommended way of running this application during developemnt is with "gradle bootRun"
 
 
 manually test with curl
