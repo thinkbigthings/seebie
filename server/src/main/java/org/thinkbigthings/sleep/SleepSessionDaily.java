@@ -37,7 +37,6 @@ public class SleepSessionDaily implements SleepStatistics, Serializable {
     * @return a new copy
     */
    public SleepSessionDaily withStartTime(int hour, int minute) {
-      validateHourAndMinute(hour, minute);
       int newTotal = Minutes.minutesBetween(new LocalTime(hour, minute), getEndAsDateTime().toLocalTime()).getMinutes();
       newTotal = newTotal < 0 ? newTotal + 1440 : newTotal;
       SleepSessionDaily session = new SleepSessionDaily(finish, newTotal, awakeInBed, awakeOutOfBed, napMinutes);
@@ -56,7 +55,6 @@ public class SleepSessionDaily implements SleepStatistics, Serializable {
     * @return a new copy
     */
    public SleepSessionDaily withFinishTime(int hour, int minute) {
-      validateHourAndMinute(hour, minute);
       DateTime newFinish = getEndAsDateTime().withHourOfDay(hour).withMinuteOfHour(minute);
       SleepSessionDaily session = new SleepSessionDaily(newFinish.toDate(), totalMinutes, awakeInBed, awakeOutOfBed, napMinutes);
       return session;
@@ -137,13 +135,5 @@ public class SleepSessionDaily implements SleepStatistics, Serializable {
 
       return this.finish.equals(other.finish);
    }
-
-   private void validateHourAndMinute(int hour, int minute) {
-      if(hour < 0 || 23 < hour) {
-         throw new IllegalArgumentException(Integer.toString(hour));
-      }
-      if(minute < 0 || 59 < minute) {
-         throw new IllegalArgumentException(Integer.toString(hour));
-      }   }
 
 }
