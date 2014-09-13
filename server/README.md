@@ -23,7 +23,7 @@ See the database section for more details.
 Recommended way of running this application during development is with "gradle bootRun" after running "vagrant up"
 
 Recommended way of running this application in production and live testing is with the scripts provided in the scripts folder.
-Run bin/app.sh to see all the options.
+Run scripts/app.sh to see all the options.
 You can start with: scripts/app.sh start
 You can stop with:  scripts/app.sh stop
 
@@ -54,6 +54,9 @@ so running with "gradle clean build intTest" should work well.
 integration tests require a running database. the database server is a vagrant vm
 (for more information visit http://vagrantup.com)
 
+Can save the current state of the database with scripts/save.sh
+Conversely, you can load the database.sql file into the database with scripts/load.sh
+
 launch vagrant with "vagrant up" from the vagrant folder
 stop it with "vagrant halt" from the vagrant folder
 
@@ -64,8 +67,7 @@ and the task returns when it's ready.
 Can connect from command line outside vagrant with this
 mysql --user=dbuser --password=dbuserpassword --host=127.0.0.1 --protocol=TCP --port=13306
 
-Can save the current state of the database if you're in the vagrantdb folder with ./save.sh
-Conversely, you can load the database.sql file into the database with ./load.sh
+
 
 ## Debugging
 

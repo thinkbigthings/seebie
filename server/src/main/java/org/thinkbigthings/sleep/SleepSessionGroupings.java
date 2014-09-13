@@ -19,7 +19,7 @@ public class SleepSessionGroupings {
       YEAR( (date)-> new LocalDate(date).dayOfYear().withMaximumValue()),
       ALL( (date) -> new LocalDate(Long.MAX_VALUE));
 
-      private Function<Date,LocalDate> keyFinder;
+      private final Function<Date,LocalDate> keyFinder;
       
       GroupSize(Function<Date,LocalDate> lambda) {
          keyFinder = lambda;
@@ -30,7 +30,7 @@ public class SleepSessionGroupings {
       }
    }
 
-   private List<SleepStatistics> sessions;
+   private final List<SleepStatistics> sessions;
    
    public SleepSessionGroupings(List<SleepStatistics> allSessions) {
       sessions = new ArrayList<>(allSessions);

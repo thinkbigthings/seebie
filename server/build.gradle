@@ -112,13 +112,13 @@ task resetDatabase(type:Exec) {
   commandLine 'scripts/load.sh'
 }
 
-// could use gradle rest plugin or regular code to remove bash dependency
+// TODO could use gradle rest plugin or regular code to remove bash dependency
 task pingServer(type:Exec) {
   workingDir '.'
   commandLine 'scripts/ready.sh', 'https://localhost:9000/health'
 }
 
-// would like to actually deploy app to vm and run there
+// TODO would like to actually deploy app to vm and run there
 // https://github.com/int128/gradle-ssh-plugin
 task runApp(type:Exec) {
   workingDir '.'
