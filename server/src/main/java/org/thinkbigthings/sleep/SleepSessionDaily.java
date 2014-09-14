@@ -116,24 +116,4 @@ public class SleepSessionDaily implements SleepStatistics, Serializable {
       return 100 * (double) getMinutesSleeping() / (double) getMinutesInBed();
    }
 
-   @Override
-   public int hashCode() {
-      int hash = 5;
-      hash = 59 * hash + Objects.hashCode(this.finish);
-      return hash;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (obj == null) {
-         return false;
-      }
-      if (getClass() != obj.getClass()) {
-         return false;
-      }
-      final SleepSessionDaily other = (SleepSessionDaily) obj;
-
-      return this.finish.equals(other.finish);
-   }
-
 }
