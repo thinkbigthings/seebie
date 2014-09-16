@@ -37,6 +37,12 @@ curl -X POST -H "Content-Type: application/json" -k -d '{"username": "j@y.com", 
 Alternatively: To run the webapp on the command line, execute "gradle bootRun"
 or java -jar build/libs/seebie-server-[version].jar
 
+After running the application as described above, you should be able to hit the url at
+https://localhost:9000/
+
+the sample database lets you log in with username "user@app.com" and password of "password"
+or admin@app.com and password of "password"
+
 ## Testing
 
 unit tests run with "gradle test".
@@ -119,9 +125,6 @@ curl -u user:password -k https://127.0.0.1:9000/user/4
 
 
 ## Web Development
-
-After running the application as described above, you should be able to hit the url at
-https://localhost:9000/
 
 We put static resources (html/css/js) in src/main/resources/static.
 There are a few standard places you can put it (static, public, resources)
