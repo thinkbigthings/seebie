@@ -102,7 +102,7 @@ var APP = (function() {
     };
   
    // validates credentials, and gives the current user object to the specified function, lazily loading if necessary
-   function login(username, password, loginSuccess)
+   function login(username, password, loginSuccess, loginFailure)
    {
       credentials.username = username;
       credentials.password = password;
@@ -111,7 +111,7 @@ var APP = (function() {
       var onGetUserSuccess = function (data, textStatus, jqXHR) {
           user = data;
           setLoggedIn(true);
-          sessionStorage[key.currentUserUrl] = JSON.stringify(data);
+          sessionStorage[key.currentUserUrl] = JSON.stringify(user);
           loginSuccess(user);
       };
 

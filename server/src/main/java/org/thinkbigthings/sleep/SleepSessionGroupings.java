@@ -17,7 +17,7 @@ public class SleepSessionGroupings {
       WEEK( (date)-> new LocalDate(date).dayOfWeek().withMaximumValue()),
       MONTH((date)-> new LocalDate(date).dayOfMonth().withMaximumValue()),
       YEAR( (date)-> new LocalDate(date).dayOfYear().withMaximumValue()),
-      ALL( (date) -> new LocalDate(Long.MAX_VALUE));
+      ALL(  (date)-> new LocalDate(Long.MAX_VALUE));
 
       private final Function<Date,LocalDate> keyFinder;
       
@@ -41,7 +41,9 @@ public class SleepSessionGroupings {
     * @param session
     * @param from
     * @param until
-    * @return true if the session's date component (i.e. ignoring time) is in the interval specified by the date components of the parameters (endpoints inclusive).
+    * @return true if the session's date component (i.e. ignoring time) is in 
+    * the interval specified by the date components of the parameters 
+    * (endpoints inclusive).
     */
    public boolean isInRange(SleepStatistics session, Date from, Date until) {
       boolean afterOrAtBeginning = DAY_COMPARATOR.compare(from, session.getTimeOutOfBed())  <= 0;

@@ -2,7 +2,6 @@ package org.thinkbigthings.sleep;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
 import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -50,7 +49,7 @@ public class SleepSessionDaily implements SleepStatistics, Serializable {
    }
    
    /**
-    * @param hour hour of day from 0-23napMinutes
+    * @param hour hour of day from 0-23
     * @param minute minute of hour from 0-59
     * @return a new copy
     */
