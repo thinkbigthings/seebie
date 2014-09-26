@@ -8,7 +8,7 @@ Sleep tracking and analysis for use with Cognitive Behavioral Therapy for Insomn
 This system has been tested with
 Vagrant 1.6.2
 Java 8 (1.8.0_05)
-Gradle 2.0
+Gradle 2.1
 
 ## Building
 
@@ -81,20 +81,17 @@ Intellij IDEA has native support for gradle, can start/debug with keyboard short
 You can debug the application, then debug the integration test to step into test and code.
 IDEA is recommended for use with this application, as it has the best gradle support.
 
-You can run the project in the debugger in Netbeans, but when you disconnect the
-debugger, the task can't be stopped. You need to shut down Netbeans and restart
-to completely shut down the process. This is due to a limitation in the Gradle tooling.
-https://github.com/kelemen/netbeans-gradle-project/issues/21
-(Looks like it should be fixed in gradle 2.1)
-To work around this, you can run the application and connect with a remote debugger.
+You can run the application and connect with a remote debugger.
 Make sure you have a newly built jar so your changes are used.
 gradle clean build
-java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n -jar build/libs/boot-0.0.1-SNAPSHOT.jar
+java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n -jar build/libs/seebie-server-0.0.1-SNAPSHOT.jar
 To debug integration tests with Netbeans:
-1) build project jar "gradle build" 
-2) run app with debugger using above java command, connect Netbeans with remote debugger
-3) right click test file and "debug test file"
-4) you can breakpoint into application code and test code
+- build project jar "gradle build" 
+- run app with debugger using above java command
+- connect to the running app with Netbeans remote debugger
+- put the integration test file in the unit test folder (I know, weird)
+- right click integration test file and click on "debug test file" 
+- you can breakpoint into application code and test code
 
 
 ## Properties

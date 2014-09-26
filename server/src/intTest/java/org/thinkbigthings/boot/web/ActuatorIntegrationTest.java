@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import org.thinkbigthings.boot.web.BasicRequestFactory;
 
 public class ActuatorIntegrationTest  {
 
