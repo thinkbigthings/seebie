@@ -34,8 +34,7 @@ curl -k -u user@app.com:password https://localhost:9000/user/10
 
 curl -X POST -H "Content-Type: application/json" -k -d '{"username": "j@y.com", "displayName":"jay", "password":"password"}' https://localhost:9000/register
 
-Alternatively: To run the webapp on the command line, execute "gradle bootRun"
-or java -jar build/libs/seebie-server-[version].jar
+Alternatively: To run the webapp on the command line without spring boot: java -jar build/libs/seebie-server-[version].jar
 
 After running the application as described above, you should be able to hit the url at
 https://localhost:9000/
@@ -49,6 +48,7 @@ unit tests run with "gradle test".
 
 generate coverage report with "gradle test jacocoTestReport"
 (tests need to have been run before jacocoTestReport can run)
+the report is then available in build/jacocoHtml/index.html
 
 integration tests run with "gradle intTest"
 The task automatically launches the database and web servers
