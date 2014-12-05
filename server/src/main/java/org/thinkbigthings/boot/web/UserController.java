@@ -83,11 +83,11 @@ public class UserController {
     
     @RequestMapping(value = "/user/{id}/sleep", method = POST, produces = {"application/json"})
     @PreAuthorize("isAuthenticated() and (principal.id == #id or hasRole('ADMIN'))")
-    public @ResponseBody boolean createSleepSession(@PathVariable Long id, @RequestBody @Valid SleepSession session, BindingResult binding) {
+    public @ResponseBody Boolean createSleepSession(@PathVariable Long id, @RequestBody @Valid SleepSession session, BindingResult binding) {
       if (binding.hasErrors()) {
          throw new InvalidRequestBodyException("Validation of incoming object failed at " + binding.getNestedPath());
       }
       service.createSleepSession(id, session);
-      return true;
+      return Boolean.TRUE;
     }
 }

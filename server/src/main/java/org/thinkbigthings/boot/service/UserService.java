@@ -33,6 +33,7 @@ public class UserService implements UserDetailsService, UserServiceInterface {
     // TODO 3 strip passwords when users are retrieved. 
     // should we do this at service layer because it's business logic, or at web layer since it is dealing with output/response?
     // maybe abstract that into a generic class that cleanses output, just like something that cleanses input?
+    // [UPDATE] should use a mapper and only return the data you need to return.
     @Transactional(readOnly = true)
     @Override
     public User getUserById(Long id) {
@@ -94,6 +95,7 @@ public class UserService implements UserDetailsService, UserServiceInterface {
    @Override
    public boolean createSleepSession(Long userId, SleepSession sleep) {
       User user = userRepository.findOne(userId);
+      
       user.getSleepSessions().add(sleep);
       userRepository.saveAndFlush(user);
       return true;

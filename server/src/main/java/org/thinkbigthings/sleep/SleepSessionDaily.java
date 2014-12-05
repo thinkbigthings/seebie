@@ -18,6 +18,11 @@ public class SleepSessionDaily implements SleepStatistics, Serializable {
    private final int awakeInBed;
    private final int awakeOutOfBed;
 
+   // for serialization
+   protected SleepSessionDaily() {
+       this(new Date(), 0, 0, 0, 0);
+   }
+   
    public SleepSessionDaily(String endStr, int mt, int mib, int mob) {
       this( DATE_TIME_FORMAT.parseDateTime(endStr).toDate(), mt, mib, mob, 0);
    }

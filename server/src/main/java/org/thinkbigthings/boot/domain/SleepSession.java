@@ -48,6 +48,11 @@ public class SleepSession implements SleepStatistics, Serializable, Identifiable
    @Min(value = 0)
    protected int minutesAwakeNotInBed = 0;
 
+   // for serialization
+   protected SleepSession() {
+       this(new Date(), 0, 0, 0, 0);
+   }
+   
    public SleepSession(String endStr, int mt, int mib, int mob) {
       this( DATE_TIME_FORMAT.parseDateTime(endStr).toDate(), mt, mib, mob, 0);
    }

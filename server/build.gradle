@@ -18,6 +18,11 @@ jar {
     version = '0.0.1-SNAPSHOT'
 }
 
+// for netbeans gradle plugin to be able to run the application
+if (!hasProperty('mainClass')) {
+    ext.mainClass = "org.thinkbigthings.boot.Application"
+}
+
 compileJava {
     // allows java 8 reflection for method parameters, useful for spring security el
     options.compilerArgs=['-parameters', '-Xlint:all']
