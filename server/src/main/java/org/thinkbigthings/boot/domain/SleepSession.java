@@ -57,12 +57,12 @@ public class SleepSession implements SleepStatistics, Serializable, Identifiable
       this( DATE_TIME_FORMAT.parseDateTime(endStr).toDate(), mt, mib, mob, 0);
    }
    
-   public SleepSession(SleepStatistics toCopy) {
-       timeOutOfBed = toCopy.getTimeOutOfBed();
-       minutesNapping = 0; // TODO add this to SleepStatistics or make it a linked statistic
-       minutesTotal = toCopy.getAllMinutes();
-       minutesAwakeInBed = toCopy.getMinutesInBed();
-       minutesAwakeNotInBed = minutesTotal - minutesAwakeInBed; // TODO if it can be calculated, maybe shouldn't be stored
+   public SleepSession(SleepSessionJSON toCopy) {
+       timeOutOfBed = DateTimeFormat.forPattern("yyyy-MM-dd hh:mm a zzz").parseDateTime(toCopy.getTimeOutOfBed()).toDate();
+       minutesNapping = toCopy.getMinutesNapping();
+       minutesTotal = toCopy.getMinutesTotal();
+       minutesAwakeInBed = toCopy.getMinutesAwakeInBed();
+       minutesAwakeNotInBed = toCopy.getMinutesAwakeNotInBed();
    }
 
    public SleepSession(Date f, int t, int ib, int ob, int naps) {

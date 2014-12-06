@@ -15,7 +15,7 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
-import org.thinkbigthings.sleep.SleepSessionDaily;
+import org.thinkbigthings.sleep.SleepSessionJSON;
 
 public class SleepDataIntegrationTest {
 
@@ -37,7 +37,7 @@ public class SleepDataIntegrationTest {
         
     @Test
     public void testCreateSleepSession() throws Exception {
-        SleepSessionDaily entity = new SleepSessionDaily("2014-07-03 05:30 AM EST", 480, 0,  0);
+        SleepSessionJSON entity = new SleepSessionJSON("2014-07-03 05:30 AM EST", 480, 25,  20);
         ResponseEntity<String> response = basicAuth.postForEntity(url, entity, String.class);
                 
         assertEquals(TRUE.toString(), response.getBody());
