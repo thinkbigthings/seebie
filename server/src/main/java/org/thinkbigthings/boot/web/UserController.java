@@ -19,6 +19,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import java.util.Set;
 import org.thinkbigthings.boot.domain.SleepSession;
+import org.thinkbigthings.sleep.SleepSessionDaily;
 
 @Controller
 public class UserController {
@@ -87,7 +88,7 @@ public class UserController {
       if (binding.hasErrors()) {
          throw new InvalidRequestBodyException("Validation of incoming object failed at " + binding.getNestedPath());
       }
-      service.createSleepSession(id, session);
+      service.createSleepSession(id, new SleepSession(session));
       return Boolean.TRUE;
     }
 }

@@ -34,7 +34,7 @@ public class BasicRequestFactory extends HttpComponentsClientHttpRequestFactory 
     public BasicRequestFactory(HttpClient httpClient) {
         super(httpClient);
     }
-
+ 
     @Override
     protected HttpContext createHttpContext(HttpMethod httpMethod, URI uri) {
         HttpHost targetHost = new HttpHost(uri.getHost(), uri.getPort(), uri.getScheme());

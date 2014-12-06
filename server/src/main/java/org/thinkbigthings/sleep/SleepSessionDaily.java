@@ -23,6 +23,10 @@ public class SleepSessionDaily implements SleepStatistics, Serializable {
        this(new Date(), 0, 0, 0, 0);
    }
    
+   // TODO deserialize with constructor instead of setters?
+   // http://www.cowtowncoder.com/blog/archives/2010/08/entry_409.html
+   // http://stackoverflow.com/questions/15121643/immutable-polymorphic-pojo-json-serialization-with-jackson
+   // http://jira.codehaus.org/browse/JACKSON-469
    public SleepSessionDaily(String endStr, int mt, int mib, int mob) {
       this( DATE_TIME_FORMAT.parseDateTime(endStr).toDate(), mt, mib, mob, 0);
    }

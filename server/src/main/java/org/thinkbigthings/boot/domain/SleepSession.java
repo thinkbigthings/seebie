@@ -56,6 +56,14 @@ public class SleepSession implements SleepStatistics, Serializable, Identifiable
    public SleepSession(String endStr, int mt, int mib, int mob) {
       this( DATE_TIME_FORMAT.parseDateTime(endStr).toDate(), mt, mib, mob, 0);
    }
+   
+   public SleepSession(SleepStatistics toCopy) {
+       timeOutOfBed = toCopy.getTimeOutOfBed();
+       minutesNapping = 0; // TODO add this to SleepStatistics or make it a linked statistic
+       minutesTotal = toCopy.getAllMinutes();
+       minutesAwakeInBed = toCopy.getMinutesInBed();
+       minutesAwakeNotInBed = minutesTotal - minutesAwakeInBed; // TODO if it can be calculated, maybe shouldn't be stored
+   }
 
    public SleepSession(Date f, int t, int ib, int ob, int naps) {
       minutesTotal = t;
@@ -87,6 +95,11 @@ public class SleepSession implements SleepStatistics, Serializable, Identifiable
       return minutesTotal;
    }
 
+   // for jackson deserialization, for now...
+   protected void setAllMinutes(int total) {
+    minutesTotal = total;
+   }
+   
    @Override
    public int getMinutesInBed() {
       return getAllMinutes() - minutesAwakeNotInBed;
