@@ -19,7 +19,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import java.util.Set;
 import org.thinkbigthings.boot.domain.SleepSession;
-import org.thinkbigthings.sleep.SleepSessionDaily;
 import org.thinkbigthings.sleep.SleepSessionJSON;
 
 @Controller
@@ -82,14 +81,5 @@ public class UserController {
     public @ResponseBody Set<SleepSession> getSleepSessions(@PathVariable Long id) {
       return service.getUserById(id).getSleepSessions();
     }
-    
-    @RequestMapping(value = "/user/{id}/sleep", method = POST, produces = {"application/json"})
-    @PreAuthorize("isAuthenticated() and (principal.id == #id or hasRole('ADMIN'))")
-    public @ResponseBody Boolean createSleepSession(@PathVariable Long id, @RequestBody @Valid SleepSessionJSON session, BindingResult binding) {
-      if (binding.hasErrors()) {
-         throw new InvalidRequestBodyException("Validation of incoming object failed at " + binding.getNestedPath());
-      }
-      service.createSleepSession(id, new SleepSession(session));
-      return Boolean.TRUE;
-    }
+
 }

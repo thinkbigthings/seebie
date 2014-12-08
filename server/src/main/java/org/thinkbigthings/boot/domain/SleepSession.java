@@ -58,7 +58,7 @@ public class SleepSession implements SleepStatistics, Serializable, Identifiable
    }
    
    public SleepSession(SleepSessionJSON toCopy) {
-       timeOutOfBed = DateTimeFormat.forPattern("yyyy-MM-dd hh:mm a zzz").parseDateTime(toCopy.getTimeOutOfBed()).toDate();
+       timeOutOfBed = DATE_TIME_FORMAT.parseDateTime(toCopy.getTimeOutOfBed()).toDate();
        minutesNapping = toCopy.getMinutesNapping();
        minutesTotal = toCopy.getMinutesTotal();
        minutesAwakeInBed = toCopy.getMinutesAwakeInBed();

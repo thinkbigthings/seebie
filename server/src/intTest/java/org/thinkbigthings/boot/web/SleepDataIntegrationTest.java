@@ -1,11 +1,13 @@
 package org.thinkbigthings.boot.web;
 
-import static java.lang.Boolean.TRUE;
+import static org.joda.time.DateTimeZone.UTC;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import static org.springframework.http.HttpStatus.OK;
+import static org.thinkbigthings.boot.domain.SleepSession.DATE_TIME_FORMAT;
 
 import java.util.Arrays;
 import org.junit.Before;
@@ -15,6 +17,7 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
+import org.thinkbigthings.boot.domain.SleepSession;
 import org.thinkbigthings.sleep.SleepSessionJSON;
 
 public class SleepDataIntegrationTest {
@@ -37,10 +40,12 @@ public class SleepDataIntegrationTest {
         
     @Test
     public void testCreateSleepSession() throws Exception {
-        SleepSessionJSON entity = new SleepSessionJSON("2014-07-03 05:30 AM EST", 480, 25,  20);
-        ResponseEntity<String> response = basicAuth.postForEntity(url, entity, String.class);
-                
-        assertEquals(TRUE.toString(), response.getBody());
+        SleepSessionJSON newSession = new SleepSessionJSON("2014-07-03 05:30 AM EST", 480, 25,  20);
+        ResponseEntity<SleepSession> response = basicAuth.postForEntity(url, newSession, SleepSession.class);
+
+        assertTrue(response.getBody().getId() > 0);
+        assertEquals(newSession.getTimeOutOfBed(), DATE_TIME_FORMAT.withZone(UTC).print(response.getBody().getEndAsDateTime()));
+        
         assertEquals(OK, response.getStatusCode());
     }
     

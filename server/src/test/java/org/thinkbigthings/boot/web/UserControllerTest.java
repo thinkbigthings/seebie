@@ -4,17 +4,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.BindingResult;
 import org.thinkbigthings.boot.domain.User;
-import org.thinkbigthings.boot.service.UserService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.thinkbigthings.boot.service.UserServiceInterface;
+
 public class UserControllerTest {
 
     private UserController resource;
-    private final UserService userService = mock(UserService.class);
+    private final UserServiceInterface userService = mock(UserServiceInterface.class);
     private final BindingResult goodBinding = mock(BindingResult.class);
     private final BindingResult failedBinding = mock(BindingResult.class);
     private final User currentUser = new User();

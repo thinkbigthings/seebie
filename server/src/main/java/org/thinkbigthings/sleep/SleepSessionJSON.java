@@ -3,8 +3,9 @@ package org.thinkbigthings.sleep;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -20,10 +21,6 @@ public class SleepSessionJSON implements Serializable {
    protected int minutesAwakeInBed = 0;
    protected int minutesAwakeNotInBed = 0;
 
-   // TODO deserialize with constructor instead of setters?
-   // http://www.cowtowncoder.com/blog/archives/2010/08/entry_409.html
-   // http://stackoverflow.com/questions/15121643/immutable-polymorphic-pojo-json-serialization-with-jackson
-   // http://jira.codehaus.org/browse/JACKSON-469
    @JsonCreator
    public SleepSessionJSON( @JsonProperty("timeOutOfBed") String endStr, 
                             @JsonProperty("minutesTotal") int mt, 
@@ -42,7 +39,7 @@ public class SleepSessionJSON implements Serializable {
    }
 
    public String getTimeOutOfBed() {
-       return new SimpleDateFormat("yyyy-MM-dd hh:mm a zzz").format(timeOutOfBed);
+       return DATE_TIME_FORMAT.print(new DateTime(timeOutOfBed).withZone(DateTimeZone.UTC));
    }
    
    public int getMinutesNapping() {

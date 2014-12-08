@@ -11,13 +11,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thinkbigthings.boot.domain.Role;
-import org.thinkbigthings.boot.domain.SleepSession;
 import org.thinkbigthings.boot.domain.User;
 import org.thinkbigthings.boot.repository.RoleRepository;
 import org.thinkbigthings.boot.repository.UserRepository;
 
 @Service
-public class UserService implements UserDetailsService, UserServiceInterface {
+class UserService implements UserDetailsService, UserServiceInterface {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -90,15 +89,5 @@ public class UserService implements UserDetailsService, UserServiceInterface {
     public List<User> getUsers() {
         return userRepository.findAll();
     }
-
-   @Transactional
-   @Override
-   public boolean createSleepSession(Long userId, SleepSession sleep) {
-      User user = userRepository.findOne(userId);
-      
-      user.getSleepSessions().add(sleep);
-      userRepository.saveAndFlush(user);
-      return true;
-   }
 
 }
