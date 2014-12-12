@@ -26,7 +26,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.hateoas.Identifiable;
-import org.springframework.hateoas.ResourceSupport;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

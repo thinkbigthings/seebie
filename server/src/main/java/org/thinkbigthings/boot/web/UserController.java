@@ -51,7 +51,6 @@ public class UserController {
     }
     
     // TODO 0 get paging working
-    // - populate more users for testing
     // - need to return a paged resource, not a page
     // - user should be returned as dto: objects should be links, collections should be links
     // - fix client deserializing 
