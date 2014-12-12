@@ -12,74 +12,96 @@ import org.thinkbigthings.boot.service.UserServiceInterface;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import java.util.List;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-import java.util.Set;
-import org.thinkbigthings.boot.domain.SleepSession;
-import org.thinkbigthings.sleep.SleepSessionJSON;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.thinkbigthings.boot.assembler.Resource;
+import org.thinkbigthings.boot.assembler.UserPageResourceAssembler;
 
 @Controller
+@RequestMapping(value = "/user")
 public class UserController {
 
-    public static final String REGISTRATION_URL = "/register";
-    
     private final UserServiceInterface service;
+    private final UserPageResourceAssembler resourceAssembler;
     
     @Inject
-    public UserController(UserServiceInterface us)
-    {
+    public UserController(UserServiceInterface us, UserPageResourceAssembler assembler) {
       service = us;
+      resourceAssembler = assembler;
     }
 
-    // http://docs.spring.io/spring-security/site/docs/3.2.x/reference/htmlsingle/#el-access
-    
-    @RequestMapping(value = "/user/all", method = GET, produces = {"application/json"})
-    @PreAuthorize("hasRole('ADMIN')")
-    public @ResponseBody List<User> getUsers() {
-      return service.getUsers();
-    }
-
-    @RequestMapping(value = "/user/current", method = GET, produces = {"application/json"})
-    @PreAuthorize("isAuthenticated()")
-    public @ResponseBody User getCurrentUser(@AuthenticationPrincipal User currentUser) {
-      return service.getUserById(currentUser.getId());
-    }
-    
-    // can also pass as a parameter @AuthenticationPrincipal User currentUser
-    @RequestMapping(value = "/user/{id}", method = GET, produces = {"application/json"})
-    @PreAuthorize("isAuthenticated() and (principal.id == #id or hasRole('ADMIN'))")
-    public @ResponseBody User getUser(@PathVariable Long id) {
-      return service.getUserById(id);
-    }
-
-    @RequestMapping(value = "/user/{id}", method = PUT, produces = {"application/json"})
-    @PreAuthorize("isAuthenticated() and (principal.id == #id or hasRole('ADMIN'))")
-    public @ResponseBody User update(@PathVariable Long id, @RequestBody @Valid User user, BindingResult binding) {
+    // TODO 3 escape incoming inputs
+    // HtmlUtils.htmlEscape(input) 
+    // http://stackoverflow.com/questions/2147958/how-do-i-prevent-people-from-doing-xss-in-java
+    // also see apache commons lang StringEscapeUtils
+    // maybe make my own @SanitizedRequestBody or @SanitizedRequestParam
+    // also see @NoHtml and NoHtmlValidator in my blog post
+    @RequestMapping(value = "/register", method = POST, produces = {"application/json"})
+    public @ResponseBody Resource<User> register(@RequestBody @Valid User newUser, BindingResult binding) {
       if (binding.hasErrors()) {
-         throw new InvalidRequestBodyException("Validation of incoming object failed at " + binding.getNestedPath());
+         throw new InvalidRequestBodyException(binding);
+      }
+      User persisted = service.registerNewUser(newUser);
+      return resourceAssembler.toResource(persisted);
+    }
+    
+    // TODO 0 get paging working
+    // - populate more users for testing
+    // - need to return a paged resource, not a page
+    // - user should be returned as dto: objects should be links, collections should be links
+    // - fix client deserializing 
+    // - need to send page info in request params (think controller gets default object right now)
+    // - test various page sizes and start/end points
+    // - test 0 vs 1 based index, do I need custom web argument resolver? custom extended page meta?
+
+    @RequestMapping(value = "/all", method = GET, produces = {"application/json"})
+    @PreAuthorize("hasRole('ADMIN')")
+    public @ResponseBody Page<User> getUsers(Pageable pageable) {
+
+      return service.getUsers(pageable);
+    }
+
+    
+    // TODO 2 allow for sorting.
+    
+    
+    @RequestMapping(value = "/current", method = GET, produces = {"application/json"})
+    @PreAuthorize("isAuthenticated()")
+    public @ResponseBody Resource<User> getCurrentUser(@AuthenticationPrincipal User currentUser) {
+      User current = service.getUserById(currentUser.getId());
+      return resourceAssembler.toResource(current);
+    }
+    
+    @RequestMapping(value = "/{id}", method = GET, produces = {"application/json"})
+    @PreAuthorize("isAuthenticated() and (principal.id == #id or hasRole('ADMIN'))")
+    public @ResponseBody Resource<User> getUser(@PathVariable Long id) {
+        
+      // TODO 1 do DTO mapping here
+      // can return as HttpEntity or ResponseEntity if need more control over response headers or response code
+      User current = service.getUserById(id);
+      return resourceAssembler.toResource(current);
+    }
+
+    @RequestMapping(value = "/{id}", method = PUT, produces = {"application/json"})
+    @PreAuthorize("isAuthenticated() and (principal.id == #id or hasRole('ADMIN'))")
+    public @ResponseBody Resource<User> update(@PathVariable Long id, @RequestBody @Valid User user, BindingResult binding) {
+      if (binding.hasErrors()) {
+         throw new InvalidRequestBodyException(binding);
       }
       if( ! id.equals(user.getId())) {
-         throw new InvalidRequestBodyException("Request body id must match the url id");
+         throw new InvalidRequestBodyException(binding);
       }
+
+      // removes authentication information for current auth, subsequent calls should re-authenticate with the new username
+      SecurityContextHolder.getContext().setAuthentication(null);
       
-      return service.updateUser(user);
-    }
-    
-    @RequestMapping(value = REGISTRATION_URL, method = POST, produces = {"application/json"})
-    public @ResponseBody User register(@RequestBody @Valid User newUser, BindingResult binding) {
-      if (binding.hasErrors()) {
-         throw new InvalidRequestBodyException("Validation of incoming object failed at " + binding.getNestedPath());
-      }
-      return service.registerNewUser(newUser);
-    }
-    
-    @RequestMapping(value = "/user/{id}/sleep", method = GET, produces = {"application/json"})
-    @PreAuthorize("isAuthenticated() and (principal.id == #id or hasRole('ADMIN'))")
-    public @ResponseBody Set<SleepSession> getSleepSessions(@PathVariable Long id) {
-      return service.getUserById(id).getSleepSessions();
+      User updated = service.updateUser(user);
+      return resourceAssembler.toResource(updated);
     }
 
 }

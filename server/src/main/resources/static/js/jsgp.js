@@ -15,7 +15,7 @@ Function.prototype.compose  = function(argFunction) {
 // from JSGP
 // this allows you to sort arrays by a particular field
 // and handles sorting of numbers and strings better than the default array sort
-// TODO sort on multiple keys, see JSGP pg 81
+// This could be enhanced to sort on multiple keys, see JSGP pg 81
 var by = function(name) {
    return function(o,p) {
       if(typeof o === 'object' && typeof p === 'object' && o && p) {

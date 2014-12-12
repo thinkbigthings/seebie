@@ -1,10 +1,11 @@
 package org.thinkbigthings.boot;
 
-import java.io.File;
 import org.springframework.boot.*;
-import org.springframework.boot.actuate.system.ApplicationPidListener;
+import org.springframework.boot.actuate.system.ApplicationPidFileWriter;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.context.annotation.ComponentScan;
+
+// TODO 2 should not continue integration test if compile fails.
 
 /*
  @EnableAutoconfiguration tells Spring Boot to "guess" how you will want 
@@ -17,16 +18,13 @@ will assume that you are developing a web application and setup Spring according
 public class Application {
 
     public static void main(String[] args) throws Exception {
-        
-        File pid = new File("app.pid");
-        pid.deleteOnExit();
-        
+
         // The arguments to SpringApplication are configuration sources for spring beans. 
         // In most cases these will be references to @Configuration classes, 
         // but they could also be references to XML configuration or to packages that should be scanned
         SpringApplication app = new SpringApplication(Application.class);
         app.setShowBanner(false);
-        app.addListeners(new ApplicationPidListener(pid));
+        app.addListeners(new ApplicationPidFileWriter("app.pid"));
         app.run(args);
         System.out.println("================================ READY");
     }

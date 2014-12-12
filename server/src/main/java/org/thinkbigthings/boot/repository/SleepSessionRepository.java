@@ -1,13 +1,14 @@
 package org.thinkbigthings.boot.repository;
 
-import java.util.Date;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.thinkbigthings.boot.domain.SleepSession;
+import org.thinkbigthings.boot.domain.Sleep;
+import org.thinkbigthings.boot.domain.User;
 
 @Repository
-public interface SleepSessionRepository extends JpaRepository<SleepSession, Long> 
+public interface SleepSessionRepository extends JpaRepository<Sleep, Long> 
 {
-   SleepSession findByTimeOutOfBed(Date time);
+   List<Sleep> findByUser(User user);
 
 }

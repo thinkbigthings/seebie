@@ -1,9 +1,10 @@
 package org.thinkbigthings.boot.service;
 
 import java.util.Date;
-import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,10 +30,8 @@ class UserService implements UserDetailsService, UserServiceInterface {
         encoder = enc;
     }
 
-    // TODO 3 strip passwords when users are retrieved. 
-    // should we do this at service layer because it's business logic, or at web layer since it is dealing with output/response?
-    // maybe abstract that into a generic class that cleanses output, just like something that cleanses input?
-    // [UPDATE] should use a mapper and only return the data you need to return.
+    // TODO 3 use DTO to return user object without the hashed password
+    // hould use a mapper and only return the data you need to return.
     @Transactional(readOnly = true)
     @Override
     public User getUserById(Long id) {
@@ -57,7 +56,7 @@ class UserService implements UserDetailsService, UserServiceInterface {
         persistedUser.setDisplayName(userData.getDisplayName());
         persistedUser.setUsername(userData.getUsername());
 
-        return userRepository.saveAndFlush(persistedUser);
+        return userRepository.save(persistedUser);
     }
 
     @Transactional
@@ -86,8 +85,8 @@ class UserService implements UserDetailsService, UserServiceInterface {
     }
 
     @Override
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public Page<User> getUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
 }

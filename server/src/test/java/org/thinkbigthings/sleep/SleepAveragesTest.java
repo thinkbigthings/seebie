@@ -34,7 +34,6 @@ public class SleepAveragesTest {
                                                       new SleepSessionDaily("2014-08-03 05:30 AM EST", 447, 25, 0),
                                                       new SleepSessionDaily("2014-08-04 05:30 AM EST", 492, 26, 0)));
         
-        // TODO this doesn't need to be a parameterized test
         return Arrays.asList(new Object[][]{
             {set2, 491, 93.74, dateFormat.parse("2014-08-04 05:30 AM")}
         });

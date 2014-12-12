@@ -19,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-
     /**
      * http://docs.spring.io/spring-security/site/docs/3.2.3.RELEASE/reference/htmlsingle/#authorize-requests
      *
@@ -34,8 +33,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .and().httpBasic();
     }
 
-    // private test implementations so we can test security without a database
-    // all usernames are valid, password is always "password", all users have role USER
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

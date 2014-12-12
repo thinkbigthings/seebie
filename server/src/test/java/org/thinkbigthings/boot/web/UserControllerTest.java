@@ -10,12 +10,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.springframework.hateoas.Link;
+import org.thinkbigthings.boot.assembler.Resource;
+import org.thinkbigthings.boot.assembler.UserPageResourceAssembler;
 import org.thinkbigthings.boot.service.UserServiceInterface;
 
 public class UserControllerTest {
 
     private UserController resource;
     private final UserServiceInterface userService = mock(UserServiceInterface.class);
+    private final UserPageResourceAssembler resourceAssembler = mock(UserPageResourceAssembler.class);
     private final BindingResult goodBinding = mock(BindingResult.class);
     private final BindingResult failedBinding = mock(BindingResult.class);
     private final User currentUser = new User();
@@ -30,19 +34,20 @@ public class UserControllerTest {
         userRequestBody.withId(ID).withUsername("myupdate@username.com");
         persistedUser.withId(ID);
 
-        resource = new UserController(userService);
+        resource = new UserController(userService, resourceAssembler);
 
         when(goodBinding.hasErrors()).thenReturn(false);
         when(failedBinding.hasErrors()).thenReturn(true);
         when(userService.getUserById(ID)).thenReturn(persistedUser);
         when(userService.updateUser(userRequestBody)).thenReturn(persistedUser);
+        when(resourceAssembler.toResource(persistedUser)).thenReturn(new Resource(persistedUser, new Link[]{}));
     }
 
     
     @Test
     public void validUserShouldUpdateSelf() throws Exception {
-        User user = resource.update(ID, userRequestBody, goodBinding);
-        assertEquals(persistedUser, user);
+        Resource<User> user = resource.update(ID, userRequestBody, goodBinding);
+        assertEquals(persistedUser, user.getContent());
     }
     
     @Test(expected = InvalidRequestBodyException.class)
@@ -58,8 +63,8 @@ public class UserControllerTest {
 
     @Test
     public void shouldGetUser() throws Exception {
-        User user = resource.getUser(ID);
-        assertNotNull(user);
+        Resource<User> user = resource.getUser(ID);
+        assertNotNull(user.getContent());
     }
 
 

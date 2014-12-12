@@ -71,12 +71,20 @@ public class BasicRequestFactory extends HttpComponentsClientHttpRequestFactory 
         return template;
     }
 
+    public static ParameterizedRestTemplate createParameterizedTemplate(String username, String password) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        return new ParameterizedRestTemplate(createTemplate(username, password));
+    }
+    
     public static RestTemplate createTemplate() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         RestTemplate template = new RestTemplate(new BasicRequestFactory(createSecureClient()));
         template.setErrorHandler(new NopResponseErrorHandler());
         return template;
     }
 
+    public static ParameterizedRestTemplate createParameterizedTemplate() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        return new ParameterizedRestTemplate(createTemplate());
+    }
+    
     private static class NopResponseErrorHandler implements ResponseErrorHandler {
 
         @Override

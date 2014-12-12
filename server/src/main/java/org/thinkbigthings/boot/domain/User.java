@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,18 +16,21 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.hateoas.Identifiable;
+import org.springframework.hateoas.ResourceSupport;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-// TODO add Address and Image objects to User
+// TODO 5 add Address and Image objects to User
 // check behavior: if I modify the schema, does the database get updated 
 // because I specified “update”? or do I need to specify “none” or “verify?”
 
@@ -40,7 +42,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = { "username" }) })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class User implements UserDetails, Identifiable<Long> {
+public class User implements UserDetails, Identifiable<Long>  {
 
    private static final long serialVersionUID = 1L;
 
@@ -48,7 +50,7 @@ public class User implements UserDetails, Identifiable<Long> {
    @GeneratedValue(strategy=GenerationType.AUTO)
    private Long id = 0L;
 
-   // TODO separate username from email address? if requires email format should rename for clarity
+   // TODO 5 separate username from email address? if requires email format should rename for clarity
    @Basic
    @NotNull
    @Size(min = 3, message = "must be at least three characters")
@@ -71,9 +73,9 @@ public class User implements UserDetails, Identifiable<Long> {
    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
    private Set<Role> roles = new HashSet<>();
 
-   @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-   @JoinTable(name = "user_sleep", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "sleep_id"))
-   private Set<SleepSession> sleepSessions = new HashSet<>();
+   @OneToMany(fetch = FetchType.LAZY, mappedBy="user", orphanRemoval=true)
+   @Cascade(value = { org.hibernate.annotations.CascadeType.ALL })
+   private Set<Sleep> sleepSessions = new HashSet<>();
    
    @Temporal(value = TemporalType.TIMESTAMP)
    private Date registration = new Date();
@@ -155,12 +157,12 @@ public class User implements UserDetails, Identifiable<Long> {
       this.roles = roles;
    }
 
-   public Set<SleepSession> getSleepSessions()
+   public Set<Sleep> getSleepSessions()
    {
       return sleepSessions;
    }
 
-   public void setSleepSessions(Set<SleepSession> sessions)
+   public void setSleepSessions(Set<Sleep> sessions)
    {
       this.sleepSessions = sessions;
    }

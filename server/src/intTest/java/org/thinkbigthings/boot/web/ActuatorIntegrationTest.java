@@ -17,7 +17,6 @@ public class ActuatorIntegrationTest  {
 
         ResponseEntity<String> response = noAuth.getForEntity("https://localhost:9000/health", String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        
     }
 
 }

@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class ApplicationExceptionHandler {
 
-    // TODO log the exception/stacktrace and return some kind of error object
+    // TODO 2 log the exception/stacktrace and return some kind of error object
     // don't return the stack trace
     
-    // TODO add email service, send notification if an unknown exception is caught
+    // TODO 2 add email service, send email notification to admin if an unknown exception is caught
     
    @ExceptionHandler
    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)

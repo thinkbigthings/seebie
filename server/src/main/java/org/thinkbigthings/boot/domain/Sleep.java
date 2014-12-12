@@ -13,9 +13,8 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.hateoas.Identifiable;
 
 @Entity
-@Table(name = "sleep")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SleepSession implements SleepStatistics, Serializable, Identifiable<Long> {
+public class Sleep implements SleepStatistics, Serializable, Identifiable<Long> {
 
    public static final long serialVersionUID = 1L;
 
@@ -25,6 +24,16 @@ public class SleepSession implements SleepStatistics, Serializable, Identifiable
    @GeneratedValue(strategy=GenerationType.AUTO)
    protected Long id = 0L;
 
+	/**
+	 * One issue with @NotNull is that you can't cascade delete the containing entity.
+	 * Cascade delete is smart enough to not violate foreign key constraints,
+	 * but it can still violate not null constraints.
+	 */
+   @ManyToOne
+   @NotNull
+   protected User user;
+   
+   // TODO 2 would like to explicitly store timezone to eliminate need to remember this is in UTC and to ease queries
    @Temporal(value = TemporalType.TIMESTAMP)
    protected Date timeOutOfBed = new Date();
    
@@ -48,16 +57,26 @@ public class SleepSession implements SleepStatistics, Serializable, Identifiable
    @Min(value = 0)
    protected int minutesAwakeNotInBed = 0;
 
-   // for serialization
-   protected SleepSession() {
+   // TODO 1 if using DTO, don't need empty constructor for serialization
+   protected Sleep() {
        this(new Date(), 0, 0, 0, 0);
    }
    
-   public SleepSession(String endStr, int mt, int mib, int mob) {
+   public Sleep(String endStr, int mt, int mib, int mob) {
       this( DATE_TIME_FORMAT.parseDateTime(endStr).toDate(), mt, mib, mob, 0);
    }
    
-   public SleepSession(SleepSessionJSON toCopy) {
+   public Sleep(Date f, int t, int ib, int ob, int naps) {
+      minutesTotal = t;
+      timeOutOfBed = f;
+      minutesAwakeInBed = ib;
+      minutesAwakeNotInBed = ob;
+      minutesNapping = naps;
+   }
+
+   
+   public Sleep(User forUser, SleepSessionJSON toCopy) {
+       user = forUser;
        timeOutOfBed = DATE_TIME_FORMAT.parseDateTime(toCopy.getTimeOutOfBed()).toDate();
        minutesNapping = toCopy.getMinutesNapping();
        minutesTotal = toCopy.getMinutesTotal();
@@ -65,13 +84,42 @@ public class SleepSession implements SleepStatistics, Serializable, Identifiable
        minutesAwakeNotInBed = toCopy.getMinutesAwakeNotInBed();
    }
 
-   public SleepSession(Date f, int t, int ib, int ob, int naps) {
-      minutesTotal = t;
-      timeOutOfBed = f;
-      minutesAwakeInBed = ib;
-      minutesAwakeNotInBed = ob;
-      minutesNapping = naps;
-   }
+    public void setTimeOutOfBed(Date timeOutOfBed) {
+        this.timeOutOfBed = timeOutOfBed;
+    }
+
+    public void setMinutesNapping(int minutesNapping) {
+        this.minutesNapping = minutesNapping;
+    }
+
+    public void setMinutesTotal(int minutesTotal) {
+        this.minutesTotal = minutesTotal;
+    }
+
+    public void setMinutesAwakeInBed(int minutesAwakeInBed) {
+        this.minutesAwakeInBed = minutesAwakeInBed;
+    }
+
+    public void setMinutesAwakeNotInBed(int minutesAwakeNotInBed) {
+        this.minutesAwakeNotInBed = minutesAwakeNotInBed;
+    }
+    
+
+    public int getMinutesNapping() {
+        return minutesNapping;
+    }
+
+    public int getMinutesTotal() {
+        return minutesTotal;
+    }
+
+    public int getMinutesAwakeInBed() {
+        return minutesAwakeInBed;
+    }
+
+    public int getMinutesAwakeNotInBed() {
+        return minutesAwakeNotInBed;
+    }
 
    @Override
    public Date getTimeOutOfBed() {
@@ -95,11 +143,6 @@ public class SleepSession implements SleepStatistics, Serializable, Identifiable
       return minutesTotal;
    }
 
-   // for jackson deserialization, for now...
-   protected void setAllMinutes(int total) {
-    minutesTotal = total;
-   }
-   
    @Override
    public int getMinutesInBed() {
       return getAllMinutes() - minutesAwakeNotInBed;

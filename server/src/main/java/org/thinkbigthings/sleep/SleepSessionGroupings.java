@@ -53,7 +53,7 @@ public class SleepSessionGroupings {
    
    public List<SleepStatistics> calculateAveragesByGroup(Date from, Date until, GroupSize groupSize) {
       
-      // TODO reduce to averages while grouping so we don't have multiple terminal operations
+      // TODO 5 reduce to averages while grouping so we don't have multiple terminal operations
       // think you can use the 2-arg groupingBy() method to map each list directly to SleepAverages?
 //      Map<LocalDate, List<SleepStatistics>> groups = sessions.stream()
 //                                                            .filter((s)-> isInRange(s, from, until))
