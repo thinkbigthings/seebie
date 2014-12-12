@@ -66,7 +66,7 @@ public class UserController {
     }
 
     
-    // TODO 2 allow for sorting.
+    // TODO 1 allow for sorting.
     
     
     @RequestMapping(value = "/current", method = GET, produces = {"application/json"})

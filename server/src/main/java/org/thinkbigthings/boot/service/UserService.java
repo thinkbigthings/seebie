@@ -30,8 +30,6 @@ class UserService implements UserDetailsService, UserServiceInterface {
         encoder = enc;
     }
 
-    // TODO 3 use DTO to return user object without the hashed password
-    // hould use a mapper and only return the data you need to return.
     @Transactional(readOnly = true)
     @Override
     public User getUserById(Long id) {

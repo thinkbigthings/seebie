@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
 
+// TODO 1 with spring boot 1.2, SSL can now be configured declaratively by setting the various server.ssl.* properties. 
+
 @Configuration
 public class HttpsConfiguration {
 
