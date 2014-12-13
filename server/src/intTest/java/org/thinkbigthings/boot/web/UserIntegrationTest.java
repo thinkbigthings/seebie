@@ -12,9 +12,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
+import org.thinkbigthings.boot.assembler.Page;
 import org.thinkbigthings.boot.assembler.Resource;
 import org.thinkbigthings.boot.domain.User;
 
@@ -24,8 +23,9 @@ public class UserIntegrationTest {
 
     private final static String currentUserUrl =  HOST + "/user/current";
     private final static ParameterizedTypeReference userResourceType = new ParameterizedTypeReference<Resource<User>>(){};
-    private final static ParameterizedTypeReference userPageResourceType = new ParameterizedTypeReference<String>(){};
+//    private final static ParameterizedTypeReference userPageResourceType = new ParameterizedTypeReference<String>(){};
     private ParameterizedRestTemplate basicAuth;
+    private final static ParameterizedTypeReference userPageResourceType = new ParameterizedTypeReference<Page<User>>(){};
     private ParameterizedRestTemplate admin;
     
    
@@ -38,8 +38,8 @@ public class UserIntegrationTest {
     @Test
     public void testGetUserPage() throws Exception {
 
-        ResponseEntity<String> retrieved = admin.getForEntity(HOST + "/user/all", userPageResourceType);
-        String users = retrieved.getBody();
+        ResponseEntity<Page<User>>retrieved = admin.getForEntity(HOST + "/user/all", userPageResourceType);
+        Page<User> users = retrieved.getBody();
         
 //        Assert.assertEquals("", users);
     }
