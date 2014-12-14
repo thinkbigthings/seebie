@@ -29,7 +29,7 @@ public class UserPageResourceAssembler extends ResourceAssemblerSupport<Page<Use
    }
 
   @Override
-  public PagedResources toResource(Page<User> users)
+  public PagedResources<Resource<User>> toResource(Page<User> users)
   {
      PagedResources.PageMetadata pageMetadata = new ExtendedPageMetadata(users);
      List<Resource> resourceList = userResourceAssembler.toResources(users.getContent());

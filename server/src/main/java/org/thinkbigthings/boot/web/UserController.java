@@ -18,6 +18,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.thinkbigthings.boot.assembler.Resource;
 import org.thinkbigthings.boot.assembler.UserPageResourceAssembler;
@@ -51,18 +52,16 @@ public class UserController {
     }
     
     // TODO 0 get paging working
-    // - need to return a paged resource, not a page, 
-    // - user should be returned as dto: objects should be links, collections should be links
-    // - fix client deserializing 
-    // - need to send page info in request params (think controller gets default object right now)
+    // - user should be returned as dto: field objects/collections should be links
+    // - need to send page info in request params (controller gets default object right now?)
     // - test various page sizes and start/end points
     // - test 0 vs 1 based index, do I need custom web argument resolver? custom extended page meta?
 
     @RequestMapping(value = "/all", method = GET, produces = {"application/json"})
     @PreAuthorize("hasRole('ADMIN')")
-    public @ResponseBody Page<User> getUsers(Pageable pageable) {
-
-      return service.getUsers(pageable);
+    public @ResponseBody PagedResources<Resource<User>> getUsers(Pageable pageable) {
+      PagedResources<Resource<User>> users = resourceAssembler.toResource(service.getUsers(pageable));
+      return users;
     }
 
     

@@ -8,12 +8,11 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.thinkbigthings.boot.web.IntegrationTestConstants.HOST;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.http.ResponseEntity;
-import org.thinkbigthings.boot.assembler.Page;
 import org.thinkbigthings.boot.assembler.Resource;
 import org.thinkbigthings.boot.domain.User;
 
@@ -23,9 +22,8 @@ public class UserIntegrationTest {
 
     private final static String currentUserUrl =  HOST + "/user/current";
     private final static ParameterizedTypeReference userResourceType = new ParameterizedTypeReference<Resource<User>>(){};
-//    private final static ParameterizedTypeReference userPageResourceType = new ParameterizedTypeReference<String>(){};
+    private final static ParameterizedTypeReference userPageResourceType = new ParameterizedTypeReference<PagedResources<Resource<User>>>(){};
     private ParameterizedRestTemplate basicAuth;
-    private final static ParameterizedTypeReference userPageResourceType = new ParameterizedTypeReference<Page<User>>(){};
     private ParameterizedRestTemplate admin;
     
    
@@ -38,10 +36,8 @@ public class UserIntegrationTest {
     @Test
     public void testGetUserPage() throws Exception {
 
-        ResponseEntity<Page<User>>retrieved = admin.getForEntity(HOST + "/user/all", userPageResourceType);
-        Page<User> users = retrieved.getBody();
-        
-//        Assert.assertEquals("", users);
+        ResponseEntity<PagedResources<Resource<User>>>retrieved = admin.getForEntity(HOST + "/user/all", userPageResourceType);
+        PagedResources<Resource<User>> users = retrieved.getBody();
     }
     
     @Test
