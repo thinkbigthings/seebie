@@ -8,6 +8,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.thinkbigthings.boot.web.IntegrationTestConstants.HOST;
 
+import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -16,9 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.thinkbigthings.boot.assembler.Resource;
 import org.thinkbigthings.boot.domain.User;
 
-// TODO 1 use links to trace through application states for link tests and hateoas test
 
 public class UserIntegrationTest {
+
+    // TODO 1 use links to trace through application states for link tests and hateoas test, here could find user link from /
 
     private final static String currentUserUrl =  HOST + "/user/current";
     private final static ParameterizedTypeReference userResourceType = new ParameterizedTypeReference<Resource<User>>(){};
@@ -38,6 +40,18 @@ public class UserIntegrationTest {
 
         ResponseEntity<PagedResources<Resource<User>>>retrieved = admin.getForEntity(HOST + "/user/all", userPageResourceType);
         PagedResources<Resource<User>> users = retrieved.getBody();
+        
+        
+        assertEquals(20, users.getMetadata().getSize());  // default page size
+        assertEquals(0, users.getMetadata().getNumber()); // first page, page index numbers are zero-based
+        
+        // use links to retrieve single specific resource
+        Resource<User> first = users.getContent().iterator().next();
+        User firstUserFromPage = first.getContent();
+        ResponseEntity<Resource<User>> firstUserLinkResponse = admin.getForEntity(first.getLink("self").getHref(), userResourceType); 
+        User retrievedFromPage =  firstUserLinkResponse.getBody().getContent();
+        assertEquals(firstUserFromPage.getUsername(), retrievedFromPage.getUsername());
+                
     }
     
     @Test
