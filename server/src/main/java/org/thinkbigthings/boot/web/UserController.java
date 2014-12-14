@@ -52,11 +52,13 @@ public class UserController {
     }
     
     // TODO 0 get paging working
-    // - user should be returned as dto: field objects/collections should be links
-    // - need to send page info in request params (controller gets default object right now?)
-    // - test various page sizes and start/end points
-    // - test 0 vs 1 based index, do I need custom web argument resolver? custom extended page meta?
-
+    // - int test various page sizes and start/end points
+    // - test 0 vs 1 based index and document. Do I need custom web argument resolver? custom extended page meta?
+    // - figure out nicer way to send url parameters, maybe user resttemplate method, or custruct 
+    // - set fallback pageable (default if I don't define it is first page, page size 20) or document the defaults and how to override
+    // - http://stackoverflow.com/questions/19756786/spring-pageableargumentresolver-deprecated-how-to-use-pageablehandlermethodargu
+        
+    
     @RequestMapping(value = "/all", method = GET, produces = {"application/json"})
     @PreAuthorize("hasRole('ADMIN')")
     public @ResponseBody PagedResources<Resource<User>> getUsers(Pageable pageable) {
@@ -79,7 +81,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated() and (principal.id == #id or hasRole('ADMIN'))")
     public @ResponseBody Resource<User> getUser(@PathVariable Long id) {
         
-      // TODO 1 do DTO mapping here
+      // TODO 1 user should be returned as dto: field objects/collections should be links
       // can return as HttpEntity or ResponseEntity if need more control over response headers or response code
       User current = service.getUserById(id);
       return resourceAssembler.toResource(current);

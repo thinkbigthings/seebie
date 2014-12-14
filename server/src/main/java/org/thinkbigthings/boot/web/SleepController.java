@@ -28,7 +28,8 @@ public class SleepController {
         service = us;
     }
 
-    // TODO 2 use spring-data-rest to do this automatically?
+    // TODO 0 use spring-data-rest to do this automatically?
+    // http://spring.io/guides/gs/accessing-data-rest/
     @RequestMapping(value = "/user/{userId}/sleep", method = POST, produces = {"application/json"})
     @PreAuthorize("isAuthenticated() and (principal.id == #userId or hasRole('ADMIN'))")
     public @ResponseBody Sleep createSleepSession(@PathVariable Long userId, @RequestBody @Valid SleepSessionJSON session, BindingResult binding) {
@@ -39,7 +40,7 @@ public class SleepController {
         return createdSession;
     }
     
-    // userId is required in the signature so it can be bound in the SPEL expression
+    // userId is required in the method signature so it can be bound in the annotation's SPEL expression
     @RequestMapping(value = "/user/{userId}/sleep/{sleepId}", method = GET, produces = {"application/json"})
     @PreAuthorize("isAuthenticated() and (principal.id == #userId or hasRole('ADMIN'))")
     public @ResponseBody Sleep getSleepSession(@PathVariable Long userId, @PathVariable Long sleepId) {

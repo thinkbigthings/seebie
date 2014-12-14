@@ -20,12 +20,12 @@ public class ParameterizedRestTemplate {
     public <T> ResponseEntity<T> getForEntity(String url, ParameterizedTypeReference<T> responseType) {
         return rt.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, responseType);
     }
-
+    
     public <T> ResponseEntity<T> postForEntity(String url, Object request, ParameterizedTypeReference<T> responseType) {
         return rt.exchange(url, HttpMethod.POST, new HttpEntity(request), responseType);
     }
     
     public <T> ResponseEntity<T> putForEntity(String url, Object request, ParameterizedTypeReference<T> responseType) {
         return rt.exchange(url, HttpMethod.PUT, new HttpEntity(request), responseType);
-    }    
+    }
 }

@@ -8,7 +8,8 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.thinkbigthings.boot.web.IntegrationTestConstants.HOST;
 
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -34,9 +35,25 @@ public class UserIntegrationTest {
         basicAuth = BasicRequestFactory.createParameterizedTemplate("user@app.com",  "password");
         admin     = BasicRequestFactory.createParameterizedTemplate("admin@app.com", "password");
     }
+    
+    @Test
+    public void testSpecificUserPages() throws Exception {
+
+        Map<String,String> urlParameters = new HashMap<>();
+        urlParameters.put("pageIndex", "1");
+        urlParameters.put("pageSize", "55");
+        String queryParams = "?fooPage={pageIndex}&fooSize={pageSize}";
+        
+        String params = "?page=1&size=55";
+        ResponseEntity<PagedResources<Resource<User>>> retrieved = admin.getForEntity(HOST + "/user/all" + params, userPageResourceType);
+        
+        assertEquals(55, retrieved.getBody().getMetadata().getSize());  // page size specified in request
+        assertEquals(1, retrieved.getBody().getMetadata().getNumber()); // page index specified in request, page index numbers are zero-based
+    }
+    
 
     @Test
-    public void testGetUserPage() throws Exception {
+    public void testGetDefaultUserPage() throws Exception {
 
         ResponseEntity<PagedResources<Resource<User>>>retrieved = admin.getForEntity(HOST + "/user/all", userPageResourceType);
         PagedResources<Resource<User>> users = retrieved.getBody();
@@ -135,7 +152,7 @@ public class UserIntegrationTest {
         ResponseEntity<Resource<User>> attempt = auth.getForEntity(selfLink, userResourceType);
         assertEquals(UNAUTHORIZED, attempt.getStatusCode());
         
-        // TODO 1 be able to update user password, this should be a separate POST
+        // TODO 2 be able to update user password, this should be a separate POST
     }
 
 }
