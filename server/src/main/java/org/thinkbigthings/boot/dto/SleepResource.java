@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.LocalTime;
 import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -70,7 +68,7 @@ public class SleepResource extends ResourceSupport implements SleepStatistics {
     /**
      * @param hour hour of day from 0-23
      * @param minute minute of hour from 0-59
-     * @return a new copy
+     * @return this
      */
     public SleepResource setStartTime(int hour, int minute) {
         startTime = startTime.withHourOfDay(hour).withMinuteOfHour(minute);
@@ -86,8 +84,9 @@ public class SleepResource extends ResourceSupport implements SleepStatistics {
     /**
      * Utility method for client editing
      *
+     * @param hour hour of day from 0-23
      * @param minute minute of hour from 0-59
-     * @return a new copy
+     * @return this
      */
     public SleepResource setFinishTime(int hour, int minute) {
         finishTime = finishTime.withHourOfDay(hour).withMinuteOfHour(minute);
@@ -101,6 +100,7 @@ public class SleepResource extends ResourceSupport implements SleepStatistics {
      * @param year
      * @param month
      * @param day
+     * @return this
      */
     public SleepResource setFinishDate(int year, int month, int day) {
         finishTime = finishTime.withYear(year).withMonthOfYear(month).withDayOfMonth(day);
@@ -147,6 +147,8 @@ public class SleepResource extends ResourceSupport implements SleepStatistics {
         this.minutesAwakeNotInBed = minutesAwakeNotInBed;
     }
 
+    // TODO 0 don't send extra data in json representation that you don't need
+    
     @Override
     public DateTime getTimeOutOfBed() {
         return finishTime;

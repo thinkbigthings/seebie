@@ -30,10 +30,6 @@ public class SleepResourceIntegrationTest {
         basicAuth = BasicRequestFactory.createTemplate("user@app.com", "password");
     }
     
-    // TODO 0 use DTO to transfer sleep data
-    // - trim down what's marshalled by json, just need to send what's in the constructor
-
-    
     // TODO 1 enable resource for requesting pages of averages and groupings, doesn't need to be on dto branch
 
     @Test
