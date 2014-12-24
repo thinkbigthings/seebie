@@ -120,8 +120,8 @@ public class Sleep implements SleepStatistics, Serializable, Identifiable<Long> 
     }
 
    @Override
-   public Date getTimeOutOfBed() {
-      return timeOutOfBed;
+   public DateTime getTimeOutOfBed() {
+      return new DateTime(timeOutOfBed);
    }
    
    /**

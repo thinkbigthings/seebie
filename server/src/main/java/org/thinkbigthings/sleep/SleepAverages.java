@@ -1,6 +1,7 @@
 package org.thinkbigthings.sleep;
 
 import java.util.*;
+import org.joda.time.DateTime;
 
 public class SleepAverages implements SleepStatistics {
 
@@ -9,7 +10,7 @@ public class SleepAverages implements SleepStatistics {
    private int allMinutes = 0;
    private int minutesSleeping = 0;
    private int minutesInBed = 0;
-   private Date latestEnding = null;
+   private DateTime latestEnding = null;
 
    /** for serialization only */
    public SleepAverages() {
@@ -35,7 +36,7 @@ public class SleepAverages implements SleepStatistics {
          sumMinutesSleeping += stats.getMinutesSleeping();
          sumMinutesInBed += stats.getMinutesInBed();
          latestEnding = (latestEnding == null) ? stats.getTimeOutOfBed() : latestEnding;
-         latestEnding = latestEnding.after(stats.getTimeOutOfBed()) ? latestEnding : stats.getTimeOutOfBed();
+         latestEnding = latestEnding.isAfter(stats.getTimeOutOfBed()) ? latestEnding : stats.getTimeOutOfBed();
       }
 
       efficiency = sumEfficiency / (double) numberSleepSessions;
@@ -69,7 +70,7 @@ public class SleepAverages implements SleepStatistics {
    }
 
    @Override
-   public Date getTimeOutOfBed() {
+   public DateTime getTimeOutOfBed() {
       return latestEnding;
    }
 

@@ -1,6 +1,5 @@
 package org.thinkbigthings.sleep;
 
-import org.thinkbigthings.boot.assembler.SleepSessionDaily;
 import java.util.ArrayList;
 import java.util.List;
 import org.joda.time.DateTime;
@@ -8,7 +7,6 @@ import org.joda.time.format.DateTimeFormatter;
 
 import static org.junit.Assert.*;
 
-import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 import org.thinkbigthings.boot.dto.SleepResource;
@@ -18,20 +16,19 @@ public class SleepSessionGroupingsTest {
 
    private SleepSessionGroupings groups;
    private List<SleepStatistics> allData = new ArrayList<>();
-      DateTimeFormatter format = SleepResource.DATE_TIME_FORMAT;
-      Date firstRecordedDay;
-      Date lastRecordedDay;
+   private DateTimeFormatter format = SleepResource.DATE_TIME_FORMAT;
+   private DateTime firstRecordedDay;
+   private DateTime lastRecordedDay;
    
    @Before
    public void setup() {
       
       DateTime first = format.parseDateTime("2014-12-23 05:30 AM EST");
-      firstRecordedDay = first.toDate();
+      firstRecordedDay = first;
       
       for (int i = 0; i < 10; i++) {
-         DateTime date = first.plusDays(i);
-         lastRecordedDay = date.toDate();
-         allData.add(new SleepSessionDaily(lastRecordedDay, 480, 0, 0, 0));
+         lastRecordedDay = first.plusDays(i);
+         allData.add(new SleepResource(format.print(lastRecordedDay), 480, 0, 0));
       }
       
       groups = new SleepSessionGroupings(allData);
@@ -39,18 +36,18 @@ public class SleepSessionGroupingsTest {
    
    @Test
    public void testRanges() throws Exception {
-      SleepStatistics daily = new SleepSessionDaily("2014-12-23 05:30 AM EST", 480, 0, 0);
+      SleepStatistics daily = new SleepResource("2014-12-23 05:30 AM EST", 480, 0, 0);
       
       // outside lower
-      assertFalse(groups.isInRange(daily, format.parseDateTime("2014-12-20 05:30 AM EST").toDate(), format.parseDateTime("2014-12-21 05:30 AM EST").toDate()));
+      assertFalse(groups.isInRange(daily, format.parseDateTime("2014-12-20 05:30 AM EST"), format.parseDateTime("2014-12-21 05:30 AM EST")));
       
       // on lower edge, middle, upper edge
-      assertTrue(groups.isInRange(daily, format.parseDateTime("2014-12-23 05:30 AM EST").toDate(), format.parseDateTime("2014-12-25 05:30 AM EST").toDate()));
-      assertTrue(groups.isInRange(daily, format.parseDateTime("2014-12-22 05:30 AM EST").toDate(), format.parseDateTime("2014-12-25 05:30 AM EST").toDate()));
-      assertTrue(groups.isInRange(daily, format.parseDateTime("2014-12-20 05:30 AM EST").toDate(), format.parseDateTime("2014-12-23 05:30 AM EST").toDate()));
+      assertTrue(groups.isInRange(daily, format.parseDateTime("2014-12-23 05:30 AM EST"), format.parseDateTime("2014-12-25 05:30 AM EST")));
+      assertTrue(groups.isInRange(daily, format.parseDateTime("2014-12-22 05:30 AM EST"), format.parseDateTime("2014-12-25 05:30 AM EST")));
+      assertTrue(groups.isInRange(daily, format.parseDateTime("2014-12-20 05:30 AM EST"), format.parseDateTime("2014-12-23 05:30 AM EST")));
       
       // outside upper
-      assertFalse(groups.isInRange(daily, format.parseDateTime("2014-12-24 05:30 AM EST").toDate(), format.parseDateTime("2014-12-25 05:30 AM EST").toDate()));
+      assertFalse(groups.isInRange(daily, format.parseDateTime("2014-12-24 05:30 AM EST"), format.parseDateTime("2014-12-25 05:30 AM EST")));
    }
 
    @Test

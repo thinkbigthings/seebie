@@ -1,7 +1,7 @@
 package org.thinkbigthings.sleep;
 
 import java.util.Comparator;
-import java.util.Date;
+import org.joda.time.DateTime;
 
 public interface SleepStatistics extends Comparable<SleepStatistics> {
 
@@ -12,7 +12,7 @@ public interface SleepStatistics extends Comparable<SleepStatistics> {
       return COMPARATOR.compare(this, other);
    }
    
-   Date getTimeOutOfBed();
+   DateTime getTimeOutOfBed();
 
    int getAllMinutes();
 

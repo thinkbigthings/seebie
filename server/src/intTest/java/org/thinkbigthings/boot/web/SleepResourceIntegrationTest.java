@@ -31,11 +31,6 @@ public class SleepResourceIntegrationTest {
     }
     
     // TODO 0 use DTO to transfer sleep data
-    // - squash commits, and push to origin, merge to master and push master, blog on git squash
-    // - SleepStatistics could use joda time
-    // - implement SleepStatistics with SleepResource
-    // - SleepSessionGroupings and averages should work with joda time sleep statistics object
-    // - remove SleepSessionDaily
     // - trim down what's marshalled by json, just need to send what's in the constructor
 
     

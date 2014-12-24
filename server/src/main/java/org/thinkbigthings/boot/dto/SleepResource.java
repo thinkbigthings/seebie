@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.LocalTime;
 import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.hateoas.ResourceSupport;
+import org.thinkbigthings.sleep.SleepStatistics;
 
-public class SleepResource extends ResourceSupport {
+public class SleepResource extends ResourceSupport implements SleepStatistics {
 
     public static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd hh:mm a zzz");
 
@@ -32,15 +35,25 @@ public class SleepResource extends ResourceSupport {
         minutesAwakeNotInBed = mob;
     }
 
-   // TODO implement SleepStatistics? maybe don't want SleepStatistics to use Date
+   public SleepResource(String endStr, int mt, int mib, int mob) {
+       finishTime = DATE_TIME_FORMAT.parseDateTime(endStr);
+       startTime = finishTime.minusMinutes(mt);
+       minutesNapping = 0;
+       minutesAwakeInBed = mib;
+       minutesAwakeNotInBed = mob;
+   }
+   
+    @Override
     public int getAllMinutes() {
         return Minutes.minutesBetween(startTime, finishTime).getMinutes();
     }
 
+    @Override
     public int getMinutesInBed() {
         return getAllMinutes() - minutesAwakeNotInBed;
     }
 
+    @Override
     public int getMinutesSleeping() {
         return getMinutesInBed() - minutesAwakeInBed;
     }
@@ -49,28 +62,37 @@ public class SleepResource extends ResourceSupport {
      *
      * @return a decimal number between 0 and 100 representing the sleep efficiency as a percentage.
      */
+    @Override
     public double getEfficiency() {
         return 100 * (double) getMinutesSleeping() / (double) getMinutesInBed();
     }
 
     /**
-     * Utility method for client editing
-     *
-     * @param hour
-     * @param minute
+     * @param hour hour of day from 0-23
+     * @param minute minute of hour from 0-59
+     * @return a new copy
      */
-    public void setStartTime(int hour, int minute) {
+    public SleepResource setStartTime(int hour, int minute) {
         startTime = startTime.withHourOfDay(hour).withMinuteOfHour(minute);
+        if(startTime.isAfter(finishTime)) {
+            startTime = startTime.minusDays(1);
+        }
+        if(Minutes.minutesBetween(startTime, finishTime).getMinutes() > 1440) {
+            startTime = startTime.plusDays(1);
+        }
+        return this;
     }
 
     /**
      * Utility method for client editing
      *
-     * @param hour
-     * @param minute
+     * @param minute minute of hour from 0-59
+     * @return a new copy
      */
-    public void setFinishTime(int hour, int minute) {
+    public SleepResource setFinishTime(int hour, int minute) {
         finishTime = finishTime.withHourOfDay(hour).withMinuteOfHour(minute);
+        return this;
+
     }
 
     /**
@@ -80,8 +102,9 @@ public class SleepResource extends ResourceSupport {
      * @param month
      * @param day
      */
-    public void setFinishDate(int year, int month, int day) {
+    public SleepResource setFinishDate(int year, int month, int day) {
         finishTime = finishTime.withYear(year).withMonthOfYear(month).withDayOfMonth(day);
+        return this;
     }
 
     public String getStartTime() {
@@ -124,4 +147,8 @@ public class SleepResource extends ResourceSupport {
         this.minutesAwakeNotInBed = minutesAwakeNotInBed;
     }
 
+    @Override
+    public DateTime getTimeOutOfBed() {
+        return finishTime;
+    }
 }

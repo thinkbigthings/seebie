@@ -3,6 +3,7 @@ package org.thinkbigthings.sleep;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
 import org.joda.time.LocalDate;
 
@@ -19,13 +20,13 @@ public class SleepSessionGroupings {
       YEAR( (date)-> new LocalDate(date).dayOfYear().withMaximumValue()),
       ALL(  (date)-> new LocalDate(Long.MAX_VALUE));
 
-      private final Function<Date,LocalDate> keyFinder;
+      private final Function<DateTime,LocalDate> keyFinder;
       
-      GroupSize(Function<Date,LocalDate> lambda) {
+      GroupSize(Function<DateTime,LocalDate> lambda) {
          keyFinder = lambda;
       }
       
-      public LocalDate getEndOfGroup(Date date) {
+      public LocalDate getEndOfGroup(DateTime date) {
          return keyFinder.apply(date);
       }
    }
@@ -45,13 +46,13 @@ public class SleepSessionGroupings {
     * the interval specified by the date components of the parameters 
     * (endpoints inclusive).
     */
-   public boolean isInRange(SleepStatistics session, Date from, Date until) {
+   public boolean isInRange(SleepStatistics session, DateTime from, DateTime until) {
       boolean afterOrAtBeginning = DAY_COMPARATOR.compare(from, session.getTimeOutOfBed())  <= 0;
       boolean beforeOrAtEnd      = DAY_COMPARATOR.compare(session.getTimeOutOfBed(), until) <= 0;
       return afterOrAtBeginning && beforeOrAtEnd;
    }
    
-   public List<SleepStatistics> calculateAveragesByGroup(Date from, Date until, GroupSize groupSize) {
+   public List<SleepStatistics> calculateAveragesByGroup(DateTime from, DateTime until, GroupSize groupSize) {
       
       // TODO 5 reduce to averages while grouping so we don't have multiple terminal operations
       // think you can use the 2-arg groupingBy() method to map each list directly to SleepAverages?
