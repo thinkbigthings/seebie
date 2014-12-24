@@ -30,8 +30,6 @@ public class SleepResourceIntegrationTest {
         basicAuth = BasicRequestFactory.createTemplate("user@app.com", "password");
     }
     
-    // TODO 1 enable resource for requesting pages of averages and groupings, doesn't need to be on dto branch
-
     @Test
     public void testGetPage() throws Exception {
         ResponseEntity<PagedResources<SleepResource>>retrieved = basicParamAuth.getForEntity(url, sleepPageResourceType);

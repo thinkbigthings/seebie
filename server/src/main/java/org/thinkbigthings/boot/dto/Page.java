@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.data.domain.PageImpl;
 
 /**
- * This class only exists because PageImpl couldn't be deserialized by a JSON parser.
+ * This class only exists because PageImpl couldn't be unmarshalled by a JSON parser.
  * @param <T> 
  */
 public class Page<T> extends PageImpl<T> {

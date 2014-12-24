@@ -66,10 +66,6 @@ public class UserController {
       PagedResources<UserResource> users = resourceAssembler.toResource(service.getUsers(pageable));
       return users;
     }
-
-    
-    // TODO 1 allow for sorting.
-    
     
     @RequestMapping(value = "/current", method = GET, produces = {"application/json"})
     @PreAuthorize("isAuthenticated()")

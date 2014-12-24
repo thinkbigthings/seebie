@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import javax.validation.Valid;
+import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedResources;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.thinkbigthings.boot.assembler.SleepPageResourceAssembler;
 import org.thinkbigthings.boot.dto.SleepResource;
 import org.thinkbigthings.boot.domain.Sleep;
+import org.thinkbigthings.sleep.SleepSessionGroupings.GroupSize;
 
 @RequestMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
 @Controller
@@ -47,13 +49,26 @@ public class SleepResourceController {
         return resource;
     }
     
+    // TODO 0 enable resource for pages of averages and groupings
+    // - add bunches of random sleep data to test database
+    // - allow parameters of start/finish dates and group size, see SleepSessionGroupings
+    // - default sort descending by finish time, allow sorting parameter
+    
+//    @RequestMapping(value = "/user/{userId}/sleepresource/averages", method = GET)
+//    @PreAuthorize("isAuthenticated() and (principal.id == #userId or hasRole('ADMIN'))")
+//    public @ResponseBody PagedResources<SleepResource> getSleepAverages(@PathVariable Long userId, Pageable pageable) {
+//        Page<Sleep> page = service.getSleepSessions(userId, pageable);
+//        PagedResources<SleepResource> sleep = assembler.toResource(page);
+//        return sleep;
+//    }
+    
+    
     @RequestMapping(value = "/user/{userId}/sleepresource", method = GET)
     @PreAuthorize("isAuthenticated() and (principal.id == #userId or hasRole('ADMIN'))")
     public @ResponseBody PagedResources<SleepResource> getSleepSessions(@PathVariable Long userId, Pageable pageable) {
         Page<Sleep> page = service.getSleepSessions(userId, pageable);
-        PagedResources<SleepResource> users = assembler.toResource(page);
-        return users;
-
+        PagedResources<SleepResource> sleep = assembler.toResource(page);
+        return sleep;
     }
     
     @RequestMapping(value = "/user/{userId}/sleepresource/{sleepId}", method = GET)
