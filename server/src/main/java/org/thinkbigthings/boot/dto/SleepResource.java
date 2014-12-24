@@ -147,9 +147,8 @@ public class SleepResource extends ResourceSupport implements SleepStatistics {
         this.minutesAwakeNotInBed = minutesAwakeNotInBed;
     }
 
-    // TODO 0 don't send extra data in json representation that you don't need
-    
     @Override
+    @JsonIgnore
     public DateTime getTimeOutOfBed() {
         return finishTime;
     }
