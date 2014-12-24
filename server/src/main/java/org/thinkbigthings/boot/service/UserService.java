@@ -5,19 +5,23 @@ import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thinkbigthings.boot.domain.Role;
 import org.thinkbigthings.boot.domain.User;
+import org.thinkbigthings.boot.dto.UserRegistration;
+import org.thinkbigthings.boot.dto.UserResource;
 import org.thinkbigthings.boot.repository.RoleRepository;
 import org.thinkbigthings.boot.repository.UserRepository;
 
+/**
+ * 
+ * This class doesn't implement UserDetailsService because if it implements an interface,
+ * you can't wire it into the controller as a concrete class.
+ */
 @Service
-class UserService implements UserDetailsService, UserServiceInterface {
+public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -31,7 +35,6 @@ class UserService implements UserDetailsService, UserServiceInterface {
     }
 
     @Transactional(readOnly = true)
-    @Override
     public User getUserById(Long id) {
         User user = userRepository.findOne(id);
         if (user == null) {
@@ -42,14 +45,14 @@ class UserService implements UserDetailsService, UserServiceInterface {
     }
 
     /**
+     * @param userId
      * @param userData the userData information to persist
      * @return the persisted userData
      */
     @Transactional
-    @Override
-    public User updateUser(User userData) {
+    public User updateUser(Long userId, UserResource userData) {
 
-        User persistedUser = userRepository.findOne(userData.getId());
+        User persistedUser = userRepository.findOne(userId);
 
         persistedUser.setDisplayName(userData.getDisplayName());
         persistedUser.setUsername(userData.getUsername());
@@ -58,31 +61,20 @@ class UserService implements UserDetailsService, UserServiceInterface {
     }
 
     @Transactional
-    @Override
-    public User registerNewUser(User newUser) {
+    public User registerNewUser(UserRegistration registrationInfo) {
 
         User user = new User();
-        user.setDisplayName(newUser.getDisplayName());
-        user.setUsername(newUser.getUsername());
+        user.setDisplayName(registrationInfo.getDisplayName());
+        user.setUsername(registrationInfo.getUserName());
         user.setRegistration(new Date());
         user.setEnabled(true);
         user.getRoles().add(roleRepository.findByName(Role.NAME.USER));
-        user.setPassword(encoder.encode(newUser.getPassword()));
+        user.setPassword(encoder.encode(registrationInfo.getPlaintextPassword()));
 
         User persistedUser = userRepository.save(user);
         return persistedUser;
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-        if(user == null) {
-            throw new UsernameNotFoundException(username);
-        }
-        return user;
-    }
-
-    @Override
     public Page<User> getUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }

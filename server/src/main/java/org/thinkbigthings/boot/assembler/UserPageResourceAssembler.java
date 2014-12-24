@@ -1,8 +1,7 @@
 package org.thinkbigthings.boot.assembler;
 
-import java.util.HashSet;
+import org.thinkbigthings.boot.dto.UserResource;
 import java.util.List;
-import java.util.Set;
 import javax.inject.Inject;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.Link;
@@ -17,51 +16,29 @@ import org.thinkbigthings.boot.web.UserController;
 @Component
 public class UserPageResourceAssembler extends ResourceAssemblerSupport<Page<User>, PagedResources> {
 
-   public static final String PAGING_PREFIX    = "paging";
-   public static final String PAGING_SEPARATOR = ".";
-   
-   private UserResourceAssembler userResourceAssembler;
+    protected UserResourceAssembler userResourceAssembler;
+    protected PagingLinkCreator pagingLink;
+    
+    @Inject
+    public UserPageResourceAssembler(UserResourceAssembler userAssembler, PagingLinkCreator creator) {
+        super(UserController.class, PagedResources.class);
+        userResourceAssembler = userAssembler;
+        pagingLink = creator;
+        
+    }
 
-   @Inject
-   public UserPageResourceAssembler(UserResourceAssembler userAssembler) {
-      super(UserController.class, PagedResources.class);
-      userResourceAssembler = userAssembler;
-   }
+    @Override
+    public PagedResources<UserResource> toResource(Page<User> page) {
+        String baseUrl = ControllerLinkBuilder.linkTo(UserController.class).toString();
+        List<UserResource> resourceList = userResourceAssembler.toResources(page.getContent());
+        List<Link> pagingLinks = pagingLink.createPagingLinks(baseUrl, page);
+        PagedResources.PageMetadata meta = pagingLink.createMeta(page);
+                
+        return new PagedResources(resourceList, meta, pagingLinks);
+    }
 
-  @Override
-  public PagedResources<Resource<User>> toResource(Page<User> users)
-  {
-     PagedResources.PageMetadata pageMetadata = new ExtendedPageMetadata(users);
-     List<Resource> resourceList = userResourceAssembler.toResources(users.getContent());
-     PagedResources<Resource<User>> resources = new PagedResources(resourceList, pageMetadata);
-     resources.add(createPagingLinks(users));
-     return resources;
-  }
-
-  public Resource<User> toResource(User user) {
-     return userResourceAssembler.toResource(user);
-  }
-
-  private Set<Link> createPagingLinks(Page<User> page) 
-  {
-
-     Set<Link> links = new HashSet<>();
-     String baseUrl = ControllerLinkBuilder.linkTo(UserController.class).toString();
-     String pageNumber = PAGING_PREFIX + PAGING_SEPARATOR + "page";
-     String pageSize   = PAGING_PREFIX + PAGING_SEPARATOR + "size";
-
-     // the page object here outputs zero-based page numbers
-     // but the requests coming in are one-based, so these urls are constructed with an extra offset
-     if(page.hasPrevious()) {
-        String url = baseUrl + "?" + pageNumber + "=" + (page.getNumber() + 0) + "&" + pageSize + "=" + page.getSize();
-        links.add(new Link(url, Link.REL_PREVIOUS));
-     }
-     if(page.hasNext()) {
-        String url = baseUrl + "?" + pageNumber + "=" + (page.getNumber() + 2) + "&" + pageSize + "=" + page.getSize();
-        links.add(new Link(url, Link.REL_NEXT));
-     }
-
-     return links;
-  }
+    public UserResource toResource(User user) {
+        return userResourceAssembler.toResource(user);
+    }
 
 }

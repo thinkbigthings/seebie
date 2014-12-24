@@ -3,6 +3,7 @@ package org.thinkbigthings.boot.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -40,7 +41,6 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 @Entity
 @Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = { "username" }) })
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements UserDetails, Identifiable<Long>  {
 
    private static final long serialVersionUID = 1L;
@@ -68,7 +68,7 @@ public class User implements UserDetails, Identifiable<Long>  {
    @Basic
    private boolean enabled = false;
 
-   @ManyToMany(fetch = FetchType.EAGER)
+   @ManyToMany(fetch = FetchType.LAZY)
    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
    private Set<Role> roles = new HashSet<>();
 
@@ -78,7 +78,6 @@ public class User implements UserDetails, Identifiable<Long>  {
    
    @Temporal(value = TemporalType.TIMESTAMP)
    private Date registration = new Date();
-
 
    public User()
    {
@@ -141,11 +140,6 @@ public class User implements UserDetails, Identifiable<Long>  {
 
    //////////////////////////////////////
    
-   public boolean isSystemAdmin()
-   {
-      return roles.contains(new Role(Role.NAME.ADMIN));
-   }
-
    public Set<Role> getRoles()
    {
       return roles;
@@ -212,9 +206,8 @@ public class User implements UserDetails, Identifiable<Long>  {
     }
 
     public User withRoles(Role... inroles) {
-        for(Role role : inroles) {
-            getRoles().add(role);
-        }
+        roles.addAll(Arrays.asList(inroles));
         return this;
     }
+    
 }

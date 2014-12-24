@@ -1,16 +1,15 @@
-package org.thinkbigthings.sleep;
+package org.thinkbigthings.boot.assembler;
+
+import static org.thinkbigthings.boot.dto.SleepResource.DATE_TIME_FORMAT;
 
 import java.io.Serializable;
 import java.util.Date;
 import org.joda.time.*;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.thinkbigthings.sleep.SleepStatistics;
 
 public class SleepSessionDaily implements SleepStatistics, Serializable {
 
    public static final long serialVersionUID = 1L;
-
-   public static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd hh:mm a zzz");
 
    private final int napMinutes;
    private final int totalMinutes;

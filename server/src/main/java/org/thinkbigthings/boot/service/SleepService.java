@@ -3,16 +3,18 @@ package org.thinkbigthings.boot.service;
 import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thinkbigthings.boot.dto.SleepResource;
 import org.thinkbigthings.boot.domain.Sleep;
 import org.thinkbigthings.boot.domain.User;
 import org.thinkbigthings.boot.repository.SleepSessionRepository;
 import org.thinkbigthings.boot.repository.UserRepository;
-import org.thinkbigthings.sleep.SleepSessionJSON;
 
 @Service
-class SleepService implements SleepServiceInterface {
+public class SleepService  {
 
     private final UserRepository userRepository;
     private final SleepSessionRepository sleepRepository;
@@ -24,8 +26,7 @@ class SleepService implements SleepServiceInterface {
     }
 
     @Transactional
-    @Override
-    public Sleep createSleepSession(Long userId, SleepSessionJSON sleepData) {
+    public Sleep createSleepSession(Long userId, SleepResource sleepData) {
         User user = userRepository.findOne(userId);
         Sleep sleep = new Sleep(user, sleepData);
         Sleep saved = sleepRepository.save(sleep);
@@ -33,38 +34,39 @@ class SleepService implements SleepServiceInterface {
     }
 
     @Transactional
-    @Override
-    public List<Sleep> getSleepSessions(Long forUserId) {
+    public Page<Sleep> getSleepSessions(Long forUserId, Pageable pageable) {
         User user = userRepository.findOne(forUserId);
-        return sleepRepository.findByUser(user);
+        if(user == null) {
+            throw new EntityNotFoundException("User with id was not found: " + forUserId);
+        }
+        return sleepRepository.findByUser(user, pageable);
     }
 
     @Transactional
-    @Override
     public Boolean deleteSleepSession(Long sleepId) {
         sleepRepository.delete(sleepId);
         return true;
     }
 
     @Transactional
-    @Override
-    public Sleep getSleepSession(Long sleepId) {
-        Sleep session = sleepRepository.findOne(sleepId);
-        if(session == null) {
-            throw new EntityNotFoundException("Sleep data with id was not found: " + sleepId.toString());
+    public Sleep getSleepSession(Long userId, Long sleepId) {
+        User user = userRepository.findOne(userId);
+        List<Sleep> sleepList = sleepRepository.findByUserAndId(user, sleepId);
+        if(sleepList.isEmpty()) {
+            throw new EntityNotFoundException("Sleep data with id was not found: " + sleepId);
         }
-        return session;
+        return sleepList.get(0);
     }
 
     @Transactional
-    @Override
-    public Sleep updateSleep(Long userId, Long sleepId, SleepSessionJSON session) {
-        Sleep persistedSleep = getSleepSession(sleepId);
+    public Sleep updateSleepResource(Long userId, Long sleepId, SleepResource session) {
+        Sleep persistedSleep = getSleepSession(userId, sleepId);
         persistedSleep.setMinutesAwakeInBed(session.getMinutesAwakeInBed());
         persistedSleep.setMinutesAwakeNotInBed(session.getMinutesAwakeNotInBed());
         persistedSleep.setMinutesNapping(session.getMinutesNapping());
-        persistedSleep.setMinutesTotal(session.getMinutesTotal());
+        persistedSleep.setMinutesTotal(session.getAllMinutes());
         persistedSleep = sleepRepository.save(persistedSleep);
         return persistedSleep;
     }
+
 }

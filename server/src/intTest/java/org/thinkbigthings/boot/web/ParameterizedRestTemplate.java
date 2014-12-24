@@ -17,6 +17,10 @@ public class ParameterizedRestTemplate {
         rt = t;
     }
 
+    public <T> ResponseEntity<T> getForEntity(String url, Class<T> clazz) {
+        return rt.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, clazz);
+    }
+    
     public <T> ResponseEntity<T> getForEntity(String url, ParameterizedTypeReference<T> responseType) {
         return rt.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, responseType);
     }

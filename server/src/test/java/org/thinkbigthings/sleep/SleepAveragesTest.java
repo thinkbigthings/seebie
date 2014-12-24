@@ -1,5 +1,7 @@
 package org.thinkbigthings.sleep;
 
+import org.thinkbigthings.boot.assembler.SleepSessionDaily;
+
 import static java.util.Arrays.asList;
 
 import static org.junit.Assert.assertEquals;

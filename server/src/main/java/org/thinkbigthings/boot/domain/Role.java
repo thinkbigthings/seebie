@@ -37,7 +37,8 @@ public class Role implements GrantedAuthority, Serializable {
    @NotNull
    private NAME name = NAME.USER;
 
-   public Role() {
+   // empty constructor is necessary for hibernate to create
+   protected Role() {
 
    }
 

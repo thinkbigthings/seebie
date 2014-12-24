@@ -1,6 +1,5 @@
 package org.thinkbigthings.boot.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.thinkbigthings.sleep.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -11,9 +10,9 @@ import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.hateoas.Identifiable;
+import org.thinkbigthings.boot.dto.SleepResource;
 
 @Entity
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Sleep implements SleepStatistics, Serializable, Identifiable<Long> {
 
    public static final long serialVersionUID = 1L;
@@ -57,9 +56,9 @@ public class Sleep implements SleepStatistics, Serializable, Identifiable<Long> 
    @Min(value = 0)
    protected int minutesAwakeNotInBed = 0;
 
-   // TODO 1 if using DTO, don't need empty constructor for serialization
+   // empty constructor is necessary for hibernate to create
    protected Sleep() {
-       this(new Date(), 0, 0, 0, 0);
+       
    }
    
    public Sleep(String endStr, int mt, int mib, int mob) {
@@ -74,12 +73,11 @@ public class Sleep implements SleepStatistics, Serializable, Identifiable<Long> 
       minutesNapping = naps;
    }
 
-   
-   public Sleep(User forUser, SleepSessionJSON toCopy) {
+   public Sleep(User forUser, SleepResource toCopy) {
        user = forUser;
-       timeOutOfBed = DATE_TIME_FORMAT.parseDateTime(toCopy.getTimeOutOfBed()).toDate();
+       timeOutOfBed = DATE_TIME_FORMAT.parseDateTime(toCopy.getFinishTime()).toDate();
        minutesNapping = toCopy.getMinutesNapping();
-       minutesTotal = toCopy.getMinutesTotal();
+       minutesTotal = toCopy.getAllMinutes();
        minutesAwakeInBed = toCopy.getMinutesAwakeInBed();
        minutesAwakeNotInBed = toCopy.getMinutesAwakeNotInBed();
    }
@@ -165,6 +163,10 @@ public class Sleep implements SleepStatistics, Serializable, Identifiable<Long> 
    @Override
    public Long getId() {
       return id;
+   }
+   
+   public User getUser() {
+       return user;
    }
 
 }

@@ -1,9 +1,9 @@
 package org.thinkbigthings.sleep;
 
+import org.thinkbigthings.boot.assembler.SleepSessionDaily;
 import java.util.ArrayList;
 import java.util.List;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import static org.junit.Assert.*;
@@ -11,13 +11,14 @@ import static org.junit.Assert.*;
 import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
+import org.thinkbigthings.boot.dto.SleepResource;
 import org.thinkbigthings.sleep.SleepSessionGroupings.GroupSize;
 
 public class SleepSessionGroupingsTest {
 
    private SleepSessionGroupings groups;
    private List<SleepStatistics> allData = new ArrayList<>();
-      DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd hh:mm a zzz");
+      DateTimeFormatter format = SleepResource.DATE_TIME_FORMAT;
       Date firstRecordedDay;
       Date lastRecordedDay;
    
