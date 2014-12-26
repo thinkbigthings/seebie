@@ -9,17 +9,14 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.thinkbigthings.boot.web.IntegrationTestConstants.HOST;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.PagedResources.PageMetadata;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.thinkbigthings.boot.dto.SleepResource;
 import org.thinkbigthings.boot.dto.UserRegistration;
 import org.thinkbigthings.boot.dto.UserResource;
 
@@ -30,7 +27,6 @@ public class UserIntegrationTest {
     private final static String currentUserUrl =  HOST + "/user/current";
     private final static ParameterizedTypeReference userResourceType = new ParameterizedTypeReference<UserResource>(){};
     private final static ParameterizedTypeReference userPageResourceType = new ParameterizedTypeReference<PagedResources<UserResource>>(){};
-    private final static ParameterizedTypeReference sleepPageResourceType = new ParameterizedTypeReference<PagedResources<SleepResource>>(){};
 
     private ParameterizedRestTemplate basicAuth;
     private ParameterizedRestTemplate admin;
@@ -116,24 +112,6 @@ public class UserIntegrationTest {
         ResponseEntity<UserResource> firstUserLinkResponse = admin.getForEntity(firstResource.getLink("self").getHref(), userResourceType); 
         UserResource retrievedFromPage =  firstUserLinkResponse.getBody();
         assertEquals(firstResource.getUsername(), retrievedFromPage.getUsername());
-    }
-    
-    @Test
-    public void testFollowLinks() throws Exception {
-
-        ResponseEntity<UserResource> retrieved = basicAuth.getForEntity(currentUserUrl, userResourceType);
-        UserResource user10 = retrieved.getBody();
-        
-        String sleepUrl = user10.getLink(UserResource.REL_SLEEP).getHref();
-        String rolesUrl = user10.getLink(UserResource.REL_ROLES).getHref();
-        
-        ResponseEntity<PagedResources<SleepResource>> sleepPage = basicAuth.getForEntity(sleepUrl, sleepPageResourceType);
-        PageMetadata sleepPageMeta = sleepPage.getBody().getMetadata();
-        Collection<SleepResource> page = sleepPage.getBody().getContent();
-        
-        assertEquals(2, sleepPageMeta.getTotalElements());
-        assertEquals(sleepPageMeta.getTotalElements(), page.size());
-        
     }
     
     @Test

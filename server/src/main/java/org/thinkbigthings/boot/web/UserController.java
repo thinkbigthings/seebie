@@ -20,12 +20,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedResources;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.thinkbigthings.boot.assembler.UserPageResourceAssembler;
 
 @Controller
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/user", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class UserController {
 
     private final UserService service;
@@ -43,7 +44,7 @@ public class UserController {
     // also see apache commons lang StringEscapeUtils
     // maybe make my own @SanitizedRequestBody or @SanitizedRequestParam
     // also see @NoHtml and NoHtmlValidator in my blog post
-    @RequestMapping(value = "/register", method = POST, produces = {"application/json"})
+    @RequestMapping(value = "/register", method = POST)
     public @ResponseBody UserResource register(@RequestBody @Valid UserRegistration registration, BindingResult binding) {
       if (binding.hasErrors()) {
          throw new InvalidRequestBodyException(binding);
@@ -60,21 +61,21 @@ public class UserController {
      * 
      * @return resource of users
      */
-    @RequestMapping(method = GET, produces = {"application/json"})
+    @RequestMapping(method = GET)
     @PreAuthorize("hasRole('ADMIN')")
     public @ResponseBody PagedResources<UserResource> getUsers(Pageable pageable) {
       PagedResources<UserResource> users = resourceAssembler.toResource(service.getUsers(pageable));
       return users;
     }
     
-    @RequestMapping(value = "/current", method = GET, produces = {"application/json"})
+    @RequestMapping(value = "/current", method = GET)
     @PreAuthorize("isAuthenticated()")
     public @ResponseBody UserResource getCurrentUser(@AuthenticationPrincipal User currentUser) {
       User current = service.getUserById(currentUser.getId());
       return resourceAssembler.toResource(current);
     }
     
-    @RequestMapping(value = "/{id}", method = GET, produces = {"application/json"})
+    @RequestMapping(value = "/{id}", method = GET)
     @PreAuthorize("isAuthenticated() and (principal.id == #id or hasRole('ADMIN'))")
     public @ResponseBody UserResource getUser(@PathVariable Long id) {
         
@@ -83,7 +84,7 @@ public class UserController {
       return resourceAssembler.toResource(current);
     }
 
-    @RequestMapping(value = "/{id}", method = PUT, produces = {"application/json"})
+    @RequestMapping(value = "/{id}", method = PUT)
     @PreAuthorize("isAuthenticated() and (principal.id == #id or hasRole('ADMIN'))")
     public @ResponseBody UserResource update(@PathVariable Long id, @RequestBody @Valid UserResource user, BindingResult binding) {
       if (binding.hasErrors()) {

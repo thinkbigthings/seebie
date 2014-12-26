@@ -11,19 +11,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.inject.Inject;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.thinkbigthings.boot.dto.SleepResource.DATE_FORMAT;
 
+import java.util.Date;
 import javax.validation.Valid;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.thinkbigthings.boot.assembler.SleepPageResourceAssembler;
-import org.thinkbigthings.boot.dto.SleepResource;
 import org.thinkbigthings.boot.domain.Sleep;
-import org.thinkbigthings.sleep.SleepSessionGroupings.GroupSize;
+import org.thinkbigthings.boot.dto.SleepResource;
 
 @RequestMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
 @Controller
@@ -49,23 +51,26 @@ public class SleepResourceController {
         return resource;
     }
     
-    // TODO 0 enable resource for pages of averages and groupings
-    // - add bunches of random sleep data to test database
-    // - allow parameters of start/finish dates and group size, see SleepSessionGroupings
-    // - default sort descending by finish time, allow sorting parameter
-    
-//    @RequestMapping(value = "/user/{userId}/sleepresource/averages", method = GET)
-//    @PreAuthorize("isAuthenticated() and (principal.id == #userId or hasRole('ADMIN'))")
-//    public @ResponseBody PagedResources<SleepResource> getSleepAverages(@PathVariable Long userId, Pageable pageable) {
-//        Page<Sleep> page = service.getSleepSessions(userId, pageable);
-//        PagedResources<SleepResource> sleep = assembler.toResource(page);
-//        return sleep;
-//    }
-    
-    
+    // TODO 0 enable resource for pages of averages
+    // start with averages resource, 
+    // - add parameter for averages group sizes: DAY, WEEK, MONTH, YEAR, ALL (day is just same as regular results)
+    // may be able to consolidate with regular sleepresource url
+    // default is just daily for latest page
+
+
+    /**
+     * A normal query might look like this:
+     * 
+     * http://localhost:9000/user/15/sleepresource?sort=timeOutOfBed,desc&page=1&size=30"
+     * 
+     * @param userId
+     * @param pageable
+     * @return 
+     */
     @RequestMapping(value = "/user/{userId}/sleepresource", method = GET)
     @PreAuthorize("isAuthenticated() and (principal.id == #userId or hasRole('ADMIN'))")
-    public @ResponseBody PagedResources<SleepResource> getSleepSessions(@PathVariable Long userId, Pageable pageable) {
+    public @ResponseBody PagedResources<SleepResource> getSleepSessions(@PathVariable Long userId, Pageable pageable) 
+    {
         Page<Sleep> page = service.getSleepSessions(userId, pageable);
         PagedResources<SleepResource> sleep = assembler.toResource(page);
         return sleep;

@@ -5,7 +5,13 @@ import org.springframework.boot.actuate.system.ApplicationPidFileWriter;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.context.annotation.ComponentScan;
 
+// TODO 2 shouldn't restart server for intTest if no code changes were made
+// although this could be a problem to detect if you do a gradle clean build; gradle intTest
+
 // TODO 2 should not continue integration test if compile fails.
+
+// TODO 3 investigate security headers
+// http://www.ibuildings.com/blog/2013/03/4-http-security-headers-you-should-always-be-using
 
 /*
  @EnableAutoconfiguration tells Spring Boot to "guess" how you will want 

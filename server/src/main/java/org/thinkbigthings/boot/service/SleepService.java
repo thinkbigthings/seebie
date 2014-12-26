@@ -4,6 +4,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,9 @@ import org.thinkbigthings.boot.domain.Sleep;
 import org.thinkbigthings.boot.domain.User;
 import org.thinkbigthings.boot.repository.SleepSessionRepository;
 import org.thinkbigthings.boot.repository.UserRepository;
+import org.thinkbigthings.sleep.SleepSessionGroupings;
+import org.thinkbigthings.sleep.SleepSessionGroupings.GroupSize;
+import org.thinkbigthings.sleep.SleepStatistics;
 
 @Service
 public class SleepService  {
@@ -32,14 +36,24 @@ public class SleepService  {
         Sleep saved = sleepRepository.save(sleep);
         return saved;
     }
-
-    @Transactional
+    
+    @Transactional(readOnly = true)
+    public Page<Sleep> getSleepAverages(Long forUserId, Pageable pageable, GroupSize averages) {
+        List<? extends SleepStatistics> all = sleepRepository.findAllByUserId(forUserId);
+        
+        // may be able to do this with a clever SQL query
+        
+//        SleepSessionGroupings groupings = new SleepSessionGroupings(all);
+//        List<SleepStatistics> allStats = groupings.calculateAveragesByGroup(averages);
+//        Page<Sleep> page = new PageImpl(allStats);
+//        return page;
+        
+        return null;
+    }
+    
+    @Transactional(readOnly = true)
     public Page<Sleep> getSleepSessions(Long forUserId, Pageable pageable) {
-        User user = userRepository.findOne(forUserId);
-        if(user == null) {
-            throw new EntityNotFoundException("User with id was not found: " + forUserId);
-        }
-        return sleepRepository.findByUser(user, pageable);
+        return sleepRepository.findByUserId(forUserId, pageable);
     }
 
     @Transactional
@@ -48,14 +62,13 @@ public class SleepService  {
         return true;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Sleep getSleepSession(Long userId, Long sleepId) {
-        User user = userRepository.findOne(userId);
-        List<Sleep> sleepList = sleepRepository.findByUserAndId(user, sleepId);
-        if(sleepList.isEmpty()) {
+        Sleep sleep = sleepRepository.findOneByUserIdAndId(userId, sleepId);
+        if(sleep == null) {
             throw new EntityNotFoundException("Sleep data with id was not found: " + sleepId);
         }
-        return sleepList.get(0);
+        return sleep;
     }
 
     @Transactional
@@ -68,5 +81,5 @@ public class SleepService  {
         persistedSleep = sleepRepository.save(persistedSleep);
         return persistedSleep;
     }
-
+    
 }

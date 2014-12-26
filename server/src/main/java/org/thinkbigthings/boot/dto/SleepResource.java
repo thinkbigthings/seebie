@@ -10,8 +10,15 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.hateoas.ResourceSupport;
 import org.thinkbigthings.sleep.SleepStatistics;
 
+// TODO 3 investigate json views
+// http://spring.io/blog/2014/12/02/latest-jackson-integration-improvements-in-spring
+
+// TODO 3 investigate json support for joda time https://github.com/FasterXML/jackson-datatype-joda
+// rather than parsing myself
+
 public class SleepResource extends ResourceSupport implements SleepStatistics {
 
+    public static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd");
     public static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd hh:mm a zzz");
 
     @JsonIgnore private DateTime startTime;
