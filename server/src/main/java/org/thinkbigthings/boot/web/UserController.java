@@ -87,6 +87,10 @@ public class UserController {
     
     /**
      * update user password, this should be a separate operation from regular update
+     * 
+     * @param id
+     * @param plainTextPassword
+     * @return 
      */
     @RequestMapping(value = "/{id}/password", method = PUT)
     @PreAuthorize("isAuthenticated() and (principal.id == #id or hasRole('ADMIN'))")
@@ -95,6 +99,7 @@ public class UserController {
       User updated = service.updateUserPassword(id, plainTextPassword);
       UserResource updatedResource = resourceAssembler.toResource(updated);
       
+      // removes authentication information for current auth, subsequent calls should re-authenticate with the new username
       SecurityContextHolder.getContext().setAuthentication(null);
       
       return updatedResource;
@@ -103,6 +108,7 @@ public class UserController {
     @RequestMapping(value = "/{id}", method = PUT)
     @PreAuthorize("isAuthenticated() and (principal.id == #id or hasRole('ADMIN'))")
     public @ResponseBody UserResource update(@PathVariable Long id, @RequestBody @Valid UserResource user, BindingResult binding) {
+        
       if (binding.hasErrors()) {
          throw new InvalidRequestBodyException(binding);
       }

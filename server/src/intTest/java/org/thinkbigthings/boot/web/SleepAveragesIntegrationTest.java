@@ -11,11 +11,9 @@ import org.junit.Test;
 
 import org.junit.Before;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.http.ResponseEntity;
 import org.thinkbigthings.boot.dto.SleepAveragesResource;
-import org.thinkbigthings.boot.dto.UserResource;
 
 public class SleepAveragesIntegrationTest {
     

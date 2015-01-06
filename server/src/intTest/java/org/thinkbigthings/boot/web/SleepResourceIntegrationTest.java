@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import org.junit.Before;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.PagedResources.PageMetadata;
 import org.springframework.http.HttpEntity;
@@ -97,7 +98,7 @@ public class SleepResourceIntegrationTest {
         SleepResource newResource = new SleepResource("2014-07-03 09:30 PM EST", "2014-07-04 05:30 AM EST", 0, 25,  20);
         ResponseEntity<SleepResource> created = basicAuth.postForEntity(url, newResource, SleepResource.class);
         SleepResource newSleepResource = created.getBody();
-        String sleepUrl = newSleepResource.getLink("self").getHref();
+        String sleepUrl = newSleepResource.getLink(Link.REL_SELF).getHref();
         
         assertEquals(OK, created.getStatusCode());
         assertEquals(newResource.getMinutesInBed(), newSleepResource.getMinutesInBed());
@@ -113,11 +114,11 @@ public class SleepResourceIntegrationTest {
         basicAuth.put(sleepUrl, updateRequest);
         ResponseEntity<SleepResource> retrieveAfterUpdate = basicAuth.getForEntity(sleepUrl, SleepResource.class);
         
-        assertEquals(sleepUrl, retrieveAfterUpdate.getBody().getLink("self").getHref());
+        assertEquals(sleepUrl, retrieveAfterUpdate.getBody().getLink(Link.REL_SELF).getHref());
         assertEquals(updateRequest.getMinutesAwakeInBed(), retrieveAfterUpdate.getBody().getMinutesAwakeInBed());
         assertEquals(updateRequest.getMinutesAwakeNotInBed(), retrieveAfterUpdate.getBody().getMinutesAwakeNotInBed());
 
-        assertEquals(sleepUrl, retrieveAfterUpdate.getBody().getLink("self").getHref());
+        assertEquals(sleepUrl, retrieveAfterUpdate.getBody().getLink(Link.REL_SELF).getHref());
         assertEquals(updateRequest.getMinutesAwakeInBed(), retrieveAfterUpdate.getBody().getMinutesAwakeInBed());
         assertEquals(updateRequest.getMinutesAwakeNotInBed(), retrieveAfterUpdate.getBody().getMinutesAwakeNotInBed());
         

@@ -7,7 +7,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 
 // TODO 2 should generate test reports for both unit and integration tests when doing full build
-// (right now last test run is all that remains)
+// right now all tests are generated, but only int tests are available via index.html (if running int tests)
+// http://www.gradle.org/docs/current/userguide/java_plugin.html
 
 // TODO 2 shouldn't restart server for intTest if no code changes were made
 // although this could be a problem to detect if you do a gradle clean build; gradle intTest

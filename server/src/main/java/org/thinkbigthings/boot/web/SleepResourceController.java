@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import java.util.Optional;
-import javax.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -51,12 +50,7 @@ public class SleepResourceController {
 
     @RequestMapping(value = "/user/{userId}/sleepresource", method = POST)
     @PreAuthorize("isAuthenticated() and (principal.id == #userId or hasRole('ADMIN'))")
-    public @ResponseBody SleepResource createSleepSession(@PathVariable Long userId, @RequestBody @Valid SleepResource sleepData, BindingResult binding) {
-        // TODO 3 Because of the way SleepResource is instantiated, I'm not sure this path can have errors.
-        // Should find a way to int test this and the other binding.hasErrors() blocks in the controllers
-        if (binding.hasErrors()) {
-            throw new InvalidRequestBodyException(binding);
-        }
+    public @ResponseBody SleepResource createSleepSession(@PathVariable Long userId, @RequestBody SleepResource sleepData, BindingResult binding) {
         Sleep createdSession = service.createSleepSession(userId, sleepData);
         SleepResource resource = assembler.toResource(createdSession);
         return resource;
@@ -118,10 +112,7 @@ public class SleepResourceController {
     
     @RequestMapping(value = "/user/{userId}/sleepresource/{sleepId}", method = PUT)
     @PreAuthorize("isAuthenticated() and (principal.id == #userId or hasRole('ADMIN'))")
-    public @ResponseBody SleepResource updateSleepSession(@PathVariable Long userId, @PathVariable Long sleepId, @RequestBody @Valid SleepResource session, BindingResult binding) {
-        if (binding.hasErrors()) {
-         throw new InvalidRequestBodyException(binding);
-        }
+    public @ResponseBody SleepResource updateSleepSession(@PathVariable Long userId, @PathVariable Long sleepId, @RequestBody SleepResource session, BindingResult binding) {
         Sleep updatedSession = service.updateSleepResource(userId, sleepId, session);
         SleepResource resource = assembler.toResource(updatedSession);
         return resource;

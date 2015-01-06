@@ -5,6 +5,7 @@ package org.thinkbigthings.boot.web;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.thinkbigthings.boot.dto.UserResource.REL_PASSWORD_UPDATE;
@@ -18,7 +19,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.thinkbigthings.boot.dto.UserRegistration;
 import org.thinkbigthings.boot.dto.UserResource;
@@ -33,12 +33,13 @@ public class UserIntegrationTest {
 
     private ParameterizedRestTemplate basicAuth;
     private ParameterizedRestTemplate admin;
-    
+    private ParameterizedRestTemplate noAuth;
    
     @Before
     public void setup() throws Exception {
         basicAuth = BasicRequestFactory.createParameterizedTemplate("user@app.com",  "password");
         admin     = BasicRequestFactory.createParameterizedTemplate("admin@app.com", "password");
+        noAuth    = BasicRequestFactory.createParameterizedTemplate();
     }
 
     /**
@@ -117,7 +118,7 @@ public class UserIntegrationTest {
         
         // use links to retrieve single specific resource
         UserResource firstResource = page.getContent().iterator().next();
-        ResponseEntity<UserResource> firstUserLinkResponse = admin.getForEntity(firstResource.getLink("self").getHref(), userResourceType); 
+        ResponseEntity<UserResource> firstUserLinkResponse = admin.getForEntity(firstResource.getLink(Link.REL_SELF).getHref(), userResourceType); 
         UserResource retrievedFromPage =  firstUserLinkResponse.getBody();
         assertEquals(firstResource.getUsername(), retrievedFromPage.getUsername());
     }
@@ -131,7 +132,7 @@ public class UserIntegrationTest {
         assertEquals(OK, retrieved.getStatusCode());
         assertEquals("user@app.com", user10.getUsername());
         
-        ResponseEntity<UserResource> retrieved10 = basicAuth.getForEntity(retrieved.getBody().getLink("self").getHref(), userResourceType);
+        ResponseEntity<UserResource> retrieved10 = basicAuth.getForEntity(retrieved.getBody().getLink(Link.REL_SELF).getHref(), userResourceType);
 
         assertEquals(OK, retrieved10.getStatusCode());
         assertEquals("user@app.com", retrieved10.getBody().getUsername());
@@ -139,8 +140,6 @@ public class UserIntegrationTest {
     
     @Test
     public void testUserCRUD() throws Exception {
-
-        ParameterizedRestTemplate noAuth = BasicRequestFactory.createParameterizedTemplate();
 
         UserRegistration registration = new UserRegistration();
         String uniqueName = UUID.randomUUID().toString();
@@ -156,7 +155,7 @@ public class UserIntegrationTest {
         
         // call for current user data
         ResponseEntity<UserResource> currentUserResponse = auth.getForEntity(currentUserUrl, userResourceType);
-        String selfLink = currentUserResponse.getBody().getLink("self").getHref();
+        String selfLink = currentUserResponse.getBody().getLink(Link.REL_SELF).getHref();
         
         
         ////////// RETRIEVE
@@ -206,7 +205,6 @@ public class UserIntegrationTest {
         String uniqueName = UUID.randomUUID().toString();
         String userName = uniqueName + "@app.com";
         
-        ParameterizedRestTemplate noAuth = BasicRequestFactory.createParameterizedTemplate();
         ParameterizedRestTemplate origAuth = BasicRequestFactory.createParameterizedTemplate(userName, originalPassword);
         ParameterizedRestTemplate newAuth = BasicRequestFactory.createParameterizedTemplate(userName, newPassword);
 
@@ -243,6 +241,18 @@ public class UserIntegrationTest {
         assertEquals(userName, currentUserResponse.getBody().getUsername());
 
     }
-
+    
+    @Test
+    public void updateWithInvalidRequestBody() throws Exception {
+        
+        ResponseEntity<UserResource> currentUserResponse = basicAuth.getForEntity(currentUserUrl, userResourceType);
+        Link self = currentUserResponse.getBody().getLink(Link.REL_SELF);
+        
+        UserResource requestUpdate = new UserResource("", "", self);
+        ResponseEntity<String> responseToAttempt = basicAuth.putForEntity(self.getHref(), requestUpdate, new ParameterizedTypeReference<String>(){});
+        
+        assertEquals(BAD_REQUEST, responseToAttempt.getStatusCode());
+        assertTrue(responseToAttempt.getBody().contains("Validation of incoming object failed"));
+    }
 
 }

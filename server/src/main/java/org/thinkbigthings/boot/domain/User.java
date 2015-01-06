@@ -2,7 +2,6 @@ package org.thinkbigthings.boot.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
