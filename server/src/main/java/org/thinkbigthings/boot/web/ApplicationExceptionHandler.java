@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class ApplicationExceptionHandler {
 
-    // TODO 2 log the exception/stacktrace and return some kind of error object
-    // don't return the stack trace
+    // TODO 1 log the exception/stacktrace and return some kind of error object, don't return the stack trace
     
     // TODO 2 add email service, send email notification to admin if an unknown exception is caught
+    
+    // TODO 2 use email service for password reset feature
     
    @ExceptionHandler
    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
@@ -37,7 +38,7 @@ public class ApplicationExceptionHandler {
    public @ResponseBody String handleException(InvalidRequestBodyException ex) {
       return ex.getMessage() + getStackTrace(ex);
    }
-   
+
    @ExceptionHandler
    @ResponseStatus(HttpStatus.NOT_FOUND)
    public @ResponseBody String handleNotFound(EntityNotFoundException ex) {

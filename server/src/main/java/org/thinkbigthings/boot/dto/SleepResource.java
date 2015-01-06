@@ -130,6 +130,7 @@ public class SleepResource extends ResourceSupport implements SleepStatistics {
         finishTime = DATE_TIME_FORMAT.parseDateTime(finish);
     }
 
+    @Override
     public int getMinutesNapping() {
         return minutesNapping;
     }

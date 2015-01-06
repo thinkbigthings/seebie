@@ -1,11 +1,12 @@
 package org.thinkbigthings.boot.web;
 
 import static org.junit.Assert.assertEquals;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
-import static org.thinkbigthings.boot.dto.SleepResource.DATE_FORMAT;
 import static org.thinkbigthings.boot.web.IntegrationTestConstants.HOST;
 
+import java.util.Arrays;
 import java.util.Collection;
 import org.junit.Test;
 
@@ -14,6 +15,10 @@ import org.junit.Before;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.PagedResources.PageMetadata;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.thinkbigthings.boot.dto.SleepResource;
@@ -111,6 +116,10 @@ public class SleepResourceIntegrationTest {
         assertEquals(sleepUrl, retrieveAfterUpdate.getBody().getLink("self").getHref());
         assertEquals(updateRequest.getMinutesAwakeInBed(), retrieveAfterUpdate.getBody().getMinutesAwakeInBed());
         assertEquals(updateRequest.getMinutesAwakeNotInBed(), retrieveAfterUpdate.getBody().getMinutesAwakeNotInBed());
+
+        assertEquals(sleepUrl, retrieveAfterUpdate.getBody().getLink("self").getHref());
+        assertEquals(updateRequest.getMinutesAwakeInBed(), retrieveAfterUpdate.getBody().getMinutesAwakeInBed());
+        assertEquals(updateRequest.getMinutesAwakeNotInBed(), retrieveAfterUpdate.getBody().getMinutesAwakeNotInBed());
         
         // DELETE
         basicAuth.delete(sleepUrl);
@@ -118,7 +127,7 @@ public class SleepResourceIntegrationTest {
 
         assertEquals(NOT_FOUND, retrieveAfterDelete.getStatusCode());
     }
-    
+
     @Test
     public void testFollowLinks() throws Exception {
 
@@ -131,13 +140,15 @@ public class SleepResourceIntegrationTest {
         PageMetadata sleepPageMeta = sleepPage.getBody().getMetadata();
         Collection<SleepResource> page = sleepPage.getBody().getContent();
         
-        assertEquals(2, sleepPageMeta.getTotalElements());
         assertEquals(sleepPageMeta.getTotalElements(), page.size());
-        
     }
     
-    // TODO 1 test for invalid request body
+    @Test
+    public void cantGetPageThatsNotYours() throws Exception {
+        String otherUrl =  HOST + "/user/15/sleepresource";
+        ResponseEntity<String>retrieved = basicParamAuth.getForEntity(otherUrl, String.class);
+        
+        assertEquals(HttpStatus.UNAUTHORIZED, retrieved.getStatusCode());
+    }
     
-    // TODO 1 test for get of sleep that doesn't belong to a user
-
 }

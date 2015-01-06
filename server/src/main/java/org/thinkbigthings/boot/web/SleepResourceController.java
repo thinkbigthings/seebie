@@ -11,38 +11,49 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.inject.Inject;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.thinkbigthings.boot.dto.SleepResource.DATE_FORMAT;
 
-import java.util.Date;
+import java.util.Optional;
 import javax.validation.Valid;
-import org.joda.time.LocalDate;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.thinkbigthings.boot.assembler.SleepPageResourceAssembler;
+import org.thinkbigthings.boot.assembler.SleepAveragesResourceAssembler;
 import org.thinkbigthings.boot.domain.Sleep;
 import org.thinkbigthings.boot.dto.SleepResource;
+import org.thinkbigthings.boot.dto.SleepAveragesResource;
+import org.thinkbigthings.sleep.SleepStatisticsCalculator.Group;
 
 @RequestMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
 @Controller
 public class SleepResourceController {
 
+    public static final Sort DEFAULT_AVG_SORT = new Sort(new Order(Direction.DESC, "groupEnding"));
+            
     private final SleepService service;
     private final SleepPageResourceAssembler assembler;
+    private final SleepAveragesResourceAssembler statsAssembler;
     
     @Inject
-    public SleepResourceController(SleepService us, SleepPageResourceAssembler sa) {
+    public SleepResourceController(SleepService us, SleepPageResourceAssembler sa, SleepAveragesResourceAssembler ta) {
         service = us;
         assembler = sa;
+        statsAssembler = ta;
     }
 
     @RequestMapping(value = "/user/{userId}/sleepresource", method = POST)
     @PreAuthorize("isAuthenticated() and (principal.id == #userId or hasRole('ADMIN'))")
     public @ResponseBody SleepResource createSleepSession(@PathVariable Long userId, @RequestBody @Valid SleepResource sleepData, BindingResult binding) {
+        // TODO 3 Because of the way SleepResource is instantiated, I'm not sure this path can have errors.
+        // Should find a way to int test this and the other binding.hasErrors() blocks in the controllers
         if (binding.hasErrors()) {
             throw new InvalidRequestBodyException(binding);
         }
@@ -50,12 +61,33 @@ public class SleepResourceController {
         SleepResource resource = assembler.toResource(createdSession);
         return resource;
     }
-    
-    // TODO 0 enable resource for pages of averages
-    // start with averages resource, 
-    // - add parameter for averages group sizes: DAY, WEEK, MONTH, YEAR, ALL (day is just same as regular results)
-    // may be able to consolidate with regular sleepresource url
-    // default is just daily for latest page
+
+    /**
+     * This is not consolidated with regular sleepresource url 
+     * because an averages resource is actually a little different from a sleep record resource
+     * (includes grouping size and count for average, only uses dates)
+     * 
+     * @param userId
+     * @param pageable
+     * @param averagesGroup default is WEEK, incoming string is automatically converted to enum
+     * @return 
+     */
+    @RequestMapping(value = "/user/{userId}/sleepresource/averages", method = GET)
+    @PreAuthorize("isAuthenticated() and (principal.id == #userId or hasRole('ADMIN'))")
+    public @ResponseBody PagedResources<SleepAveragesResource> getSleepAverages(@PathVariable Long userId, 
+                                                                                Pageable pageable, 
+                                                                                @RequestParam(value="groupSize", defaultValue="WEEK") Group averagesGroup) 
+    {
+        // enhance Pageable to replace any nulls with defaults
+        Optional<Sort> optionalSort = Optional.ofNullable(pageable.getSort());
+        Pageable pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), optionalSort.orElse(DEFAULT_AVG_SORT));
+
+        // get actual data and convert to resource
+        Page<SleepAveragesResource> page = service.getSleepAverages(userId, pageRequest, averagesGroup);
+        PagedResources<SleepAveragesResource> averagesWithLinks = statsAssembler.toResource(page, userId, pageRequest, averagesGroup);
+        
+        return averagesWithLinks;
+    }
 
 
     /**

@@ -113,7 +113,7 @@ task vagrantUp(type:Exec) {
   commandLine 'vagrant', 'up'
 }
 
-// TODO call vagrant -c commands with scripts to remove host dependency on bash
+// TODO 4 call vagrant -c commands with scripts to remove host dependency on bash
 // and only reference them from Vagrantfile too so the mysql commands are in one place
 
 task resetDatabase(type:Exec) {
@@ -121,13 +121,13 @@ task resetDatabase(type:Exec) {
   commandLine 'scripts/load.sh'
 }
 
-// TODO could use gradle rest plugin or regular code to remove bash dependency
+// TODO 4 could use gradle rest plugin or regular code to remove bash dependency
 task pingServer(type:Exec) {
   workingDir '.'
   commandLine 'scripts/ready.sh', 'https://localhost:9000/health'
 }
 
-// TODO would like to actually deploy app to vm and run there
+// TODO 4 would like to actually deploy app to vm and run there
 // https://github.com/int128/gradle-ssh-plugin
 task runApp(type:Exec) {
   workingDir '.'

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 @Component
@@ -19,16 +20,20 @@ public class PagingLinkCreator {
     }
     
     public List<Link> createPagingLinks(String baseUrl, Page page) {
+        
         List<Link> links = new ArrayList<>();
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl).replaceQueryParam(PAGE_SIZE, page.getSize());
+
         // TODO 3 add links for first and last, add following those links to user integration test
         if (page.hasPrevious()) {
-            String url = baseUrl + "?" + PAGE_NUMBER + "=" + (page.getNumber() - 1) + "&" + PAGE_SIZE + "=" + page.getSize();
+            String url = builder.replaceQueryParam(PAGE_NUMBER, (page.getNumber() - 1)).toUriString();
             links.add(new Link(url, Link.REL_PREVIOUS));
         }
         if (page.hasNext()) {
-            String url = baseUrl + "?" + PAGE_NUMBER + "=" + (page.getNumber() + 1) + "&" + PAGE_SIZE + "=" + page.getSize();
+            String url = builder.replaceQueryParam(PAGE_NUMBER, (page.getNumber() + 1)).toUriString();
             links.add(new Link(url, Link.REL_NEXT));
         }
+        
         return links;
     }
 

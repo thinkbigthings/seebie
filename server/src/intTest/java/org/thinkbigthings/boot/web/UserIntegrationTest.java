@@ -62,35 +62,40 @@ public class UserIntegrationTest {
         // get some sub pages and compare to first big page
         // follow "next" links for pages 2-4, then follow "previous" links back
         url = builder.replaceQueryParam("page", 1).replaceQueryParam("size", 5).toUriString();
-        assertTrue(url.contains("page=1&size=5"));
+        assertTrue(url.contains("page=1"));
+        assertTrue(url.contains("size=5"));
         response = admin.getForEntity(url, userPageResourceType);
         List<UserResource> second5 = new ArrayList<>(response.getBody().getContent());
         assertEquals(first40.get(5).getUsername(), second5.get(0).getUsername());
 
         
         url = response.getBody().getLink(Link.REL_NEXT).getHref();
-        assertTrue(url.contains("page=2&size=5"));
+        assertTrue(url.contains("page=2"));
+        assertTrue(url.contains("size=5"));
         response = admin.getForEntity(url, userPageResourceType);
         List<UserResource> third5 = new ArrayList<>(response.getBody().getContent());
         assertEquals(first40.get(11).getUsername(), third5.get(1).getUsername());
         
         
         url = response.getBody().getLink(Link.REL_NEXT).getHref();
-        assertTrue(url.contains("page=3&size=5"));
+        assertTrue(url.contains("page=3"));
+        assertTrue(url.contains("size=5"));
         response = admin.getForEntity(url, userPageResourceType);
         List<UserResource> fourth5 = new ArrayList<>(response.getBody().getContent());
         assertEquals(first40.get(19).getUsername(), fourth5.get(4).getUsername());
         
         
         url = response.getBody().getLink(Link.REL_PREVIOUS).getHref();
-        assertTrue(url.contains("page=2&size=5"));
+        assertTrue(url.contains("page=2"));
+        assertTrue(url.contains("size=5"));
         response = admin.getForEntity(url, userPageResourceType);
         third5 = new ArrayList<>(response.getBody().getContent());
         assertEquals(first40.get(11).getUsername(), third5.get(1).getUsername());
         
         
         url = builder.replaceQueryParam("page", 1).replaceQueryParam("size", 5).toUriString();
-        assertTrue(url.contains("page=1&size=5"));
+        assertTrue(url.contains("page=1"));
+        assertTrue(url.contains("size=5"));
         response = admin.getForEntity(url, userPageResourceType);
         second5 = new ArrayList<>(response.getBody().getContent());
         assertEquals(first40.get(5).getUsername(), second5.get(0).getUsername());
@@ -190,6 +195,6 @@ public class UserIntegrationTest {
         
     }
 
-    // TODO 2 be able to update user password, this should be a separate POST
+    // TODO 1 be able to update user password, this should be a separate POST
 
 }
