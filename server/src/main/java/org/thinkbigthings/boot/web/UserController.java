@@ -38,7 +38,7 @@ public class UserController {
       resourceAssembler = assembler;
     }
 
-    // TODO 3 escape incoming inputs
+    // TODO 2 (Security) escape incoming inputs
     // HtmlUtils.htmlEscape(input) 
     // http://stackoverflow.com/questions/2147958/how-do-i-prevent-people-from-doing-xss-in-java
     // also see apache commons lang StringEscapeUtils

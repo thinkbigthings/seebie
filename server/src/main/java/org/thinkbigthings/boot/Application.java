@@ -6,17 +6,15 @@ import org.springframework.boot.autoconfigure.*;
 import org.springframework.context.annotation.ComponentScan;
 
 
-// TODO 2 should generate test reports for both unit and integration tests when doing full build
+// TODO 1 should generate test reports for both unit and integration tests when doing full build
 // right now all tests are generated, but only int tests are available via index.html (if running int tests)
 // http://www.gradle.org/docs/current/userguide/java_plugin.html
+// also see if we can get coverage reports for both unit and int tests
 
 // TODO 2 shouldn't restart server for intTest if no code changes were made
 // although this could be a problem to detect if you do a gradle clean build; gradle intTest
 
 // TODO 2 should not continue integration test if compile fails.
-
-// TODO 3 investigate security headers
-// http://www.ibuildings.com/blog/2013/03/4-http-security-headers-you-should-always-be-using
 
 // TODO 5 try running with jetty, see if faster than tomcat
 // see https://github.com/spring-projects/spring-boot/issues/345

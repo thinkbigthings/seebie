@@ -24,7 +24,7 @@ public class PagingLinkCreator {
         List<Link> links = new ArrayList<>();
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl).replaceQueryParam(PAGE_SIZE, page.getSize());
 
-        // TODO 3 add links for first and last, add following those links to user integration test
+        // TODO 0 add links for first and last, add following those links to user integration test
         if (page.hasPrevious()) {
             String url = builder.replaceQueryParam(PAGE_NUMBER, (page.getNumber() - 1)).toUriString();
             links.add(new Link(url, Link.REL_PREVIOUS));

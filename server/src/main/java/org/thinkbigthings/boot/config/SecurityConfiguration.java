@@ -15,7 +15,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-// TODO 3 use google for authentication in addition to option of username / password. Is that OAuth2?
+// TODO 2 (Security) use google for authentication in addition to option of username / password. Is that OAuth2?
+
+// TODO 2 (Security) investigate security headers
+// http://www.ibuildings.com/blog/2013/03/4-http-security-headers-you-should-always-be-using
 
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
