@@ -52,7 +52,7 @@ the report is then available in build/jacocoHtml/index.html
 
 integration tests run with "gradle intTest"
 The task automatically launches the database and web servers
-The jar has to have already been built for the test to work
+The jar has to have already been built for the int test to work
 so running with "gradle clean build intTest" should work well.
 
 ## Database
