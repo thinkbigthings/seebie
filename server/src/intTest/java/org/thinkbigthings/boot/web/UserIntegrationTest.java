@@ -1,11 +1,13 @@
 package org.thinkbigthings.boot.web;
 
 
+
 import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.thinkbigthings.boot.dto.UserResource.REL_PASSWORD_UPDATE;
 import static org.thinkbigthings.boot.web.IntegrationTestConstants.HOST;
 
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.thinkbigthings.boot.dto.UserRegistration;
 import org.thinkbigthings.boot.dto.UserResource;
@@ -189,12 +192,57 @@ public class UserIntegrationTest {
         assertEquals(updatedFromPut.getUsername(), updated.getUsername());
         
         
-        // make sure old username credentials doesn't work
+        // make sure credentials containing old username doesn't work
         ResponseEntity<String> attempt = auth.getForEntity(selfLink, String.class);
         assertEquals(UNAUTHORIZED, attempt.getStatusCode());
         
     }
 
-    // TODO 0 be able to update user password, this should be a separate POST
+    @Test
+    public void updatePassword() throws Exception {
+
+        String originalPassword = "originalpassword";
+        String newPassword = "newpassword";
+        String uniqueName = UUID.randomUUID().toString();
+        String userName = uniqueName + "@app.com";
+        
+        ParameterizedRestTemplate noAuth = BasicRequestFactory.createParameterizedTemplate();
+        ParameterizedRestTemplate origAuth = BasicRequestFactory.createParameterizedTemplate(userName, originalPassword);
+        ParameterizedRestTemplate newAuth = BasicRequestFactory.createParameterizedTemplate(userName, newPassword);
+
+        UserRegistration registration = new UserRegistration();
+        registration.setDisplayName(uniqueName);
+        registration.setPlaintextPassword(originalPassword);
+        registration.setUserName(userName);
+        
+        //////// CREATE
+        
+        // perform registration, be able to make new calls with that user's auth
+        // then call for current user data
+        noAuth.postForEntity(HOST + "/user/register", registration, userResourceType);
+        ResponseEntity<UserResource> currentUserResponse = origAuth.getForEntity(currentUserUrl, UserResource.class);
+        String passwordUpdateLink = currentUserResponse.getBody().getLink(REL_PASSWORD_UPDATE).getHref();
+        
+        ////////// UPDATE PASSWORD TO NEW
+        
+        ResponseEntity<UserResource> putResponse = origAuth.putForEntity(passwordUpdateLink, newPassword, userResourceType);
+        UserResource updatedFromPut = putResponse.getBody();
+        assertEquals(userName, updatedFromPut.getUsername());
+        
+        // make sure credentials containing old password doesn't work
+        ResponseEntity<String> attempt = origAuth.putForEntity(passwordUpdateLink, newPassword, new ParameterizedTypeReference<String>(){});
+        assertEquals(UNAUTHORIZED, attempt.getStatusCode());
+        
+        ////////// UPDATE PASSWORD TO ORIGINAL
+        
+        putResponse = newAuth.putForEntity(passwordUpdateLink, originalPassword, userResourceType);
+        updatedFromPut = putResponse.getBody();
+        currentUserResponse = origAuth.getForEntity(currentUserUrl, UserResource.class);
+        
+        assertEquals(userName, updatedFromPut.getUsername());
+        assertEquals(userName, currentUserResponse.getBody().getUsername());
+
+    }
+
 
 }

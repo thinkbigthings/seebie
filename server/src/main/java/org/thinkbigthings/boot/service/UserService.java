@@ -61,6 +61,13 @@ public class UserService {
     }
 
     @Transactional
+    public User updateUserPassword(Long userId, String newPlainPassword) {
+        User persistedUser = userRepository.findOne(userId);
+        persistedUser.setPassword(encoder.encode(newPlainPassword));
+        return userRepository.save(persistedUser);
+    }
+    
+    @Transactional
     public User registerNewUser(UserRegistration registrationInfo) {
 
         User user = new User();

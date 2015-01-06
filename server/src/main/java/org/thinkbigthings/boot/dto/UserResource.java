@@ -10,6 +10,8 @@ import org.springframework.hateoas.ResourceSupport;
 public class UserResource extends ResourceSupport {
     public static final String REL_SLEEP = "sleepresource";
     public static final String REL_ROLES = "roles";
+    public static final String REL_PASSWORD_UPDATE = "password";
+    
     private final String username;
     private final String displayName;
 
@@ -24,7 +26,7 @@ public class UserResource extends ResourceSupport {
     }
 
     public UserResource(String name, String display, Link selfLink) {
-        this(name, display, Arrays.asList(selfLink, appendProperty(selfLink, REL_SLEEP), appendProperty(selfLink, REL_ROLES)));
+        this(name, display, Arrays.asList(selfLink, appendProperty(selfLink, REL_SLEEP), appendProperty(selfLink, REL_ROLES), appendProperty(selfLink, REL_PASSWORD_UPDATE)));
     }
 
     public String getUsername() {

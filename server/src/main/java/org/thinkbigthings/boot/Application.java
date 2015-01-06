@@ -6,10 +6,6 @@ import org.springframework.boot.autoconfigure.*;
 import org.springframework.context.annotation.ComponentScan;
 
 
-
-// TODO 0 with spring boot 1.2, SSL can now be configured declaratively by setting the various server.ssl.* properties. 
-
-
 // TODO 2 should generate test reports for both unit and integration tests when doing full build
 // (right now last test run is all that remains)
 
