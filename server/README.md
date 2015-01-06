@@ -111,13 +111,13 @@ you have to remove the code in HttpsConfiguration.java
 
 If you want to make changes to the certificate, here are directions for what to do:
 
-// create a keystore with this
+You can create a keystore with this:
 keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12
 
-// view your keystore like this
+You can view your keystore like this:
 keytool -list -v -keystore keystore.p12 -storetype pkcs12
 
-// test with curl like so (the -k option lets you use a self-signed cert)
+You can test with curl like so (the -k option lets you use a self-signed cert)
 curl -u user:password -k https://127.0.0.1:9000/user/4
 
 
