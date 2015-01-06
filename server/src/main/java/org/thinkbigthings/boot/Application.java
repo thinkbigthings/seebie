@@ -6,6 +6,10 @@ import org.springframework.boot.autoconfigure.*;
 import org.springframework.context.annotation.ComponentScan;
 
 
+
+// TODO 0 with spring boot 1.2, SSL can now be configured declaratively by setting the various server.ssl.* properties. 
+
+
 // TODO 2 should generate test reports for both unit and integration tests when doing full build
 // (right now last test run is all that remains)
 
@@ -16,6 +20,10 @@ import org.springframework.context.annotation.ComponentScan;
 
 // TODO 3 investigate security headers
 // http://www.ibuildings.com/blog/2013/03/4-http-security-headers-you-should-always-be-using
+
+// TODO 5 try running with jetty, see if faster than tomcat
+// see https://github.com/spring-projects/spring-boot/issues/345
+// and spring boot ref guide 115-117
 
 /*
  @EnableAutoconfiguration tells Spring Boot to "guess" how you will want 

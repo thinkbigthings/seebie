@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-// TODO 3 use google for authentication instead of own username / password. Is that OAuth2?
+// TODO 3 use google for authentication in addition to option of username / password. Is that OAuth2?
 
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration

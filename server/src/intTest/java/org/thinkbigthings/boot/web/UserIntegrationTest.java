@@ -195,6 +195,6 @@ public class UserIntegrationTest {
         
     }
 
-    // TODO 1 be able to update user password, this should be a separate POST
+    // TODO 0 be able to update user password, this should be a separate POST
 
 }
