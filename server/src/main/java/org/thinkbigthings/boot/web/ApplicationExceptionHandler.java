@@ -18,16 +18,18 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ApplicationExceptionHandler {
 
     private static Logger log = LoggerFactory.getLogger(ApplicationExceptionHandler.class);
-    
-    // TODO 0 return some kind of error object
-    // want to write application logs to own log file instead of spring.log
-    // see section 25.2 http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-logging.html
-    // http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-logging.html
-    // http://docs.spring.io/spring-boot/docs/current/reference/html/howto-logging.html
+
     
     // TODO 1 add email service, send email notification to admin if an unknown exception is caught
     
     // TODO 1 use email service for password reset feature
+    
+    // TODO 3 return some kind of error object with localized messate instead of exception message
+    
+    // TODO 3 write application logs to own log file instead of spring.log
+    // see section 25.2 http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-logging.html
+    // http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-logging.html
+    // http://docs.spring.io/spring-boot/docs/current/reference/html/howto-logging.html
     
    @ExceptionHandler
    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
