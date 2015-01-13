@@ -18,6 +18,8 @@ import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.http.MediaType;
@@ -28,6 +30,8 @@ import org.thinkbigthings.boot.assembler.UserPageResourceAssembler;
 @Controller
 @RequestMapping(value = "/user", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class UserController {
+
+    private Logger log = LoggerFactory.getLogger(SleepResourceController.class);
 
     private final UserService service;
     private final UserPageResourceAssembler resourceAssembler;
@@ -49,6 +53,9 @@ public class UserController {
       if (binding.hasErrors()) {
          throw new InvalidRequestBodyException(binding);
       }
+      
+      log.info("Registering user: " + registration.getUserName());
+      
       User persisted = service.registerNewUser(registration);
       return resourceAssembler.toResource(persisted);
     }
