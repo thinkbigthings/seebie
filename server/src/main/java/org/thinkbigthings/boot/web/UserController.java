@@ -31,7 +31,7 @@ import org.thinkbigthings.boot.assembler.UserPageResourceAssembler;
 @RequestMapping(value = "/user", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class UserController {
 
-    // TODO 1 inject loggers, could have one logger and inject with standard CDI, 
+    // TODO 2 inject loggers, could have one logger and inject with standard CDI, 
     // or use @Autowired-like logger annotation, with optional setter for unit tests
     // http://java.dzone.com/articles/inject-slf4j-logger-annotation
     private Logger log = LoggerFactory.getLogger(SleepResourceController.class);
