@@ -1,0 +1,10 @@
+
+# aliases for blue green demo
+
+alias migrate="./gradlew :server:bootRun --args='--spring.profiles.active=migration'"
+
+alias blueClient="./gradlew :perf:bootRun --args='--connect.host=https://localhost:9001'"
+alias blueDeploy="./gradlew copyWebApp :server:bootRun --args='--server.port=9001'"
+
+alias greenClient="./gradlew :perf:bootRun --args='--connect.host=https://localhost:9002'"
+alias greenDeploy="./gradlew copyWebApp :server:bootRun --args='--server.port=9002'"

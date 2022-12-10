@@ -1,144 +1,133 @@
+
 buildscript {
-    repositories {
-        mavenCentral()
-        maven { url "http://repo.spring.io/snapshot" }
-        maven { url "http://repo.spring.io/milestone" }
-    }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.0.RELEASE")
+        classpath 'org.postgresql:postgresql:42.5.0'
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'spring-boot'
-apply plugin: 'jacoco'
-
-jar {
-    baseName = 'seebie-server'
-    version = '0.0.1-SNAPSHOT'
+plugins {
+    id 'org.springframework.boot' version '3.0.0'
+    id 'jacoco' // core plugin provided by gradle
+    id 'org.flywaydb.flyway' version '9.8.3'
 }
 
-// for netbeans gradle plugin to be able to run the application
-if (!hasProperty('mainClass')) {
-    ext.mainClass = "org.thinkbigthings.boot.Application"
-}
+//// to get a later version of security
+//apply plugin: "io.spring.dependency-management"
+//ext['spring-security.version']='5.8.0'
 
-compileJava {
-    // allows java 8 reflection for method parameters, useful for spring security el
-    options.compilerArgs=['-parameters', '-Xlint:all']
-}
-
-sourceCompatibility = '1.8'
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
-jacoco {
-    toolVersion = "0.7.1.201405082137"
-    reportsDir = file("$buildDir/reports/jacoco")
-}
-
-jacocoTestReport {
-    reports {
-        xml.enabled false
-        csv.enabled false
-        html.destination "${buildDir}/jacocoHtml"
-    }
-}
-
-repositories {
-    mavenCentral()
-    maven { url "http://repo.spring.io/snapshot" }
-    maven { url "http://repo.spring.io/milestone" }
-}
-
-// can see what versions spring boot pulls in automatically here:
-// http://docs.spring.io/spring-boot/docs/1.2.0.RC2/reference/htmlsingle/#appendix-dependency-versions
-// When you declare a dependency on one of these artifacts without declaring a version, the version that is listed in the table will be used
 dependencies {
-    compile("com.fasterxml.jackson.core:jackson-databind")
-    compile("javax.inject:javax.inject:1") // this is not defined by spring boot
-    compile("org.apache.commons:commons-lang3:3.3.2") // this is not defined by spring boot
-    compile("joda-time:joda-time")
-    compile("mysql:mysql-connector-java")
-    compile('org.apache.httpcomponents:httpclient')
-    compile("org.hibernate:hibernate-validator")    
-    compile("org.springframework.boot:spring-boot-starter-actuator:")
-    compile("org.springframework.boot:spring-boot-starter-data-jpa")
-    compile("org.springframework.boot:spring-boot-starter-security")
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.hateoas:spring-hateoas")
-    
-    testCompile("junit:junit:")
-    testCompile('org.mockito:mockito-all:1.9.5') // this overrides what's brought in by spring boot
+
+    implementation 'org.postgresql:postgresql:42.5.0'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-security:3.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-validation:3.0.0'
+
+    implementation 'org.springframework.session:spring-session-jdbc:3.0.0'
+
+    compileOnly 'org.hibernate:hibernate-jpamodelgen:6.1.5.Final'
+    annotationProcessor 'org.hibernate:hibernate-jpamodelgen:6.1.5.Final'
+
+    implementation 'org.jsoup:jsoup:1.14.3'
+
+    // JAXB was removed in Java 11 so needs to be included here
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+
+    implementation 'org.flywaydb:flyway-core:9.8.3'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.0.0'
+    testImplementation 'net.datafaker:datafaker:1.6.0'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.3.1'
+
+    testImplementation "org.testcontainers:testcontainers:1.16.3"
+    testImplementation "org.testcontainers:junit-jupiter:1.16.3"
+    testImplementation "org.testcontainers:postgresql:1.16.3"
 }
 
-// stuff for integration tests
-// can also try this http://selimober.com/blog/2014/01/24/separate-unit-and-integration-tests-using-gradle/
-// but I think it's the same thing
+
 sourceSets {
-    intTest {
+    generated {
         java {
-            compileClasspath += main.output + test.output
-            runtimeClasspath += main.output + test.output
+            srcDirs = ['build/generated/sources']
         }
     }
 }
 
-configurations {
-    intTestCompile.extendsFrom testCompile
-    intTestRuntime.extendsFrom testRuntime
+// Since Spring Boot 2.5, it builds both an executable jar and a plain jar suitable for use as a library.
+// This block prevents building the "plain" jar so we only build the executable jar
+jar {
+    enabled = false
 }
 
-task intTest(type:Test){
-    description = "Run integration tests (located in src/intTest/...)."
-    testClassesDir = project.sourceSets.intTest.output.classesDir
-    classpath = project.sourceSets.intTest.runtimeClasspath
+// https://docs.gradle.org/current/userguide/jacoco_plugin.html
+jacoco {
+    toolVersion = "0.8.7"
 }
 
-//test {
-    // you can run tests in parallel by setting this property greater than one.
-    // it will fork a new jvm to run tests in parallel so this is only advantageous if
-    // the speedup from parallel test execution is greater than the hit of starting N JVM's.
-    // maxParallelForks = 1;
-//}
+jacocoTestReport {
 
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/reports/jacoco/html")
+    }
 
-// make dependent calls in gradle: 
-// vagrant, dbload, build jar, run jar (in debug), ping server url until ready, run intTest
-// http://www.gradle.org/docs/current/dsl/org.gradle.api.tasks.Exec.html
-// http://fbflex.wordpress.com/2013/03/14/gradle-madness-execwait-a-task-that-waits-for-commandline-calls-to-be-ready
+    // so we can get test data from both tests and integration tests
+    getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/**/jacocoTest.exec"))
 
-// could do this as a gradle plugin
-task vagrantUp(type:Exec) {
-  workingDir '.'
-  commandLine 'vagrant', 'up'
+    // ignore code that's not a good fit for unit testing
+    // e.g. getters and setters in JPA entities
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "**/entity/*"
+            ])
+        }))
+    }
 }
 
-// TODO 4 call vagrant -c commands with scripts to remove host dependency on bash
-// and only reference them from Vagrantfile too so the mysql commands are in one place
+// integration test by tags,
+// inspired by https://stackoverflow.com/questions/40891867/junit5-tag-specific-gradle-task
 
-task resetDatabase(type:Exec) {
-  workingDir '.'
-  commandLine 'scripts/load.sh'
+test {
+    useJUnitPlatform {
+        excludeTags "integration"
+    }
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/test/jacocoTest.exec")
+        classDumpDir = file("$buildDir/jacoco/test/classpathdumps")
+    }
+    finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
-// TODO 4 could use gradle rest plugin or regular code to remove bash dependency
-task pingServer(type:Exec) {
-  workingDir '.'
-  commandLine 'scripts/ready.sh', 'https://localhost:9000/health'
+def integrationTest = tasks.register("integrationTest", Test) {
+
+    // this lets the container stay up so you can run standalone later with the same container if you want
+    // the flag here merely allows you to use the setting, to actually leave a container up (or not), call
+    // the container's .withReuse() method
+    environment "TESTCONTAINERS_REUSE_ENABLE", "true"
+
+    // It takes a couple of seconds, but if you want to speed up your tests,
+    // you can disable the checks once you have everything configured
+    // TODO I think this overwrites the above? Maybe you can only make one environment call here
+    // environment "TESTCONTAINERS_CHECKS_DISABLE", "true"
+
+    useJUnitPlatform {
+        includeTags "integration"
+    }
+
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/integrationTest/jacocoTest.exec")
+        classDumpDir = file("$buildDir/jacoco/integrationTest/classpathdumps")
+    }
+
+    finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
-// TODO 4 would like to actually deploy app to vm and run there
-// https://github.com/int128/gradle-ssh-plugin
-task runApp(type:Exec) {
-  workingDir '.'
-  commandLine 'scripts/app.sh', 'restart'
+tasks.named("check") {
+    dependsOn integrationTest
 }
-
-resetDatabase.dependsOn vagrantUp
-runApp.dependsOn resetDatabase
-runApp.mustRunAfter build
-pingServer.dependsOn runApp
-intTest.dependsOn pingServer
-
-
-

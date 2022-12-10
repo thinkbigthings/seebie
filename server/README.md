@@ -1,139 +1,272 @@
-Seebie Project
-====
+# ZDD - Zero Downtime Deployment
 
-Sleep tracking and analysis for use with Cognitive Behavioral Therapy for Insomnia (CBTI).
+This is a project to illustrate zero downtime deployments.
 
-## Build Requirements
+## Prerequisites
 
-This system has been tested with
-Vagrant 1.6.2
-Java 8 (1.8.0_05)
-Gradle 2.1
+Software that needs to be installed and available from the command line:
 
-## Building
+* Java 17
+* Docker
 
-to build an executable jar file: "gradle build"
+
+### Install Java
+
+Any major distribution of Java 17 should work. 
+This project has been tested with openjdk 17.0.2 downloaded from https://adoptium.net/
+
+### Install Docker
+
+On Linux: `sudo apt install docker.io`
+Note: On Linux, needed to run docker as sudo.
+docker daemon must run as root, but you can specify that a group other than docker should own the Unix socket with the -G option.
+
+On Mac: can install [Docker Desktop](https://hub.docker.com/editions/community/docker-ce-desktop-mac) or use brew.
+
+
+
+# Database Migrations
+
+
+## Docker Postgres
+
+This project uses [testcontainers](https://www.testcontainers.org) 
+for integration tests as [recommended by Docker](https://www.docker.com/blog/maintainable-integration-tests-with-docker/).
+"By spinning it up from inside the test itself, you have a lot more control over the orchestration and provisioning, 
+and the test is more stable. You can even check when a container is ready before you start a test"
+
+It turns out to be convenient to use test containers for general docker setup as well.
+Running the full build with the server integration tests will create and populate
+a docker container with a postgres database which can be left up and running after the build.
+
+After a full build, the database should be in a state consistent with the data populated from the integration tests.
+This can be useful for bringing up the application and exploring the data, e.g. for UI development.
+
+Once running, connect to the db through docker directly: `docker exec -it [container_name] bash`
+then : `psql -U test`
+
+or more succinctly:
+`docker exec -it $(docker ps -q) psql -U test`
+
+Handy Commands:
+
+See running images with `docker ps`
+Stop a container with `docker container stop container_name`
+
+stop and remove all docker containers
+`docker stop $(docker ps -q); docker rm $(docker ps -a -q)`
+
+
+
+## Migrations
+
+We use [Flyway](https://flywaydb.org) and run the migration standalone (not on default startup of the server)
+so that we have more control over the migration process.
+
+To perform a database migration, a server is run in a "migration only" mode that does the migrations and then shuts down.
+
+e.g.
+
+use `migrate` script that runs the migration profile with gradle,
+
+or 
+
+    cd server
+    java --enable-preview -Dspring.profiles.active=migration -jar build/libs/server-1.0-SNAPSHOT.jar
+
+
+## Heroku database
+
+Can get a postgres command prompt with
+
+    heroku pg:psql --app stage-zdd-full
+
+
+## Environment variables
+
+Heroku automatically creates environment variables for you. To see all of them, run
+
+    heroku run env --app zdd-full
+
+e.g.
+
+    JAVA_OPTS=-XX:+UseContainerSupport -Xmx300m -Xss512k -XX:CICompilerCount=2 -Dfile.encoding=UTF-8
+    PORT=38476
+
+
+## Fitting in with Heroku
+
+There are a number of database connection environment variables generated automatically by Heroku.
+They overlap, so you can use them with different technologies (i.e. straight Java vs Spring)
+
+SPRING_DATASOURCE_URL to Spring is the same as spring.datasource.url
+given the [properties rules](https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config-relaxed-binding-from-environment-variables).
+
+command line properties take top priority, so even though SPRING_DATASOURCE_URL is defined as an environment variable
+automatically by Heroku, we can still override it in the command in the Procfile
+to add custom database properties to the URL
+
+    DATABASE_URL=postgres://pafei...:23782e...@ec2-34-236-215-156.compute-1.amazonaws.com:5432/d5oqne55s6np1v
+
+    JDBC_DATABASE_URL=jdbc:postgresql://ec2...compute-1.amazonaws.com:5432/d5oqne55s6np1v?password=23782e...&sslmode=require&user=pafei...
+    JDBC_DATABASE_USERNAME=pafei...
+    JDBC_DATABASE_PASSWORD=23782e2da93a7a8f987949613942f9ff30a530afc640e6e05294a4cd6658c3b4
+
+    SPRING_DATASOURCE_URL=jdbc:postgresql://ec2...compute-1.amazonaws.com:5432/d5oqne55s6np1v?password=23782e...&sslmode=require&user=pafei...
+    SPRING_DATASOURCE_USERNAME=pafei...
+    SPRING_DATASOURCE_PASSWORD=23782e...
+
+
+
+## Heroku Database Migrations
+
+See [Heroku Migrations](https://devcenter.heroku.com/articles/running-database-migrations-for-java-apps)
+
+Heroku's [release phase](https://devcenter.heroku.com/articles/release-phase)
+is one intended mechanism for migrations.
+
+Heroku requires apps to bind a port in 60s or it's considered crashed.
+Migrations can eat into that time, so do that separately from deployment.
+The release phase has a 1h timeout and a release can be
+monitored and [stopped](https://help.heroku.com/Z44Q4WW4/how-do-i-stop-a-release-phase).
+
+Running from a [flyway caller](https://devcenter.heroku.com/articles/running-database-migrations-for-java-apps#using-flyway)
+is the best way to do a migration without doing the source code deployment.
+
+Besides the release phase, database migrations can also be run in a
+[one-off dyno](https://devcenter.heroku.com/articles/one-off-dynos)
+
+
+## Threads
+
+The Logging filter's ScheduledThreadPoolExecutor has a core pool size
+
+The server defines a number of standard spring boot threads:
+server.tomcat.max-threads
+server.tomcat.min-spare-threads 
+server.tomcat.accept-count
+
+
+## Security
+
+## HTTPS
+
+To make self-signed keys for dev:
+`keytool -genkeypair -alias app -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore app.dev.p12 -validity 3650`
+
+To update HTTPS related files and properties, see the `server.ssl.*` properties used by Spring Boot
+
+We don't include the p12 file when deploying to heroku, 
+but get https by virtue of being a subdomain of herokuapps.com which has a CA cert.
+Http automatically redirects to https on heroku. Locally it always requires https.
+
 
 ## Running
 
-Running the application requires a running database.
-You can run the database distributed with this project with "vagrant up"
-See the database section for more details.
-
-Recommended way of running this application during development is with "gradle bootRun" after running "vagrant up"
-
-Recommended way of running this application in production and live testing is with the scripts provided in the scripts folder.
-Run scripts/app.sh to see all the options.
-You can start with: scripts/app.sh start
-You can stop with:  scripts/app.sh stop
-
-
-manually test with curl
-
-curl -k -u user@app.com:password https://localhost:9000/user/10
-
-curl -X POST -H "Content-Type: application/json" -k -d '{"username": "j@y.com", "displayName":"jay", "password":"password"}' https://localhost:9000/register
-
-Alternatively: To run the webapp on the command line without spring boot: java -jar build/libs/seebie-server-[version].jar
-
-After running the application as described above, you should be able to hit the url at
-https://localhost:9000/
-
-the sample database lets you log in with username "user@app.com" and password of "password"
-or admin@app.com and password of "password"
-
-## Testing
-
-unit tests run with "gradle test".
-
-generate coverage report with "gradle test jacocoTestReport"
-(tests need to have been run before jacocoTestReport can run)
-the report is then available in build/jacocoHtml/index.html
-
-integration tests run with "gradle intTest"
-The task automatically launches the database and web servers
-The jar has to have already been built for the int test to work
-so running with "gradle clean build intTest" should work well.
-
-## Database
-
-integration tests require a running database. the database server is a vagrant vm
-(for more information visit http://vagrantup.com)
-
-Can save the current state of the database with scripts/save.sh
-Conversely, you can load the database.sql file into the database with scripts/load.sh
-
-launch vagrant with "vagrant up" from the vagrant folder
-stop it with "vagrant halt" from the vagrant folder
-
-There's a gradle task to launch it too:
-from the project home folder just use "gradle vagrantUp"
-and the task returns when it's ready.
-
-Can connect from command line outside vagrant with this
-mysql --user=dbuser --password=dbuserpassword --host=127.0.0.1 --protocol=TCP --port=13306
-
-
+Doing a full build and leaving the docker container for postgres running
+will allow us to run standalone.
 
 ## Debugging
 
-Intellij IDEA has native support for gradle, can start/debug with keyboard shortcuts.
-You can debug the application, then debug the integration test to step into test and code.
-IDEA is recommended for use with this application, as it has the best gradle support.
+Right click the main class and "Debug Application (main)"
 
-You can run the application and connect with a remote debugger.
-Make sure you have a newly built jar so your changes are used.
-gradle clean build
-java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n -jar build/libs/seebie-server-0.0.1-SNAPSHOT.jar
-To debug integration tests with Netbeans:
-- build project jar "gradle build" 
-- run app with debugger using above java command
-- connect to the running app with Netbeans remote debugger
-- put the integration test file in the unit test folder (I know, weird)
-- right click integration test file and click on "debug test file" 
-- you can breakpoint into application code and test code
-
-
-## Properties
-
-To add a property:
-add it to the application.properties file, and @Inject it as a @Value("${prop.name}") where needed.
-
-To override a property, can override directly with the command line like so
-
-java -jar build/libs/my-application-1.0.jar --app.some.property=newstuff
-
-
-## Setting up HTTPS
-
-The web app is designed to only work over https. To turn it off, right now
-you have to remove the code in HttpsConfiguration.java
-
-If you want to make changes to the certificate, here are directions for what to do:
-
-You can create a keystore with this:
-keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12
-
-You can view your keystore like this:
-keytool -list -v -keystore keystore.p12 -storetype pkcs12
-
-You can test with curl like so (the -k option lets you use a self-signed cert)
-curl -u user:password -k https://127.0.0.1:9000/user/4
-
-
-## Web Development
-
-We put static resources (html/css/js) in src/main/resources/static.
-There are a few standard places you can put it (static, public, resources)
-(http://spring.io/blog/2013/12/19/serving-static-web-content-with-spring-boot)
-Content that is placed there will be served relative to the url base path /
-
-If you run with gradle bootRun, content should automatically be reloaded
-so you can just refresh the browser to see changes to static content.
-
-By default, the document /index.html is served on a request to /
-
-JQuery 2.x is used, so only IE9 and higher is supported.
+## Testing
 
 
 
+### Unit test
+ 
+    gradlew test
+
+### Integration Test
+
+    gradlew integrationTest
+    
+### Both tests
+
+    gradlew check
+    
+### Code Coverage
+
+We can get code coverage metrics with Jacoco, and can do so for either unit tests, integration tests, or both.
+
+    Generate coverage for just unit tests: `gradlew test`
+
+    Generate coverage for just integration tests: `gradlew integrationTest`
+
+    Generate coverage for all tests: `gradlew build`
+
+Then see output in build/reports/jacoco/html/index.html
+
+
+### Manual test
+
+curl quick guide: https://gist.github.com/subfuzion/08c5d85437d5d4f00e58
+
+WITH SECURITY
+
+(this one should fail)
+curl -k --user user:password "https://localhost:9000/user/admin"
+
+(this one should pass)
+curl -k --user admin:admin "https://localhost:9000/user/admin"
+
+
+
+rm cookies.txt
+curl -k -v -b cookies.txt -c cookies.txt --user admin:admin "https://localhost:9000/login"
+cat cookies.txt
+curl -k -v -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"
+cat cookies.txt
+curl -k -v -b cookies.txt -c cookies.txt "https://localhost:9000/logout"
+cat cookies.txt
+curl -k -v -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"
+cat cookies.txt
+rm cookies.txt
+
+Run the server, then from another command line run `curl -k https://localhost:9000/user`
+
+See most recent users:
+`curl -k "https://localhost:9000/user?page=0&size=2&sort=registrationTime,desc"`
+
+post:
+`curl -k -X POST -H "Content-Type: application/json" -d '{"username":"user1", "displayName":"user1", "email":"us@r.com"}' https://localhost:9000/user`
+or if the json is in a file:
+`curl -k -X POST -H "Content-Type: application/json" -d @data-file.json https://localhost:9000/user`
+
+Actuator (admin/management endpoints) enpoints are listed at
+`https://localhost:9000/actuator`
+
+For example, try /actuator/health
+
+### Web
+
+Base URL is at https://localhost:9000/index.html
+
+Static content (built JS, etc) should go into src/main/resources/static
+
+
+## Update Dependencies
+
+From this project, use `../gradlew dependencies`
+
+Also see [Gradle Versions Plugin](https://github.com/ben-manes/gradle-versions-plugin)
+To discover what dependencies are out of date.
+
+To upgrade versions of Java in general:
+
+- Note that Gradle's java toolchain feature allows us to run Gradle with one version and build with another version
+  (useful if the current version of Gradle doesn't support the latest version of Java)
+- Set the project base build.gradle's sourceCompatibility
+- Update the server README that references Java version
+- The heroku plugin also references the jdkVersion
+
+
+To upgrade versions of Java in IntelliJ:
+
+- I think you need to add the SDK in Module Settings -> Platform Settings -> SDK
+  But see if updating Build Tools below works first
+- Click "IntelliJ IDEA" -> Preferences -> Build, Execution, Deployment -> Build Tools -> Gradle
+  and set Gradle JVM to the new version
+- Might need to right click the project and go to module settings to set it there too?
+- You'll also need to edit the version in any Run Configurations

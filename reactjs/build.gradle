@@ -1,0 +1,23 @@
+
+plugins {
+    id "com.github.node-gradle.node" version "3.0.1"
+}
+
+apply plugin: 'base'
+
+
+// node needs to have been downloaded and be available on the path
+node {
+
+    // match the version of node specified in the README
+    version = "16.14.0"
+
+    // TODO this needs to be true to work, but we should understand what it is doing
+    download = true
+}
+
+task bundle(type: NpmTask, dependsOn: npmInstall) {
+    args = ['run', 'build']
+}
+
+assemble.dependsOn(bundle)
