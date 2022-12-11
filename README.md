@@ -1,6 +1,6 @@
-# Argus Project
+# Seebie Project
 
-This project is a multi-dispensary search and notification app.
+This is a sleep diary app.
 
 ## Setup
 
