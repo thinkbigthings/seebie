@@ -17,10 +17,6 @@ public class User implements Serializable {
     @Column(name = "id", updatable = false, insertable = false, nullable = false)
     private Long id;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
-    private SearchConfig searchConfig;
-
     @Column(unique=true)
     @NotNull
     @Size(min = 3, message = "must be at least three characters")
@@ -139,11 +135,4 @@ public class User implements Serializable {
         return sessions;
     }
 
-    public SearchConfig getSearchConfig() {
-        return searchConfig;
-    }
-
-    public void setSearchConfig(SearchConfig searchConfig) {
-        this.searchConfig = searchConfig;
-    }
 }

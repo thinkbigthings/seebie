@@ -1,4 +1,4 @@
-package com.seebie.server.scraper.keystone;
+package com.seebie.server;
 
 import java.util.function.Function;
 

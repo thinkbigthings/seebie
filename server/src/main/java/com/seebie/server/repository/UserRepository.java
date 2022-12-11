@@ -18,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE u.username=?1")
     Optional<User> loadUserWithRoles(String name);
 
-    @Query("SELECT new org.thinkbigthings.zdd.dto.UserSummary" +
+    @Query("SELECT new com.seebie.dto.UserSummary" +
             "(u.username, u.displayName) " +
             "FROM User u " +
             "ORDER BY u.username ASC ")

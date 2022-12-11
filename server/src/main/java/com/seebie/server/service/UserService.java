@@ -16,7 +16,6 @@ import com.seebie.dto.RegistrationRequest;
 import com.seebie.dto.UserSummary;
 import com.seebie.server.entity.Address;
 import com.seebie.server.entity.Role;
-import com.seebie.server.entity.SearchConfig;
 import com.seebie.server.entity.User;
 import com.seebie.server.repository.UserRepository;
 
@@ -129,9 +128,6 @@ public class UserService {
         user.setEnabled(true);
         user.setPassword(passwordEncoder.encode(registration.plainTextPassword()));
         user.getRoles().add(Role.USER);
-
-        user.setSearchConfig(new SearchConfig());
-        user.getSearchConfig().setUser(user);
 
         return user;
     }
