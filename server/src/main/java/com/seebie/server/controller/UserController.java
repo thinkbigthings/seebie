@@ -39,8 +39,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value="/login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public User login(Principal principal) {
-        // Session is not written to database on login until after the user has returned,
-        // so the session is not immediately available on login
+
         return userService.getUser(principal.getName()).withIsLoggedIn(true);
     }
 

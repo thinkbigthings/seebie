@@ -11,10 +11,6 @@ plugins {
     id 'org.flywaydb.flyway' version '9.8.3'
 }
 
-//// to get a later version of security
-//apply plugin: "io.spring.dependency-management"
-//ext['spring-security.version']='5.8.0'
-
 dependencies {
 
     implementation 'org.postgresql:postgresql:42.5.0'

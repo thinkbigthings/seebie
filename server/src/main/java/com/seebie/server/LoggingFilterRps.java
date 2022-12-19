@@ -19,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static java.time.Instant.now;
+import static java.util.Optional.ofNullable;
+import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
@@ -55,8 +57,8 @@ public class LoggingFilterRps implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
 
-        HttpServletRequest request = (HttpServletRequest)req;
-
+//        HttpServletRequest request = (HttpServletRequest)req;
+//
 //        String headers = stream(spliteratorUnknownSize(request.getHeaderNames().asIterator(), ORDERED),false)
 //                .map(h -> "Header - " + h + ": " + request.getHeader(h))
 //                .collect(joining(System.lineSeparator()));
@@ -75,6 +77,11 @@ public class LoggingFilterRps implements Filter {
         long startTime = System.currentTimeMillis();
         chain.doFilter(req, res);
         long elapsed = System.currentTimeMillis() - startTime;
+
+//        System.out.println(request.getRequestURI());
+//        System.out.println(headers);
+//        System.out.println(cookies);
+//        System.out.println();
 
         executor.submit(() -> accumulateStatistic(elapsed));
     }

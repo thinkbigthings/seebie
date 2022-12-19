@@ -9,7 +9,7 @@ subprojects {
 
     apply plugin: 'java' // core plugin provided by gradle
     
-    group = 'org.thinkbigthings.zdd'
+    group = 'com.seebie'
     version = '1.0-SNAPSHOT'
 
     sourceCompatibility = JavaVersion.VERSION_17

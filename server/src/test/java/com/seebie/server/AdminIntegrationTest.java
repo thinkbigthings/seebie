@@ -3,6 +3,8 @@ package com.seebie.server;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seebie.dto.PersonalInfo;
+import com.seebie.dto.User;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,7 @@ public class AdminIntegrationTest extends IntegrationTest {
 
     private static String baseUrl;
     private static URI users;
+    private static URI adminUser;
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -45,10 +48,19 @@ public class AdminIntegrationTest extends IntegrationTest {
 
         baseUrl = "https://localhost:" + randomServerPort + "/";
         users = URI.create(baseUrl + "user");
+        adminUser = URI.create(users+"/admin");
 
         adminClient = new ApiClientStateful(baseUrl, "admin", "admin");
     }
 
+    @Test()
+    @DisplayName("Admin get user")
+    public void adminGetUser() throws JsonProcessingException {
+
+        PersonalInfo info  = adminClient.get(adminUser, User.class).personalInfo();
+
+        assertTrue(info.toString().length() > 0);
+    }
 
     @Test()
     @DisplayName("Admin list users")

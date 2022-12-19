@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.CookieManager;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.KeyManagementException;
@@ -17,7 +18,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Duration;
 
+import static java.lang.String.join;
 import static java.lang.System.lineSeparator;
+import static java.util.stream.Collectors.joining;
 
 public class ApiClientStateful {
 
@@ -121,6 +124,12 @@ public class ApiClientStateful {
         return parse(get(uri), jsonResponse);
     }
 
+    public String toString(HttpHeaders headers) {
+        return headers.map().entrySet().stream()
+                .map(entry -> entry.getKey() + ": " + join(", ", entry.getValue()))
+                .collect(joining(lineSeparator()));
+    }
+
     public HttpResponse<String> send(HttpRequest request) {
 
         try {
@@ -132,17 +141,17 @@ public class ApiClientStateful {
             // more on body handlers here https://openjdk.java.net/groups/net/httpclient/recipes.html
             // might be fun to have direct-to-json-object body handler
 
+//            System.out.println("Request: " + request.method() + " " + request.uri().getPath());
+//            System.out.println(toString(request.headers()));
+//            System.out.println();
+
 //            Duration randomLatency = Duration.ofMillis(new Random().nextInt(15));
 //            sleep(randomLatency);
             HttpResponse<String> response = throwOnError(client.send(request, HttpResponse.BodyHandlers.ofString()));
 //            sleep(randomLatency);
 
-//            String headerLog = response.headers().map().entrySet().stream()
-//                    .map(entry -> entry.getKey() + ": " + String.join(", ", entry.getValue()))
-//                    .collect(Collectors.joining(lineSeparator()));
-//
-//            System.out.println(request.uri().getPath());
-//            System.out.println(headerLog);
+//            System.out.println("Response: " + request.method() + " " + request.uri().getPath());
+//            System.out.println(toString(response.headers()));
 //            System.out.println();
 
             return response;
