@@ -1,6 +1,6 @@
-# ZDD - Zero Downtime Deployment
+# Seebie - Sleep Analysis Tool
 
-This is a project to illustrate zero downtime deployments.
+This is a project to record and analyze your sleep.
 
 ## Prerequisites
 

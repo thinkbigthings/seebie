@@ -24,10 +24,9 @@ function Home() {
 
     return (
         <Container className="pt-5 pb-3">
-            <h1>Zero Downtime Demo<FontAwesomeIcon icon={faHome} /></h1>
+            <h1>Seebie<FontAwesomeIcon icon={faHome} /></h1>
             <p>
-                This is a sample app that manages users. It is a starting point for an app
-                and a demonstration of doing zero downtime deployment.
+                This is a sleep analysis tool to help you find your best sleep.
             </p>
             <p>
                 There are {fetchedData.users.count} users in the system.

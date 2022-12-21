@@ -8,8 +8,6 @@ import Form from 'react-bootstrap/Form';
 import { HashRouter, Route } from 'react-router-dom';
 
 import Home from './Home.js';
-import ItemList from './ItemList.js';
-import StoreList from './StoreList.js';
 import UserList from './UserList.js';
 import About from './About.js';
 import EditUser from './EditUser.js';
@@ -50,7 +48,7 @@ function UnauthenticatedApp() {
         <HashRouter>
             <NavBar bg="dark" variant="dark">
                 <Container>
-                    <NavBar.Brand>ZDD Demo</NavBar.Brand>
+                    <NavBar.Brand>Seebie</NavBar.Brand>
                     <Nav className="mr-auto" />
                     <Form inline>
                         <Nav.Link href="#login">Login</Nav.Link>
@@ -85,12 +83,10 @@ function AuthenticatedApp() {
             <HashRouter>
                 <NavBar bg="dark" variant="dark">
                     <Container>
-                        <NavBar.Brand>ZDD Demo</NavBar.Brand>
+                        <NavBar.Brand>Seebie</NavBar.Brand>
                         <Nav>
                             <Nav.Link href="/">Home</Nav.Link>
                             <Nav.Link href="#users">Users</Nav.Link>
-                            <Nav.Link href="#stores">Stores</Nav.Link>
-                            <Nav.Link href="#items">Items</Nav.Link>
                             <Nav.Link href={userUrl}>Profile</Nav.Link>
                             <Nav.Link href="#about">About</Nav.Link>
                         </Nav>
@@ -101,8 +97,6 @@ function AuthenticatedApp() {
                 </NavBar>
                 <Route exact path="/" render={() => <Home/>}/>
                 <Route exact path="/users" render={() => <UserList/>}/>
-                <Route exact path="/stores" render={() => <StoreList/>}/>
-                <Route exact path="/items" render={() => <ItemList/>}/>
                 <Route exact path="/about" render={() => <About/>}/>
                 <Route exact path="/users/:username/edit" component={EditUser}/>
             </HashRouter>
@@ -113,10 +107,9 @@ function AuthenticatedApp() {
             <HashRouter>
                 <NavBar bg="dark" variant="dark">
                     <Container>
-                        <NavBar.Brand>ZDD Demo</NavBar.Brand>
+                        <NavBar.Brand>Seebie</NavBar.Brand>
                         <Nav className="mr-auto">
                             <Nav.Link href="/">Home</Nav.Link>
-                            <Nav.Link href="#items">Items</Nav.Link>
                             <Nav.Link href="#about">About</Nav.Link>
                             <Nav.Link href={userUrl}>Profile</Nav.Link>
                         </Nav>
@@ -126,7 +119,6 @@ function AuthenticatedApp() {
                     </Container>
                 </NavBar>
                 <Route exact path="/" render={() => <Home/>}/>
-                <Route exact path="/items" render={() => <ItemList/>}/>
                 <Route exact path="/about" render={() => <About/>}/>
                 <Route exact path="/users/:username/edit" component={EditUser}/>
             </HashRouter>
