@@ -4,7 +4,7 @@ import com.seebie.server.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import com.seebie.dto.User;
+import com.seebie.server.dto.User;
 import com.seebie.server.controller.UserController;
 
 

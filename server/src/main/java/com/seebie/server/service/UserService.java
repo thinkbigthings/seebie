@@ -1,5 +1,9 @@
 package com.seebie.server.service;
 
+import com.seebie.server.dto.AddressRecord;
+import com.seebie.server.dto.PersonalInfo;
+import com.seebie.server.dto.RegistrationRequest;
+import com.seebie.server.dto.UserSummary;
 import com.seebie.server.mapper.entitytodto.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import com.seebie.dto.AddressRecord;
-import com.seebie.dto.PersonalInfo;
-import com.seebie.dto.RegistrationRequest;
-import com.seebie.dto.UserSummary;
 import com.seebie.server.entity.Address;
 import com.seebie.server.entity.Role;
 import com.seebie.server.entity.User;
@@ -55,7 +55,7 @@ public class UserService {
     }
 
     @Transactional
-    public com.seebie.dto.User updateUser(String username, PersonalInfo userData) {
+    public com.seebie.server.dto.User updateUser(String username, PersonalInfo userData) {
 
         var user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("no user found for " + username));
@@ -111,7 +111,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public com.seebie.dto.User getUser(String username) {
+    public com.seebie.server.dto.User getUser(String username) {
 
         return userRepo.findByUsername(username)
                 .map(toUserRecord)

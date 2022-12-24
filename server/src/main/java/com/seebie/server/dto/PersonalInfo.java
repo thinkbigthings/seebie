@@ -1,4 +1,4 @@
-package com.seebie.dto;
+package com.seebie.server.dto;
 
 import java.util.Set;
 

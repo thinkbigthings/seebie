@@ -1,5 +1,9 @@
 package com.seebie.server.controller;
 
+import com.seebie.server.dto.PersonalInfo;
+import com.seebie.server.dto.RegistrationRequest;
+import com.seebie.server.dto.User;
+import com.seebie.server.dto.UserSummary;
 import com.seebie.server.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,10 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import com.seebie.dto.PersonalInfo;
-import com.seebie.dto.RegistrationRequest;
-import com.seebie.dto.User;
-import com.seebie.dto.UserSummary;
 
 import java.security.Principal;
 

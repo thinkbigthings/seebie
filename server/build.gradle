@@ -11,6 +11,37 @@ plugins {
     id 'org.flywaydb.flyway' version '9.8.3'
 }
 
+
+apply plugin: 'java' // core plugin provided by gradle
+
+group = 'com.seebie'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_17
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+
+// use preview features
+tasks.withType(JavaCompile) {
+    options.compilerArgs += "--enable-preview"
+    // options.compilerArgs += "-Xlint:preview"
+    options.compilerArgs += "-Xlint:unchecked"
+    options.compilerArgs += "-Xlint:deprecation"
+}
+tasks.withType(Test) {
+    jvmArgs += "--enable-preview"
+}
+tasks.withType(JavaExec) {
+    jvmArgs += '--enable-preview'
+}
+
 dependencies {
 
     implementation 'org.postgresql:postgresql:42.5.0'

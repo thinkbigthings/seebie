@@ -8,9 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import com.seebie.dto.PersonalInfo;
-import com.seebie.dto.RegistrationRequest;
-import com.seebie.dto.User;
+import com.seebie.server.dto.PersonalInfo;
+import com.seebie.server.dto.RegistrationRequest;
+import com.seebie.server.dto.User;
 
 import java.net.URI;
 

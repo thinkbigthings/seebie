@@ -8,9 +8,9 @@ import org.mockito.Mockito;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.web.server.ResponseStatusException;
-import com.seebie.dto.AddressRecord;
-import com.seebie.dto.PersonalInfo;
-import com.seebie.dto.RegistrationRequest;
+import com.seebie.server.dto.AddressRecord;
+import com.seebie.server.dto.PersonalInfo;
+import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.entity.User;
 import com.seebie.server.repository.UserRepository;
 import com.seebie.server.service.UserService;
@@ -56,7 +56,7 @@ public class UserServiceTest {
         Set<AddressRecord> addresses = Set.of(new AddressRecord("123 A St", "Philadelphia", "PA", "19109"));
         PersonalInfo updateInfo = new PersonalInfo("update@email.com", savedUsername+"1", addresses);
 
-        com.seebie.dto.User updatedUser = service.updateUser(savedUsername, updateInfo);
+        com.seebie.server.dto.User updatedUser = service.updateUser(savedUsername, updateInfo);
 
         assertEquals(updateInfo, updatedUser.personalInfo());
     }
@@ -64,7 +64,7 @@ public class UserServiceTest {
     @Test
     public void getUser() {
 
-        com.seebie.dto.User foundUser = service.getUser(savedUsername);
+        com.seebie.server.dto.User foundUser = service.getUser(savedUsername);
 
         assertEquals(savedUser.getUsername(), foundUser.username());
         assertEquals(savedUser.getDisplayName(), foundUser.personalInfo().displayName());

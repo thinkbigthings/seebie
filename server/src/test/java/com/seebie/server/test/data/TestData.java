@@ -2,9 +2,9 @@ package com.seebie.server.test.data;
 
 import net.datafaker.Address;
 import net.datafaker.Faker;
-import com.seebie.dto.AddressRecord;
-import com.seebie.dto.PersonalInfo;
-import com.seebie.dto.RegistrationRequest;
+import com.seebie.server.dto.AddressRecord;
+import com.seebie.server.dto.PersonalInfo;
+import com.seebie.server.dto.RegistrationRequest;
 
 import java.util.Locale;
 import java.util.Random;

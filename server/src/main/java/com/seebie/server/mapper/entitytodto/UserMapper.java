@@ -1,7 +1,7 @@
 package com.seebie.server.mapper.entitytodto;
 
-import com.seebie.dto.AddressRecord;
-import com.seebie.dto.PersonalInfo;
+import com.seebie.server.dto.AddressRecord;
+import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.entity.Address;
 import com.seebie.server.entity.Role;
 import com.seebie.server.entity.User;
@@ -11,12 +11,12 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toSet;
 
-public class UserMapper implements Function<User, com.seebie.dto.User> {
+public class UserMapper implements Function<User, com.seebie.server.dto.User> {
 
     @Override
-    public com.seebie.dto.User apply(User user) {
+    public com.seebie.server.dto.User apply(User user) {
 
-        return new com.seebie.dto.User( user.getUsername(),
+        return new com.seebie.server.dto.User( user.getUsername(),
                 user.getRegistrationTime().toString(),
                 user.getRoles().stream()
                         .map(Role::name)

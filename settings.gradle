@@ -1,4 +1,4 @@
 
 rootProject.name = 'seebie'
 
-include 'reactjs', 'perf', 'server', 'dto'
+include 'reactjs', 'server'
