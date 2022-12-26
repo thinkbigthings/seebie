@@ -1,13 +1,10 @@
 import React, {useState} from 'react';
 
 import Button from "react-bootstrap/Button";
-import Container from "react-bootstrap/Container";
 
 import {REACT_APP_API_VERSION, VERSION_HEADER} from "./Constants";
 import useCurrentUser from "./useCurrentUser";
 import useHttpError from "./useHttpError";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 
 
 function getWithCreds(url, credentials) {

@@ -1,5 +1,4 @@
 
-import useError from "./useError";
 import {basicHeader} from "./BasicAuth";
 import useHttpError from "./useHttpError";
 
@@ -7,7 +6,6 @@ import useHttpError from "./useHttpError";
 const useApiPut = () => {
 
     const requestHeaders = basicHeader();
-    const { addError } = useError();
     const {throwOnHttpError} = useHttpError();
 
     function put(url, body) {

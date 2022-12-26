@@ -19,11 +19,11 @@ const useApiLoader = (initialUrl, initialData) => {
 
     const longLoadTimeMs = 1000;
 
-    // the caller can choose to only show a spinner if it takes a long time using the isLongRequest flag
-    // otherwise it's a poor UX to flash a spinner for a fraction of a second
-    let longRequestTimer = setTimeout(() => {}, longLoadTimeMs);
-
     useEffect(() => {
+
+        // the caller can choose to only show a spinner if it takes a long time using the isLongRequest flag
+        // otherwise it's a poor UX to flash a spinner for a fraction of a second
+        let longRequestTimer = setTimeout(() => {}, longLoadTimeMs);
 
         const handleFetchResponse = response => {
 
@@ -35,10 +35,6 @@ const useApiLoader = (initialUrl, initialData) => {
         };
 
         const fetchData = () => {
-
-            // TODO Assignments to the 'longRequestTimer' variable from inside Reach Hook useEffect will be lost after each render.
-            // To preserve the value over time, store it in a useRef Hook and keep the mutable value in the '.current' property.
-            // Otherwise, you can move this variable directly inside useEffect react-hooks/exhaustive-deps
 
             clearTimeout(longRequestTimer);
             longRequestTimer = setTimeout(() => setLongRequest(true), longLoadTimeMs);
@@ -68,6 +64,9 @@ const useApiLoader = (initialUrl, initialData) => {
         // return () => {
         //    unmounted = true;
         // }
+
+        // TODO React Hook useEffect has missing dependencies: 'initialData', 'requestHeaders', and 'throwOnHttpError'.
+        //  Either include them or remove the dependency array  react-hooks/exhaustive-deps
 
     }, [url]);
 
