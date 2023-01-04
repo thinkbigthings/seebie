@@ -28,8 +28,10 @@ public class IntegrationTest {
     private static Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
 
     private static final String POSTGRES_IMAGE = "postgres:12";
-    private static final boolean leaveRunningAfterTests = true;
     private static final int PG_PORT = 5432;
+
+    // can only set to false if other instances are shut down first
+    private static final boolean leaveRunningAfterTests = true;
 
     protected static PostgreSQLContainer<?> postgres;
 
