@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,6 +24,13 @@ public class SleepSession implements Serializable {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToMany
+    @JoinTable(
+            name = "sleep_session_tag",
+            joinColumns = @JoinColumn(name = "sleep_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tags = new HashSet<>();
 
     @NotNull
     @Column(name="date_awakened")
@@ -57,6 +63,14 @@ public class SleepSession implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 
     public LocalDate getDateAwakened() {

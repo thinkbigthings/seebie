@@ -24,7 +24,7 @@ CREATE TABLE tag (
 
 CREATE INDEX index_tag_user ON tag(user_id);
 
-CREATE TABLE sleep_tag (
+CREATE TABLE sleep_session_tag (
     sleep_id   INT8        NOT NULL    REFERENCES sleep_session (id),
     tag_id     INT8        NOT NULL    REFERENCES tag (id),
     PRIMARY KEY (sleep_id, tag_id)
