@@ -42,10 +42,7 @@ public class SleepSession implements Serializable {
     @Basic
     private boolean outOfBed = false;
 
-    @Basic
-    private boolean ignored = false;
-
-    protected SleepSession() {
+    public SleepSession() {
         // no arg constructor is required by JPA
     }
 
@@ -97,11 +94,4 @@ public class SleepSession implements Serializable {
         this.outOfBed = outOfBed;
     }
 
-    public boolean isIgnored() {
-        return ignored;
-    }
-
-    public void setIgnored(boolean ignored) {
-        this.ignored = ignored;
-    }
 }

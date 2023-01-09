@@ -6,7 +6,6 @@ CREATE TABLE sleep_session (
     user_id         INT8        NOT NULL REFERENCES app_user (id),
     minutes         INT4        NOT NULL DEFAULT 0,
     out_of_bed      BOOLEAN     NOT NULL DEFAULT FALSE,
-    ignored         BOOLEAN     NOT NULL DEFAULT FALSE,
     date_awakened   DATE        NOT NULL DEFAULT now(),
     notes           VARCHAR     NOT NULL DEFAULT '',
     UNIQUE(user_id, date_awakened)
