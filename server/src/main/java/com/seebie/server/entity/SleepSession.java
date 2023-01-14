@@ -36,11 +36,11 @@ public class SleepSession implements Serializable {
     @Column(name="date_awakened")
     private LocalDate dateAwakened;
 
-    @NotNull
+    @Basic
     private int minutes = 0;
 
     @Basic
-    private boolean outOfBed = false;
+    private int outOfBed = 0;
 
     public SleepSession() {
         // no arg constructor is required by JPA
@@ -86,11 +86,11 @@ public class SleepSession implements Serializable {
         this.minutes = minutes;
     }
 
-    public boolean isOutOfBed() {
+    public int isOutOfBed() {
         return outOfBed;
     }
 
-    public void setOutOfBed(boolean outOfBed) {
+    public void setOutOfBed(int outOfBed) {
         this.outOfBed = outOfBed;
     }
 
