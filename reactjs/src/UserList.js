@@ -10,11 +10,10 @@ import Col          from 'react-bootstrap/Col';
 
 import copy from './Copier.js';
 import CreateUser from "./CreateUser";
-import useApiLoader from "./useApiLoader";
-import CenteredSpinner from "./CenteredSpinner";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUserEdit, faCaretLeft, faCaretRight} from "@fortawesome/free-solid-svg-icons";
+import useApiGet from "./useApiGet";
 
 const initialPage = {
     content: [],
@@ -31,7 +30,7 @@ const initialPage = {
 
 function UserList() {
 
-    const {setUrl, isLoading, isLongRequest, fetchedData} = useApiLoader('/user?page=0&size=10', initialPage);
+    const [data, setUrl] = useApiGet('/user?page=0&size=10', initialPage)
 
     let fetchRecentUsers = (pageable) => {
         setUrl('/user?' + pageQuery(pageable));
@@ -42,18 +41,14 @@ function UserList() {
     }
 
     function movePage(amount) {
-        let pageable = copy(fetchedData.pageable);
+        let pageable = copy(data.pageable);
         pageable.pageNumber = pageable.pageNumber + amount;
         fetchRecentUsers(pageable);
     }
 
-    const firstElementInPage = fetchedData.pageable.offset + 1;
-    const lastElementInPage = fetchedData.pageable.offset + fetchedData.numberOfElements;
-    const currentPage = firstElementInPage + "-" + lastElementInPage + " of " + fetchedData.totalElements;
-
-    if(isLoading && ! isLongRequest) { return <div />; }
-
-    if(isLoading && isLongRequest) {   return <CenteredSpinner /> ; }
+    const firstElementInPage = data.pageable.offset + 1;
+    const lastElementInPage = data.pageable.offset + data.numberOfElements;
+    const currentPage = firstElementInPage + "-" + lastElementInPage + " of " + data.totalElements;
 
     return (
         <>
@@ -64,7 +59,7 @@ function UserList() {
                 <CreateUser />
 
                 <Container className="container mt-3">
-                    {fetchedData.content.map(user =>
+                    {data.content.map(user =>
                         <Row key={user.displayName} className="pt-2 pb-2 border-bottom border-top ">
                             <Col >{user.displayName}</Col>
                             <Col xs={2}>
@@ -77,11 +72,11 @@ function UserList() {
                 </Container>
 
                 <ButtonGroup className="mt-2">
-                    <Button variant="primary" disabled={fetchedData.first} className={"btn btn-primary "} onClick={ () => movePage(-1) }>
+                    <Button variant="primary" disabled={data.first} className={"btn btn-primary "} onClick={ () => movePage(-1) }>
                         <FontAwesomeIcon className="me-2" icon={faCaretLeft} />Previous
                     </Button>
                     <div className="page-item disabled"><span className="page-link">{currentPage}</span></div>
-                    <Button variant="primary" disabled={fetchedData.last} className={"btn btn-primary "} onClick={ () => movePage(1) }>
+                    <Button variant="primary" disabled={data.last} className={"btn btn-primary "} onClick={ () => movePage(1) }>
                         <FontAwesomeIcon className="me-2" icon={faCaretRight} />Next
                     </Button>
                 </ButtonGroup>

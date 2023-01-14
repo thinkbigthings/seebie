@@ -1,5 +1,5 @@
 
-import {basicHeader} from "./BasicAuth";
+import {basicHeader} from "./BasicHeaders";
 import useHttpError from "./useHttpError";
 
 

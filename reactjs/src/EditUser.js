@@ -7,12 +7,11 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import useCurrentUser from "./useCurrentUser";
 import useApiPost from "./useApiPost";
-import useApiLoader from "./useApiLoader";
 import useApiPut from "./useApiPut";
-import CenteredSpinner from "./CenteredSpinner";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey} from "@fortawesome/free-solid-svg-icons";
+import useApiGet from "./useApiGet";
 
 const blankUser = {
     username: '',
@@ -21,7 +20,6 @@ const blankUser = {
     personalInfo: {
         displayName: '',
         email: '',
-        heightCm: 0,
         addresses: [],
     }
 }
@@ -34,7 +32,7 @@ function EditUser({history, match}) {
     const userInfoEndpoint = userEndpoint + '/personalInfo';
     const updatePasswordEndpoint = userEndpoint + '/password/update'
 
-    const {isLoading, isLongRequest, fetchedData} = useApiLoader(userEndpoint, blankUser);
+    const [data] = useApiGet(userEndpoint, blankUser)
 
     // update user info stuff
 
@@ -60,12 +58,6 @@ function EditUser({history, match}) {
             });
     }
 
-    ///////
-
-    if(isLoading && ! isLongRequest) { return <div />; }
-
-    if(isLoading && isLongRequest) {   return <CenteredSpinner /> ; }
-
     return (
         <div className="container mt-3">
             <h1>User Profile</h1>
@@ -78,7 +70,7 @@ function EditUser({history, match}) {
             <ResetPasswordModal show={showResetPassword} onConfirm={onResetPassword} onHide={() => setShowResetPassword(false)} />
 
             <Container id="userFormWrapper" className="pl-0 pr-0">
-                <UserForm onCancel={history.goBack} onSave={onSave} userData={fetchedData}/>
+                <UserForm onCancel={history.goBack} onSave={onSave} userData={data}/>
             </Container>
         </div>
     );

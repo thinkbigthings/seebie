@@ -18,7 +18,7 @@ import {ErrorProvider} from './ErrorContext.js';
 import ErrorModal from "./ErrorModal";
 import useCurrentUser from "./useCurrentUser";
 import {CurrentUserContext, CurrentUserProvider} from "./CurrentUserContext";
-import {basicHeader} from "./BasicAuth";
+import {basicHeader} from "./BasicHeaders";
 
 // I think this only has to be imported on any one page, and it works for the whole site
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -50,7 +50,7 @@ function UnauthenticatedApp() {
                 <Container>
                     <NavBar.Brand>Seebie</NavBar.Brand>
                     <Nav className="mr-auto" />
-                    <Form inline>
+                    <Form inline="true">
                         <Nav.Link href="#login">Login</Nav.Link>
                     </Form>
                 </Container>
@@ -90,7 +90,7 @@ function AuthenticatedApp() {
                             <Nav.Link href={userUrl}>Profile</Nav.Link>
                             <Nav.Link href="#about">About</Nav.Link>
                         </Nav>
-                        <Form inline>
+                        <Form inline="true">
                             <Nav.Link onClick={onClickLogout}>Logout</Nav.Link>
                         </Form>
                     </Container>
@@ -113,7 +113,7 @@ function AuthenticatedApp() {
                             <Nav.Link href="#about">About</Nav.Link>
                             <Nav.Link href={userUrl}>Profile</Nav.Link>
                         </Nav>
-                        <Form inline>
+                        <Form inline="true">
                             <Nav.Link onClick={onLogout}>Logout</Nav.Link>
                         </Form>
                     </Container>

@@ -21,6 +21,9 @@ const useHttpError = () => {
         if (httpResponse.status === 403) {
             addError('The action was forbidden. Contact your administrator for additional privileges.', recoveryActions.NONE);
         }
+        if (httpResponse.status === 404) {
+            addError('Endpoint not found: ' + httpResponse.url, recoveryActions.NONE);
+        }
         if (httpResponse.status >= 500) {
             addError('There was a server error. If the error continues contact your administrator.', recoveryActions.NONE);
         }

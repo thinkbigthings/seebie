@@ -2,11 +2,9 @@ package com.seebie.server.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -20,6 +18,14 @@ import java.util.List;
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
+    private static class BasicAuthPostProcessor implements ObjectPostProcessor<BasicAuthenticationFilter> {
+        @Override
+        public <O extends BasicAuthenticationFilter> O postProcess(O filter) {
+            filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
+            return filter;
+        }
+    }
+
     @Bean
     public SecurityFilterChain filterChain(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") HttpSecurity http) throws Exception {
 
@@ -28,18 +34,11 @@ public class WebSecurityConfig {
                 .map(AntPathRequestMatcher::new)
                 .toList().toArray(new RequestMatcher[paths.size()]);
 
-        var addSessionSaving = new ObjectPostProcessor<BasicAuthenticationFilter>() {
-            public BasicAuthenticationFilter postProcess(BasicAuthenticationFilter filter) {
-                filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
-                return filter;
-            }
-        };
-
         http
             .authorizeHttpRequests( customizer -> customizer
                     .requestMatchers(openEndpoints).permitAll()
                     .anyRequest().authenticated() )
-            .httpBasic(basic -> basic.withObjectPostProcessor(addSessionSaving))
+            .httpBasic(basic -> basic.withObjectPostProcessor(new BasicAuthPostProcessor()))
             .csrf()
                 .disable()
             .exceptionHandling()

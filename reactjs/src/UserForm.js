@@ -133,13 +133,6 @@ function UserForm(props) {
                         else.</small>
                 </Container>
 
-                <Container className="ps-0 mb-3">
-                    <label htmlFor="inputHeight" className="form-label">Height (cm)</label>
-                    <input type="number" className="form-control" id="inputHeight" placeholder="Height"
-                           value={formState.user.personalInfo.heightCm}
-                           onChange={e => dispatch({type:'UPDATE_USER', payload: {heightCm: e.target.value }})}/>
-                </Container>
-
                 <hr />
 
                 <div className="container mt-3">
