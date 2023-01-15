@@ -1,8 +1,7 @@
 package com.seebie.server.service;
 
-import com.seebie.server.dto.Sleep;
-import com.seebie.server.dto.UserSleep;
-import com.seebie.server.mapper.dtotoentity.SleepMapper;
+import com.seebie.server.dto.SleepData;
+import com.seebie.server.mapper.dtotoentity.UnsavedSleepMapper;
 import com.seebie.server.repository.SleepRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,21 +12,32 @@ import org.springframework.transaction.annotation.Transactional;
 public class SleepService {
 
     private SleepRepository sleepRepository;
-    private SleepMapper sleepToEntity;
+    private UnsavedSleepMapper toNewEntity;
 
-    public SleepService(SleepRepository sleepRepository, SleepMapper toEntity) {
+    public SleepService(SleepRepository sleepRepository, UnsavedSleepMapper toEntity) {
         this.sleepRepository = sleepRepository;
-        this.sleepToEntity = toEntity;
+        this.toNewEntity = toEntity;
     }
 
-    public void save(String username, Sleep dto) {
-        sleepRepository.save(sleepToEntity.apply(new UserSleep(username, dto)));
+    public void saveNew(String username, SleepData dto) {
+        sleepRepository.save(toNewEntity.apply(username, dto));
     }
 
     @Transactional(readOnly = true)
-    public Page<Sleep> listSleepData(String username, Pageable page) {
+    public Page<SleepData> listSleepData(String username, Pageable page) {
         return sleepRepository.loadSummaries(page, username);
     }
 
+    @Transactional
+    public void update(Long sleepId, SleepData dto) {
 
+        var entity = sleepRepository.findById(sleepId).get();
+
+//        entity.setSleepData(dto.dateAwakened(), dto.minutes(), dto.outOfBed(), dto.notes(), tagMapper.apply(dto.tags()));
+
+//        if( ! sleepSession.getUser().getUsername().equals(username)) {
+//            throw new IllegalArgumentException("U");
+//        }
+
+    }
 }

@@ -1,6 +1,6 @@
 package com.seebie.server.controller;
 
-import com.seebie.server.dto.Sleep;
+import com.seebie.server.dto.SleepData;
 import com.seebie.server.service.SleepService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,15 +24,23 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void saveSleepSession(@RequestBody Sleep dto, @PathVariable String username) {
+    public void saveSleepSession(@RequestBody SleepData dto, @PathVariable String username) {
 
-        sleepService.save(username, dto);
+        sleepService.saveNew(username, dto);
+    }
+
+//    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/sleep/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void updateSleepSession(@RequestBody SleepData dto, @PathVariable Long id) {
+
+        sleepService.update(id, dto);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Page<Sleep> getSleepList(@PathVariable String username, @PageableDefault(page = 0, size = 10, sort = {"dateAwakened"}, direction=Sort.Direction.DESC) Pageable page) {
+    public Page<SleepData> getSleepList(@PathVariable String username, @PageableDefault(page = 0, size = 10, sort = {"dateAwakened"}, direction=Sort.Direction.DESC) Pageable page) {
         return sleepService.listSleepData(username, page);
     }
 

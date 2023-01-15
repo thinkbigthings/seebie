@@ -7,13 +7,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public record Sleep(LocalDate dateAwakened, @Positive int minutes, String notes, int outOfBed, Set<String> tags) {
+public record SleepData(LocalDate dateAwakened, @Positive int minutes, String notes, @Positive int outOfBed, Set<String> tags) {
 
-    public Sleep(LocalDate dateAwakened, @Positive int minutes) {
+    public SleepData(LocalDate dateAwakened, int minutes) {
         this(dateAwakened, minutes, "", 0, new HashSet<>());
     }
 
-    public Sleep(LocalDate dateAwakened, @Positive int minutes, String notes, int outOfBed) {
+    public SleepData(LocalDate dateAwakened, int minutes, String notes, int outOfBed) {
         this(dateAwakened, minutes, notes, outOfBed, new HashSet<>());
     }
 }

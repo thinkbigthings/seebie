@@ -1,7 +1,7 @@
 package com.seebie.server;
 
 import com.seebie.server.dto.RegistrationRequest;
-import com.seebie.server.dto.Sleep;
+import com.seebie.server.dto.SleepData;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.TestData;
@@ -28,12 +28,12 @@ class SleepIntegrationTest extends IntegrationTest {
         RegistrationRequest registration = TestData.createRandomUserRegistration();
         userService.saveNewUser(registration);
 
-        Sleep lastNight = new Sleep(LocalDate.now(), 450);
+        SleepData lastNight = new SleepData(LocalDate.now(), 450);
         String username = registration.username();
 
-        sleepService.save(username, lastNight);
+        sleepService.saveNew(username, lastNight);
 
-        Page<Sleep> listing = sleepService.listSleepData(username, PageRequest.of(0, 10));
+        Page<SleepData> listing = sleepService.listSleepData(username, PageRequest.of(0, 10));
 
         assertEquals(1, listing.getNumberOfElements());
         assertEquals(1, listing.getTotalElements());

@@ -18,12 +18,12 @@ public class SleepSession implements Serializable {
     private Long id;
 
     @NotNull
-    private String notes = "";
-
-    @NotNull
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @NotNull
+    private String notes = "";
 
     @ManyToMany
     @JoinTable(
@@ -44,6 +44,17 @@ public class SleepSession implements Serializable {
 
     public SleepSession() {
         // no arg constructor is required by JPA
+    }
+
+    public void setSleepData(LocalDate dateAwakened, int minutes, int outOfBed, String notes, Set<Tag> newTags) {
+
+        setDateAwakened(dateAwakened);
+        setMinutes(minutes);
+        setOutOfBed(outOfBed);
+        setNotes(notes);
+
+        tags.clear();
+        tags.addAll(newTags);
     }
 
     public String getNotes() {
