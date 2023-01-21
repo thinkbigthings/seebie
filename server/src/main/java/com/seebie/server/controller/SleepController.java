@@ -29,19 +29,20 @@ public class SleepController {
         sleepService.saveNew(username, dto);
     }
 
-//    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
-    @RequestMapping(value="/sleep/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public void updateSleepSession(@RequestBody SleepData dto, @PathVariable Long id) {
-
-        sleepService.update(id, dto);
-    }
-
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Page<SleepData> getSleepList(@PathVariable String username, @PageableDefault(page = 0, size = 10, sort = {"dateAwakened"}, direction=Sort.Direction.DESC) Pageable page) {
         return sleepService.listSleepData(username, page);
     }
+
+//    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/user/{username}/sleep/{sleepId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void updateSleepSession(@RequestBody SleepData dto, @PathVariable Long sleepId) {
+
+        sleepService.update(sleepId, dto);
+    }
+
 
 }

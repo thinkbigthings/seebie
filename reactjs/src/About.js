@@ -5,6 +5,7 @@ import {REACT_APP_API_VERSION} from "./Constants";
 import {faRedo} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Container from "react-bootstrap/Container";
+import useApiGet from "./useApiGet";
 
 
 const styleByStatus = {
@@ -13,7 +14,17 @@ const styleByStatus = {
     "UNKNOWN" : "text-warning"
 };
 
+
+
 function About() {
+
+    const initialData = {
+        users: {
+            count:0
+        }
+    };
+
+    const [data] = useApiGet('/actuator/info', initialData);
 
     const [serverStatus, setServerStatus] = useState("UNKNOWN");
 
@@ -31,6 +42,9 @@ function About() {
             <h1>About</h1>
             <p>
                 Client API Compatibility Version {REACT_APP_API_VERSION}
+            </p>
+            <p>
+                There are {data.users.count} users in the system.
             </p>
             <p><span className={styleByStatus[serverStatus]}>
                 {"Server is "+ serverStatus}</span>

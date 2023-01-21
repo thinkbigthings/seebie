@@ -78,52 +78,31 @@ function AuthenticatedApp() {
             .then(response => onLogout());
     }
 
-    if(hasAdmin()) {
-        return (
-            <HashRouter>
-                <NavBar bg="dark" variant="dark">
-                    <Container>
-                        <NavBar.Brand>Seebie</NavBar.Brand>
-                        <Nav>
-                            <Nav.Link href="/">Home</Nav.Link>
-                            <Nav.Link href="#users">Users</Nav.Link>
-                            <Nav.Link href={userUrl}>Profile</Nav.Link>
-                            <Nav.Link href="#about">About</Nav.Link>
-                        </Nav>
-                        <Form inline="true">
-                            <Nav.Link onClick={onClickLogout}>Logout</Nav.Link>
-                        </Form>
-                    </Container>
-                </NavBar>
-                <Route exact path="/" render={() => <Home/>}/>
-                <Route exact path="/users" render={() => <UserList/>}/>
-                <Route exact path="/about" render={() => <About/>}/>
-                <Route exact path="/users/:username/edit" component={EditUser}/>
-            </HashRouter>
-        );
-    }
-    else {
-        return (
-            <HashRouter>
-                <NavBar bg="dark" variant="dark">
-                    <Container>
-                        <NavBar.Brand>Seebie</NavBar.Brand>
-                        <Nav className="mr-auto">
-                            <Nav.Link href="/">Home</Nav.Link>
-                            <Nav.Link href="#about">About</Nav.Link>
-                            <Nav.Link href={userUrl}>Profile</Nav.Link>
-                        </Nav>
-                        <Form inline="true">
-                            <Nav.Link onClick={onLogout}>Logout</Nav.Link>
-                        </Form>
-                    </Container>
-                </NavBar>
-                <Route exact path="/" render={() => <Home/>}/>
-                <Route exact path="/about" render={() => <About/>}/>
-                <Route exact path="/users/:username/edit" component={EditUser}/>
-            </HashRouter>
-        );
-    }
+    let usersLink = hasAdmin() ? <Nav.Link href="#users">Users</Nav.Link> : "";
+
+    return (
+        <HashRouter>
+            <NavBar bg="dark" variant="dark">
+                <Container>
+                    <NavBar.Brand>Seebie</NavBar.Brand>
+                    <Nav>
+                        <Nav.Link href="/">Home</Nav.Link>
+                        {usersLink}
+                        <Nav.Link href={userUrl}>Profile</Nav.Link>
+                        <Nav.Link href="#about">About</Nav.Link>
+                    </Nav>
+                    <Form inline="true">
+                        <Nav.Link onClick={onClickLogout}>Logout</Nav.Link>
+                    </Form>
+                </Container>
+            </NavBar>
+            <Route exact path="/" render={() => <Home/>}/>
+            <Route exact path="/users" render={() => <UserList/>}/>
+            <Route exact path="/about" render={() => <About/>}/>
+            <Route exact path="/users/:username/edit" component={EditUser}/>
+        </HashRouter>
+    );
+
 
 }
 
