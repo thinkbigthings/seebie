@@ -10,6 +10,11 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface SleepRepository extends JpaRepository<SleepSession, Long> {
 
+    @Query("SELECT s FROM SleepSession s " +
+            "WHERE s.user.username=:username " +
+            "AND s.id=:sleepId ")
+    SleepSession findBy(String username, Long sleepId);
+
     @Query("SELECT new com.seebie.server.dto.SleepData" +
             "(s.dateAwakened, s.minutes, s.notes, s.outOfBed) " +
             "FROM SleepSession s " +

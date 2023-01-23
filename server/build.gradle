@@ -64,6 +64,7 @@ dependencies {
 
     implementation 'org.flywaydb:flyway-core:9.8.3'
 
+    testImplementation 'org.springframework.security:spring-security-test:6.0.1'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.0.0'
     testImplementation 'net.datafaker:datafaker:1.6.0'
 

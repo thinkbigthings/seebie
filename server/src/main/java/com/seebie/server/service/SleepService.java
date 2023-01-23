@@ -29,15 +29,12 @@ public class SleepService {
     }
 
     @Transactional
-    public void update(Long sleepId, SleepData dto) {
+    public void update(String username, Long sleepId, SleepData dto) {
 
-        var entity = sleepRepository.findById(sleepId).get();
+        var entity = sleepRepository.findBy(username, sleepId);
 
 //        entity.setSleepData(dto.dateAwakened(), dto.minutes(), dto.outOfBed(), dto.notes(), tagMapper.apply(dto.tags()));
 
-//        if( ! sleepSession.getUser().getUsername().equals(username)) {
-//            throw new IllegalArgumentException("U");
-//        }
 
     }
 }

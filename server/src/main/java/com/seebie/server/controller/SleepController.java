@@ -36,12 +36,12 @@ public class SleepController {
         return sleepService.listSleepData(username, page);
     }
 
-//    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/{sleepId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void updateSleepSession(@RequestBody SleepData dto, @PathVariable Long sleepId) {
+    public void updateSleepSession(@RequestBody SleepData sleepData, @PathVariable String username, @PathVariable Long sleepId) {
 
-        sleepService.update(sleepId, dto);
+        sleepService.update(username, sleepId, sleepData);
     }
 
 
