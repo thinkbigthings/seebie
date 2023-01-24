@@ -37,9 +37,12 @@ function About() {
     useEffect(fetchData, [setServerStatus]);
 
     return (
-        <Container className="pt-5 pb-3">
+        <div className="container mt-3">
 
             <h1>About</h1>
+            <p>
+                Seebie is a sleep diary and analysis tool to help you get better sleep
+            </p>
             <p>
                 Client API Compatibility Version {REACT_APP_API_VERSION}
             </p>
@@ -52,7 +55,7 @@ function About() {
             <p>
                 <Button variant="primary" onClick={fetchData}><FontAwesomeIcon className="me-2" icon={faRedo} />Refresh Status</Button>
             </p>
-        </Container>
+        </div>
     );
 
 }

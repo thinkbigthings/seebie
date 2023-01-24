@@ -51,37 +51,35 @@ function UserList() {
     const currentPage = firstElementInPage + "-" + lastElementInPage + " of " + data.totalElements;
 
     return (
-        <>
+        <div className="container mt-3">
+            <h1>User Management</h1>
 
-            <div className="container mt-3">
-                <h1>User Management</h1>
+            <CreateUser />
 
-                <CreateUser />
+            <Container className="container mt-3">
+                {data.content.map(user =>
+                    <Row key={user.displayName} className="pt-2 pb-2 border-bottom border-top ">
+                        <Col >{user.displayName}</Col>
+                        <Col xs={2}>
+                            <Link to={"/users/" + user.username + "/edit" } className="btn btn-primary">
+                                <FontAwesomeIcon className="me-2" icon={faUserEdit} />Edit
+                            </Link>
+                        </Col>
+                    </Row>
+                )}
+            </Container>
 
-                <Container className="container mt-3">
-                    {data.content.map(user =>
-                        <Row key={user.displayName} className="pt-2 pb-2 border-bottom border-top ">
-                            <Col >{user.displayName}</Col>
-                            <Col xs={2}>
-                                <Link to={"/users/" + user.username + "/edit" } className="btn btn-primary">
-                                    <FontAwesomeIcon className="me-2" icon={faUserEdit} />Edit
-                                </Link>
-                            </Col>
-                        </Row>
-                    )}
-                </Container>
+            <ButtonGroup className="mt-2">
+                <Button variant="primary" disabled={data.first} className={"btn btn-primary "} onClick={ () => movePage(-1) }>
+                    <FontAwesomeIcon className="me-2" icon={faCaretLeft} />Previous
+                </Button>
+                <div className="page-item disabled"><span className="page-link">{currentPage}</span></div>
+                <Button variant="primary" disabled={data.last} className={"btn btn-primary "} onClick={ () => movePage(1) }>
+                    <FontAwesomeIcon className="me-2" icon={faCaretRight} />Next
+                </Button>
+            </ButtonGroup>
+        </div>
 
-                <ButtonGroup className="mt-2">
-                    <Button variant="primary" disabled={data.first} className={"btn btn-primary "} onClick={ () => movePage(-1) }>
-                        <FontAwesomeIcon className="me-2" icon={faCaretLeft} />Previous
-                    </Button>
-                    <div className="page-item disabled"><span className="page-link">{currentPage}</span></div>
-                    <Button variant="primary" disabled={data.last} className={"btn btn-primary "} onClick={ () => movePage(1) }>
-                        <FontAwesomeIcon className="me-2" icon={faCaretRight} />Next
-                    </Button>
-                </ButtonGroup>
-            </div>
-        </>
     );
 }
 

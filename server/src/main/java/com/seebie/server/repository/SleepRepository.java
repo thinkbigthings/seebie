@@ -1,7 +1,6 @@
 package com.seebie.server.repository;
 
-
-import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.entity.SleepSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,10 +14,10 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             "AND s.id=:sleepId ")
     SleepSession findBy(String username, Long sleepId);
 
-    @Query("SELECT new com.seebie.server.dto.SleepData" +
-            "(s.dateAwakened, s.minutes, s.notes, s.outOfBed) " +
+    @Query("SELECT new com.seebie.server.dto.SleepDataWithId" +
+            "(s.id, s.dateAwakened, s.minutes, s.notes, s.outOfBed) " +
             "FROM SleepSession s " +
             "WHERE s.user.username=:username " +
             "ORDER BY s.dateAwakened DESC ")
-    Page<SleepData> loadSummaries(Pageable page, String username);
+    Page<SleepDataWithId> loadSummaries(Pageable page, String username);
 }

@@ -1,6 +1,7 @@
 package com.seebie.server.service;
 
 import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepMapper;
 import com.seebie.server.repository.SleepRepository;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,7 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public Page<SleepData> listSleepData(String username, Pageable page) {
+    public Page<SleepDataWithId> listSleepData(String username, Pageable page) {
         return sleepRepository.loadSummaries(page, username);
     }
 

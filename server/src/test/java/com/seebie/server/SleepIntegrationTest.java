@@ -2,6 +2,7 @@ package com.seebie.server;
 
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.TestData;
@@ -33,7 +34,7 @@ class SleepIntegrationTest extends IntegrationTest {
 
         sleepService.saveNew(username, lastNight);
 
-        Page<SleepData> listing = sleepService.listSleepData(username, PageRequest.of(0, 10));
+        Page<SleepDataWithId> listing = sleepService.listSleepData(username, PageRequest.of(0, 10));
 
         assertEquals(1, listing.getNumberOfElements());
         assertEquals(1, listing.getTotalElements());

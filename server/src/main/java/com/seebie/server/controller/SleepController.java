@@ -1,6 +1,7 @@
 package com.seebie.server.controller;
 
 import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.service.SleepService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +21,6 @@ public class SleepController {
         this.sleepService = sleepService;
     }
 
-
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -32,7 +32,7 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Page<SleepData> getSleepList(@PathVariable String username, @PageableDefault(page = 0, size = 10, sort = {"dateAwakened"}, direction=Sort.Direction.DESC) Pageable page) {
+    public Page<SleepDataWithId> getSleepList(@PathVariable String username, @PageableDefault(page = 0, size = 10, sort = {"dateAwakened"}, direction=Sort.Direction.DESC) Pageable page) {
         return sleepService.listSleepData(username, page);
     }
 
@@ -43,6 +43,5 @@ public class SleepController {
 
         sleepService.update(username, sleepId, sleepData);
     }
-
 
 }
