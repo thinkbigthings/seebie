@@ -14,6 +14,7 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             "AND s.id=:sleepId ")
     SleepSession findBy(String username, Long sleepId);
 
+    // use both username and sleep id in the query to ensure the given user owns this sleep
     @Query("SELECT new com.seebie.server.dto.SleepDataWithId" +
             "(s.id, s.dateAwakened, s.minutes, s.notes, s.outOfBed) " +
             "FROM SleepSession s " +

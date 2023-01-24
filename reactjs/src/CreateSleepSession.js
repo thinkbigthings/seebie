@@ -3,14 +3,21 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import useApiPost from "./useApiPost";
 import useCurrentUser from "./useCurrentUser";
-
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
 
 const minutesBetween = (date1, date2) => {
+
     let diff = (date2.getTime() - date1.getTime()) / 1000;
     diff /= 60;
     return Math.abs(Math.round(diff));
+}
+
+const minuteToHrMin = (minutes) => {
+
+    const hr = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return hr + 'hr ' + m + 'm';
 }
 
 function CreateSleepSession() {
@@ -26,12 +33,16 @@ function CreateSleepSession() {
     yesterday.setDate(today.getDate() - 1);
     yesterday.setHours(21, 45, 0);
 
+    const displayTimeInit = minuteToHrMin(minutesBetween(yesterday, today));
+
     const formSleepData = {
         startDate: yesterday,
         endDate: today,
+        displayTime: displayTimeInit,
         notes: '',
         outOfBed: 0
     }
+
 
     const sleepUrl = '/user/' + currentUser.username + '/sleep';
 
@@ -39,8 +50,6 @@ function CreateSleepSession() {
     const post = useApiPost();
     const [showLogSleep, setShowLogSleep] = useState(false);
     const [sleepSession, setSleepSession] = useState(formSleepData);
-
-    console.log("current sleep session: " + JSON.stringify(sleepSession))
 
     const onCreate = (formData) => {
 
@@ -55,14 +64,17 @@ function CreateSleepSession() {
         }
 
         const requestBody = JSON.stringify(formSleepData);
-        console.log("posting " + requestBody);
 
         post(sleepUrl, requestBody)
             .then(result => setShowLogSleep(false));
     }
 
     function updateSleepSession(updateValues) {
-        setSleepSession( {...sleepSession, ...updateValues});
+
+        let updatedSleep = {...sleepSession, ...updateValues};
+        updatedSleep.displayTime = minuteToHrMin(minutesBetween(updatedSleep.startDate, updatedSleep.endDate));
+
+        setSleepSession( updatedSleep );
     }
 
     function onHide() {
@@ -111,6 +123,11 @@ function CreateSleepSession() {
                             timeFormat="p"
                             selected={sleepSession.endDate}
                             onChange={ date => updateSleepSession({endDate : date })} />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="calculatedMinutes" className="form-label">Time Asleep</label>
+                        <input disabled className="form-control" id="calculatedMinutes" placeholder="Time Asleep"
+                               value={sleepSession.displayTime} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="outOfBed" className="form-label">Out Of Bed (number of times)</label>
