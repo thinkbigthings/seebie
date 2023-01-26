@@ -18,4 +18,8 @@ public record SleepData(@NotNull LocalDate dateAwakened, @Positive int minutes, 
     public SleepData(LocalDate dateAwakened, int minutes, String notes, int outOfBed) {
         this(dateAwakened, minutes, notes, outOfBed, new HashSet<>());
     }
+
+    public SleepData withDate(LocalDate newDate) {
+        return new SleepData(newDate, minutes, notes, outOfBed, new HashSet<>(tags));
+    }
 }
