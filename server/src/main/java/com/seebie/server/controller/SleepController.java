@@ -3,6 +3,7 @@ package com.seebie.server.controller;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.service.SleepService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,7 +25,7 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void saveSleepSession(@RequestBody SleepData dto, @PathVariable String username) {
+    public void saveSleepSession(@Valid @RequestBody SleepData dto, @PathVariable String username) {
 
         sleepService.saveNew(username, dto);
     }
@@ -39,7 +40,7 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/{sleepId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void updateSleepSession(@RequestBody SleepData sleepData, @PathVariable String username, @PathVariable Long sleepId) {
+    public void updateSleepSession(@Valid @RequestBody SleepData sleepData, @PathVariable String username, @PathVariable Long sleepId) {
 
         sleepService.update(username, sleepId, sleepData);
     }
