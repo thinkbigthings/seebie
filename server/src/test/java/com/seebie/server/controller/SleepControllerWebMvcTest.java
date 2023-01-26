@@ -13,15 +13,16 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 
 import java.time.LocalDate;
 import java.util.HashSet;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,6 +41,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(WebSecurityConfig.class)
 public class SleepControllerWebMvcTest {
 
+	private static final String USERNAME = "someusername";
+	private static final String SLEEP_URL = "/user/"+ USERNAME + "/sleep";
+
+	private MockHttpServletRequestBuilder userSleepReq = post(SLEEP_URL).contentType(APPLICATION_JSON);
+
+	private	ObjectWriter writer;
+
 	@Autowired
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	private MappingJackson2HttpMessageConverter converter;
@@ -51,8 +59,6 @@ public class SleepControllerWebMvcTest {
 	@MockBean
 	private SleepService sleepService;
 
-	private	ObjectWriter writer;
-	private static final String USERNAME = "someusername";
 
 	@BeforeEach
 	public void setup() {
@@ -65,12 +71,8 @@ public class SleepControllerWebMvcTest {
 
 		var validData = new SleepData(LocalDate.now(), 10, "", 0, new HashSet<>());
 
-		var reqBuilder = post("/user/"+ USERNAME + "/sleep")
-				.content(writer.writeValueAsString(validData))
-				.contentType(MediaType.APPLICATION_JSON);
-
 		// this tests that the validation is applied
-		mockMvc.perform(reqBuilder)
+		mockMvc.perform(userSleepReq.content(writer.writeValueAsString(validData)))
 				.andDo(print())
 				.andExpect(status().isOk());
 	}
@@ -81,12 +83,8 @@ public class SleepControllerWebMvcTest {
 
 		var invalidData = new SleepData(null, 0, null, 0, null);
 
-		var reqBuilder = post("/user/"+ USERNAME + "/sleep")
-				.content(writer.writeValueAsString(invalidData))
-				.contentType(MediaType.APPLICATION_JSON);
-
 		// this tests that the validation is applied
-		mockMvc.perform(reqBuilder)
+		mockMvc.perform(userSleepReq.content(writer.writeValueAsString(invalidData)))
 				.andDo(print())
 				.andExpect(status().is4xxClientError());
 	}
