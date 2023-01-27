@@ -14,6 +14,7 @@ import CreateUser from "./CreateUser";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUserEdit, faCaretLeft, faCaretRight} from "@fortawesome/free-solid-svg-icons";
 import useApiGet from "./useApiGet";
+import Table from "react-bootstrap/Table";
 
 const initialPage = {
     content: [],
@@ -30,21 +31,17 @@ const initialPage = {
 
 function UserList() {
 
-    const [data, setUrl] = useApiGet('/user?page=0&size=10', initialPage)
-
-    let fetchRecentUsers = (pageable) => {
-        setUrl('/user?' + pageQuery(pageable));
-    };
-
-    const pageQuery = (pageable) => {
-        return 'page=' + pageable.pageNumber + '&size=' + pageable.pageSize;
-    }
+    const [data, setUrl, reload] = useApiGet('/user?page=0&size=10', initialPage)
 
     function movePage(amount) {
         let pageable = copy(data.pageable);
         pageable.pageNumber = pageable.pageNumber + amount;
         fetchRecentUsers(pageable);
     }
+
+    let fetchRecentUsers = (pageable) => {
+        setUrl('/user?' + 'page=' + pageable.pageNumber + '&size=' + pageable.pageSize);
+    };
 
     const firstElementInPage = data.pageable.offset + 1;
     const lastElementInPage = data.pageable.offset + data.numberOfElements;
@@ -54,19 +51,29 @@ function UserList() {
         <div className="container mt-3">
             <h1>User Management</h1>
 
-            <CreateUser />
+            <CreateUser onSave={reload} />
 
             <Container className="container mt-3">
-                {data.content.map(user =>
-                    <Row key={user.displayName} className="pt-2 pb-2 border-bottom border-top ">
-                        <Col >{user.displayName}</Col>
-                        <Col xs={2}>
-                            <Link to={"/users/" + user.username + "/edit" } className="btn btn-primary">
-                                <FontAwesomeIcon className="me-2" icon={faUserEdit} />Edit
-                            </Link>
-                        </Col>
-                    </Row>
-                )}
+                <Table striped bordered hover>
+                    <thead>
+                    <tr>
+                        <th>User</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {data.content.map(user =>
+                        <tr key={user.username}>
+                            <td>{user.displayName}</td>
+                            <td>
+                                <Link to={"/users/" + user.username + "/edit" } className="btn btn-primary">
+                                    <FontAwesomeIcon className="me-2" icon={faUserEdit} />Edit
+                                </Link>
+                            </td>
+                        </tr>
+                    )}
+                    </tbody>
+                </Table>
             </Container>
 
             <ButtonGroup className="mt-2">

@@ -1,6 +1,6 @@
 import {basicHeader} from "./BasicHeaders";
 import useHttpError from "./useHttpError";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 
 const request = {
     headers: basicHeader(false),
@@ -14,15 +14,20 @@ const useApiGet = (initialUrl, initialData) => {
 
     const [data, setData] = useState(initialData);
 
+    const [reloadCount, setReloadCount] = useState(0);
+    const reload = useCallback(() => {
+        setReloadCount(p => p + 1);
+    }, []);
+
     useEffect(() => {
         fetch(url, request)
             .then(throwOnHttpError)
             .then((res) => res.json())
             .then(setData)
             .catch(error => console.log(error));
-    }, [url]);
+    }, [url, reloadCount]);
 
-    return [data, setUrl];
+    return [data, setUrl, reload];
 };
 
 export default useApiGet;

@@ -36,22 +36,18 @@ function Home() {
 
     const sleepUrl = '/user/' + currentUser.username + '/sleep';
 
-    const [data, setUrl] = useApiGet(sleepUrl + '?page=0&size=10', initialPage);
+    const [data, setUrl, reload] = useApiGet(sleepUrl + '?page=0&size=10', initialPage);
 
-
-    let fetchRecentSleep= (pageable) => {
-        setUrl(sleepUrl + '?' + pageQuery(pageable));
-    };
-
-    const pageQuery = (pageable) => {
-        return 'page=' + pageable.pageNumber + '&size=' + pageable.pageSize;
-    }
 
     function movePage(amount) {
         let pageable = copy(data.pageable);
         pageable.pageNumber = pageable.pageNumber + amount;
         fetchRecentSleep(pageable);
     }
+
+    let fetchRecentSleep= (pageable) => {
+        setUrl(sleepUrl + '?' + 'page=' + pageable.pageNumber + '&size=' + pageable.pageSize);
+    };
 
     const firstElementInPage = data.pageable.offset + 1;
     const lastElementInPage = data.pageable.offset + data.numberOfElements;
@@ -61,7 +57,7 @@ function Home() {
         <div className="container mt-3">
             <h1>Seebie<FontAwesomeIcon icon={faHome} /></h1>
 
-            <CreateSleepSession />
+            <CreateSleepSession onSave={reload}/>
 
             <Container className="container mt-3">
                 <Table striped bordered hover>

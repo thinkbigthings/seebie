@@ -20,7 +20,7 @@ const minuteToHrMin = (minutes) => {
     return hr + 'hr ' + m + 'm';
 }
 
-function CreateSleepSession() {
+function CreateSleepSession(props) {
 
 
     const {currentUser} = useCurrentUser();
@@ -66,7 +66,8 @@ function CreateSleepSession() {
         const requestBody = JSON.stringify(formSleepData);
 
         post(sleepUrl, requestBody)
-            .then(result => setShowLogSleep(false));
+            .then(result => setShowLogSleep(false))
+            .then(props.onSave);
     }
 
     function updateSleepSession(updateValues) {

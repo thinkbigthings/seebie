@@ -12,7 +12,7 @@ const blankFormData = {
     confirmPassword: ''
 }
 
-function CreateUser() {
+function CreateUser(props) {
 
     const post = useApiPost();
     const [showCreateUser, setShowCreateUser] = useState(false);
@@ -29,7 +29,8 @@ function CreateUser() {
         const requestBody = typeof registrationRequest === 'string' ? registrationRequest : JSON.stringify(registrationRequest);
 
         post('/registration', requestBody)
-            .then(result => setShowCreateUser(false));
+            .then(result => setShowCreateUser(false))
+            .then(props.onSave);
     }
 
     function updateUser(updateValues) {
