@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {UserForm} from './UserForm.js';
 import ResetPasswordModal from "./ResetPasswordModal.js";
@@ -11,7 +11,6 @@ import useApiPut from "./useApiPut";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey} from "@fortawesome/free-solid-svg-icons";
-import useApiGet from "./useApiGet";
 
 const blankUser = {
     username: '',
@@ -32,7 +31,13 @@ function EditUser({history, match}) {
     const userInfoEndpoint = userEndpoint + '/personalInfo';
     const updatePasswordEndpoint = userEndpoint + '/password/update'
 
-    const [data] = useApiGet(userEndpoint, blankUser)
+    const [data, setData] = useState(blankUser);
+
+    useEffect(() => {
+        fetch(userEndpoint)
+            .then(response => response.json())
+            .then(setData)
+    }, [setData]);
 
     // update user info stuff
 

@@ -36,12 +36,9 @@ function UserList() {
     function movePage(amount) {
         let pageable = copy(data.pageable);
         pageable.pageNumber = pageable.pageNumber + amount;
-        fetchRecentUsers(pageable);
+        setUrl('/user?' + 'page=' + pageable.pageNumber + '&size=' + pageable.pageSize)
     }
 
-    let fetchRecentUsers = (pageable) => {
-        setUrl('/user?' + 'page=' + pageable.pageNumber + '&size=' + pageable.pageSize);
-    };
 
     const firstElementInPage = data.pageable.offset + 1;
     const lastElementInPage = data.pageable.offset + data.numberOfElements;

@@ -42,12 +42,8 @@ function Home() {
     function movePage(amount) {
         let pageable = copy(data.pageable);
         pageable.pageNumber = pageable.pageNumber + amount;
-        fetchRecentSleep(pageable);
-    }
-
-    let fetchRecentSleep= (pageable) => {
         setUrl(sleepUrl + '?' + 'page=' + pageable.pageNumber + '&size=' + pageable.pageSize);
-    };
+    }
 
     const firstElementInPage = data.pageable.offset + 1;
     const lastElementInPage = data.pageable.offset + data.numberOfElements;
