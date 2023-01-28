@@ -1,11 +1,19 @@
 import {basicHeader} from "./BasicHeaders";
 import useHttpError from "./useHttpError";
 import {useCallback, useEffect, useState} from "react";
+import copy from "./Copier";
 
 const request = {
     headers: basicHeader(false),
     method: 'GET'
 };
+
+const toPagingLabel = (pageData) => {
+    const firstElementInPage = pageData.pageable.offset + 1;
+    const lastElementInPage = pageData.pageable.offset + pageData.numberOfElements;
+    const pagingLabel = firstElementInPage + "-" + lastElementInPage + " of " + pageData.totalElements;
+    return pagingLabel;
+}
 
 const useApiGet = (initialUrl, initialData) => {
 
@@ -19,6 +27,19 @@ const useApiGet = (initialUrl, initialData) => {
         setReloadCount(p => p + 1);
     }, []);
 
+    function movePage(amount) {
+        let pageable = copy(data.pageable);
+        pageable.pageNumber = pageable.pageNumber + amount;
+        setUrl(url + '?page=' + pageable.pageNumber + '&size=' + pageable.pageSize)
+    }
+
+    const next = useCallback(() => movePage(1), []);
+    const previous = useCallback(() => movePage(-1), []);
+
+    const pagingControls = {
+        next, previous, reload
+    }
+
     useEffect(() => {
         fetch(url, request)
             .then(throwOnHttpError)
@@ -27,7 +48,7 @@ const useApiGet = (initialUrl, initialData) => {
             .catch(error => console.log(error));
     }, [url, reloadCount]);
 
-    return [data, setUrl, reload];
+    return [data, pagingControls];
 };
 
-export default useApiGet;
+export {useApiGet, toPagingLabel};

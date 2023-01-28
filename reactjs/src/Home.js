@@ -2,10 +2,10 @@ import React from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCaretLeft, faCaretRight, faHome, faUserEdit} from "@fortawesome/free-solid-svg-icons";
 import Container from "react-bootstrap/Container";
-import CreateSleepSession from "./CreateSleepSession";
+import {CreateSleepSession, minuteToHrMin} from "./CreateSleepSession";
 import Table from "react-bootstrap/Table";
 import {Link} from "react-router-dom";
-import useApiGet from "./useApiGet";
+import {useApiGet, toPagingLabel} from './useApiGet.js';
 import useCurrentUser from "./useCurrentUser";
 import copy from "./Copier";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
@@ -24,36 +24,20 @@ const initialPage = {
     numberOfElements: 0,
 }
 
-const minuteToHrMin = (minutes) => {
-    const hr = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    return hr + 'hr ' + m + 'm';
-}
-
 function Home() {
 
     const {currentUser} = useCurrentUser();
 
     const sleepUrl = '/user/' + currentUser.username + '/sleep';
 
-    const [data, setUrl, reload] = useApiGet(sleepUrl + '?page=0&size=10', initialPage);
+    const [data, pagingControls] = useApiGet(sleepUrl, initialPage);
 
-
-    function movePage(amount) {
-        let pageable = copy(data.pageable);
-        pageable.pageNumber = pageable.pageNumber + amount;
-        setUrl(sleepUrl + '?' + 'page=' + pageable.pageNumber + '&size=' + pageable.pageSize);
-    }
-
-    const firstElementInPage = data.pageable.offset + 1;
-    const lastElementInPage = data.pageable.offset + data.numberOfElements;
-    const currentPage = firstElementInPage + "-" + lastElementInPage + " of " + data.totalElements;
 
     return (
         <div className="container mt-3">
             <h1>Seebie<FontAwesomeIcon icon={faHome} /></h1>
 
-            <CreateSleepSession onSave={reload}/>
+            <CreateSleepSession onSave={pagingControls.reload}/>
 
             <Container className="container mt-3">
                 <Table striped bordered hover>
@@ -81,11 +65,11 @@ function Home() {
             </Container>
 
             <ButtonGroup className="mt-2">
-                <Button variant="primary" disabled={data.first} className={"btn btn-primary "} onClick={ () => movePage(-1) }>
+                <Button variant="primary" disabled={data.first} className={"btn btn-primary "} onClick={ pagingControls.previous }>
                     <FontAwesomeIcon className="me-2" icon={faCaretLeft} />Previous
                 </Button>
-                <div className="page-item disabled"><span className="page-link">{currentPage}</span></div>
-                <Button variant="primary" disabled={data.last} className={"btn btn-primary "} onClick={ () => movePage(1) }>
+                <div className="page-item disabled"><span className="page-link">{toPagingLabel(data)}</span></div>
+                <Button variant="primary" disabled={data.last} className={"btn btn-primary "} onClick={ pagingControls.next}>
                     <FontAwesomeIcon className="me-2" icon={faCaretRight} />Next
                 </Button>
             </ButtonGroup>

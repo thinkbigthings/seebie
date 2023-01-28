@@ -152,4 +152,4 @@ function CreateSleepSession(props) {
     );
 }
 
-export default CreateSleepSession;
+export {CreateSleepSession, minuteToHrMin};
