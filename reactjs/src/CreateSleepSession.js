@@ -6,6 +6,9 @@ import useCurrentUser from "./useCurrentUser";
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
 
+
+const numericRegex=/^[0-9]+$/;
+
 const minutesBetween = (date1, date2) => {
 
     let diff = (date2.getTime() - date1.getTime()) / 1000;
@@ -73,9 +76,11 @@ function CreateSleepSession(props) {
     function updateSleepSession(updateValues) {
 
         let updatedSleep = {...sleepSession, ...updateValues};
-        updatedSleep.displayTime = minuteToHrMin(minutesBetween(updatedSleep.startDate, updatedSleep.endDate));
 
-        setSleepSession( updatedSleep );
+        if( numericRegex.test(updatedSleep.outOfBed)) {
+            updatedSleep.displayTime = minuteToHrMin(minutesBetween(updatedSleep.startDate, updatedSleep.endDate));
+            setSleepSession( updatedSleep );
+        }
     }
 
     function onHide() {
@@ -134,7 +139,7 @@ function CreateSleepSession(props) {
                         <label htmlFor="outOfBed" className="form-label">Out Of Bed (number of times)</label>
                         <input type="text"  className="form-control" id="outOfBed" placeholder="Out of Bed (number of times)"
                                value={sleepSession.outOfBed}
-                               onChange={e => updateSleepSession({outOfBed : e.target.value })} />
+                               onChange={e => updateSleepSession({outOfBed : e.target.value})} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="notes" className="form-label">Notes</label>
