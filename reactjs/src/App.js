@@ -24,6 +24,7 @@ import {basicHeader} from "./BasicHeaders";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Container from "react-bootstrap/Container";
+import EditSleep from "./EditSleep";
 
 function App() {
 
@@ -100,6 +101,7 @@ function AuthenticatedApp() {
             <Route exact path="/users" render={() => <UserList/>}/>
             <Route exact path="/about" render={() => <About/>}/>
             <Route exact path="/users/:username/edit" component={EditUser}/>
+            <Route exact path="/users/:username/sleep/:sleepId/edit" component={EditSleep}/>
         </HashRouter>
     );
 

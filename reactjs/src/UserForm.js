@@ -80,7 +80,7 @@ function UserForm(props) {
         }
     }
 
-    const [formState, dispatch] = useReducer(formReducer, {user: userData, editableAddress: blankEditableAddress});
+    const [formState, dispatch] = useReducer(formReducer, {user: userData, editableAddress: blankEditableAddress}, arg => arg);
 
     // the context hook retains its value over re-renders,
     // so need to trigger the update here once the data has been loaded for real

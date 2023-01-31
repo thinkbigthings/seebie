@@ -3,17 +3,22 @@ package com.seebie.server.service;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepMapper;
+import com.seebie.server.mapper.entitytodto.SleepMapper;
 import com.seebie.server.repository.SleepRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class SleepService {
 
     private SleepRepository sleepRepository;
     private UnsavedSleepMapper toNewEntity;
+
+    private SleepMapper sleepMapper = new SleepMapper();
 
     public SleepService(SleepRepository sleepRepository, UnsavedSleepMapper toEntity) {
         this.sleepRepository = sleepRepository;
@@ -36,6 +41,13 @@ public class SleepService {
 
 //        entity.setSleepData(dto.dateAwakened(), dto.minutes(), dto.outOfBed(), dto.notes(), tagMapper.apply(dto.tags()));
 
+    }
 
+    @Transactional(readOnly = true)
+    public SleepData retrieve(String username, Long sleepId) {
+
+        return sleepRepository.findBy(username, sleepId)
+                .map(sleepMapper)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sleep session not found"));
     }
 }

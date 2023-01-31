@@ -6,7 +6,6 @@ import ButtonGroup  from 'react-bootstrap/ButtonGroup';
 import Button       from "react-bootstrap/Button";
 import Container    from 'react-bootstrap/Container';
 
-import copy from './Copier.js';
 import {useApiGet, toPagingLabel} from './useApiGet.js';
 import CreateUser from "./CreateUser";
 

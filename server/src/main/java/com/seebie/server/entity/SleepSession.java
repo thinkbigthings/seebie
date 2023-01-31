@@ -97,7 +97,7 @@ public class SleepSession implements Serializable {
         this.minutes = minutes;
     }
 
-    public int isOutOfBed() {
+    public int getOutOfBed() {
         return outOfBed;
     }
 

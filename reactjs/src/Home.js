@@ -7,7 +7,6 @@ import Table from "react-bootstrap/Table";
 import {Link} from "react-router-dom";
 import {useApiGet, toPagingLabel} from './useApiGet.js';
 import useCurrentUser from "./useCurrentUser";
-import copy from "./Copier";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 
@@ -54,7 +53,7 @@ function Home() {
                                 <td>{sleep.sleepData.dateAwakened}</td>
                                 <td>{minuteToHrMin(sleep.sleepData.minutes)}</td>
                                 <td>
-                                    <Link to={sleepUrl + '/' + sleep.id } className="btn btn-primary">
+                                    <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } className="btn btn-primary">
                                         <FontAwesomeIcon className="me-2" icon={faUserEdit} />Edit
                                     </Link>
                                 </td>
