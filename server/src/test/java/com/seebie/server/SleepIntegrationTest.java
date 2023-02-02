@@ -5,7 +5,6 @@ import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import java.time.LocalDate;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,7 +33,7 @@ class SleepIntegrationTest extends IntegrationTest {
 
         userService.saveNewUser(new RegistrationRequest(username, "password", "x@y"));
 
-        SleepData sleep = new SleepData(LocalDate.now(), 435, "", 0, Collections.emptySet());
+        SleepData sleep = new SleepData();
 
         int listCount = 40;
 
@@ -52,6 +50,6 @@ class SleepIntegrationTest extends IntegrationTest {
     }
 
     private SleepData decrementDay(SleepData data) {
-        return new SleepData(data.dateAwakened().minusDays(1L), data.minutes(), data.notes(), data.outOfBed(), data.tags());
+        return new SleepData(data.notes(), data.outOfBed(), data.tags(), data.startTime().minusHours(24L), data.stopTime().minusHours(24L));
     }
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCaretLeft, faCaretRight, faHome, faUserEdit} from "@fortawesome/free-solid-svg-icons";
 import Container from "react-bootstrap/Container";
-import {CreateSleepSession, minuteToHrMin} from "./CreateSleepSession";
+import {CreateSleepSession, minuteToHrMin, minutesBetween} from "./CreateSleepSession";
 import Table from "react-bootstrap/Table";
 import {Link} from "react-router-dom";
 import {useApiGet, toPagingLabel} from './useApiGet.js';
@@ -50,8 +50,8 @@ function Home() {
                     <tbody>
                         {data.content.map(sleep =>
                             <tr key={sleep.id}>
-                                <td>{sleep.sleepData.dateAwakened}</td>
-                                <td>{minuteToHrMin(sleep.sleepData.minutes)}</td>
+                                <td>{new Date(sleep.sleepData.stopTime).toLocaleDateString()}</td>
+                                <td>{minuteToHrMin(minutesBetween(sleep.sleepData.startTime, sleep.sleepData.stopTime))}</td>
                                 <td>
                                     <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } className="btn btn-primary">
                                         <FontAwesomeIcon className="me-2" icon={faUserEdit} />Edit

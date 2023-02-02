@@ -4,14 +4,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "sleep_session", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_awakened"})})
+@Table(name = "sleep_session")
 public class SleepSession implements Serializable {
 
     @Id
@@ -33,13 +31,6 @@ public class SleepSession implements Serializable {
             joinColumns = @JoinColumn(name = "sleep_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags = new HashSet<>();
-
-    @NotNull
-    @Column(name="date_awakened")
-    private LocalDate dateAwakened;
-
-    @Basic
-    private int minutes = 0;
 
     @Basic
     private int outOfBed = 0;
@@ -80,11 +71,8 @@ public class SleepSession implements Serializable {
         // no arg constructor is required by JPA
     }
 
-    public void setSleepData(LocalDate dateAwakened, int minutes, int outOfBed, String notes, Set<Tag> newTags,
-                             ZonedDateTime start, ZonedDateTime stop) {
+    public void setSleepData(int outOfBed, String notes, Set<Tag> newTags, ZonedDateTime start, ZonedDateTime stop) {
 
-        setDateAwakened(dateAwakened);
-        setMinutes(minutes);
         setOutOfBed(outOfBed);
         setNotes(notes);
         setStartTime(start);
@@ -116,22 +104,6 @@ public class SleepSession implements Serializable {
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
-    }
-
-    public LocalDate getDateAwakened() {
-        return dateAwakened;
-    }
-
-    public void setDateAwakened(LocalDate dateAwakened) {
-        this.dateAwakened = dateAwakened;
-    }
-
-    public int getMinutes() {
-        return minutes;
-    }
-
-    public void setMinutes(int minutes) {
-        this.minutes = minutes;
     }
 
     public int getOutOfBed() {

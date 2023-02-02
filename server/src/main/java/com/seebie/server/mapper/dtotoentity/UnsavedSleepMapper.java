@@ -29,8 +29,7 @@ public class UnsavedSleepMapper implements BiFunction<String, SleepData, SleepSe
 
         entity.setUser(user);
 
-        entity.setSleepData(dto.dateAwakened(), dto.minutes(), dto.outOfBed(), dto.notes(), tagMapper.apply(dto.tags()),
-                dto.startTime(), dto.stopTime());
+        entity.setSleepData(dto.outOfBed(), dto.notes(), tagMapper.apply(dto.tags()), dto.startTime(), dto.stopTime());
 
         return entity;
     }

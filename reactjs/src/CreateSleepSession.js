@@ -11,6 +11,14 @@ const numericRegex=/^[0-9]+$/;
 
 const minutesBetween = (date1, date2) => {
 
+    if (typeof date1 === 'string' || date1 instanceof String) {
+        date1 = new Date(date1);
+    }
+
+    if (typeof date2 === 'string' || date2 instanceof String) {
+        date2 = new Date(date2);
+    }
+
     let diff = (date2.getTime() - date1.getTime()) / 1000;
     diff /= 60;
     return Math.abs(Math.round(diff));
@@ -21,6 +29,24 @@ const minuteToHrMin = (minutes) => {
     const hr = Math.floor(minutes / 60);
     const m = minutes % 60;
     return hr + 'hr ' + m + 'm';
+}
+
+function toIsoString(date) {
+
+    const tzo = -date.getTimezoneOffset(),
+        dif = tzo >= 0 ? '+' : '-',
+        pad = function(num) {
+            return (num < 10 ? '0' : '') + num;
+        };
+
+    return date.getFullYear() +
+        '-' + pad(date.getMonth() + 1) +
+        '-' + pad(date.getDate()) +
+        'T' + pad(date.getHours()) +
+        ':' + pad(date.getMinutes()) +
+        ':' + pad(date.getSeconds()) +
+        dif + pad(Math.floor(Math.abs(tzo) / 60)) +
+        ':' + pad(Math.abs(tzo) % 60);
 }
 
 function CreateSleepSession(props) {
@@ -36,14 +62,12 @@ function CreateSleepSession(props) {
     yesterday.setDate(today.getDate() - 1);
     yesterday.setHours(21, 45, 0);
 
-    const displayTimeInit = minuteToHrMin(minutesBetween(yesterday, today));
-
-    const formSleepData = {
-        startDate: yesterday,
-        endDate: today,
-        displayTime: displayTimeInit,
+    const initSleepData = {
+        startTime: yesterday,
+        stopTime: today,
         notes: '',
-        outOfBed: 0
+        outOfBed: 0,
+        tags: []
     }
 
     const sleepUrl = '/user/' + currentUser.username + '/sleep';
@@ -51,47 +75,42 @@ function CreateSleepSession(props) {
 
     const post = useApiPost();
     const [showLogSleep, setShowLogSleep] = useState(false);
-    const [sleepSession, setSleepSession] = useState(formSleepData);
+    const [sleepData, setSleepData] = useState(initSleepData);
 
-    const onCreate = (formData) => {
+    const onCreate = () => {
 
-        const minutesSleepSession = minutesBetween(formData.endDate, formData.startDate);
+        console.log(sleepData);
 
-        const sleepData = {
-            dateAwakened: formData.endDate,
-            minutes: minutesSleepSession,
-            notes: formData.notes,
-            outOfBed: formData.outOfBed,
-            tags: [],
-            startTime: "2023-02-02T00:02:02.109639Z",
-            stopTime:"2023-02-02T00:02:02.109639Z"
+        const formattedSleepData = {
+            notes: sleepData.notes,
+            outOfBed: sleepData.outOfBed,
+            tags: sleepData.tags,
+            startTime: toIsoString(sleepData.startTime),
+            stopTime: toIsoString(sleepData.stopTime)
         }
 
-        const requestBody = JSON.stringify(sleepData);
-
-        post(sleepUrl, requestBody)
+        post(sleepUrl, JSON.stringify(formattedSleepData))
             .then(result => setShowLogSleep(false))
             .then(props.onSave);
     }
 
     function updateSleepSession(updateValues) {
 
-        let updatedSleep = {...sleepSession, ...updateValues};
+        let updatedSleep = {...sleepData, ...updateValues};
 
         if( numericRegex.test(updatedSleep.outOfBed)) {
-            updatedSleep.displayTime = minuteToHrMin(minutesBetween(updatedSleep.startDate, updatedSleep.endDate));
-            setSleepSession( updatedSleep );
+            setSleepData( updatedSleep );
         }
     }
 
     function onHide() {
-        setSleepSession(formSleepData);
+        setSleepData(initSleepData);
         setShowLogSleep(false);
     }
 
     function onConfirm() {
-        setSleepSession(formSleepData);
-        onCreate({...sleepSession});
+        onCreate();
+        setSleepData(initSleepData);
     }
 
     const formDataValid = true;
@@ -106,44 +125,44 @@ function CreateSleepSession(props) {
                 </Modal.Header>
                 <Modal.Body>
                     <div className="mb-3">
-                        <label htmlFor="dateStart" className="form-label">Sleep Session Start</label>
+                        <label htmlFor="startTime" className="form-label">Sleep Session Start</label>
                         <DatePicker
-                            className="form-control" id="dateStart" placeholder="Date Start"
+                            className="form-control" id="startTime" placeholder="Date Start"
                             dateFormat="MMMM d, yyyy h:mm aa"
                             showTimeSelect
                             timeIntervals={15}
                             timeCaption="time"
                             timeFormat="p"
-                            selected={sleepSession.startDate}
-                            onChange={ date => updateSleepSession({startDate : date })} />
+                            selected={sleepData.startTime}
+                            onChange={ date => updateSleepSession({startTime : date })} />
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="dateEnd" className="form-label">Sleep Session End</label>
+                        <label htmlFor="stopTime" className="form-label">Sleep Session End</label>
                         <DatePicker
-                            className="form-control" id="dateEnd" placeholder="Date End"
+                            className="form-control" id="stopTime" placeholder="Date End"
                             dateFormat="MMMM d, yyyy h:mm aa"
                             showTimeSelect
                             timeIntervals={15}
                             timeCaption="time"
                             timeFormat="p"
-                            selected={sleepSession.endDate}
-                            onChange={ date => updateSleepSession({endDate : date })} />
+                            selected={sleepData.stopTime}
+                            onChange={ date => updateSleepSession({stopTime : date })} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="calculatedMinutes" className="form-label">Time Asleep</label>
                         <input disabled className="form-control" id="calculatedMinutes" placeholder="Time Asleep"
-                               value={sleepSession.displayTime} />
+                               value={minuteToHrMin(minutesBetween(sleepData.startTime, sleepData.stopTime))} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="outOfBed" className="form-label">Out Of Bed (number of times)</label>
                         <input type="text"  className="form-control" id="outOfBed" placeholder="Out of Bed (number of times)"
-                               value={sleepSession.outOfBed}
+                               value={sleepData.outOfBed}
                                onChange={e => updateSleepSession({outOfBed : e.target.value})} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="notes" className="form-label">Notes</label>
                         <textarea className="form-control" id="notes" placeholder="Notes"
-                               value={sleepSession.notes}
+                               value={sleepData.notes}
                                onChange={e => updateSleepSession({notes : e.target.value })} />
                     </div>
                 </Modal.Body>
@@ -156,4 +175,4 @@ function CreateSleepSession(props) {
     );
 }
 
-export {CreateSleepSession, minuteToHrMin};
+export {CreateSleepSession, minuteToHrMin, minutesBetween};

@@ -45,8 +45,6 @@ function SleepForm(props) {
 
     const formToDto = (formData) => {
         return {
-            dateAwakened: formData.endDate,
-            minutes: minutesBetween(formData.endDate, formData.startDate),
             notes: formData.notes,
             outOfBed: formData.outOfBed,
             tags: []

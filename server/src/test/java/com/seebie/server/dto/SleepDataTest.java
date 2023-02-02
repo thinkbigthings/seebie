@@ -4,8 +4,10 @@ import jakarta.validation.Validation;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 
+import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SleepDataTest {
@@ -17,11 +19,11 @@ public class SleepDataTest {
         var validator = Validation.buildDefaultValidatorFactory().getValidator();
 
         // annotations are applied on record components
-        var invalidSleep = new SleepData(LocalDate.now(), 0, "", 0, new HashSet<>());
+        var invalidSleep = new SleepData(null, 0, emptySet(), null, null);
 
         // these will be applied on sending to a controller
         var violations = validator.validate(invalidSleep);
 
-        assertEquals(1, violations.size());
+        assertEquals(3, violations.size());
     }
 }
