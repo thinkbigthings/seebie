@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -30,19 +31,16 @@ class SleepIntegrationTest extends IntegrationTest {
     @Test
     public void testListSleep() {
 
-        RegistrationRequest registration = TestData.createRandomUserRegistration();
-        userService.saveNewUser(registration);
+        String username = "testListSleep";
 
-        LOG.info("Sleep List user is " + registration.username());
+        userService.saveNewUser(new RegistrationRequest(username, "password", "x@y"));
 
-        String username = registration.username();
-
-        SleepData sleep = new SleepData(LocalDate.now(), 435);
+        SleepData sleep = new SleepData(LocalDate.now(), 435, "", 0, Collections.emptySet());
 
         int listCount = 40;
 
         for(int i=0; i < listCount; i++) {
-            sleep = sleep.withDate(sleep.dateAwakened().minusDays(1L));
+            sleep = decrementDay(sleep);
             sleepService.saveNew(username, sleep);
         }
 
@@ -51,5 +49,9 @@ class SleepIntegrationTest extends IntegrationTest {
 
         assertEquals(pageSize, listing.getNumberOfElements());
         assertEquals(listCount, listing.getTotalElements());
+    }
+
+    private SleepData decrementDay(SleepData data) {
+        return new SleepData(data.dateAwakened().minusDays(1L), data.minutes(), data.notes(), data.outOfBed(), data.tags());
     }
 }

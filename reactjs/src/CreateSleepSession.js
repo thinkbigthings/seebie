@@ -46,7 +46,6 @@ function CreateSleepSession(props) {
         outOfBed: 0
     }
 
-
     const sleepUrl = '/user/' + currentUser.username + '/sleep';
 
 
@@ -58,15 +57,17 @@ function CreateSleepSession(props) {
 
         const minutesSleepSession = minutesBetween(formData.endDate, formData.startDate);
 
-        const formSleepData = {
+        const sleepData = {
             dateAwakened: formData.endDate,
             minutes: minutesSleepSession,
             notes: formData.notes,
             outOfBed: formData.outOfBed,
-            tags: []
+            tags: [],
+            startTime: "2023-02-02T00:02:02.109639Z",
+            stopTime:"2023-02-02T00:02:02.109639Z"
         }
 
-        const requestBody = JSON.stringify(formSleepData);
+        const requestBody = JSON.stringify(sleepData);
 
         post(sleepUrl, requestBody)
             .then(result => setShowLogSleep(false))
@@ -110,7 +111,6 @@ function CreateSleepSession(props) {
                             className="form-control" id="dateStart" placeholder="Date Start"
                             dateFormat="MMMM d, yyyy h:mm aa"
                             showTimeSelect
-                            timeFormat="HH:mm"
                             timeIntervals={15}
                             timeCaption="time"
                             timeFormat="p"
@@ -123,7 +123,6 @@ function CreateSleepSession(props) {
                             className="form-control" id="dateEnd" placeholder="Date End"
                             dateFormat="MMMM d, yyyy h:mm aa"
                             showTimeSelect
-                            timeFormat="HH:mm"
                             timeIntervals={15}
                             timeCaption="time"
                             timeFormat="p"

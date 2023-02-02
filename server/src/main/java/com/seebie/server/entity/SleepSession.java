@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,16 +44,51 @@ public class SleepSession implements Serializable {
     @Basic
     private int outOfBed = 0;
 
+    @Basic
+    @NotNull
+    private ZonedDateTime startTime = ZonedDateTime.now();
+
+    @Basic
+    @NotNull
+    private ZonedDateTime stopTime = ZonedDateTime.now();
+
+    // this is computed inside the database, so is readable but not writable
+    @Column(insertable = false, updatable = false)
+    private int durationMinutes;
+
+    public ZonedDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(ZonedDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public ZonedDateTime getStopTime() {
+        return stopTime;
+    }
+
+    public void setStopTime(ZonedDateTime stopTime) {
+        this.stopTime = stopTime;
+    }
+
+    public int getDurationMinutes() {
+        return durationMinutes;
+    }
+
     public SleepSession() {
         // no arg constructor is required by JPA
     }
 
-    public void setSleepData(LocalDate dateAwakened, int minutes, int outOfBed, String notes, Set<Tag> newTags) {
+    public void setSleepData(LocalDate dateAwakened, int minutes, int outOfBed, String notes, Set<Tag> newTags,
+                             ZonedDateTime start, ZonedDateTime stop) {
 
         setDateAwakened(dateAwakened);
         setMinutes(minutes);
         setOutOfBed(outOfBed);
         setNotes(notes);
+        setStartTime(start);
+        setStopTime(stop);
 
         tags.clear();
         tags.addAll(newTags);

@@ -81,7 +81,7 @@ public class SleepControllerWebMvcTest {
 	@WithMockUser(username = USERNAME)
 	public void testInvalidData() throws Exception {
 
-		var invalidData = new SleepData(null, 0, null, 0, null);
+		var invalidData = new SleepData(null, 0, null, 0, new HashSet<>());
 
 		// this tests that the validation is applied
 		mockMvc.perform(userSleepReq.content(writer.writeValueAsString(invalidData)))
