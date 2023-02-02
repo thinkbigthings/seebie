@@ -33,12 +33,6 @@ function SleepForm(props) {
 
     const displayTimeInit = minuteToHrMin(minutesBetween(yesterday, today));
 
-    // TODO use incoming sleep data to construct the form values
-    // such as subtract minutes from end date to set the start date
-    // Can't get back to a time from minutes and LocalDate
-
-    // TODO add feature for timezones
-
     // const initialFormData = {
     //     startDate: ,
     //     endDate: sleepData.dateAwakened,
@@ -51,8 +45,6 @@ function SleepForm(props) {
 
     const formToDto = (formData) => {
         return {
-            dateAwakened: formData.endDate,
-            minutes: minutesBetween(formData.endDate, formData.startDate),
             notes: formData.notes,
             outOfBed: formData.outOfBed,
             tags: []

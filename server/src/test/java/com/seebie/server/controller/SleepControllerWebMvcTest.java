@@ -69,7 +69,7 @@ public class SleepControllerWebMvcTest {
 	@WithMockUser(username = USERNAME)
 	public void testValidData() throws Exception {
 
-		var validData = new SleepData(LocalDate.now(), 10, "", 0, new HashSet<>());
+		var validData = new SleepData();
 
 		// this tests that the validation is applied
 		mockMvc.perform(userSleepReq.content(writer.writeValueAsString(validData)))
@@ -81,7 +81,7 @@ public class SleepControllerWebMvcTest {
 	@WithMockUser(username = USERNAME)
 	public void testInvalidData() throws Exception {
 
-		var invalidData = new SleepData(null, 0, null, 0, null);
+		var invalidData = new SleepData(null, 0, new HashSet<>(), null, null);
 
 		// this tests that the validation is applied
 		mockMvc.perform(userSleepReq.content(writer.writeValueAsString(invalidData)))

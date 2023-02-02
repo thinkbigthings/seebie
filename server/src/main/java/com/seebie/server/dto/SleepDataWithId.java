@@ -1,11 +1,11 @@
 package com.seebie.server.dto;
 
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 
 public record SleepDataWithId(Long id, SleepData sleepData) {
 
-    public SleepDataWithId(Long id, LocalDate dateAwakened, int minutes, String notes, int outOfBed) {
-        this(id, new SleepData(dateAwakened, minutes, notes, outOfBed, new HashSet<>()));
+    public SleepDataWithId(Long id, String notes, int outOfBed, ZonedDateTime startTime, ZonedDateTime stopTime) {
+        this(id, new SleepData(notes, outOfBed, new HashSet<>(), startTime, stopTime));
     }
 }
