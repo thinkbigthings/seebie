@@ -5,6 +5,7 @@ import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
+import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +27,36 @@ class SleepIntegrationTest extends IntegrationTest {
     @Autowired
     private UserService userService;
 
+    private PageRequest firstPage = PageRequest.of(0, 10);
+
+    @Test
+    public void testDelete() {
+
+        var registration = TestData.createRandomUserRegistration();
+        String username = registration.username();
+        userService.saveNewUser(registration);
+
+        // preconditions
+        Page<SleepDataWithId> listing = sleepService.listSleepData(username, firstPage);
+        assertEquals(0, listing.getTotalElements());
+
+        // set up test data
+        var sleep = sleepService.saveNew(username, new SleepData());
+        listing = sleepService.listSleepData(username, firstPage);
+        assertEquals(1, listing.getTotalElements());
+
+        // perform testable action
+        sleepService.remove(username, sleep.id());
+
+        // postconditions
+        listing = sleepService.listSleepData(username, firstPage);
+        assertEquals(0, listing.getTotalElements());
+    }
+
     @Test
     public void testListSleep() {
 
         String username = "testListSleep";
-
         userService.saveNewUser(new RegistrationRequest(username, "password", "x@y"));
 
         SleepData sleep = new SleepData();
@@ -42,10 +68,10 @@ class SleepIntegrationTest extends IntegrationTest {
             sleepService.saveNew(username, sleep);
         }
 
-        int pageSize = 10;
-        Page<SleepDataWithId> listing = sleepService.listSleepData(username, PageRequest.of(0, pageSize));
 
-        assertEquals(pageSize, listing.getNumberOfElements());
+        Page<SleepDataWithId> listing = sleepService.listSleepData(username, firstPage);
+
+        assertEquals(firstPage.getPageSize(), listing.getNumberOfElements());
         assertEquals(listCount, listing.getTotalElements());
     }
 

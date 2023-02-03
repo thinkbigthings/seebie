@@ -47,6 +47,14 @@ public class SleepSession implements Serializable {
     @Column(insertable = false, updatable = false)
     private int durationMinutes;
 
+    public SleepSession() {
+        // no arg constructor is required by JPA
+    }
+
+    public Long getId() {
+        return id;
+    }
+
     public ZonedDateTime getStartTime() {
         return startTime;
     }
@@ -65,10 +73,6 @@ public class SleepSession implements Serializable {
 
     public int getDurationMinutes() {
         return durationMinutes;
-    }
-
-    public SleepSession() {
-        // no arg constructor is required by JPA
     }
 
     public void setSleepData(int outOfBed, String notes, Set<Tag> newTags, ZonedDateTime start, ZonedDateTime stop) {

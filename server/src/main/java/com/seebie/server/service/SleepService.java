@@ -28,13 +28,24 @@ public class SleepService {
         this.tagMapper = tagMapper;
     }
 
-    public void saveNew(String username, SleepData dto) {
-        sleepRepository.save(toNewEntity.apply(username, dto));
-    }
-
     @Transactional(readOnly = true)
     public Page<SleepDataWithId> listSleepData(String username, Pageable page) {
         return sleepRepository.loadSummaries(page, username);
+    }
+
+    @Transactional
+    public SleepDataWithId saveNew(String username, SleepData dto) {
+        var entity = sleepRepository.save(toNewEntity.apply(username, dto));
+        return new SleepDataWithId(entity.getId(), sleepMapper.apply(entity));
+    }
+
+    @Transactional
+    public void remove(String username, Long sleepId) {
+
+        var entity = sleepRepository.findBy(username, sleepId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sleep session not found"));
+
+        sleepRepository.delete(entity);
     }
 
     @Transactional
