@@ -1,6 +1,14 @@
 import React from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCaretLeft, faCaretRight, faHome, faUserEdit} from "@fortawesome/free-solid-svg-icons";
+import {
+    faCaretLeft,
+    faCaretRight,
+    faDeleteLeft,
+    faEdit,
+    faHome,
+    faTrash,
+    faUserEdit
+} from "@fortawesome/free-solid-svg-icons";
 import Container from "react-bootstrap/Container";
 import {CreateSleepSession} from "./CreateSleepSession";
 import Table from "react-bootstrap/Table";
@@ -10,6 +18,7 @@ import useCurrentUser from "./useCurrentUser";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import SleepDataManager from "./SleepDataManager";
+import useApiDelete from "./useApiDelete";
 
 const initialPage = {
     content: [],
@@ -32,6 +41,12 @@ function Home() {
 
     const [data, pagingControls] = useApiGet(sleepUrl, initialPage);
 
+    const callDelete = useApiDelete();
+
+    const deleteById = (sleepId) => {
+        callDelete("/user/" + currentUser.username + "/sleep/" + sleepId)
+            .then(pagingControls.reload);
+    }
 
     return (
         <div className="container mt-3">
@@ -40,12 +55,13 @@ function Home() {
             <CreateSleepSession onSave={pagingControls.reload}/>
 
             <Container className="container mt-3">
-                <Table striped bordered hover>
+                <Table striped bordered hover >
                     <thead>
                         <tr>
                             <th>Date</th>
                             <th>Duration</th>
                             <th>Edit</th>
+                            <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,10 +71,13 @@ function Home() {
                                 <tr key={sleep.id}>
                                     <td>{new Date(sleep.sleepData.stopTime).toLocaleDateString()}</td>
                                     <td>{SleepDataManager.formatDuration(sleep.sleepData.startTime, sleep.sleepData.stopTime)}</td>
-                                    <td>
+                                    <td className="text-center">
                                         <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } className="btn btn-primary">
-                                            <FontAwesomeIcon className="me-2" icon={faUserEdit} />Edit
+                                            <FontAwesomeIcon className="px-3" icon={faEdit} />
                                         </Link>
+                                    </td>
+                                    <td className="text-center">
+                                        <FontAwesomeIcon className="px-3 " icon={faTrash} onClick={() => deleteById(sleep.id)} />
                                     </td>
                                 </tr>
                         )}
