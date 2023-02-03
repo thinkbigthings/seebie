@@ -86,11 +86,11 @@ function Home() {
             </Container>
 
             <ButtonGroup className="mt-2">
-                <Button variant="primary" disabled={data.first} className={"btn btn-primary "} onClick={ pagingControls.previous }>
+                <Button variant="primary" disabled={data.first} onClick={ pagingControls.previous }>
                     <FontAwesomeIcon className="me-2" icon={faCaretLeft} />Previous
                 </Button>
-                <div className="page-item disabled"><span className="page-link">{toPagingLabel(data)}</span></div>
-                <Button variant="primary" disabled={data.last} className={"btn btn-primary "} onClick={ pagingControls.next}>
+                <div className="page-item disabled border align-middle pt-1 px-3"><span className="page-link">{toPagingLabel(data)}</span></div>
+                <Button variant="primary" disabled={data.last} onClick={ pagingControls.next}>
                     <FontAwesomeIcon className="me-2" icon={faCaretRight} />Next
                 </Button>
             </ButtonGroup>

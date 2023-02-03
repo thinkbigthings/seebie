@@ -27,6 +27,18 @@ To [set it up for React](https://fontawesome.com/docs/web/use-with/react/)
 There are a few ways to use it, but to start out we can [use icons individually](https://fontawesome.com/docs/web/use-with/react/add-icons#add-individual-icons-explicitly)
 
 
+## Themes and Colors
+
+The bootstrap dark theme is applied like so
+
+    <html lang="en" data-bs-theme="dark">
+
+#5f2b83
+
+https://getbootstrap.com/docs/5.3/customize/color-modes/
+
+
+
 ## Error Handling
 
 The Error Boundary is for catching general exceptions and errors that the app doesn't know about
