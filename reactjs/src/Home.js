@@ -2,13 +2,14 @@ import React from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCaretLeft, faCaretRight, faHome, faUserEdit} from "@fortawesome/free-solid-svg-icons";
 import Container from "react-bootstrap/Container";
-import {CreateSleepSession, minuteToHrMin, minutesBetween} from "./CreateSleepSession";
+import {CreateSleepSession} from "./CreateSleepSession";
 import Table from "react-bootstrap/Table";
 import {Link} from "react-router-dom";
 import {useApiGet, toPagingLabel} from './useApiGet.js';
 import useCurrentUser from "./useCurrentUser";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
+import SleepDataManager from "./SleepDataManager";
 
 const initialPage = {
     content: [],
@@ -48,16 +49,18 @@ function Home() {
                         </tr>
                     </thead>
                     <tbody>
-                        {data.content.map(sleep =>
-                            <tr key={sleep.id}>
-                                <td>{new Date(sleep.sleepData.stopTime).toLocaleDateString()}</td>
-                                <td>{minuteToHrMin(minutesBetween(sleep.sleepData.startTime, sleep.sleepData.stopTime))}</td>
-                                <td>
-                                    <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } className="btn btn-primary">
-                                        <FontAwesomeIcon className="me-2" icon={faUserEdit} />Edit
-                                    </Link>
-                                </td>
-                            </tr>
+                        {data.content
+                            .map(sleep => { sleep.sleepData = SleepDataManager.parse(sleep.sleepData); return sleep; })
+                            .map(sleep =>
+                                <tr key={sleep.id}>
+                                    <td>{new Date(sleep.sleepData.stopTime).toLocaleDateString()}</td>
+                                    <td>{SleepDataManager.formatDuration(sleep.sleepData.startTime, sleep.sleepData.stopTime)}</td>
+                                    <td>
+                                        <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } className="btn btn-primary">
+                                            <FontAwesomeIcon className="me-2" icon={faUserEdit} />Edit
+                                        </Link>
+                                    </td>
+                                </tr>
                         )}
                     </tbody>
                 </Table>

@@ -1,14 +1,10 @@
 import React, {useEffect, useState} from 'react';
 
 import Container from "react-bootstrap/Container";
+import {SleepForm} from "./SleepForm";
+import useApiPut from "./useApiPut";
+import SleepDataManager from "./SleepDataManager";
 
-const blankSleep = {
-    dateAwakened: "2000-01-01",
-    minutes: 480,
-    notes: '',
-    outOfBed: 0,
-    tags: [],
-}
 
 function EditSleep({history, match}) {
 
@@ -17,20 +13,23 @@ function EditSleep({history, match}) {
 
     const sleepEndpoint = '/user/' + username + '/sleep/' + sleepId;
 
-    const [data, setData] = useState(blankSleep);
+    const [loaded, setLoaded] = useState(false);
 
+    const [data, setData] = useState(SleepDataManager.createInitSleepData());
     useEffect(() => {
         fetch(sleepEndpoint)
             .then(response => response.json())
-            .then(setData)
+            .then(SleepDataManager.parse)
+            .then(json => setData(json))
+            .then(() => setLoaded(true))
     }, [setData]);
 
     // update data
 
-    // const put = useApiPut();
-    // const onSave = (personalInfo) => {
-    //     put(userInfoEndpoint, personalInfo).then(history.goBack);
-    // }
+    const put = useApiPut();
+    const onSave = (sleepData) => {
+        put(sleepEndpoint, sleepData).then(history.goBack);
+    }
 
     return (
         <div className="container mt-3">
@@ -38,9 +37,7 @@ function EditSleep({history, match}) {
             <h1>Sleep Session</h1>
 
             <Container id="sleepFormWrapper" className="pl-0 pr-0">
-                Coming soon...
-                {/*<EditSleep />*/}
-                {/*<UserForm onCancel={history.goBack} onSave={onSave} userData={data}/>*/}
+                {loaded ? <SleepForm onCancel={history.goBack} onSave={onSave} initData={data} /> : <div />}
             </Container>
         </div>
     );

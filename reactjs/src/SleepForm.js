@@ -3,21 +3,8 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
+import SleepDataManager from "./SleepDataManager";
 
-
-const numericRegex=/^[0-9]+$/;
-
-const minutesBetween = (date1, date2) => {
-    let diff = (date2.getTime() - date1.getTime()) / 1000;
-    diff /= 60;
-    return Math.abs(Math.round(diff));
-}
-
-const minuteToHrMin = (minutes) => {
-    const hr = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    return hr + 'hr ' + m + 'm';
-}
 
 function SleepForm(props) {
 
@@ -26,11 +13,9 @@ function SleepForm(props) {
     const [sleepData, setSleepData] = useState(initData);
 
     function updateSleepSession(updateValues) {
-
         let updatedSleep = {...sleepData, ...updateValues};
-
-        if( numericRegex.test(updatedSleep.outOfBed)) {
-            setSleepData( updatedSleep );
+        if(SleepDataManager.isDataValid(updatedSleep)) {
+            setSleepData(updatedSleep);
         }
     }
 
@@ -66,7 +51,7 @@ function SleepForm(props) {
                     <div className="mb-3">
                         <label htmlFor="calculatedMinutes" className="form-label">Time Asleep</label>
                         <input disabled className="form-control" id="calculatedMinutes" placeholder="Time Asleep"
-                               value={minuteToHrMin(minutesBetween(sleepData.startTime, sleepData.stopTime))} />
+                               value={SleepDataManager.formatDuration(sleepData.startTime, sleepData.stopTime)} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="outOfBed" className="form-label">Out Of Bed (number of times)</label>
@@ -89,4 +74,4 @@ function SleepForm(props) {
     );
 }
 
-export {SleepForm, minuteToHrMin};
+export {SleepForm};
