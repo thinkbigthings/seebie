@@ -27,7 +27,7 @@ public class IntegrationTest {
 
     private static Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
 
-    private static final String POSTGRES_IMAGE = "postgres:12";
+    private static final String POSTGRES_IMAGE = "postgres:14";
     private static final int PG_PORT = 5432;
 
     // can only set to false if other instances are shut down first
