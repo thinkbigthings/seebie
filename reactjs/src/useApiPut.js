@@ -5,7 +5,7 @@ import useHttpError from "./useHttpError";
 
 const useApiPut = () => {
 
-    const requestHeaders = basicHeader();
+    const requestHeaders = basicHeader(true);
     const {throwOnHttpError} = useHttpError();
 
     function put(url, body) {

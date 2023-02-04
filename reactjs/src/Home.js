@@ -18,26 +18,13 @@ import Button from "react-bootstrap/Button";
 import SleepDataManager from "./SleepDataManager";
 import useApiDelete from "./useApiDelete";
 
-const initialPage = {
-    content: [],
-    first: true,
-    last: true,
-    totalElements: 0,
-    pageable: {
-        offset: 0,
-        pageNumber: 0,
-        pageSize: 10,
-    },
-    numberOfElements: 0,
-}
-
 function Home() {
 
     const {currentUser} = useCurrentUser();
 
     const sleepUrl = '/user/' + currentUser.username + '/sleep';
 
-    const [data, pagingControls] = useApiGet(sleepUrl, initialPage);
+    const [data, pagingControls] = useApiGet(sleepUrl);
 
     const callDelete = useApiDelete();
 

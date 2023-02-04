@@ -25,7 +25,6 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
 
-@Profile(" ! migration")
 @Component
 public class LoggingFilterRps implements Filter {
 

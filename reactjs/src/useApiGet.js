@@ -8,6 +8,19 @@ const request = {
     method: 'GET'
 };
 
+const initialPage = {
+    content: [],
+    first: true,
+    last: true,
+    totalElements: 0,
+    pageable: {
+        offset: 0,
+        pageNumber: 0,
+        pageSize: 10,
+    },
+    numberOfElements: 0,
+}
+
 const toPagingLabel = (pageData) => {
     const firstElementInPage = pageData.pageable.offset + 1;
     const lastElementInPage = pageData.pageable.offset + pageData.numberOfElements;
@@ -15,12 +28,13 @@ const toPagingLabel = (pageData) => {
     return pagingLabel;
 }
 
-const useApiGet = (initialUrl, initialData) => {
+// This is for paging
+const useApiGet = (initialUrl) => {
 
     let [url, setUrl] = useState(initialUrl);
     const {throwOnHttpError} = useHttpError();
 
-    const [data, setData] = useState(initialData);
+    const [data, setData] = useState(initialPage);
 
     const [reloadCount, setReloadCount] = useState(0);
     const reload = useCallback(() => {

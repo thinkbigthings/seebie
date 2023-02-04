@@ -13,22 +13,10 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUserEdit, faCaretLeft, faCaretRight} from "@fortawesome/free-solid-svg-icons";
 import Table from "react-bootstrap/Table";
 
-const initialPage = {
-    content: [],
-    first: true,
-    last: true,
-    totalElements: 0,
-    pageable: {
-        offset: 0,
-        pageNumber: 0,
-        pageSize: 10,
-    },
-    numberOfElements: 0,
-}
 
 function UserList() {
 
-    const [data, pagingControls] = useApiGet('/user', initialPage)
+    const [data, pagingControls] = useApiGet('/user')
 
     const visibility = data.totalElements > 0 ? "visible" : "invisible";
 
