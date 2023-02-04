@@ -170,16 +170,26 @@ Both the web and server project README files have an "Update Dependencies" secti
 - [x] Create PR
 - [x] Squash merge to master
 
-### Deploy
+## Deployment
 
-Relevant Documentation
 
-https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#cloud-deployment-heroku 
-https://devcenter.heroku.com/articles/preparing-a-spring-boot-app-for-production-on-heroku 
-https://devcenter.heroku.com/articles/deploying-spring-boot-apps-to-heroku 
-https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku 
+### Bootstrapping
 
-#### To Deploy JAR
+When installing the software into a new environment with a new database, 
+an admin user is automatically created when the database is first initialized with a schema.
+
+The credentials are `admin:admin` and the password should be changed before the 
+environment is exposed to the public. With an admin in place,
+more regular users can then be created.
+
+### Relevant Documentation
+
+https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#cloud-deployment-heroku
+https://devcenter.heroku.com/articles/preparing-a-spring-boot-app-for-production-on-heroku
+https://devcenter.heroku.com/articles/deploying-spring-boot-apps-to-heroku
+https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku
+
+### To Deploy JAR
 
 https://devcenter.heroku.com/articles/deploying-executable-jar-files
 
@@ -236,3 +246,16 @@ A connection can block another connection for the migration, make sure the Intel
 any psql clients, VisualVM JDBC profilers, or previous servers, are disconnected.
 
 If something goes terribly wrong, you may need to even drop the docker instance and rebuild everything.
+
+### Logs (known issues)
+
+Keep an eye on log warnings and errors. But these are known issues:
+- localVariableTableParameterNameDiscoverer : Using deprecated '-debug' fallback for parameter name resolution. 
+Compile the affected code with '-parameters' instead or avoid its introspection: org.springframework.session.config.annotation.web.http.SpringHttpSessionConfiguration
+> Known [bug fixed in Spring Framework 6.0.3](https://github.com/spring-projects/spring-framework/issues/29612)
+> but it's [not a big deal](https://stackoverflow.com/questions/74845574/using-deprecated-debug-fallback-for-parameter-name-resolution-compile-the-af/74863631#74863631).
+- org.hibernate.orm.deprecation        	: HHH90000021: Encountered deprecated setting [javax.persistence.sharedCache.mode], use [jakarta.persistence.sharedCache.mode] instead
+Known bug fixed in Hibernate 6.1.7
+> Known [bug fixed in Hibernate 6.1.7](https://hibernate.atlassian.net/browse/HHH-15768)
+- WARN 65430 --- [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=6m9s146ms).
+> This happens when the machine goes to sleep and comes back, it's generally not an issue
