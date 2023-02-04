@@ -16,11 +16,12 @@ function EditSleep({history, match}) {
     const [loaded, setLoaded] = useState(false);
 
     const [data, setData] = useState(SleepDataManager.createInitSleepData());
+
     useEffect(() => {
         fetch(sleepEndpoint)
             .then(response => response.json())
             .then(SleepDataManager.parse)
-            .then(json => setData(json))
+            .then(setData)
             .then(() => setLoaded(true))
     }, [setData]);
 

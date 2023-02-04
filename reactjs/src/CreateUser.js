@@ -5,7 +5,7 @@ import Button from "react-bootstrap/Button";
 
 import useApiPost from "./useApiPost";
 
-const blankFormData = {
+const blankData = {
     username: '',
     email: '',
     password: '',
@@ -16,9 +16,9 @@ function CreateUser(props) {
 
     const post = useApiPost();
     const [showCreateUser, setShowCreateUser] = useState(false);
-    const [user, setUser] = useState(blankFormData);
+    const [user, setUser] = useState(blankData);
 
-    const onCreate = (userData) => {
+    const saveData = (userData) => {
 
         const registrationRequest = {
             username: userData.username,
@@ -38,13 +38,13 @@ function CreateUser(props) {
     }
 
     function onHide() {
-        setUser(blankFormData);
+        setUser(blankData);
         setShowCreateUser(false);
     }
 
     function onConfirm() {
-        setUser(blankFormData);
-        onCreate({...user, displayName: user.username});
+        setUser(blankData);
+        saveData({...user, displayName: user.username});
     }
 
     const passwordReady = user.password === user.confirmPassword && user.password !== '';

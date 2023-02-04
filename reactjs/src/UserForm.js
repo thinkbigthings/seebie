@@ -26,7 +26,7 @@ const blankEditableAddress = {
 
 function UserForm(props) {
 
-    const {onCancel, onSave, userData} = props;
+    const {onCancel, onSave, initData} = props;
 
     // return new state based on current state and action
     // reducer itself should not cause side effects, it should be called FROM a side effect
@@ -80,12 +80,12 @@ function UserForm(props) {
         }
     }
 
-    const [formState, dispatch] = useReducer(formReducer, {user: userData, editableAddress: blankEditableAddress}, arg => arg);
+    const [formState, dispatch] = useReducer(formReducer, {user: initData, editableAddress: blankEditableAddress}, arg => arg);
 
     // the context hook retains its value over re-renders,
     // so need to trigger the update here once the data has been loaded for real
-    if(userData.username !== '' && formState.user.username === '') {
-        dispatch({type:'LOAD_USER', payload: userData});
+    if(initData.username !== '' && formState.user.username === '') {
+        dispatch({type:'LOAD_USER', payload: initData});
     }
 
     const address = formState.editableAddress.address;

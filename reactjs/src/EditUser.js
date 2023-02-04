@@ -33,11 +33,15 @@ function EditUser({history, match}) {
 
     const [data, setData] = useState(blankUser);
 
+    const [loaded, setLoaded] = useState(false);
+
     useEffect(() => {
         fetch(userEndpoint)
             .then(response => response.json())
             .then(setData)
+            .then(() => setLoaded(true))
     }, [setData]);
+
 
     // update user info stuff
 
@@ -75,7 +79,7 @@ function EditUser({history, match}) {
             <ResetPasswordModal show={showResetPassword} onConfirm={onResetPassword} onHide={() => setShowResetPassword(false)} />
 
             <Container id="userFormWrapper" className="pl-0 pr-0">
-                <UserForm onCancel={history.goBack} onSave={onSave} userData={data}/>
+                {loaded ? <UserForm onCancel={history.goBack} onSave={onSave} initData={data}/> : <div />}
             </Container>
         </div>
     );
