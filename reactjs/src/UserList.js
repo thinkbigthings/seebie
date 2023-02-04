@@ -30,6 +30,8 @@ function UserList() {
 
     const [data, pagingControls] = useApiGet('/user', initialPage)
 
+    const visibility = data.totalElements > 0 ? "visible" : "invisible";
+
     return (
         <div className="container mt-3">
             <h1>User Management</h1>
@@ -59,7 +61,7 @@ function UserList() {
                 </Table>
             </Container>
 
-            <ButtonGroup className="mt-2">
+            <ButtonGroup className={"mt-2 " + visibility}>
                 <Button variant="primary" disabled={data.first} onClick={ pagingControls.previous }>
                     <FontAwesomeIcon className="me-2" icon={faCaretLeft} />Previous
                 </Button>
@@ -68,6 +70,7 @@ function UserList() {
                     <FontAwesomeIcon className="me-2" icon={faCaretRight} />Next
                 </Button>
             </ButtonGroup>
+
         </div>
 
     );

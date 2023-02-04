@@ -3,11 +3,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faCaretLeft,
     faCaretRight,
-    faDeleteLeft,
     faEdit,
     faHome,
     faTrash,
-    faUserEdit
 } from "@fortawesome/free-solid-svg-icons";
 import Container from "react-bootstrap/Container";
 import {CreateSleepSession} from "./CreateSleepSession";
@@ -48,6 +46,8 @@ function Home() {
             .then(pagingControls.reload);
     }
 
+    const visibility = data.totalElements > 0 ? "visible" : "invisible";
+
     return (
         <div className="container mt-3">
             <h1>Seebie<FontAwesomeIcon icon={faHome} /></h1>
@@ -85,7 +85,7 @@ function Home() {
                 </Table>
             </Container>
 
-            <ButtonGroup className="mt-2">
+            <ButtonGroup className={"mt-2 " + visibility}>
                 <Button variant="primary" disabled={data.first} onClick={ pagingControls.previous }>
                     <FontAwesomeIcon className="me-2" icon={faCaretLeft} />Previous
                 </Button>
