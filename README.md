@@ -34,26 +34,16 @@ From that folder we can run all `npm` commands like normal.
 
 The IDE can set up a run configuration to run npm as well.
 
-### Server
-
-There are server oriented sub-projects: server and perf.
-
-The server project is a web server for a normal web application.
-The perf project is a basic load testing application that runs against the server.
-
-
-### Project Composition with Gradle
-
-All projects can be run with Gradle from the base (current) folder.
-
-For example:
-`gradlew :server:bootRun` is equivalent to `gradlew -p server bootRun`
-
-
 Note that the React app has a proxy set in `package.json` so that we can run
 the front end and back end independently. Another advantage of the proxy is that
 we can just point it to another address or port to use the local web UI
 against any server we want.
+
+
+### Server
+
+The backend project is in `server`, it is a web server for a normal web application.
+`gradlew :server:bootRun` is equivalent to `gradlew -p server bootRun`
 
 
 ### Do a full build
@@ -148,8 +138,7 @@ Both the web and server project README files have an "Update Dependencies" secti
 - [x] Must be covered by automated testing
 - [x] Must verify security / authorization
 - [x] Must verify zero downtime transition
-- [x] Perf test locally
-- [x] UI test locally from full build (requires online)
+- [x] UI test locally from full build
 
 ### Protect the Process
 
@@ -157,13 +146,12 @@ Both the web and server project README files have an "Update Dependencies" secti
 - [x] Review test coverage, coverage > 40%
 - [x] Can debug front/back end in IDE
 - [x] Full clean build takes < 60s
-- [x] Docs (like README's) are up to date
+- [x] Docs (like README's) are up-to-date
 
 ### Stage
 
 - [x] Deploy to stage
 - [x] UI test on stage
-- [x] Perf test directed at stage
 
 ### Merge
 
@@ -179,8 +167,7 @@ When installing the software into a new environment with a new database,
 an admin user is automatically created when the database is first initialized with a schema.
 
 The credentials are `admin:admin` and the password should be changed before the 
-environment is exposed to the public. With an admin in place,
-more regular users can then be created.
+environment is exposed to the public. With the admin in place more regular users can be created.
 
 ### Relevant Documentation
 
@@ -199,20 +186,23 @@ These are commands you can use directly, but really it's simpler to use the grad
 heroku plugins:install java
 
 // if you want to blow away an instance and start over
-heroku apps:destroy zdd-full
+heroku apps:destroy stage
 
-heroku create --no-remote
-heroku apps:rename --app generatedname stage-zdd-full
-heroku addons:create papertrail --app stage-zdd-full
-heroku addons:create heroku-postgresql --app stage-zdd-full
+// create an app in Heroku UI
+verify from CLI with `heroku apps`
+
+// then from commandline:
+heroku apps:rename --app generatedname stage
+heroku addons:create papertrail --app stage
+heroku addons:create heroku-postgresql --app stage
 
 // deploy with gradle, specify app name to ensure the correct target environment
 
-    gradlew -Papp=stage-zdd-full deployHeroku
+    gradlew -Papp=seebie-stage deployHeroku
       
     
 // or with command line
-heroku deploy:jar server-1.0-SNAPSHOT.jar --app zdd-full --include Procfile system.properties
+heroku deploy:jar server-1.0-SNAPSHOT.jar --app stage --include Procfile system.properties
 
 
 View logs during deployment

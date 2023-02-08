@@ -28,7 +28,7 @@ On Mac: can install [Docker Desktop](https://hub.docker.com/editions/community/d
 # Database Migrations
 
 
-## Docker Postgres
+## Docker Postgres for Development
 
 This project uses [testcontainers](https://www.testcontainers.org) 
 for integration tests as [recommended by Docker](https://www.docker.com/blog/maintainable-integration-tests-with-docker/).
@@ -125,6 +125,9 @@ See [Heroku Migrations](https://devcenter.heroku.com/articles/running-database-m
 Heroku's [release phase](https://devcenter.heroku.com/articles/release-phase)
 is one intended mechanism for migrations.
 
+Besides the release phase, database migrations can also be run in a
+[one-off dyno](https://devcenter.heroku.com/articles/one-off-dynos)
+
 Heroku requires apps to bind a port in 60s or it's considered crashed.
 Migrations can eat into that time, so do that separately from deployment.
 The release phase has a 1h timeout and a release can be
@@ -132,9 +135,6 @@ monitored and [stopped](https://help.heroku.com/Z44Q4WW4/how-do-i-stop-a-release
 
 Running from a [flyway caller](https://devcenter.heroku.com/articles/running-database-migrations-for-java-apps#using-flyway)
 is the best way to do a migration without doing the source code deployment.
-
-Besides the release phase, database migrations can also be run in a
-[one-off dyno](https://devcenter.heroku.com/articles/one-off-dynos)
 
 
 ## Threads

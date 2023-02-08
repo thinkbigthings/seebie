@@ -4,7 +4,6 @@ import {
     faCaretLeft,
     faCaretRight,
     faEdit,
-    faHome,
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import Container from "react-bootstrap/Container";
@@ -37,18 +36,16 @@ function Home() {
 
     return (
         <div className="container mt-3">
-            <h1>Seebie<FontAwesomeIcon icon={faHome} /></h1>
 
             <CreateSleepSession onSave={pagingControls.reload}/>
 
-            <Container className="container mt-3">
+            <Container className="container mt-3 p-0">
                 <Table striped bordered hover >
                     <thead>
                         <tr>
                             <th>Date</th>
                             <th>Duration</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -58,18 +55,44 @@ function Home() {
                                 <tr key={sleep.id}>
                                     <td>{new Date(sleep.sleepData.stopTime).toLocaleDateString()}</td>
                                     <td>{SleepDataManager.formatDuration(sleep.sleepData.startTime, sleep.sleepData.stopTime)}</td>
-                                    <td className="text-center">
-                                        <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } className="btn btn-primary">
+                                    <td className="d-flex flex-row-reverse">
+                                        <FontAwesomeIcon className="px-3 " icon={faTrash} onClick={() => deleteById(sleep.id)} />
+                                        <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } >
                                             <FontAwesomeIcon className="px-3" icon={faEdit} />
                                         </Link>
-                                    </td>
-                                    <td className="text-center">
-                                        <FontAwesomeIcon className="px-3 " icon={faTrash} onClick={() => deleteById(sleep.id)} />
                                     </td>
                                 </tr>
                         )}
                     </tbody>
                 </Table>
+                {/*<Table striped bordered hover >*/}
+                {/*    <thead>*/}
+                {/*    <tr>*/}
+                {/*        <th>Date</th>*/}
+                {/*        <th>Duration</th>*/}
+                {/*        <th>Edit</th>*/}
+                {/*        <th>Delete</th>*/}
+                {/*    </tr>*/}
+                {/*    </thead>*/}
+                {/*    <tbody>*/}
+                {/*    {data.content*/}
+                {/*        .map(sleep => { sleep.sleepData = SleepDataManager.parse(sleep.sleepData); return sleep; })*/}
+                {/*        .map(sleep =>*/}
+                {/*            <tr key={sleep.id}>*/}
+                {/*                <td>{new Date(sleep.sleepData.stopTime).toLocaleDateString()}</td>*/}
+                {/*                <td>{SleepDataManager.formatDuration(sleep.sleepData.startTime, sleep.sleepData.stopTime)}</td>*/}
+                {/*                <td className="text-center">*/}
+                {/*                    <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } className="btn btn-primary">*/}
+                {/*                        <FontAwesomeIcon className="px-3" icon={faEdit} />*/}
+                {/*                    </Link>*/}
+                {/*                </td>*/}
+                {/*                <td className="text-center">*/}
+                {/*                    <FontAwesomeIcon className="px-3 " icon={faTrash} onClick={() => deleteById(sleep.id)} />*/}
+                {/*                </td>*/}
+                {/*            </tr>*/}
+                {/*        )}*/}
+                {/*    </tbody>*/}
+                {/*</Table>*/}
             </Container>
 
             <ButtonGroup className={"mt-2 " + visibility}>

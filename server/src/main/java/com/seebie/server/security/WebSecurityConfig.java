@@ -15,7 +15,6 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.List;
 
-
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfig {

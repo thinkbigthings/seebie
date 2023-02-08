@@ -83,7 +83,7 @@ function AuthenticatedApp() {
 
     return (
         <HashRouter>
-            <NavBar bg="dark" variant="dark">
+            <NavBar className="border-bottom">
                 <Container>
                     <NavBar.Brand>Seebie</NavBar.Brand>
                     <Nav>

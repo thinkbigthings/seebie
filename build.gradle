@@ -3,18 +3,21 @@ plugins {
     id "com.heroku.sdk.heroku-gradle" version "2.0.0"
 }
 
+
 // use heroku gradle plugin
 // https://github.com/heroku/heroku-gradle
 heroku {
 
-    appName = project.hasProperty('app') ? project.property('app') : 'stage-zdd-full'
+    appName = project.hasProperty('app') ? project.property('app') : ''
     jdkVersion = 17
     includes = ["server/build/libs/server-1.0-SNAPSHOT.jar"]
     includeBuildDir = false
 
+    // -Dspring.profiles.active=migration
+
     processTypes(
         // The \$ is to escape $ for build.gradle, don't need the slash when running the command locally
-        release: "java --enable-preview -Dspring.datasource.url='\${JDBC_DATABASE_URL}&autosave=conservative' -Dspring.profiles.active=migration -jar server/build/libs/server-1.0-SNAPSHOT.jar",
+        release: "java --enable-preview -Dspring.datasource.url='\${JDBC_DATABASE_URL}&autosave=conservative'                               -jar server/build/libs/server-1.0-SNAPSHOT.jar",
         web:     "java --enable-preview -Dspring.datasource.url='\${JDBC_DATABASE_URL}&autosave=conservative' -Dserver.port='\${PORT}'           -jar server/build/libs/server-1.0-SNAPSHOT.jar"
     )
 }
