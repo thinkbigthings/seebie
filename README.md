@@ -57,17 +57,6 @@ and run e.g. `java --enable-preview -jar build/libs/server-1.0-SNAPSHOT.jar`
 Then in the browser go to `https://localhost:9000`
 
 
-### Showing Blue Green Deployment (Server)
-
-Override the port so we can run multiple servers at once. e.g.
-`gradlew :server:bootRun --args='--spring.profiles.active=migration'`
-`gradlew :server:bootRun --args='--server.port=9001'`
-`gradlew :perf:bootRun --args='--connect.port=9001'`
-
-To make this easier, see the commands file with the aliases.
-Use `blueDeploy` and `blueClient` alternating with `greenDeploy` and `greenClient`.
-Just put ./commands on your PATH
-
 ### Updating the API Version
 
 #### How API Version Works
@@ -169,56 +158,13 @@ an admin user is automatically created when the database is first initialized wi
 The credentials are `admin:admin` and the password should be changed before the 
 environment is exposed to the public. With the admin in place more regular users can be created.
 
-### Relevant Documentation
+### Cloud Providers
 
-https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#cloud-deployment-heroku
-https://devcenter.heroku.com/articles/preparing-a-spring-boot-app-for-production-on-heroku
-https://devcenter.heroku.com/articles/deploying-spring-boot-apps-to-heroku
-https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku
+This app is known to work well with Heroku. We use the gradle heroku plugin instead of the Procfile.
 
-### To Deploy JAR
+e.g.
 
-https://devcenter.heroku.com/articles/deploying-executable-jar-files
-
-These are commands you can use directly, but really it's simpler to use the gradle plugin
-
-// if heroku java plugin isn't installed locally yet
-heroku plugins:install java
-
-// if you want to blow away an instance and start over
-heroku apps:destroy stage
-heroku create stage
-
-// create an app in Heroku UI
-verify from CLI with `heroku apps`
-
-// then from commandline:
-heroku apps:rename --app generatedname stage
-heroku addons:create papertrail --app stage
-heroku addons:create heroku-postgresql --app stage
-
-// deploy with gradle, specify app name to ensure the correct target environment
-
-    gradlew -Papp=seebie-stage deployHeroku
-      
-    
-// or with command line
-heroku deploy:jar server-1.0-SNAPSHOT.jar --app stage --include Procfile system.properties
-
-
-View logs during deployment
-heroku logs --tail --app stage
-
-View logs for the migration (release phase)
-can be viewed from dashboard, or with command
-heroku releases:output --app stage
-
-// other handy commands
-heroku config --app zdd-full
-heroku pg --app zdd-full
-heroku run ls --app zdd-full
-heroku run env --app zdd-full
-
+    gradlew -Papp=appname deployHeroku
 
 
 ## Troubleshooting
