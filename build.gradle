@@ -4,7 +4,7 @@ plugins {
 }
 
 
-// use heroku gradle plugin
+// use heroku gradle plugin so info is stored here instead of in a Procfile
 // https://github.com/heroku/heroku-gradle
 heroku {
 
@@ -17,7 +17,7 @@ heroku {
 
     processTypes(
         // The \$ is to escape $ for build.gradle, don't need the slash when running the command locally
-        release: "java --enable-preview -Dspring.datasource.url='\${JDBC_DATABASE_URL}&autosave=conservative'                               -jar server/build/libs/server-1.0-SNAPSHOT.jar",
+//        release: "java --enable-preview -Dspring.datasource.url='\${JDBC_DATABASE_URL}&autosave=conservative'   -Dspring.profiles.active=migration    -jar server/build/libs/server-1.0-SNAPSHOT.jar",
         web:     "java --enable-preview -Dspring.datasource.url='\${JDBC_DATABASE_URL}&autosave=conservative' -Dserver.port='\${PORT}'           -jar server/build/libs/server-1.0-SNAPSHOT.jar"
     )
 }

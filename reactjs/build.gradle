@@ -12,8 +12,8 @@ node {
     // match the version of node specified in the README
     version = "16.14.0"
 
-    // TODO this needs to be true to work, but we should understand what it is doing
-    download = true
+    // not sure this needs to be true to work, but we should understand what it is doing
+    download = false
 }
 
 task bundle(type: NpmTask, dependsOn: npmInstall) {

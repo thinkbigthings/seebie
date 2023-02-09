@@ -187,6 +187,7 @@ heroku plugins:install java
 
 // if you want to blow away an instance and start over
 heroku apps:destroy stage
+heroku create stage
 
 // create an app in Heroku UI
 verify from CLI with `heroku apps`
@@ -206,11 +207,11 @@ heroku deploy:jar server-1.0-SNAPSHOT.jar --app stage --include Procfile system.
 
 
 View logs during deployment
-heroku logs --tail --app stage-zdd-full
+heroku logs --tail --app stage
 
 View logs for the migration (release phase)
 can be viewed from dashboard, or with command
-heroku releases:output --app zdd-full
+heroku releases:output --app stage
 
 // other handy commands
 heroku config --app zdd-full
