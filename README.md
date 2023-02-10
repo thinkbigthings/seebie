@@ -144,6 +144,10 @@ Both the web and server project README files have an "Update Dependencies" secti
 - [x] Create PR
 - [x] Squash merge to master
 
+### CI/CD
+
+Github Actions
+
 ## Deployment
 
 
