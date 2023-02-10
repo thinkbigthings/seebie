@@ -31,7 +31,7 @@ jobs:
       with:
         node-version: 16.14.0
 
-    -name: Set up Bootstrap
+    - name: Set up Bootstrap
       run: npm install react-bootstrap bootstrap
 
     - name: Set up Java 17
