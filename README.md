@@ -35,10 +35,7 @@ From that folder we can run all `npm` commands like normal.
 The IDE can set up a run configuration to run npm as well.
 
 Note that the React app has a proxy set in `package.json` so that we can run
-the front end and back end independently. Another advantage of the proxy is that
-we can just point it to another address or port to use the local web UI
-against any server we want.
-
+the front end and back end independently.
 
 ### Server
 
