@@ -33,7 +33,7 @@ The bootstrap dark theme is applied like so
 
     <html lang="en" data-bs-theme="dark">
 
-#5f2b83
+    #5f2b83
 
 https://getbootstrap.com/docs/5.3/customize/color-modes/
 
@@ -70,7 +70,7 @@ To upgrade React:
 
     npm install react@17.0.0 react-dom@17.0.0
 
-Note: if bootstrap is upgrade, react-bootstrap needs to be upgraded to a compatible verision
+Note: if bootstrap is upgraded, react-bootstrap needs to be upgraded to a compatible version
 
 Note: that fontawesome and bootstrap can be served by CDN
 but this project includes them via npm
@@ -84,10 +84,10 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.<br />
+Runs the app in the development mode.
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br />
+The page will reload if you make edits.
 You will also see any lint errors in the console.
 
 ### `npm test`
