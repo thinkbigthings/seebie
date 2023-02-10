@@ -26,10 +26,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-#    - name: Set up Node 16
-#      uses: actions/setup-node@v3
-#      with:
-#        node-version: 16.14.0
+    - name: Set up Node 16
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.14.0
 #      run: npm ci
 #
 #    - name: Set up Java 17
