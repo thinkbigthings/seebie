@@ -2,7 +2,7 @@ import React from 'react';
 
 import './App.css';
 import Form from 'react-bootstrap/Form';
-import NavBar from 'react-bootstrap/NavBar';
+import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 
 import { HashRouter, Route } from 'react-router-dom';
@@ -47,15 +47,15 @@ function App() {
 function UnauthenticatedApp() {
     return (
         <HashRouter>
-            <NavBar className="border-bottom">
+            <Navbar className="border-bottom">
                 <Container>
-                    <NavBar.Brand>Seebie</NavBar.Brand>
+                    <Navbar.Brand>Seebie</Navbar.Brand>
                     <Nav className="mr-auto" />
                     <Form inline="true">
                         <Nav.Link href="#login">Login</Nav.Link>
                     </Form>
                 </Container>
-            </NavBar>
+            </Navbar>
             <Route exact path="/login" component={Login} />
         </HashRouter>
     );
@@ -83,9 +83,9 @@ function AuthenticatedApp() {
 
     return (
         <HashRouter>
-            <NavBar className="border-bottom">
+            <Navbar className="border-bottom">
                 <Container>
-                    <NavBar.Brand>Seebie</NavBar.Brand>
+                    <Navbar.Brand>Seebie</Navbar.Brand>
                     <Nav>
                         <Nav.Link href="/">Home</Nav.Link>
                         {usersLink}
@@ -96,7 +96,7 @@ function AuthenticatedApp() {
                         <Nav.Link onClick={onClickLogout}>Logout</Nav.Link>
                     </Form>
                 </Container>
-            </NavBar>
+            </Navbar>
             <Route exact path="/" render={() => <Home/>}/>
             <Route exact path="/users" render={() => <UserList/>}/>
             <Route exact path="/about" render={() => <About/>}/>
