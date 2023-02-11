@@ -1,5 +1,5 @@
 import {basicHeader} from "./BasicHeaders";
-import useHttpError from "./useHttpError";
+// import useHttpError from "./useHttpError";
 import {useCallback, useEffect, useState} from "react";
 import copy from "./Copier";
 
@@ -32,7 +32,9 @@ const toPagingLabel = (pageData) => {
 const useApiGet = (initialUrl) => {
 
     let [url, setUrl] = useState(initialUrl);
-    const {throwOnHttpError} = useHttpError();
+
+    // TODO maybe this should be in a callback hook?
+    // const {throwOnHttpError} = useHttpError();
 
     const [data, setData] = useState(initialPage);
 
@@ -41,14 +43,15 @@ const useApiGet = (initialUrl) => {
         setReloadCount(p => p + 1);
     }, []);
 
-    function movePage(amount) {
+
+    const movePage = useCallback((amount) => {
         let pageable = copy(data.pageable);
         pageable.pageNumber = pageable.pageNumber + amount;
-        setUrl(url + '?page=' + pageable.pageNumber + '&size=' + pageable.pageSize)
-    }
+        setUrl(initialUrl + '?page=' + pageable.pageNumber + '&size=' + pageable.pageSize)
+    }, [data.pageable, initialUrl]);
 
-    const next = useCallback(() => movePage(1), []);
-    const previous = useCallback(() => movePage(-1), []);
+    const next = useCallback(() => movePage(1), [movePage]);
+    const previous = useCallback(() => movePage(-1), [movePage]);
 
     const pagingControls = {
         next, previous, reload
@@ -56,7 +59,7 @@ const useApiGet = (initialUrl) => {
 
     useEffect(() => {
         fetch(url, request)
-            .then(throwOnHttpError)
+            // .then(throwOnHttpError)
             .then((res) => res.json())
             .then(setData)
             .catch(error => console.log(error));

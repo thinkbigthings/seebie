@@ -23,7 +23,7 @@ function EditSleep({history, match}) {
             .then(SleepDataManager.parse)
             .then(setData)
             .then(() => setLoaded(true))
-    }, [setData]);
+    }, [setData, sleepEndpoint]);
 
     // update data
 

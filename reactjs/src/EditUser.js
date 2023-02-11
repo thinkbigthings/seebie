@@ -40,7 +40,7 @@ function EditUser({history, match}) {
             .then(response => response.json())
             .then(setData)
             .then(() => setLoaded(true))
-    }, [setData]);
+    }, [setData, userEndpoint]);
 
 
     // update user info stuff
