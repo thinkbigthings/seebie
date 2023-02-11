@@ -41,7 +41,7 @@ jobs:
       with:
         arguments: build
 
-    - name: Deploy to Staging
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: -Papp=stage deployHeroku
+#    - name: Deploy to Staging
+#      uses: gradle/gradle-build-action@v2
+#      with:
+#        arguments: -Papp=stage deployHeroku
