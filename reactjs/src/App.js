@@ -1,9 +1,9 @@
 import React from 'react';
 
 import './App.css';
+import Form from 'react-bootstrap/Form';
 import NavBar from 'react-bootstrap/NavBar';
 import Nav from 'react-bootstrap/Nav';
-import Form from 'react-bootstrap/Form';
 
 import { HashRouter, Route } from 'react-router-dom';
 
