@@ -45,14 +45,14 @@ jobs:
         heroku_email: "jay@levelstonesoftware.com"
         justlogin: true
 
-#    - name: Build with Gradle
-#      uses: gradle/gradle-build-action@v2
-#      with:
-#        arguments: build
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: build
 
 #    - run: heroku auth:whoami
 
-#    - name: Deploy to Staging
-#      uses: gradle/gradle-build-action@v2
-#      with:
-#        arguments: -Papp=stage deployHeroku
+    - name: Deploy to Staging
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: -Papp=stage deployHeroku
