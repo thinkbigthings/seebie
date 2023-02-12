@@ -50,8 +50,6 @@ jobs:
       with:
         arguments: build
 
-#    - run: heroku auth:whoami
-
     - name: Deploy to Staging
       uses: gradle/gradle-build-action@v2
       with:
