@@ -30,7 +30,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") HttpSecurity http) throws Exception {
 
-        var paths = List.of("/", "/index.html", "/static/**", "/*.png", "favicon.ico", "/manifest.json", "/actuator/**");
+        var paths = List.of("/", "/index.html", "/static/**", "/*.png", "/favicon.ico", "/manifest.json", "/actuator/**");
         var openEndpoints = paths.stream()
                 .map(AntPathRequestMatcher::new)
                 .toList().toArray(new RequestMatcher[paths.size()]);
