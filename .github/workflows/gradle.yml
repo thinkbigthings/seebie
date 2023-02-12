@@ -36,10 +36,10 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: build
+#    - name: Build with Gradle
+#      uses: gradle/gradle-build-action@v2
+#      with:
+#        arguments: build
 
     - name: Login to Heroku
       uses: akhileshns/heroku-deploy@v3.12.12
