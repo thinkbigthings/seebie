@@ -18,20 +18,3 @@ heroku {
         web: "java --enable-preview -Dspring.datasource.url='\${JDBC_DATABASE_URL}&autosave=conservative' -Dserver.port='\${PORT}' -jar server/build/libs/server-1.0-SNAPSHOT.jar"
     )
 }
-
-//task copyWebApp {
-//    description 'copies built files from reactjs to the server'
-//    dependsOn ':reactjs:build'
-//    doLast {
-//        copy {
-//            from(project(":reactjs").buildDir)
-//            into(project(":server").buildDir.toPath().resolve('resources/main/static'))
-//        }
-//    }
-//}
-//
-//task build () {
-//    description 'builds the entire project with all sub-modules'
-//    dependsOn('copyWebApp')
-//    dependsOn(':server:bootJar')
-//}
