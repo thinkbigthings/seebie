@@ -159,3 +159,16 @@ def integrationTest = tasks.register("integrationTest", Test) {
 tasks.named("check") {
     dependsOn integrationTest
 }
+
+task copyWebApp {
+    description 'Copies built files from reactjs to server'
+    dependsOn ':reactjs:build'
+    doLast {
+        copy {
+            from(project(":reactjs").buildDir)
+            into(project(":server").buildDir.toPath().resolve('resources/main/static'))
+        }
+    }
+}
+
+bootJar.dependsOn('copyWebApp')
