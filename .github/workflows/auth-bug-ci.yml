@@ -48,8 +48,14 @@ jobs:
         with:
           arguments: build
 
-      - name: Debug Build Folder
-        run: ls server/build/resources/main/static
+      - name: Debug Build Folder 1
+        run: ls server/build
+
+      - name: Debug Build Folder 2
+        run: ls server/build/resources
+
+      - name: Debug Build Folder 3
+        run: ls server/build/resources/main
 
       - name: Debug Jar Contents
         run: jar tf server/build/libs/server-1.0-SNAPSHOT.jar
