@@ -57,6 +57,9 @@ jobs:
       - name: Debug Build Folder 3
         run: ls server/build/resources/main
 
+      - name: Debug Build Folder 4
+        run: ls server/build/resources/main/static
+
       - name: Debug Jar Contents
         run: jar tf server/build/libs/server-1.0-SNAPSHOT.jar
 

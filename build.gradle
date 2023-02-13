@@ -19,19 +19,19 @@ heroku {
     )
 }
 
-task copyWebApp {
-    description 'copies built files from reactjs to the server'
-    dependsOn ':reactjs:build'
-    doLast {
-        copy {
-            from(project(":reactjs").buildDir)
-            into(project(":server").buildDir.toPath().resolve('resources/main/static'))
-        }
-    }
-}
-
-task build () {
-    description 'builds the entire project with all sub-modules'
-    dependsOn('copyWebApp')
-    dependsOn(':server:bootJar')
-}
+//task copyWebApp {
+//    description 'copies built files from reactjs to the server'
+//    dependsOn ':reactjs:build'
+//    doLast {
+//        copy {
+//            from(project(":reactjs").buildDir)
+//            into(project(":server").buildDir.toPath().resolve('resources/main/static'))
+//        }
+//    }
+//}
+//
+//task build () {
+//    description 'builds the entire project with all sub-modules'
+//    dependsOn('copyWebApp')
+//    dependsOn(':server:bootJar')
+//}
