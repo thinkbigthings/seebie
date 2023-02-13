@@ -48,6 +48,9 @@ jobs:
         with:
           arguments: build
 
+      - name: Debug Jar Contents
+        run: jar tf server/build/libs/server-1.0-SNAPSHOT.jar
+
       - name: Deploy to Staging
         uses: gradle/gradle-build-action@v2
         with:
