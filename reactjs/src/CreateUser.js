@@ -4,7 +4,6 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
 import useApiPost from "./useApiPost";
-import SleepDataManager from "./SleepDataManager";
 
 const blankData = {
     username: '',
