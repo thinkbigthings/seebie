@@ -33,8 +33,16 @@ function CreateUser(props) {
             .then(props.onSave);
     }
 
+
     function updateUser(updateValues) {
-        setUser( {...user, ...updateValues});
+        let updatedUser = {...user, ...updateValues};
+
+        // username should not need to be url encoded
+        let valid = encodeURIComponent(updatedUser.username) === updatedUser.username;
+
+        if(valid) {
+            setUser( updatedUser );
+        }
     }
 
     function onHide() {
@@ -47,7 +55,7 @@ function CreateUser(props) {
         saveData({...user, displayName: user.username});
     }
 
-    const passwordReady = user.password === user.confirmPassword && user.password !== '';
+    const passwordReady = (user.password === user.confirmPassword && user.password !== '');
 
     return (
         <>
