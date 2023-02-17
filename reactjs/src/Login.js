@@ -5,27 +5,18 @@ import Button from "react-bootstrap/Button";
 import {REACT_APP_API_VERSION, VERSION_HEADER} from "./Constants";
 import useCurrentUser from "./useCurrentUser";
 import useHttpError from "./useHttpError";
+import {GET} from "./BasicHeaders";
+import copy from "./Copier";
 
 
 function getWithCreds(url, credentials) {
 
     const encoded = btoa(credentials.username + ":" + credentials.password);
 
-    // don't pass in the api version, so login is never blocked by being on an old api version.
-    // omitting the api version in the request header always lets it pass the api check, assuming latest
+    let authGet = copy(GET);
+    authGet.headers['Authorization'] = 'Basic ' + encoded;
 
-    // If the server returns a 401 status code and includes one or more WWW-Authenticate headers, then
-    // the browser pops up an authentication dialog asking for the username and password
-    // Including X-Requested-With by the client signals the server to not respond with that header
-
-    const requestMeta = {
-        headers: {
-            'Authorization': 'Basic ' + encoded,
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    };
-
-    return fetch(url, requestMeta);
+    return fetch(url, authGet);
 }
 
 // login needs to be a component in the router for history to be passed here

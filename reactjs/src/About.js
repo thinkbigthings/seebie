@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 
 import {REACT_APP_API_VERSION} from "./Constants";
+import {GET} from "./BasicHeaders";
 
 const styleByStatus = {
     "UP" : "text-success",
@@ -19,7 +20,7 @@ function About() {
     const [info, setInfo] = useState(initialData);
 
     useEffect(() => {
-        fetch('/actuator/info')
+        fetch('/actuator/info', GET)
             .then(response => response.json())
             .then(setInfo)
     }, [setInfo]);
@@ -27,7 +28,7 @@ function About() {
     const [serverStatus, setServerStatus] = useState("UNKNOWN");
 
     useEffect(() => {
-        fetch('/actuator/health')
+        fetch('/actuator/health', GET)
             .then(response => setServerStatus("UP"))
             .catch(response => setServerStatus("DOWN"));
     }, [setServerStatus]);

@@ -1,12 +1,7 @@
-import {basicHeader} from "./BasicHeaders";
+import {GET} from "./BasicHeaders";
 // import useHttpError from "./useHttpError";
 import {useCallback, useEffect, useState} from "react";
 import copy from "./Copier";
-
-const request = {
-    headers: basicHeader(false),
-    method: 'GET'
-};
 
 const initialPage = {
     content: [],
@@ -58,7 +53,7 @@ const useApiGet = (initialUrl) => {
     }
 
     useEffect(() => {
-        fetch(url, request)
+        fetch(url, GET)
             // .then(throwOnHttpError)
             .then((res) => res.json())
             .then(setData)

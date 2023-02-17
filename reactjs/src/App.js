@@ -18,7 +18,7 @@ import {ErrorProvider} from './ErrorContext.js';
 import ErrorModal from "./ErrorModal";
 import useCurrentUser from "./useCurrentUser";
 import {CurrentUserContext, CurrentUserProvider} from "./CurrentUserContext";
-import {basicHeader} from "./BasicHeaders";
+import {GET} from "./BasicHeaders";
 
 // I think this only has to be imported on any one page, and it works for the whole site
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -69,13 +69,7 @@ function AuthenticatedApp() {
     const userUrl = "#/users/"+currentUser.username+"/edit";
 
     function onClickLogout() {
-
-        const request = {
-            headers: basicHeader(),
-            method: 'GET'
-        };
-
-        fetch("/logout", request)
+        fetch("/logout", GET)
             .then(response => onLogout());
     }
 

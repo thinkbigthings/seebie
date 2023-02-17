@@ -11,6 +11,7 @@ import useApiPut from "./useApiPut";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey} from "@fortawesome/free-solid-svg-icons";
+import {GET} from "./BasicHeaders";
 
 const blankUser = {
     username: '',
@@ -35,12 +36,14 @@ function EditUser({history, match}) {
 
     const [loaded, setLoaded] = useState(false);
 
+    console.log(userEndpoint)
+
     useEffect(() => {
-        fetch(userEndpoint)
+        fetch(userEndpoint, GET)
             .then(response => response.json())
             .then(setData)
             .then(() => setLoaded(true))
-    }, [setData, userEndpoint]);
+    }, [setData, userEndpoint, username]);
 
 
     // update user info stuff

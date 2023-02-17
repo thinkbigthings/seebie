@@ -4,6 +4,7 @@ import Container from "react-bootstrap/Container";
 import {SleepForm} from "./SleepForm";
 import useApiPut from "./useApiPut";
 import SleepDataManager from "./SleepDataManager";
+import {GET} from "./BasicHeaders";
 
 
 function EditSleep({history, match}) {
@@ -18,7 +19,7 @@ function EditSleep({history, match}) {
     const [data, setData] = useState(SleepDataManager.createInitSleepData());
 
     useEffect(() => {
-        fetch(sleepEndpoint)
+        fetch(sleepEndpoint, GET)
             .then(response => response.json())
             .then(SleepDataManager.parse)
             .then(setData)
