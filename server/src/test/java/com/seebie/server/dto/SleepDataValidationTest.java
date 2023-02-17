@@ -3,14 +3,10 @@ package com.seebie.server.dto;
 import jakarta.validation.Validation;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.util.HashSet;
-
 import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SleepDataTest {
+public class SleepDataValidationTest {
 
 
     @Test

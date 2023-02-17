@@ -15,9 +15,7 @@ import com.seebie.server.entity.User;
 import com.seebie.server.repository.UserRepository;
 import com.seebie.server.service.UserService;
 
-import jakarta.validation.ConstraintViolationException;
 import java.time.Instant;
-import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Optional.of;
@@ -87,27 +85,7 @@ public class UserServiceTest {
 
         RegistrationRequest register = new RegistrationRequest("username", "b", "name@email.com");
 
-        assertThrows(ResponseStatusException.class, () -> service.saveNewUser(register));
-    }
-
-    @Test
-    public void blockConstraintViolationOnRegister() {
-
-        when(userRepo.save(ArgumentMatchers.any(User.class))).thenThrow(new ConstraintViolationException(new HashSet<>()));
-
-        RegistrationRequest register = new RegistrationRequest("username", "b", "name@email.com");
-
-        assertThrows(ResponseStatusException.class, () -> service.saveNewUser(register));
-    }
-
-    @Test
-    public void blockUrlUnsafeUsername() {
-
-        String name = "first last";
-
-        RegistrationRequest register = new RegistrationRequest(name, "b", "name@email.com");
-
-        assertThrows(ResponseStatusException.class, () -> service.saveNewUser(register));
+        assertThrows(IllegalArgumentException.class, () -> service.saveNewUser(register));
     }
 
 }

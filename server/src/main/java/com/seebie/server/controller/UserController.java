@@ -5,6 +5,7 @@ import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.User;
 import com.seebie.server.dto.UserSummary;
 import com.seebie.server.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,7 +31,7 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/registration", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void createUserRegistration(@RequestBody RegistrationRequest newUser) {
+    public void createUser(@Valid @RequestBody RegistrationRequest newUser) {
 
         userService.saveNewUser(newUser);
     }

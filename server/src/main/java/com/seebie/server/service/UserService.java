@@ -9,24 +9,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 import com.seebie.server.entity.Address;
 import com.seebie.server.entity.Role;
 import com.seebie.server.entity.User;
 import com.seebie.server.repository.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ConstraintViolationException;
-import java.net.URLEncoder;
 import java.time.Instant;
 import java.util.List;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.stream.Collectors.joining;
 
 
 @Service
@@ -79,29 +73,10 @@ public class UserService {
 
         String username = registration.username();
 
-        try {
-            if( ! URLEncoder.encode(username, UTF_8).equals(username)) {
-                throw new IllegalArgumentException("Username must be url-safe");
-            }
-
-            if(userRepo.existsByUsername(username)) {
-                throw new IllegalArgumentException("Username already exists " + registration.username());
-            }
-
-            userRepo.save(fromRegistration(registration));
+        if(userRepo.existsByUsername(username)) {
+            throw new IllegalArgumentException("Username already exists " + registration.username());
         }
-        catch(ConstraintViolationException e) {
-            String constraintMessage = "User can't be saved: " + e.getMessage();
-            String list = e.getConstraintViolations().stream().map(v -> v.toString()).collect(joining(", "));
-            constraintMessage += " " + list;
-            LOG.error(constraintMessage, e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, constraintMessage);
-        }
-        catch(IllegalArgumentException e) {
-            String constraintMessage = "User can't be saved: " + e.getMessage();
-            LOG.error(constraintMessage, e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, constraintMessage);
-        }
+        userRepo.save(fromRegistration(registration));
     }
 
     @Transactional(readOnly = true)
