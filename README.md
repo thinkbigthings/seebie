@@ -113,6 +113,18 @@ Both the web and server project README files have an "Update Dependencies" secti
 
 ## Dev Procedures
 
+Trunk based development is helpful to implement continuous delivery and continuous deployment.
+Find out more at https://trunkbaseddevelopment.com/
+
+Working on a branch is useful for testing the build 
+since we might have to push a lot of changes to see our experiments.
+
+For small changes (e.g. docs, single file fix) we might merge directly to master
+to save time for this one-person team.
+Generally there will be multiple commits to a feature branch
+which when ready is merged directly to master.
+
+
 ### Branch 
 
 - [x] Define acceptance criteria for clearly defined scope
@@ -120,35 +132,42 @@ Both the web and server project README files have an "Update Dependencies" secti
 
 ### Develop
 
+- [x] Favor incremental builds and fast feedback cycle
 - [x] Must satisfy acceptance criteria
-- [x] Must be covered by automated testing
-- [x] Must verify security / authorization
+- [x] Must be covered by automated testing (functional, security)
 - [x] Must verify zero downtime transition
-- [x] UI test locally from full build
+- [x] Must pass a manual test locally
 
 ### Protect the Process
 
 - [x] Can run unit/integration tests in IDE
 - [x] Review test coverage, coverage > 40%
 - [x] Can debug front/back end in IDE
-- [x] Full clean build takes < 60s
 - [x] Docs (like README's) are up-to-date
-
-### Stage
-
-- [x] Deploy to stage
-- [x] UI test on stage
 
 ### Merge
 
 - [x] Create PR
 - [x] Squash merge to master
+- [x] Delete remote and local branch
+
+### Stage
+
+- [x] Master is automatically deployed to stage
+- [x] UI test on stage
+
+
+## Deployments
 
 ### CI/CD
 
-Github Actions
+We use Github Actions to build and deploy. 
+See the `.github/workflows` folder.
 
-## Deployment
+Right now only build and deploy on merge to master. 
+So workflow is develop, merge to master, verify change in stage.
+This can become more refined once we have a production environment.
+Eventually would want to verify in a cloud environment before merging to master.
 
 
 ### Bootstrapping
@@ -161,12 +180,9 @@ environment is exposed to the public. With the admin in place more regular users
 
 ### Cloud Providers
 
-This app is known to work well with Heroku. We use the gradle heroku plugin instead of the Procfile.
-
-e.g.
-
-    gradlew -Papp=appname deployHeroku
-
+This app is known to work well with Heroku. 
+We use the gradle heroku plugin instead of the Procfile.
+See the github workflow files for the actual command and parameters.
 
 ## Troubleshooting
 
