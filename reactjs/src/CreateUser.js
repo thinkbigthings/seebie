@@ -59,7 +59,7 @@ function CreateUser(props) {
 
     return (
         <>
-            <Button variant="success" onClick={() => setShowCreateUser(true)}>Create User</Button>
+            <Button variant="primary" className="p-3" onClick={() => setShowCreateUser(true)}>Create User</Button>
 
             <Modal show={showCreateUser} onHide={onHide} >
                 <Modal.Header closeButton>

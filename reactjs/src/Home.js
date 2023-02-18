@@ -65,34 +65,6 @@ function Home() {
                         )}
                     </tbody>
                 </Table>
-                {/*<Table striped bordered hover >*/}
-                {/*    <thead>*/}
-                {/*    <tr>*/}
-                {/*        <th>Date</th>*/}
-                {/*        <th>Duration</th>*/}
-                {/*        <th>Edit</th>*/}
-                {/*        <th>Delete</th>*/}
-                {/*    </tr>*/}
-                {/*    </thead>*/}
-                {/*    <tbody>*/}
-                {/*    {data.content*/}
-                {/*        .map(sleep => { sleep.sleepData = SleepDataManager.parse(sleep.sleepData); return sleep; })*/}
-                {/*        .map(sleep =>*/}
-                {/*            <tr key={sleep.id}>*/}
-                {/*                <td>{new Date(sleep.sleepData.stopTime).toLocaleDateString()}</td>*/}
-                {/*                <td>{SleepDataManager.formatDuration(sleep.sleepData.startTime, sleep.sleepData.stopTime)}</td>*/}
-                {/*                <td className="text-center">*/}
-                {/*                    <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } className="btn btn-primary">*/}
-                {/*                        <FontAwesomeIcon className="px-3" icon={faEdit} />*/}
-                {/*                    </Link>*/}
-                {/*                </td>*/}
-                {/*                <td className="text-center">*/}
-                {/*                    <FontAwesomeIcon className="px-3 " icon={faTrash} onClick={() => deleteById(sleep.id)} />*/}
-                {/*                </td>*/}
-                {/*            </tr>*/}
-                {/*        )}*/}
-                {/*    </tbody>*/}
-                {/*</Table>*/}
             </Container>
 
             <ButtonGroup className={"mt-2 " + visibility}>

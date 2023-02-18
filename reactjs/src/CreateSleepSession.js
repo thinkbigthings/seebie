@@ -30,7 +30,7 @@ function CreateSleepSession(props) {
 
     return (
         <>
-            <Button variant="success" onClick={() => setShowLogSleep(true)}>Log Sleep</Button>
+            <Button variant="primary" className="p-3" onClick={() => setShowLogSleep(true)}>Log Sleep</Button>
 
             <Modal show={showLogSleep} onHide={hideModal} >
                 <Modal.Header closeButton>

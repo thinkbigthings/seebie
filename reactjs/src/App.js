@@ -1,6 +1,5 @@
 import React from 'react';
 
-import './App.css';
 import Form from 'react-bootstrap/Form';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
@@ -20,8 +19,10 @@ import useCurrentUser from "./useCurrentUser";
 import {CurrentUserContext, CurrentUserProvider} from "./CurrentUserContext";
 import {GET} from "./BasicHeaders";
 
-// I think this only has to be imported on any one page, and it works for the whole site
+// This only has to be imported on any one page, and it works for the whole site
+// import custom css after so that it takes precedence
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
 
 import Container from "react-bootstrap/Container";
 import EditSleep from "./EditSleep";

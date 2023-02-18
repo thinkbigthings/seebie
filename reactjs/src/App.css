@@ -2,6 +2,49 @@
 
 }
 
-.App-link {
-  color: #09d3ac;
+/* ------------------------------ */
+/* Override Bootstrap styles      */
+/* ------------------------------ */
+
+.btn-success {
+    background-color: #671a88;
+}
+.btn-success:hover {
+    background-color: #8e25bb;
+}
+.btn-success:disabled {
+    background-color: #745085;
+}
+/* on mouse press */
+.btn-success:active:focus {
+    background-color: #c333ff;
+}
+
+/* ------------------------------ */
+.btn-warning {
+    background-color: #cc9a2a;
+}
+.btn-warning:hover {
+    background-color: #ffb630;
+}
+.btn-warning:disabled {
+    background-color: #dec968;
+}
+.btn-warning:active:focus {
+    background-color: #f8b005;
+}
+
+/* ------------------------------ */
+.btn-primary {
+    background-color: #333680;
+}
+
+.btn-primary:hover {
+    background-color: #484eb2;
+}
+.btn-primary:disabled {
+    background-color: #595b7c;
+}
+.btn-primary:active:focus {
+    background-color: #585fd9;
 }

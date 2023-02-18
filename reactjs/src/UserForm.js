@@ -192,7 +192,7 @@ function UserForm(props) {
                     </Modal>
 
                 <Button variant="success" onClick={() => { onSave(formState.user.personalInfo); }}>Save</Button>
-                <Button variant="light" onClick={onCancel}>Cancel</Button>
+                <Button variant="secondary" onClick={onCancel}>Cancel</Button>
             </form>
         </Container>
 
