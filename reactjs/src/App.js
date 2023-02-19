@@ -80,7 +80,7 @@ function AuthenticatedApp() {
         <HashRouter>
             <Navbar className="border-bottom">
                 <Container>
-                    <Navbar.Brand>Seebie</Navbar.Brand>
+                    <Navbar.Brand>Seebie<img className="mb-1 px-1" src="favicon.ico" alt="Seebie icon" width="30" height="20"/></Navbar.Brand>
                     <Nav>
                         <Nav.Link href="/">Home</Nav.Link>
                         {usersLink}
