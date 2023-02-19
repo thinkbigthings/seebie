@@ -191,8 +191,10 @@ function UserForm(props) {
                         </Modal.Footer>
                     </Modal>
 
-                <Button variant="success" onClick={() => { onSave(formState.user.personalInfo); }}>Save</Button>
-                <Button variant="secondary" onClick={onCancel}>Cancel</Button>
+                <div className="d-flex flex-row-reverse">
+                    <Button className="m-1" variant="primary" onClick={() => { onSave(formState.user.personalInfo); }} >Save</Button>
+                    <Button className="m-1" variant="secondary" onClick={onCancel}>Cancel</Button>
+                </div>
             </form>
         </Container>
 

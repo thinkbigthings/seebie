@@ -92,7 +92,7 @@ function CreateUser(props) {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={onHide}>Close</Button>
+                    <Button variant="secondary" onClick={onHide}>Cancel</Button>
                     <Button variant="primary" onClick={onConfirm} disabled={!passwordReady}>Save</Button>
                 </Modal.Footer>
             </Modal>

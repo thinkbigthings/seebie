@@ -36,8 +36,6 @@ function EditUser({history, match}) {
 
     const [loaded, setLoaded] = useState(false);
 
-    console.log(userEndpoint)
-
     useEffect(() => {
         fetch(userEndpoint, GET)
             .then(response => response.json())

@@ -2,13 +2,12 @@ import React, {useState} from 'react';
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
 import Container from "react-bootstrap/Container";
-import Button from "react-bootstrap/Button";
 import SleepDataManager from "./SleepDataManager";
 
 
 function SleepForm(props) {
 
-    const {onCancel, onSave, initData} = props;
+    const {onChange, initData} = props;
 
     const [sleepData, setSleepData] = useState(initData);
 
@@ -16,6 +15,7 @@ function SleepForm(props) {
         let updatedSleep = {...sleepData, ...updateValues};
         if(SleepDataManager.isDataValid(updatedSleep)) {
             setSleepData(updatedSleep);
+            onChange(updatedSleep);
         }
     }
 
@@ -65,9 +65,6 @@ function SleepForm(props) {
                                value={sleepData.notes}
                                onChange={e => updateSleepSession({notes : e.target.value })} />
                     </div>
-
-                <Button variant="success" onClick={() => { onSave(sleepData) }}>Save</Button>
-                <Button variant="light" onClick={ onCancel }>Cancel</Button>
 
             </form>
         </Container>

@@ -13,19 +13,24 @@ function CreateSleepSession(props) {
 
     const sleepUrl = '/user/' + currentUser.username + '/sleep';
 
-    const data = SleepDataManager.createInitSleepData();
+    const initSleepData = SleepDataManager.createInitSleepData();
+    const [sleepData, setSleepData] = useState(initSleepData);
 
     const post = useApiPost();
     const [showLogSleep, setShowLogSleep] = useState(false);
 
-    const saveData = (data) => {
-        post(sleepUrl, SleepDataManager.format(data))
+    const saveData = () => {
+        post(sleepUrl, SleepDataManager.format(sleepData))
             .then(result => setShowLogSleep(false))
             .then(props.onSave);
     }
 
     function hideModal() {
         setShowLogSleep(false);
+    }
+
+    function onChange(sleepData) {
+        setSleepData(sleepData);
     }
 
     return (
@@ -37,8 +42,12 @@ function CreateSleepSession(props) {
                     <Modal.Title>Log Sleep</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <SleepForm onCancel={hideModal} onSave={saveData} initData={data} />
+                    <SleepForm onChange={onChange} initData={initSleepData} />
                 </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={ hideModal }>Cancel</Button>
+                    <Button variant="primary" onClick={ saveData }>Save</Button>
+                </Modal.Footer>
             </Modal>
         </>
     );
