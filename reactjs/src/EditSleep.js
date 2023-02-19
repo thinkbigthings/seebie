@@ -5,7 +5,6 @@ import {SleepForm} from "./SleepForm";
 import useApiPut from "./useApiPut";
 import SleepDataManager from "./SleepDataManager";
 import {GET} from "./BasicHeaders";
-import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
 
