@@ -24,14 +24,18 @@ const toPagingLabel = (pageData) => {
 }
 
 // This is for paging
-const useApiGet = (initialUrl) => {
+const useApiGet = (initialUrl, customPageSize=10) => {
 
-    let [url, setUrl] = useState(initialUrl);
+    let customizedPage = copy(initialPage);
+    customizedPage.pageable.pageSize = customPageSize;
+    const [data, setData] = useState(customizedPage);
+
+    let newInitialUrl = initialUrl + '?page=' + customizedPage.pageable.pageNumber + '&size=' + customizedPage.pageable.pageSize
+
+    let [url, setUrl] = useState(newInitialUrl);
 
     // TODO maybe this should be in a callback hook?
     // const {throwOnHttpError} = useHttpError();
-
-    const [data, setData] = useState(initialPage);
 
     const [reloadCount, setReloadCount] = useState(0);
     const reload = useCallback(() => {

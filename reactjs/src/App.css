@@ -2,6 +2,14 @@
 
 }
 
+.clickable-table tr:hover {
+    background-color: #595b7c;
+}
+.clickable-table td a {
+    display: block;
+    padding: 8px;
+}
+
 /* ------------------------------ */
 /* Override Bootstrap styles      */
 /* ------------------------------ */

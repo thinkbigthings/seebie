@@ -15,7 +15,6 @@ import useCurrentUser from "./useCurrentUser";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import SleepDataManager from "./SleepDataManager";
-import useApiDelete from "./useApiDelete";
 
 function Home() {
 
@@ -23,14 +22,7 @@ function Home() {
 
     const sleepUrl = '/user/' + currentUser.username + '/sleep';
 
-    const [data, pagingControls] = useApiGet(sleepUrl);
-
-    const callDelete = useApiDelete();
-
-    const deleteById = (sleepId) => {
-        callDelete("/user/" + currentUser.username + "/sleep/" + sleepId)
-            .then(pagingControls.reload);
-    }
+    const [data, pagingControls] = useApiGet(sleepUrl, 7);
 
     const visibility = data.totalElements > 0 ? "visible" : "invisible";
 
@@ -47,7 +39,7 @@ function Home() {
                             <th>Duration</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="clickable-table">
                         {data.content
                             .map(sleep => { sleep.sleepData = SleepDataManager.parse(sleep.sleepData); return sleep; })
                             .map(sleep =>
