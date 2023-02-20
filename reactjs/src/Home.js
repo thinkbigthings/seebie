@@ -1,21 +1,15 @@
 import React from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {
-    faCaretLeft,
-    faCaretRight,
-    faEdit,
-    faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import {faCaretLeft, faCaretRight,} from "@fortawesome/free-solid-svg-icons";
 import Container from "react-bootstrap/Container";
 import {CreateSleepSession} from "./CreateSleepSession";
 import Table from "react-bootstrap/Table";
 import {Link} from "react-router-dom";
-import {useApiGet, toPagingLabel} from './useApiGet.js';
+import {toPagingLabel, useApiGet} from './useApiGet.js';
 import useCurrentUser from "./useCurrentUser";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import SleepDataManager from "./SleepDataManager";
-import useApiDelete from "./useApiDelete";
 
 function Home() {
 
@@ -23,14 +17,7 @@ function Home() {
 
     const sleepUrl = '/user/' + currentUser.username + '/sleep';
 
-    const [data, pagingControls] = useApiGet(sleepUrl);
-
-    const callDelete = useApiDelete();
-
-    const deleteById = (sleepId) => {
-        callDelete("/user/" + currentUser.username + "/sleep/" + sleepId)
-            .then(pagingControls.reload);
-    }
+    const [data, pagingControls] = useApiGet(sleepUrl, 7);
 
     const visibility = data.totalElements > 0 ? "visible" : "invisible";
 
@@ -45,22 +32,19 @@ function Home() {
                         <tr>
                             <th>Date</th>
                             <th>Duration</th>
-                            <th></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="clickable-table">
                         {data.content
                             .map(sleep => { sleep.sleepData = SleepDataManager.parse(sleep.sleepData); return sleep; })
                             .map(sleep =>
                                 <tr key={sleep.id}>
-                                    <td>{new Date(sleep.sleepData.stopTime).toLocaleDateString()}</td>
-                                    <td>{SleepDataManager.formatDuration(sleep.sleepData.startTime, sleep.sleepData.stopTime)}</td>
-                                    <td className="d-flex flex-row-reverse">
-                                        <FontAwesomeIcon className="px-3 " icon={faTrash} onClick={() => deleteById(sleep.id)} />
+                                    <td>
                                         <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } >
-                                            <FontAwesomeIcon className="px-3" icon={faEdit} />
+                                            {new Date(sleep.sleepData.stopTime).toLocaleDateString()}
                                         </Link>
                                     </td>
+                                    <td>{SleepDataManager.formatDuration(sleep.sleepData.startTime, sleep.sleepData.stopTime)}</td>
                                 </tr>
                         )}
                     </tbody>
