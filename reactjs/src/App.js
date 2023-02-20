@@ -6,7 +6,7 @@ import Nav from 'react-bootstrap/Nav';
 
 import { HashRouter, Route } from 'react-router-dom';
 
-import Home from './Home.js';
+import SleepList from './SleepList.js';
 import UserList from './UserList.js';
 import About from './About.js';
 import EditUser from './EditUser.js';
@@ -82,7 +82,7 @@ function AuthenticatedApp() {
                 <Container>
                     <Navbar.Brand>Seebie<img className="mb-1 px-1" src="favicon.ico" alt="Seebie icon" width="30" height="20"/></Navbar.Brand>
                     <Nav>
-                        <Nav.Link href="/">Home</Nav.Link>
+                        <Nav.Link href="/">Sleep Log</Nav.Link>
                         {usersLink}
                         <Nav.Link href={userUrl}>Profile</Nav.Link>
                         <Nav.Link href="#about">About</Nav.Link>
@@ -92,7 +92,7 @@ function AuthenticatedApp() {
                     </Form>
                 </Container>
             </Navbar>
-            <Route exact path="/" render={() => <Home/>}/>
+            <Route exact path="/" render={() => <SleepList/>}/>
             <Route exact path="/users" render={() => <UserList/>}/>
             <Route exact path="/about" render={() => <About/>}/>
             <Route exact path="/users/:username/edit" component={EditUser}/>

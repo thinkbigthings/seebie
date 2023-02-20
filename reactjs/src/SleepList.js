@@ -11,7 +11,7 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import SleepDataManager from "./SleepDataManager";
 
-function Home() {
+function SleepList() {
 
     const {currentUser} = useCurrentUser();
 
@@ -65,4 +65,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default SleepList;
