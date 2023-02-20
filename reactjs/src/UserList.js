@@ -31,16 +31,14 @@ function UserList() {
                     <thead>
                     <tr>
                         <th>User</th>
-                        <th></th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="clickable-table">
                     {data.content.map(user =>
                         <tr key={user.username}>
-                            <td>{user.displayName}</td>
                             <td>
-                                <Link to={"/users/" + user.username + "/edit" } className="btn btn-primary">
-                                    <FontAwesomeIcon className="me-2" icon={faUserEdit} />Edit
+                                <Link to={"/users/" + user.username + "/edit" } >
+                                    {user.displayName}
                                 </Link>
                             </td>
                         </tr>
