@@ -10,7 +10,7 @@ import {useApiGet, toPagingLabel} from './useApiGet.js';
 import CreateUser from "./CreateUser";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUserEdit, faCaretLeft, faCaretRight} from "@fortawesome/free-solid-svg-icons";
+import {faCaretLeft, faCaretRight} from "@fortawesome/free-solid-svg-icons";
 import Table from "react-bootstrap/Table";
 
 
