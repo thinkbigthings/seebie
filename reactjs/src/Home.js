@@ -53,13 +53,14 @@ function Home() {
                             .map(sleep => { sleep.sleepData = SleepDataManager.parse(sleep.sleepData); return sleep; })
                             .map(sleep =>
                                 <tr key={sleep.id}>
-                                    <td>{new Date(sleep.sleepData.stopTime).toLocaleDateString()}</td>
+                                    <td>
+                                        <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } >
+                                            {new Date(sleep.sleepData.stopTime).toLocaleDateString()}
+                                        </Link>
+                                    </td>
                                     <td>{SleepDataManager.formatDuration(sleep.sleepData.startTime, sleep.sleepData.stopTime)}</td>
                                     <td className="d-flex flex-row-reverse">
                                         <FontAwesomeIcon className="px-3 " icon={faTrash} onClick={() => deleteById(sleep.id)} />
-                                        <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } >
-                                            <FontAwesomeIcon className="px-3" icon={faEdit} />
-                                        </Link>
                                     </td>
                                 </tr>
                         )}
