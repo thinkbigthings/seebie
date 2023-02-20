@@ -50,7 +50,7 @@ function UnauthenticatedApp() {
         <HashRouter>
             <Navbar className="border-bottom">
                 <Container>
-                    <Navbar.Brand>Seebie</Navbar.Brand>
+                    <Navbar.Brand>Seebie<img className="mb-1 px-1" src="favicon.ico" alt="Seebie icon" width="30" height="20"/></Navbar.Brand>
                     <Nav className="mr-auto" />
                     <Form inline="true">
                         <Nav.Link href="#login">Login</Nav.Link>

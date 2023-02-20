@@ -88,7 +88,7 @@ function Login({history}) {
                                onKeyPress={e => callOnEnter(e, onClickLogin)}
                     />
                 </div>
-                <Button variant="success" onClick={() => onClickLogin() }>Login</Button>
+                <Button variant="primary" onClick={() => onClickLogin() }>Login</Button>
             </form>
 
         </div>
