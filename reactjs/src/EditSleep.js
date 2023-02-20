@@ -7,7 +7,7 @@ import SleepDataManager from "./SleepDataManager";
 import {GET} from "./BasicHeaders";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCaretRight, faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import useApiDelete from "./useApiDelete";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
