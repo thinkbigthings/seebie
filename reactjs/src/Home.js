@@ -45,7 +45,6 @@ function Home() {
                         <tr>
                             <th>Date</th>
                             <th>Duration</th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -59,9 +58,6 @@ function Home() {
                                         </Link>
                                     </td>
                                     <td>{SleepDataManager.formatDuration(sleep.sleepData.startTime, sleep.sleepData.stopTime)}</td>
-                                    <td className="d-flex flex-row-reverse">
-                                        <FontAwesomeIcon className="px-3 " icon={faTrash} onClick={() => deleteById(sleep.id)} />
-                                    </td>
                                 </tr>
                         )}
                     </tbody>

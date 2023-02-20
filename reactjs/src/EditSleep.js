@@ -9,6 +9,8 @@ import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCaretRight, faTrash} from "@fortawesome/free-solid-svg-icons";
 import useApiDelete from "./useApiDelete";
+import Modal from "react-bootstrap/Modal";
+import Alert from "react-bootstrap/Alert";
 
 
 function EditSleep({history, match}) {
@@ -20,6 +22,7 @@ function EditSleep({history, match}) {
 
     const [loaded, setLoaded] = useState(false);
 
+    const [showDeleteWarning, setShowDeleteWarning] = useState(false);
 
     const initSleepData = SleepDataManager.createInitSleepData();
     const [sleepData, setSleepData] = useState(initSleepData);
@@ -54,7 +57,7 @@ function EditSleep({history, match}) {
 
             <Container className="d-flex justify-content-between" >
                 <h1 >Sleep Session</h1>
-                <Button variant="danger"  onClick={deleteById}>
+                <Button variant="danger"  onClick={()=>setShowDeleteWarning(true)}>
                     <FontAwesomeIcon className="me-2" icon={faTrash} />
                     Delete
                 </Button>
@@ -68,6 +71,24 @@ function EditSleep({history, match}) {
                 <Button className="m-1" variant="primary" onClick={onSave} >Save</Button>
                 <Button className="m-1" variant="secondary" onClick={history.goBack}>Cancel</Button>
             </div>
+
+
+
+            <Modal show={showDeleteWarning} onHide={() => setShowDeleteWarning(false)} >
+                <Modal.Header closeButton>
+                    <Modal.Title>Warning</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Alert variant="warning">
+                        This deletes the current sleep log entry and cannot be undone. Proceed?
+                    </Alert>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowDeleteWarning(false)}>Cancel</Button>
+                    <Button variant="warning" onClick={deleteById} >Delete</Button>
+                </Modal.Footer>
+            </Modal>
+
         </div>
     );
 }
