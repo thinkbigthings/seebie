@@ -6,6 +6,9 @@ import useApiPut from "./useApiPut";
 import SleepDataManager from "./SleepDataManager";
 import {GET} from "./BasicHeaders";
 import Button from "react-bootstrap/Button";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCaretRight, faTrash} from "@fortawesome/free-solid-svg-icons";
+import useApiDelete from "./useApiDelete";
 
 
 function EditSleep({history, match}) {
@@ -40,10 +43,22 @@ function EditSleep({history, match}) {
         setSleepData(updatedSleepData);
     }
 
+    const callDelete = useApiDelete();
+    const deleteById = () => {
+        callDelete("/user/" + username + "/sleep/" + sleepId)
+            .then(history.goBack);
+    }
+
     return (
         <div className="container mt-3">
 
-            <h1>Sleep Session</h1>
+            <Container className="d-flex justify-content-between" >
+                <h1 >Sleep Session</h1>
+                <Button variant="danger"  onClick={deleteById}>
+                    <FontAwesomeIcon className="me-2" icon={faTrash} />
+                    Delete
+                </Button>
+            </Container>
 
             <Container id="sleepFormWrapper" className="pl-0 pr-0">
                 {loaded ? <SleepForm onChange={onChange} initData={sleepData} /> : <div />}
