@@ -49,7 +49,7 @@ public class UserServiceTest {
     @Test
     public void updateUser() {
 
-        PersonalInfo updateInfo = new PersonalInfo("update@email.com", savedUsername+"1", new HashSet<>());
+        PersonalInfo updateInfo = new PersonalInfo("update@email.com", savedUsername+"1");
 
         com.seebie.server.dto.User updatedUser = service.updateUser(savedUsername, updateInfo);
 

@@ -4,7 +4,6 @@ import net.datafaker.Faker;
 import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
 
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Random;
 
@@ -16,11 +15,7 @@ public class TestData {
     private static Faker faker = new Faker(Locale.US, random);
 
     public static PersonalInfo randomPersonalInfo() {
-
-        return new PersonalInfo(
-                faker.internet().emailAddress(),
-                faker.name().name(),
-                new HashSet<>());
+        return new PersonalInfo(faker.internet().emailAddress(), faker.name().name());
     }
 
     public static RegistrationRequest createRandomUserRegistration() {
