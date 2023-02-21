@@ -48,9 +48,6 @@ public class User implements Serializable {
     @Enumerated(EnumType.ORDINAL)
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(fetch=FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval=true)
-    private Set<Address> addresses = new HashSet<>();
-
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "user")
     private Set<Session> sessions = new HashSet<>();
 
@@ -121,14 +118,6 @@ public class User implements Serializable {
 
     public void setRegistrationTime(Instant registration) {
         this.registrationTime = registration;
-    }
-
-    public Set<Address> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(Set<Address> addresses) {
-        this.addresses = addresses;
     }
 
     public Set<Session> getSessions() {

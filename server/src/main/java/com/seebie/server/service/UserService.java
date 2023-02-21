@@ -1,6 +1,5 @@
 package com.seebie.server.service;
 
-import com.seebie.server.dto.AddressRecord;
 import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.UserSummary;
@@ -12,15 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.seebie.server.entity.Address;
 import com.seebie.server.entity.Role;
 import com.seebie.server.entity.User;
 import com.seebie.server.repository.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import java.time.Instant;
-import java.util.List;
-
 
 
 @Service
@@ -56,14 +52,6 @@ public class UserService {
 
         user.setEmail(userData.email());
         user.setDisplayName(userData.displayName());
-
-        List<Address> newAddressEntities = userData.addresses().stream()
-                .map(this::fromRecord)
-                .toList();
-
-        user.getAddresses().clear();
-        user.getAddresses().addAll(newAddressEntities);
-        newAddressEntities.forEach(a -> a.setUser(user));
 
         return toUserRecord.apply(user);
     }
@@ -105,18 +93,6 @@ public class UserService {
         user.getRoles().add(Role.USER);
 
         return user;
-    }
-
-    public Address fromRecord(AddressRecord addressData) {
-
-        var address = new Address();
-
-        address.setLine1(addressData.line1());
-        address.setCity(addressData.city());
-        address.setState(addressData.state());
-        address.setZip(addressData.zip());
-
-        return address;
     }
 
 }

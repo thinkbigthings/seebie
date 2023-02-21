@@ -19,8 +19,7 @@ const blankUser = {
     registrationTime: '',
     personalInfo: {
         displayName: '',
-        email: '',
-        addresses: [],
+        email: ''
     }
 }
 
