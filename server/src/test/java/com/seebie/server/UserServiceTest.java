@@ -7,8 +7,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import org.springframework.web.server.ResponseStatusException;
-import com.seebie.server.dto.AddressRecord;
 import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.entity.User;
@@ -16,7 +14,7 @@ import com.seebie.server.repository.UserRepository;
 import com.seebie.server.service.UserService;
 
 import java.time.Instant;
-import java.util.Set;
+import java.util.HashSet;
 
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,8 +49,7 @@ public class UserServiceTest {
     @Test
     public void updateUser() {
 
-        Set<AddressRecord> addresses = Set.of(new AddressRecord("123 A St", "Philadelphia", "PA", "19109"));
-        PersonalInfo updateInfo = new PersonalInfo("update@email.com", savedUsername+"1", addresses);
+        PersonalInfo updateInfo = new PersonalInfo("update@email.com", savedUsername+"1", new HashSet<>());
 
         com.seebie.server.dto.User updatedUser = service.updateUser(savedUsername, updateInfo);
 
