@@ -21,11 +21,10 @@ function EditSleep({history, match}) {
     const sleepEndpoint = '/user/' + username + '/sleep/' + sleepId;
 
     const [loaded, setLoaded] = useState(false);
-
     const [showDeleteWarning, setShowDeleteWarning] = useState(false);
-
-    const initSleepData = SleepDataManager.createInitSleepData();
-    const [sleepData, setSleepData] = useState(initSleepData);
+    const [sleepData, setSleepData] = useState(SleepDataManager.createInitSleepData());
+    const put = useApiPut();
+    const callDelete = useApiDelete();
 
     useEffect(() => {
         fetch(sleepEndpoint, GET)
@@ -35,20 +34,20 @@ function EditSleep({history, match}) {
             .then(() => setLoaded(true))
     }, [setSleepData, sleepEndpoint]);
 
-    const put = useApiPut();
+
     const onSave = () => {
-        console.log("sending sleep data " + JSON.stringify(sleepData));
         put(sleepEndpoint, sleepData).then(history.goBack);
     }
 
-    function onChange(updatedSleepData) {
-        console.log("updated sleep data " + JSON.stringify(updatedSleepData));
-        setSleepData(updatedSleepData);
+    function updateSleepSession(updateValues) {
+        let updatedSleep = {...sleepData, ...updateValues};
+        if(SleepDataManager.isDataValid(updatedSleep)) {
+            setSleepData(updatedSleep);
+        }
     }
 
-    const callDelete = useApiDelete();
     const deleteById = () => {
-        callDelete("/user/" + username + "/sleep/" + sleepId)
+        callDelete(sleepEndpoint)
             .then(history.goBack);
     }
 
@@ -64,15 +63,13 @@ function EditSleep({history, match}) {
             </Container>
 
             <Container id="sleepFormWrapper" className="pl-0 pr-0">
-                {loaded ? <SleepForm onChange={onChange} initData={sleepData} /> : <div />}
+                {loaded ? <SleepForm onChange={updateSleepSession} data={sleepData} /> : <div />}
             </Container>
 
             <div className="d-flex flex-row-reverse">
                 <Button className="m-1" variant="primary" onClick={onSave} >Save</Button>
                 <Button className="m-1" variant="secondary" onClick={history.goBack}>Cancel</Button>
             </div>
-
-
 
             <Modal show={showDeleteWarning} onHide={() => setShowDeleteWarning(false)} >
                 <Modal.Header closeButton>

@@ -29,13 +29,17 @@ There are a few ways to use it, but to start out we can [use icons individually]
 
 ## Themes and Colors
 
+We use Bootstrap for style and layout, etc. There is a mixture of Bootstrap styles and React-Bootstrap components.
+Generally this mixture is ok, but if you use Bootstrap Javascript, it can cause problems with DOM manipulation
+unless you exclusively use React-Bootstrap. See Bootstrap docs for details.
+
 The bootstrap dark theme is applied like so
 
     <html lang="en" data-bs-theme="dark">
 
-    #5f2b83
+Further customization is done in App.css
 
-https://getbootstrap.com/docs/5.3/customize/color-modes/
+This is about Bootstrap Javascript, not bootstrap in general: Make a note about it in README: While the Bootstrap CSS can be used with any framework, the Bootstrap JavaScript is not fully compatible with JavaScript frameworks like React, Vue, and Angular which assume full knowledge of the DOM. Both Bootstrap and the framework may attempt to mutate the same DOM element, resulting in bugs like dropdowns that are stuck in the “open” position.
 
 
 

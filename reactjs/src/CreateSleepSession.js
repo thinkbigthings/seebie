@@ -13,39 +13,36 @@ function CreateSleepSession(props) {
 
     const sleepUrl = '/user/' + currentUser.username + '/sleep';
 
-    const initSleepData = SleepDataManager.createInitSleepData();
-    const [sleepData, setSleepData] = useState(initSleepData);
-
+    const [sleepData, setSleepData] = useState(SleepDataManager.createInitSleepData());
+    const [showModal, setShowModal] = useState(false);
     const post = useApiPost();
-    const [showLogSleep, setShowLogSleep] = useState(false);
 
     const saveData = () => {
         post(sleepUrl, SleepDataManager.format(sleepData))
-            .then(result => setShowLogSleep(false))
+            .then(result => setShowModal(false))
             .then(props.onSave);
     }
 
-    function hideModal() {
-        setShowLogSleep(false);
-    }
-
-    function onChange(sleepData) {
-        setSleepData(sleepData);
+    function updateSleepSession(updateValues) {
+        let updatedSleep = {...sleepData, ...updateValues};
+        if(SleepDataManager.isDataValid(updatedSleep)) {
+            setSleepData(updatedSleep);
+        }
     }
 
     return (
         <>
-            <Button variant="primary" className="p-3" onClick={() => setShowLogSleep(true)}>Log Sleep</Button>
+            <Button variant="primary" className="p-3" onClick={() => setShowModal(true)}>Log Sleep</Button>
 
-            <Modal show={showLogSleep} onHide={hideModal} >
+            <Modal show={showModal} onHide={() => setShowModal(false)} >
                 <Modal.Header closeButton>
                     <Modal.Title>Log Sleep</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <SleepForm onChange={onChange} initData={initSleepData} />
+                    <SleepForm onChange={updateSleepSession} data={sleepData} />
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={ hideModal }>Cancel</Button>
+                    <Button variant="secondary" onClick={ () => setShowModal(false) }>Cancel</Button>
                     <Button variant="primary" onClick={ saveData }>Save</Button>
                 </Modal.Footer>
             </Modal>
