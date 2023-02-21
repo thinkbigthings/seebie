@@ -169,16 +169,20 @@ post:
 or if the json is in a file:
 `curl -k -X POST -H "Content-Type: application/json" -d @data-file.json https://localhost:9000/user`
 
-Actuator (admin/management endpoints) enpoints are listed at
-`https://localhost:9000/actuator`
-
-For example, try /actuator/health
 
 ### Web
 
 Base URL is at https://localhost:9000/index.html
 
 Static content (built JS, etc) should go into src/main/resources/static
+
+## Actuator
+
+Actuator enpoints are listed at e.g. `https://localhost:9000/actuator`
+
+Some useful endpoints are `/actuator/health`, `/actuator/flyway`, `/actuator/info`
+
+Git info is included under `actuator/info` and has a property to expose more details
 
 
 ## Update Dependencies
