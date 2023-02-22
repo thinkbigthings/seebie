@@ -1,5 +1,11 @@
-.App {
 
+
+/* ------------------------------ */
+/* App custom styles              */
+/* ------------------------------ */
+
+.login {
+    max-width: 540px;
 }
 
 .clickable-table tr:hover {

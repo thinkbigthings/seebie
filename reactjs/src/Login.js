@@ -69,7 +69,7 @@ function Login({history}) {
 
     return (
 
-        <div className="container mt-5">
+        <div className="login container-sm mt-5">
 
             <form>
                 <div className="mb-3">

@@ -19,8 +19,8 @@ import useCurrentUser from "./useCurrentUser";
 import {CurrentUserContext, CurrentUserProvider} from "./CurrentUserContext";
 import {GET} from "./BasicHeaders";
 
-// This only has to be imported on any one page, and it works for the whole site
-// import custom css after so that it takes precedence
+// This only has to be imported on one page, and it works for the whole site
+// import custom css after bootstrap so that customizations takes precedence
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -30,7 +30,7 @@ import EditSleep from "./EditSleep";
 function App() {
 
     return (
-        <div className="App">
+        <div>
             <ErrorBoundary>
                 <ErrorProvider>
                     <ErrorModal />
