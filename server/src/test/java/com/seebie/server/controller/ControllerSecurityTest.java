@@ -155,7 +155,7 @@ public class ControllerSecurityTest {
 	private static List<Arguments> provideUserTestParameters() {
 		return List.of(
 
-//				Arguments.of(GET, "/actuator", "", 403),
+				Arguments.of(GET, "/actuator", "", 403),
 
 				Arguments.of(GET, "/", "", 200),
 				Arguments.of(GET, "/favicon.ico", "", 200),

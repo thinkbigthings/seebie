@@ -1,5 +1,6 @@
 package com.seebie.server.security;
 
+import com.seebie.server.entity.Role;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,16 +38,18 @@ public class WebSecurityConfig {
                 .toList().toArray(new RequestMatcher[paths.size()]);
 
         http
-//            .securityMatcher(EndpointRequest.toAnyEndpoint())
             .authorizeHttpRequests( customizer -> customizer
-//                    .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole("ADMIN")
+                    .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(Role.ADMIN.name())
                     .requestMatchers(openEndpoints).permitAll()
                     .anyRequest().authenticated() )
             .httpBasic(basic -> basic.withObjectPostProcessor(new BasicAuthPostProcessor()))
             .csrf()
                 .disable()
             .exceptionHandling()
-                .accessDeniedHandler((req, resp, e) -> e.printStackTrace() )
+//                .accessDeniedHandler((req, resp, e) -> {
+//                    e.printStackTrace();
+//                    resp.setStatus(403);
+//                })
                 .and()
             .logout()
                 .invalidateHttpSession(true)
