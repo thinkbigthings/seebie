@@ -41,7 +41,7 @@ public class UserController {
     @RequestMapping(value="/login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public User login(Principal principal) {
 
-        return userService.getUser(principal.getName()).withIsLoggedIn(true);
+        return userService.loginUser(principal.getName());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

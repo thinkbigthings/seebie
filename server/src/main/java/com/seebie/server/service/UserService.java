@@ -81,6 +81,14 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("no user found for " + username));
     }
 
+    @Transactional(readOnly = true)
+    public com.seebie.server.dto.User loginUser(String name) {
+
+        // The web session isn't saved until the db is flushed at the end.
+        // That's why we use withLoggedIn
+        return getUser(name).withIsLoggedIn(true);
+    }
+
     public User fromRegistration(RegistrationRequest registration) {
 
         var user = new User(registration.username(), registration.username());

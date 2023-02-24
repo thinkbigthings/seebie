@@ -75,7 +75,7 @@ public class UserIntegrationTest extends IntegrationTest {
     @DisplayName("Update user info")
     public void updateUserInfo() {
 
-        var updatedInfo = TestData.randomPersonalInfo();
+        var updatedInfo = TestData.createRandomPersonalInfo();
         var savedInfo = userService.updateUser(testUserName, updatedInfo).personalInfo();
         assertEquals(updatedInfo, savedInfo);
     }

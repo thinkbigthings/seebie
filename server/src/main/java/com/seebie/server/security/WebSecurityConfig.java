@@ -1,5 +1,6 @@
 package com.seebie.server.security;
 
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
@@ -30,13 +31,15 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") HttpSecurity http) throws Exception {
 
-        var paths = List.of("/", "/index.html", "/static/**", "/*.png", "/favicon.ico", "/manifest.json", "/actuator/**");
+        var paths = List.of("/", "/index.html", "/static/**", "/*.png", "/favicon.ico", "/manifest.json");
         var openEndpoints = paths.stream()
                 .map(AntPathRequestMatcher::new)
                 .toList().toArray(new RequestMatcher[paths.size()]);
 
         http
+//            .securityMatcher(EndpointRequest.toAnyEndpoint())
             .authorizeHttpRequests( customizer -> customizer
+//                    .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole("ADMIN")
                     .requestMatchers(openEndpoints).permitAll()
                     .anyRequest().authenticated() )
             .httpBasic(basic -> basic.withObjectPostProcessor(new BasicAuthPostProcessor()))

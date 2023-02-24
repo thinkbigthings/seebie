@@ -14,7 +14,7 @@ public class TestData {
     private static Random random = new Random();
     private static Faker faker = new Faker(Locale.US, random);
 
-    public static PersonalInfo randomPersonalInfo() {
+    public static PersonalInfo createRandomPersonalInfo() {
         return new PersonalInfo(faker.internet().emailAddress(), faker.name().name());
     }
 
@@ -22,7 +22,7 @@ public class TestData {
 
         String username = "user-" + randomUUID();
         String password = "password";
-        PersonalInfo info = randomPersonalInfo();
+        PersonalInfo info = createRandomPersonalInfo();
 
         return new RegistrationRequest(username, password, info.email());
     }
