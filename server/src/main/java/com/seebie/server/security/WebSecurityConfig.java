@@ -45,12 +45,12 @@ public class WebSecurityConfig {
             .httpBasic(basic -> basic.withObjectPostProcessor(new BasicAuthPostProcessor()))
             .csrf()
                 .disable()
-            .exceptionHandling()
+//            .exceptionHandling()
 //                .accessDeniedHandler((req, resp, e) -> {
 //                    e.printStackTrace();
 //                    resp.setStatus(403);
 //                })
-                .and()
+//                .and()
             .logout()
                 .invalidateHttpSession(true)
                 .clearAuthentication(true);

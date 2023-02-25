@@ -135,7 +135,8 @@ which when ready is merged directly to master.
 
 - [x] Favor incremental builds and fast feedback cycle
 - [x] Must satisfy acceptance criteria
-- [x] Must be covered by automated testing (functional, security)
+- [x] Must be covered by automated functional tests
+- [x] Must be covered by security and validation tests, both positive and negative
 - [x] Must verify zero downtime transition
 - [x] Must pass a manual test locally
 

@@ -8,6 +8,7 @@ import com.seebie.server.dto.SleepData;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
+import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -44,13 +44,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //   Error handling
 
 
-@DisplayName("Controller Security")
-
-//@WebMvcTest
+// The next three could be replaced by @WebMvcTest
+// except we need @SpringBootTest to expose actuator endpoints
 @SpringBootTest
 @AutoConfigureMockMvc
 @EnableAutoConfiguration
-
+@DisplayName("Endpoint Security")
 @EnableConfigurationProperties(value = {AppProperties.class})
 @Import(WebSecurityConfig.class)
 public class ControllerSecurityTest {
@@ -72,20 +71,35 @@ public class ControllerSecurityTest {
 	@MockBean
 	private SleepService sleepService;
 
+	private ControllerValidationTest.RequestBodyJson jsonWriter;
+
 	private static final RegistrationRequest registration = createRandomUserRegistration();
 	private static final SleepData sleepData = new SleepData();
 	private static final PersonalInfo info = createRandomPersonalInfo();
 	private static final String password = "new_password";
 
+	@PostConstruct
+	public void setup() {
+		jsonWriter = new ControllerValidationTest.RequestBodyJson(converter);
+	}
+
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
 		return List.of(
 
+				// actuator
 				Arguments.of(GET, "/actuator", "", 401),
+				Arguments.of(GET, "/actuator/flyway", "", 401),
+				Arguments.of(GET, "/actuator/health", "", 401),
+				Arguments.of(GET, "/actuator/info", "", 401),
+				Arguments.of(GET, "/actuator/mappings", "", 401),
+				Arguments.of(GET, "/actuator/sessions?username=admin", "", 401),
 
+				// unsecured resources
 				Arguments.of(GET, "/", "", 200),
 				Arguments.of(GET, "/favicon.ico", "", 200),
 				Arguments.of(GET, "/manifest.json", "", 200),
 
+				// user controller
 				Arguments.of(POST, "/registration", registration, 401),
 				Arguments.of(GET, "/login", "", 401),
 				Arguments.of(GET, "/user", "", 401),
@@ -117,13 +131,20 @@ public class ControllerSecurityTest {
 	private static List<Arguments> provideAdminTestParameters() {
 		return List.of(
 
+				// actuator
 				Arguments.of(GET, "/actuator", "", 200),
+				Arguments.of(GET, "/actuator/flyway", "", 200),
+				Arguments.of(GET, "/actuator/health", "", 200),
+				Arguments.of(GET, "/actuator/info", "", 200),
+				Arguments.of(GET, "/actuator/mappings", "", 200),
+				Arguments.of(GET, "/actuator/sessions?username=admin", "", 200),
 
-
+				// unsecured resources
 				Arguments.of(GET, "/", "", 200),
 				Arguments.of(GET, "/favicon.ico", "", 200),
 				Arguments.of(GET, "/manifest.json", "", 200),
 
+				// user controller
 				Arguments.of(POST, "/registration", registration, 200),
 				Arguments.of(GET, "/login", "", 200),
 				Arguments.of(GET, "/user", "", 200),
@@ -154,12 +175,20 @@ public class ControllerSecurityTest {
 	private static List<Arguments> provideUserTestParameters() {
 		return List.of(
 
+				// actuator
 				Arguments.of(GET, "/actuator", "", 403),
+				Arguments.of(GET, "/actuator/flyway", "", 403),
+				Arguments.of(GET, "/actuator/health", "", 403),
+				Arguments.of(GET, "/actuator/info", "", 403),
+				Arguments.of(GET, "/actuator/mappings", "", 403),
+				Arguments.of(GET, "/actuator/sessions?username=admin", "", 403),
 
+				// unsecured resources
 				Arguments.of(GET, "/", "", 200),
 				Arguments.of(GET, "/favicon.ico", "", 200),
 				Arguments.of(GET, "/manifest.json", "", 200),
 
+				// user controller
 				Arguments.of(POST, "/registration", registration, 403),
 				Arguments.of(GET, "/login", "", 200),
 				Arguments.of(GET, "/user", "", 403),
@@ -192,7 +221,7 @@ public class ControllerSecurityTest {
 	@DisplayName("Unauthenticated Access")
 	void testUnauthenticatedSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
 
-		mockMvc.perform(request(httpMethod, url).content(toJson(reqBody)).contentType(APPLICATION_JSON))
+		mockMvc.perform(request(httpMethod, url).content(jsonWriter.toJson(reqBody)).contentType(APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));
 	}
@@ -203,7 +232,7 @@ public class ControllerSecurityTest {
 	@DisplayName("Admin Access")
 	void testAdminSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
 
-		mockMvc.perform(request(httpMethod, url).content(toJson(reqBody)).contentType(APPLICATION_JSON))
+		mockMvc.perform(request(httpMethod, url).content(jsonWriter.toJson(reqBody)).contentType(APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));
 	}
@@ -214,19 +243,9 @@ public class ControllerSecurityTest {
 	@DisplayName("User Access")
 	void testUserSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
 
-		mockMvc.perform(request(httpMethod, url).content(toJson(reqBody)).contentType(APPLICATION_JSON))
+		mockMvc.perform(request(httpMethod, url).content(jsonWriter.toJson(reqBody)).contentType(APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));
-	}
-
-	String toJson(Object requestBody) throws Exception {
-		return switch (requestBody) {
-			case String s -> s;
-			case PersonalInfo p -> converter.getObjectMapper().writerFor(p.getClass()).writeValueAsString(p);
-			case RegistrationRequest r -> converter.getObjectMapper().writerFor(r.getClass()).writeValueAsString(r);
-			case SleepData d -> converter.getObjectMapper().writerFor(d.getClass()).writeValueAsString(d);
-			default -> throw new IllegalStateException("Can't create request body for " + requestBody);
-		};
 	}
 
 }
