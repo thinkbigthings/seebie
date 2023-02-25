@@ -11,16 +11,19 @@ import java.util.Map;
 public class UserMetadataContributor implements InfoContributor  {
 
     private UserRepository userRepository;
+    private int apiVersion;
 
-    public UserMetadataContributor(UserRepository userRepository) {
+    public UserMetadataContributor(UserRepository userRepository, AppProperties properties) {
         this.userRepository = userRepository;
+        this.apiVersion = properties.apiVersion();
     }
 
     @Override
     public void contribute(Info.Builder builder) {
 
         var userMetadata = Map.of("count", String.valueOf(userRepository.count()));
-
         builder.withDetail("users", userMetadata);
+
+        builder.withDetail("apiVersion", apiVersion);
     }
 }
