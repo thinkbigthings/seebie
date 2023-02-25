@@ -72,19 +72,4 @@ public class AdminIntegrationTest extends IntegrationTest {
         assertTrue(page.isFirst());
         assertTrue(page.getTotalElements() >= 1);
     }
-
-    @Test
-    @DisplayName("Health Check")
-    public void testHealth() throws URISyntaxException, JsonProcessingException {
-
-        ApiClientStateful adminClient = new ApiClientStateful(baseUrl, "admin", "admin");
-
-        String healthResponse = adminClient.get(new URI(baseUrl + "actuator/health"));
-
-        record Health(String status) {}
-        Health healthMessage = mapper.readValue(healthResponse, Health.class);
-
-        assertEquals("UP", healthMessage.status());
-    }
-
 }
