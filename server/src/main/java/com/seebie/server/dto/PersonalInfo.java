@@ -1,4 +1,6 @@
 package com.seebie.server.dto;
 
-public record PersonalInfo(String email, String displayName) { }
+import jakarta.validation.constraints.NotNull;
+
+public record PersonalInfo(@NotNull String email, String displayName) { }
 
