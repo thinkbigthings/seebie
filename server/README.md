@@ -178,7 +178,9 @@ Static content (built JS, etc) should go into src/main/resources/static
 
 ## Actuator
 
-Actuator enpoints are listed at e.g. `https://localhost:9000/actuator`
+For detailed help see the API docs https://docs.spring.io/spring-boot/docs/current/actuator-api/htmlsingle/#overview
+
+Actuator endpoints are listed at e.g. `https://localhost:9000/actuator`
 
 Some useful endpoints are `/actuator/health`, `/actuator/flyway`, `/actuator/info`
 
