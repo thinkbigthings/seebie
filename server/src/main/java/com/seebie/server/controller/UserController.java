@@ -55,7 +55,7 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/personalInfo", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public User updateUser(@RequestBody PersonalInfo userData, @PathVariable String username) {
+    public User updateUser(@Valid @RequestBody PersonalInfo userData, @PathVariable String username) {
 
         return userService.updateUser(username, userData);
     }
