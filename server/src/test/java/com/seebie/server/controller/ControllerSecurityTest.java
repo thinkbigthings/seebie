@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -44,13 +43,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //   Error handling
 
 
-@DisplayName("Controller Security")
-
-//@WebMvcTest
+// The next three could be replaced by @WebMvcTest
+// except we need @SpringBootTest to expose actuator endpoints
 @SpringBootTest
 @AutoConfigureMockMvc
 @EnableAutoConfiguration
-
+@DisplayName("Controller Security")
 @EnableConfigurationProperties(value = {AppProperties.class})
 @Import(WebSecurityConfig.class)
 public class ControllerSecurityTest {
@@ -80,6 +78,7 @@ public class ControllerSecurityTest {
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
 		return List.of(
 
+				// actuator
 				Arguments.of(GET, "/actuator", "", 401),
 				Arguments.of(GET, "/actuator/flyway", "", 401),
 				Arguments.of(GET, "/actuator/health", "", 401),
@@ -87,10 +86,12 @@ public class ControllerSecurityTest {
 				Arguments.of(GET, "/actuator/mappings", "", 401),
 				Arguments.of(GET, "/actuator/sessions?username=admin", "", 401),
 
+				// unsecured resources
 				Arguments.of(GET, "/", "", 200),
 				Arguments.of(GET, "/favicon.ico", "", 200),
 				Arguments.of(GET, "/manifest.json", "", 200),
 
+				// user controller
 				Arguments.of(POST, "/registration", registration, 401),
 				Arguments.of(GET, "/login", "", 401),
 				Arguments.of(GET, "/user", "", 401),
@@ -122,6 +123,7 @@ public class ControllerSecurityTest {
 	private static List<Arguments> provideAdminTestParameters() {
 		return List.of(
 
+				// actuator
 				Arguments.of(GET, "/actuator", "", 200),
 				Arguments.of(GET, "/actuator/flyway", "", 200),
 				Arguments.of(GET, "/actuator/health", "", 200),
@@ -129,10 +131,12 @@ public class ControllerSecurityTest {
 				Arguments.of(GET, "/actuator/mappings", "", 200),
 				Arguments.of(GET, "/actuator/sessions?username=admin", "", 200),
 
+				// unsecured resources
 				Arguments.of(GET, "/", "", 200),
 				Arguments.of(GET, "/favicon.ico", "", 200),
 				Arguments.of(GET, "/manifest.json", "", 200),
 
+				// user controller
 				Arguments.of(POST, "/registration", registration, 200),
 				Arguments.of(GET, "/login", "", 200),
 				Arguments.of(GET, "/user", "", 200),
@@ -163,6 +167,7 @@ public class ControllerSecurityTest {
 	private static List<Arguments> provideUserTestParameters() {
 		return List.of(
 
+				// actuator
 				Arguments.of(GET, "/actuator", "", 403),
 				Arguments.of(GET, "/actuator/flyway", "", 403),
 				Arguments.of(GET, "/actuator/health", "", 403),
@@ -170,10 +175,12 @@ public class ControllerSecurityTest {
 				Arguments.of(GET, "/actuator/mappings", "", 403),
 				Arguments.of(GET, "/actuator/sessions?username=admin", "", 403),
 
+				// unsecured resources
 				Arguments.of(GET, "/", "", 200),
 				Arguments.of(GET, "/favicon.ico", "", 200),
 				Arguments.of(GET, "/manifest.json", "", 200),
 
+				// user controller
 				Arguments.of(POST, "/registration", registration, 403),
 				Arguments.of(GET, "/login", "", 200),
 				Arguments.of(GET, "/user", "", 403),

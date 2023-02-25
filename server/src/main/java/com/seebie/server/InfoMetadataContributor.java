@@ -8,12 +8,12 @@ import com.seebie.server.repository.UserRepository;
 import java.util.Map;
 
 @Component
-public class UserMetadataContributor implements InfoContributor  {
+public class InfoMetadataContributor implements InfoContributor  {
 
-    private UserRepository userRepository;
-    private int apiVersion;
+    private final UserRepository userRepository;
+    private final int apiVersion;
 
-    public UserMetadataContributor(UserRepository userRepository, AppProperties properties) {
+    public InfoMetadataContributor(UserRepository userRepository, AppProperties properties) {
         this.userRepository = userRepository;
         this.apiVersion = properties.apiVersion();
     }
