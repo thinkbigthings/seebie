@@ -81,6 +81,11 @@ public class ControllerSecurityTest {
 		return List.of(
 
 				Arguments.of(GET, "/actuator", "", 401),
+				Arguments.of(GET, "/actuator/flyway", "", 401),
+				Arguments.of(GET, "/actuator/health", "", 401),
+				Arguments.of(GET, "/actuator/info", "", 401),
+				Arguments.of(GET, "/actuator/mappings", "", 401),
+				Arguments.of(GET, "/actuator/sessions?username=admin", "", 401),
 
 				Arguments.of(GET, "/", "", 200),
 				Arguments.of(GET, "/favicon.ico", "", 200),
@@ -118,7 +123,11 @@ public class ControllerSecurityTest {
 		return List.of(
 
 				Arguments.of(GET, "/actuator", "", 200),
-
+				Arguments.of(GET, "/actuator/flyway", "", 200),
+				Arguments.of(GET, "/actuator/health", "", 200),
+				Arguments.of(GET, "/actuator/info", "", 200),
+				Arguments.of(GET, "/actuator/mappings", "", 200),
+				Arguments.of(GET, "/actuator/sessions?username=admin", "", 200),
 
 				Arguments.of(GET, "/", "", 200),
 				Arguments.of(GET, "/favicon.ico", "", 200),
@@ -155,6 +164,11 @@ public class ControllerSecurityTest {
 		return List.of(
 
 				Arguments.of(GET, "/actuator", "", 403),
+				Arguments.of(GET, "/actuator/flyway", "", 403),
+				Arguments.of(GET, "/actuator/health", "", 403),
+				Arguments.of(GET, "/actuator/info", "", 403),
+				Arguments.of(GET, "/actuator/mappings", "", 403),
+				Arguments.of(GET, "/actuator/sessions?username=admin", "", 403),
 
 				Arguments.of(GET, "/", "", 200),
 				Arguments.of(GET, "/favicon.ico", "", 200),
