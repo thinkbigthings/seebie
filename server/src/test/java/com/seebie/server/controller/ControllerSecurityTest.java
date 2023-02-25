@@ -8,6 +8,7 @@ import com.seebie.server.dto.SleepData;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
+import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -70,10 +71,17 @@ public class ControllerSecurityTest {
 	@MockBean
 	private SleepService sleepService;
 
+	private ControllerValidationTest.RequestBodyJson jsonWriter;
+
 	private static final RegistrationRequest registration = createRandomUserRegistration();
 	private static final SleepData sleepData = new SleepData();
 	private static final PersonalInfo info = createRandomPersonalInfo();
 	private static final String password = "new_password";
+
+	@PostConstruct
+	public void setup() {
+		jsonWriter = new ControllerValidationTest.RequestBodyJson(converter);
+	}
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
 		return List.of(
@@ -213,7 +221,7 @@ public class ControllerSecurityTest {
 	@DisplayName("Unauthenticated Access")
 	void testUnauthenticatedSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
 
-		mockMvc.perform(request(httpMethod, url).content(toJson(reqBody)).contentType(APPLICATION_JSON))
+		mockMvc.perform(request(httpMethod, url).content(jsonWriter.toJson(reqBody)).contentType(APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));
 	}
@@ -224,7 +232,7 @@ public class ControllerSecurityTest {
 	@DisplayName("Admin Access")
 	void testAdminSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
 
-		mockMvc.perform(request(httpMethod, url).content(toJson(reqBody)).contentType(APPLICATION_JSON))
+		mockMvc.perform(request(httpMethod, url).content(jsonWriter.toJson(reqBody)).contentType(APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));
 	}
@@ -235,19 +243,9 @@ public class ControllerSecurityTest {
 	@DisplayName("User Access")
 	void testUserSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
 
-		mockMvc.perform(request(httpMethod, url).content(toJson(reqBody)).contentType(APPLICATION_JSON))
+		mockMvc.perform(request(httpMethod, url).content(jsonWriter.toJson(reqBody)).contentType(APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));
-	}
-
-	String toJson(Object requestBody) throws Exception {
-		return switch (requestBody) {
-			case String s -> s;
-			case PersonalInfo p -> converter.getObjectMapper().writerFor(p.getClass()).writeValueAsString(p);
-			case RegistrationRequest r -> converter.getObjectMapper().writerFor(r.getClass()).writeValueAsString(r);
-			case SleepData d -> converter.getObjectMapper().writerFor(d.getClass()).writeValueAsString(d);
-			default -> throw new IllegalStateException("Can't create request body for " + requestBody);
-		};
 	}
 
 }

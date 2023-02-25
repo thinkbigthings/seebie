@@ -1,6 +1,7 @@
 package com.seebie.server.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seebie.server.AppProperties;
 import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
@@ -8,6 +9,7 @@ import com.seebie.server.dto.SleepData;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
+import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -42,7 +44,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //   Serialization / Deserialization
 //   Error handling
 
-
 @WebMvcTest
 @DisplayName("Controller Validation")
 @EnableConfigurationProperties(value = {AppProperties.class})
@@ -66,8 +67,7 @@ public class ControllerValidationTest {
 	@MockBean
 	private SleepService sleepService;
 
-	// TODO toJson should be refactored and shared
-	// TODO validation annotations should be reviewed for each dto
+	private RequestBodyJson jsonWriter;
 
 	private static final RegistrationRequest registration = createRandomUserRegistration();
 	private static final SleepData sleepData = new SleepData();
@@ -76,6 +76,11 @@ public class ControllerValidationTest {
 	private static final RegistrationRequest invalidRegistration = new RegistrationRequest("", null, null);
 	private static final SleepData invalidSleepData = new SleepData("", 0, new HashSet<>(), null, null);
 	private static final PersonalInfo invalidInfo = new PersonalInfo(null, null);
+
+	@PostConstruct
+	public void setup() {
+		jsonWriter = new RequestBodyJson(converter);
+	}
 
 	private static List<Arguments> provideAdminTestParameters() {
 		return List.of(
@@ -105,7 +110,7 @@ public class ControllerValidationTest {
 	@DisplayName("Admin Access")
 	void testAdminSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
 
-		mockMvc.perform(request(httpMethod, url).content(toJson(reqBody)).contentType(APPLICATION_JSON))
+		mockMvc.perform(request(httpMethod, url).content(jsonWriter.toJson(reqBody)).contentType(APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));
 	}
@@ -116,19 +121,29 @@ public class ControllerValidationTest {
 	@DisplayName("User Access")
 	void testUserSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
 
-		mockMvc.perform(request(httpMethod, url).content(toJson(reqBody)).contentType(APPLICATION_JSON))
+		mockMvc.perform(request(httpMethod, url).content(jsonWriter.toJson(reqBody)).contentType(APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));
 	}
 
-	String toJson(Object requestBody) throws Exception {
-		return switch (requestBody) {
-			case String s -> s;
-			case PersonalInfo p -> converter.getObjectMapper().writerFor(p.getClass()).writeValueAsString(p);
-			case RegistrationRequest r -> converter.getObjectMapper().writerFor(r.getClass()).writeValueAsString(r);
-			case SleepData d -> converter.getObjectMapper().writerFor(d.getClass()).writeValueAsString(d);
-			default -> throw new IllegalStateException("Can't create request body for " + requestBody);
-		};
+	public static class RequestBodyJson {
+
+		private ObjectMapper mapper;
+
+		public RequestBodyJson(MappingJackson2HttpMessageConverter converter) {
+			mapper = converter.getObjectMapper();
+		}
+
+		public String toJson(Object requestBody) throws Exception {
+			return switch (requestBody) {
+				case String s -> s;
+				case PersonalInfo p -> mapper.writerFor(p.getClass()).writeValueAsString(p);
+				case RegistrationRequest r -> mapper.writerFor(r.getClass()).writeValueAsString(r);
+				case SleepData d -> mapper.writerFor(d.getClass()).writeValueAsString(d);
+				default -> throw new IllegalStateException("Can't create request body for " + requestBody);
+			};
+		}
 	}
+
 
 }
