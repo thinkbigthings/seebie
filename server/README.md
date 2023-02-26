@@ -84,8 +84,6 @@ server.tomcat.min-spare-threads
 server.tomcat.accept-count
 
 
-## Security
-
 ## HTTPS
 
 To make self-signed keys for dev:

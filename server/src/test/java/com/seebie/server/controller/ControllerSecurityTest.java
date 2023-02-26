@@ -221,7 +221,9 @@ public class ControllerSecurityTest {
 	@DisplayName("Unauthenticated Access")
 	void testUnauthenticatedSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
 
-		mockMvc.perform(request(httpMethod, url).content(jsonWriter.toJson(reqBody)).contentType(APPLICATION_JSON))
+		mockMvc.perform(request(httpMethod, url)
+						.content(jsonWriter.toJson(reqBody))
+						.contentType(APPLICATION_JSON).secure(true))
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));
 	}
@@ -232,7 +234,9 @@ public class ControllerSecurityTest {
 	@DisplayName("Admin Access")
 	void testAdminSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
 
-		mockMvc.perform(request(httpMethod, url).content(jsonWriter.toJson(reqBody)).contentType(APPLICATION_JSON))
+		mockMvc.perform(request(httpMethod, url)
+						.content(jsonWriter.toJson(reqBody))
+						.contentType(APPLICATION_JSON).secure(true))
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));
 	}
@@ -243,7 +247,9 @@ public class ControllerSecurityTest {
 	@DisplayName("User Access")
 	void testUserSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
 
-		mockMvc.perform(request(httpMethod, url).content(jsonWriter.toJson(reqBody)).contentType(APPLICATION_JSON))
+		mockMvc.perform(request(httpMethod, url)
+						.content(jsonWriter.toJson(reqBody))
+						.contentType(APPLICATION_JSON).secure(true))
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));
 	}
