@@ -8,6 +8,7 @@ import com.seebie.server.dto.SleepData;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
+import com.seebie.server.test.support.MvcTestRunner;
 import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,19 +31,6 @@ import java.util.List;
 import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
 import static org.springframework.http.HttpMethod.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-// almost of the full stack is used, and your code will be called in exactly the same way
-// as if it were processing a real HTTP request but without the cost of starting the server
-// WebMvcTest (as opposed to pure unit test) is good for testing:
-//   HTTP request mapping
-//   Input field validation
-//   Serialization / Deserialization
-//   Error handling
-
 
 // The next three could be replaced by @WebMvcTest
 // except we need @SpringBootTest to expose actuator endpoints
@@ -71,7 +59,7 @@ public class ControllerSecurityTest {
 	@MockBean
 	private SleepService sleepService;
 
-	private ControllerValidationTest.RequestBodyJson jsonWriter;
+	private MvcTestRunner mvc;
 
 	private static final RegistrationRequest registration = createRandomUserRegistration();
 	private static final SleepData sleepData = new SleepData();
@@ -80,7 +68,7 @@ public class ControllerSecurityTest {
 
 	@PostConstruct
 	public void setup() {
-		jsonWriter = new ControllerValidationTest.RequestBodyJson(converter);
+		mvc = new MvcTestRunner(converter);
 	}
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
@@ -220,12 +208,7 @@ public class ControllerSecurityTest {
 	@MethodSource("provideUnauthenticatedTestParameters")
 	@DisplayName("Unauthenticated Access")
 	void testUnauthenticatedSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
-
-		mockMvc.perform(request(httpMethod, url)
-						.content(jsonWriter.toJson(reqBody))
-						.contentType(APPLICATION_JSON).secure(true))
-				.andDo(print())
-				.andExpect(status().is(expectedStatus));
+		mvc.test(mockMvc, httpMethod, url, reqBody, expectedStatus);
 	}
 
 	@ParameterizedTest
@@ -233,12 +216,7 @@ public class ControllerSecurityTest {
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
 	void testAdminSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
-
-		mockMvc.perform(request(httpMethod, url)
-						.content(jsonWriter.toJson(reqBody))
-						.contentType(APPLICATION_JSON).secure(true))
-				.andDo(print())
-				.andExpect(status().is(expectedStatus));
+		mvc.test(mockMvc, httpMethod, url, reqBody, expectedStatus);
 	}
 
 	@ParameterizedTest
@@ -246,12 +224,7 @@ public class ControllerSecurityTest {
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
 	void testUserSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
-
-		mockMvc.perform(request(httpMethod, url)
-						.content(jsonWriter.toJson(reqBody))
-						.contentType(APPLICATION_JSON).secure(true))
-				.andDo(print())
-				.andExpect(status().is(expectedStatus));
+		mvc.test(mockMvc, httpMethod, url, reqBody, expectedStatus);
 	}
 
 }
