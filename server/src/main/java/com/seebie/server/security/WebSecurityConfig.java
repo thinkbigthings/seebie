@@ -38,6 +38,7 @@ public class WebSecurityConfig {
                 .toList().toArray(new RequestMatcher[paths.size()]);
 
         http
+            .requiresChannel((channel) -> channel.anyRequest().requiresSecure())
             .authorizeHttpRequests( customizer -> customizer
                     .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(Role.ADMIN.name())
                     .requestMatchers(openEndpoints).permitAll()
