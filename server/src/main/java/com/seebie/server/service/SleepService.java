@@ -1,6 +1,7 @@
 package com.seebie.server.service;
 
 import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.mapper.dtotoentity.TagMapper;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepMapper;
@@ -12,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.time.ZonedDateTime;
+import java.util.List;
 
 @Service
 public class SleepService {
@@ -63,5 +67,10 @@ public class SleepService {
         return sleepRepository.findBy(username, sleepId)
                 .map(sleepMapper)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sleep session not found"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<SleepDataPoint> listSleepPlotData(String username, ZonedDateTime from, ZonedDateTime to) {
+         return sleepRepository.loadPlotData(username, from, to);
     }
 }

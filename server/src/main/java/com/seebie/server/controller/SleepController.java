@@ -1,6 +1,7 @@
 package com.seebie.server.controller;
 
 import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.service.SleepService;
 import jakarta.validation.Valid;
@@ -11,6 +12,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.ZonedDateTime;
+import java.util.List;
 
 @RestController
 public class SleepController {
@@ -36,6 +40,19 @@ public class SleepController {
     public Page<SleepDataWithId> getSleepList(@PathVariable String username, @PageableDefault(page = 0, size = 10, sort = {"stopTime"}, direction=Sort.Direction.DESC) Pageable page) {
 
         return sleepService.listSleepData(username, page);
+    }
+
+    // TODO save this to a graphing branch
+    // TODO test url query parameters
+    // TODO remember to add security tests for a new url
+    // TODO dto could have a proper duration
+    // TODO we might have duplicate data, how to handle here? will the chart handle it?
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/user/{username}/sleep/graph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<SleepDataPoint> getSleepPlothData(@PathVariable String username, @RequestParam ZonedDateTime from, @RequestParam ZonedDateTime to) {
+        return sleepService.listSleepPlotData(username, from, to);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
