@@ -36,5 +36,5 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             "AND s.stopTime >= :from " +
             "AND s.stopTime <= :to " +
             "ORDER BY s.stopTime ASC ")
-    List<SleepDataPoint> loadPlotData(String username, ZonedDateTime from, ZonedDateTime to);
+    List<SleepDataPoint> loadChartData(String username, ZonedDateTime from, ZonedDateTime to);
 }

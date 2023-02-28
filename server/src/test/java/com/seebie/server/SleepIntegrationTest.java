@@ -77,7 +77,7 @@ class SleepIntegrationTest extends IntegrationTest {
         assertEquals(firstPage.getPageSize(), listing.getNumberOfElements());
         assertEquals(listCount, listing.getTotalElements());
 
-        var graphingData = sleepService.listSleepPlotData(username, earliest, latest);
+        var graphingData = sleepService.listChartData(username, earliest, latest);
         System.out.println(graphingData);
     }
 

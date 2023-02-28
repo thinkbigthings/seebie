@@ -70,7 +70,7 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public List<SleepDataPoint> listSleepPlotData(String username, ZonedDateTime from, ZonedDateTime to) {
-         return sleepRepository.loadPlotData(username, from, to);
+    public List<SleepDataPoint> listChartData(String username, ZonedDateTime from, ZonedDateTime to) {
+         return sleepRepository.loadChartData(username, from, to);
     }
 }
