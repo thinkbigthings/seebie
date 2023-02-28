@@ -42,15 +42,10 @@ public class SleepController {
         return sleepService.listSleepData(username, page);
     }
 
-    // TODO test url query parameters
-    // TODO remember to add security tests for a new url
-    // TODO dto could have a proper duration
-    // TODO we might have duplicate data, how to handle here? will the chart handle it?
-
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/chart", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<SleepDataPoint> getChartData(@PathVariable String username, @RequestParam ZonedDateTime from, @RequestParam ZonedDateTime to) {
+    public List<SleepDataPoint> getChartData(@PathVariable String username, @RequestParam("from") ZonedDateTime from, @RequestParam ZonedDateTime to) {
         return sleepService.listChartData(username, from, to);
     }
 

@@ -11,6 +11,7 @@ import com.seebie.server.service.UserService;
 import com.seebie.server.test.support.MvcTestRunner;
 import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -26,13 +27,14 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
 import static org.springframework.http.HttpMethod.*;
 
-// The next three could be replaced by @WebMvcTest
+// The next three annotations could be replaced by @WebMvcTest
 // except we need @SpringBootTest to expose actuator endpoints
 @SpringBootTest
 @AutoConfigureMockMvc
