@@ -176,6 +176,15 @@ bootJar.dependsOn('copyWebApp')
 
 task genKey(type:Exec) {
 
+//    ByteArrayOutputStream errorOut = new ByteArrayOutputStream()
+//    exec {
+//        errorOutput = errorOut
+//        commandLine()
+//        args "keytool -genkeypair -alias app -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore app.p12 -validity 3650 -storepass password -keypass password -dname".split(' ')
+//        args "\"cn=Unknown, ou=Unknown, o=Unknown, c=Unknown\""
+//    }
+//    String errors = errorOut.toString()
+
 //    workingDir '../tomcat/bin'
 
     //on windows:
@@ -184,10 +193,11 @@ task genKey(type:Exec) {
     // https://docs.gradle.org/current/dsl/org.gradle.api.tasks.Exec.html
 
     // keytool -genkeypair -alias app -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore app.p12 -validity 3650
-    // -storepass password -keypass password -dname "cn=Unknown, ou=Unknown, o=Unknown, c=Unknown"
+    // -storepass password -keypass password
+    // -dname "cn=Unknown, ou=Unknown, o=Unknown, c=Unknown"
 
     //on linux
-    commandLine "keytool -genkeypair -alias app -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore app.p12 -validity 3650 -storepass password -keypass password -dname \"cn=Unknown, ou=Unknown, o=Unknown, c=Unknown\""
+//    commandLine "keytool -genkeypair -alias app -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore app.p12 -validity 3650 -storepass password -keypass password -dname \"cn=Unknown, ou=Unknown, o=Unknown, c=Unknown\""
 
 //    //store the output instead of printing to the console:
 //    standardOutput = new ByteArrayOutputStream()
