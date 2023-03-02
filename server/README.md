@@ -86,14 +86,16 @@ server.tomcat.accept-count
 
 ## HTTPS
 
-To make self-signed keys for dev:
-`keytool -genkeypair -alias app -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore app.dev.p12 -validity 3650`
+We don't include the p12 file when deploying to heroku,
+but get https by virtue of being a subdomain of herokuapps.com which has a CA cert.
+Http automatically redirects to https on heroku.
+The app is running on http on the inside of heroku. Check startup logs, see "tomcat running (http)"
+
+`keytool` is called automatically via the custom `genKey` task in build.gradle so that a custom cert 
+can be generated at build time so we don't need to commit certs to source control and the developer
+does not need to generate keys for setup. In dev, we require https for everything.
 
 To update HTTPS related files and properties, see the `server.ssl.*` properties used by Spring Boot
-
-We don't include the p12 file when deploying to heroku, 
-but get https by virtue of being a subdomain of herokuapps.com which has a CA cert.
-Http automatically redirects to https on heroku. Locally it always requires https.
 
 
 ## Running
