@@ -34,15 +34,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-
-      - name: Login to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "stage"
-          heroku_email: "jay@levelstonesoftware.com"
-          justlogin: true
-
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
