@@ -8,7 +8,7 @@ import com.seebie.server.dto.SleepData;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.support.MvcTestRunner;
+import com.seebie.server.test.support.MockMvcRunner;
 import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,8 +31,8 @@ import java.util.List;
 
 import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
-import static com.seebie.server.test.support.MvcTestRunner.EndpointTest;
-import static com.seebie.server.test.support.MvcTestRunner.EndpointTest.*;
+import static com.seebie.server.test.support.MockMvcRunner.EndpointTest;
+import static com.seebie.server.test.support.MockMvcRunner.EndpointTest.*;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
 // almost of the full stack is used, and your code will be called in exactly the same way
@@ -69,7 +69,7 @@ public class ControllerValidationTest {
 	@MockBean
 	private SleepService sleepService;
 
-	private MvcTestRunner mvc;
+	private MockMvcRunner mvc;
 
 	private static final RegistrationRequest registration = createRandomUserRegistration();
 	private static final SleepData sleepData = new SleepData();
@@ -81,7 +81,7 @@ public class ControllerValidationTest {
 
 	@PostConstruct
 	public void setup() {
-		mvc = new MvcTestRunner(converter);
+		mvc = new MockMvcRunner(mockMvc, converter);
 	}
 
 	private static List<Arguments> provideAdminTestParameters() {
@@ -115,12 +115,12 @@ public class ControllerValidationTest {
 		);
 	}
 
-
+	@ParameterizedTest
 	@MethodSource("provideAdminTestParameters")
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
 	void testAdminValidation(EndpointTest test, int expectedStatus) throws Exception {
-		mvc.test(mockMvc, test, expectedStatus);
+		mvc.test(test, expectedStatus);
 	}
 
 	@ParameterizedTest
@@ -128,7 +128,7 @@ public class ControllerValidationTest {
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
 	void testUserValidation(EndpointTest test, int expectedStatus) throws Exception {
-		mvc.test(mockMvc, test, expectedStatus);
+		mvc.test(test, expectedStatus);
 	}
 
 }

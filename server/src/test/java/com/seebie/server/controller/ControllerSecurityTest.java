@@ -8,7 +8,7 @@ import com.seebie.server.dto.SleepData;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.support.MvcTestRunner;
+import com.seebie.server.test.support.MockMvcRunner;
 import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -60,7 +60,7 @@ public class ControllerSecurityTest {
 	@MockBean
 	private SleepService sleepService;
 
-	private MvcTestRunner mvc;
+	private MockMvcRunner mvc;
 
 	private static final RegistrationRequest registration = createRandomUserRegistration();
 	private static final SleepData sleepData = new SleepData();
@@ -69,7 +69,7 @@ public class ControllerSecurityTest {
 
 	@PostConstruct
 	public void setup() {
-		mvc = new MvcTestRunner(converter);
+		mvc = new MockMvcRunner(mockMvc, converter);
 	}
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
@@ -209,7 +209,7 @@ public class ControllerSecurityTest {
 	@MethodSource("provideUnauthenticatedTestParameters")
 	@DisplayName("Unauthenticated Access")
 	void testUnauthenticatedSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
-		mvc.test(mockMvc, httpMethod, url, reqBody, expectedStatus);
+		mvc.test(httpMethod, url, reqBody, expectedStatus);
 	}
 
 	@ParameterizedTest
@@ -217,7 +217,7 @@ public class ControllerSecurityTest {
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
 	void testAdminSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
-		mvc.test(mockMvc, httpMethod, url, reqBody, expectedStatus);
+		mvc.test(httpMethod, url, reqBody, expectedStatus);
 	}
 
 	@ParameterizedTest
@@ -225,7 +225,7 @@ public class ControllerSecurityTest {
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
 	void testUserSecurity(HttpMethod httpMethod, String url, Object reqBody, int expectedStatus) throws Exception {
-		mvc.test(mockMvc, httpMethod, url, reqBody, expectedStatus);
+		mvc.test(httpMethod, url, reqBody, expectedStatus);
 	}
 
 }

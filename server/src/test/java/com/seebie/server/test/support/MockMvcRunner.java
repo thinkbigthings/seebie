@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.CollectionUtils.unmodifiableMultiValueMap;
 
-public class MvcTestRunner {
+public class MockMvcRunner {
 
     public record EndpointTest(HttpMethod httpMethod, String url, Object reqBody, MultiValueMap<String, String> reqParams) {
 
@@ -40,13 +40,15 @@ public class MvcTestRunner {
         }
     }
 
+    private MockMvc mvc;
     private ObjectMapper mapper;
 
-    public MvcTestRunner(MappingJackson2HttpMessageConverter converter) {
-        mapper = converter.getObjectMapper();
+    public MockMvcRunner(MockMvc mvc, MappingJackson2HttpMessageConverter converter) {
+        this.mvc = mvc;
+        this.mapper = converter.getObjectMapper();
     }
 
-    public void test(MockMvc mvc, EndpointTest test, int expectedStatus) throws Exception {
+    public void test(EndpointTest test, int expectedStatus) throws Exception {
         mvc.perform(request(test.httpMethod(), test.url())
                         .content(toJson(test.reqBody()))
                         .params(test.reqParams())
@@ -56,7 +58,7 @@ public class MvcTestRunner {
                 .andExpect(status().is(expectedStatus));
     }
 
-    public void test(MockMvc mvc, HttpMethod method, String url, Object body, int expectedStatus) throws Exception {
+    public void test(HttpMethod method, String url, Object body, int expectedStatus) throws Exception {
         mvc.perform(request(method, url)
                         .content(toJson(body))
                         .contentType(APPLICATION_JSON)
