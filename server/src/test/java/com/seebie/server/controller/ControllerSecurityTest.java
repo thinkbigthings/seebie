@@ -45,6 +45,7 @@ public class ControllerSecurityTest {
 	private static final String USERNAME = "someuser";
 	private static final String ADMINNAME = "admin";
 
+	// so we get the mapper as configured for the app
 	@Autowired
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	private MappingJackson2HttpMessageConverter converter;

@@ -54,7 +54,7 @@ public class ControllerValidationTest {
 
 	private static final MultiValueMap<String,String> NONE = new LinkedMultiValueMap<>();
 
-
+	// so we get the mapper as configured for the app
 	@Autowired
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	private MappingJackson2HttpMessageConverter converter;
