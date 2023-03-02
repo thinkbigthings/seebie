@@ -47,8 +47,3 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: genKey build
-
-      - name: Deploy to Staging
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: -Papp=stage deployHeroku
