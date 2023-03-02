@@ -105,7 +105,8 @@ public class ControllerValidationTest {
 				Arguments.of(put("/user/" + USERNAME + "/sleep" + "/1", invalidSleepData), 400),
 
 				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", from).withParam("to", to), 200),
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", "").withParam("to", ""), 400)
+				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", "").withParam("to", ""), 400),
+				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", to).withParam("to", from), 400)
 		);
 	}
 

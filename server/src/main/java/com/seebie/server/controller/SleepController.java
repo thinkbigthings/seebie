@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +46,12 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/chart", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<SleepDataPoint> getChartData(@PathVariable String username, @RequestParam("from") ZonedDateTime from, @RequestParam ZonedDateTime to) {
+    public List<SleepDataPoint> getChartData(@PathVariable String username, @RequestParam ZonedDateTime from, @RequestParam ZonedDateTime to) {
+
+        if(to.isBefore(from)) {
+            throw new IllegalArgumentException("Request parameter \"from\" must be before \"to\"");
+        }
+
         return sleepService.listChartData(username, from, to);
     }
 
