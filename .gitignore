@@ -3,6 +3,9 @@
 build/
 out/
 
+# Certificates and keystores
+*.p12
+
 # Certain Mac files
 .DS_Store
 
