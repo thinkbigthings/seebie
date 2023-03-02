@@ -75,6 +75,9 @@ public class ControllerValidationTest {
 	private static final SleepData invalidSleepData = new SleepData("", 0, new HashSet<>(), null, null);
 	private static final PersonalInfo invalidInfo = new PersonalInfo(null, null);
 
+	private static final String from = ZonedDateTime.now().minusDays(1).format(ISO_OFFSET_DATE_TIME);
+	private static final String to = ZonedDateTime.now().format(ISO_OFFSET_DATE_TIME);
+
 	@PostConstruct
 	public void setup() {
 		mvc = new MockMvcRunner(mockMvc, converter);
@@ -89,9 +92,6 @@ public class ControllerValidationTest {
 	}
 
 	private static List<Arguments> provideUserTestParameters() {
-
-		var from = ZonedDateTime.now().minusDays(1).format(ISO_OFFSET_DATE_TIME);
-		var to = ZonedDateTime.now().format(ISO_OFFSET_DATE_TIME);
 
 		return List.of(
 

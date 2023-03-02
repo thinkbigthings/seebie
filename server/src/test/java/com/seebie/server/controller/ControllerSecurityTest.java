@@ -25,12 +25,14 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
 import static com.seebie.server.test.support.MockMvcRunner.EndpointTest;
 import static com.seebie.server.test.support.MockMvcRunner.EndpointTest.*;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
 // The next three annotations could be replaced by @WebMvcTest
 // except we need @SpringBootTest to expose actuator endpoints
@@ -66,6 +68,9 @@ public class ControllerSecurityTest {
 	private static final SleepData sleepData = new SleepData();
 	private static final PersonalInfo info = createRandomPersonalInfo();
 	private static final String password = "new_password";
+
+	private static final String from = ZonedDateTime.now().minusDays(1).format(ISO_OFFSET_DATE_TIME);
+	private static final String to = ZonedDateTime.now().format(ISO_OFFSET_DATE_TIME);
 
 	@PostConstruct
 	public void setup() {
@@ -112,9 +117,11 @@ public class ControllerSecurityTest {
 				Arguments.of(get("/user/" + ADMINNAME + "/sleep"), 401),
 				Arguments.of(get("/user/" + ADMINNAME + "/sleep" + "/1"), 401),
 				Arguments.of(put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData), 401),
-				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 401)
+				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 401),
 
-		);
+				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", from).withParam("to", to), 401)
+
+			);
 	}
 
 	private static List<Arguments> provideAdminTestParameters() {
@@ -158,7 +165,9 @@ public class ControllerSecurityTest {
 				Arguments.of(get("/user/" + ADMINNAME + "/sleep"), 200),
 				Arguments.of(get("/user/" + ADMINNAME + "/sleep" + "/1"), 200),
 				Arguments.of(put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData), 200),
-				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 200)
+				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 200),
+
+				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", from).withParam("to", to), 200)
 		);
 	}
 
@@ -202,7 +211,9 @@ public class ControllerSecurityTest {
 				Arguments.of(get("/user/" + ADMINNAME + "/sleep"), 403),
 				Arguments.of(get("/user/" + ADMINNAME + "/sleep" + "/1"), 403),
 				Arguments.of(put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData), 403),
-				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 403)
+				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 403),
+
+				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", from).withParam("to", to), 200)
 		);
 	}
 
