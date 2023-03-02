@@ -22,8 +22,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -51,8 +49,6 @@ public class ControllerValidationTest {
 
 	private static final String USERNAME = "someuser";
 	private static final String ADMINNAME = "admin";
-
-	private static final MultiValueMap<String,String> NONE = new LinkedMultiValueMap<>();
 
 	// so we get the mapper as configured for the app
 	@Autowired
@@ -94,10 +90,8 @@ public class ControllerValidationTest {
 
 	private static List<Arguments> provideUserTestParameters() {
 
-		// we don't need to url encode the parameters here
-		var fromTo = new LinkedMultiValueMap<String, String>();
-		fromTo.put("from", List.of(ZonedDateTime.now().minusDays(1).format(ISO_OFFSET_DATE_TIME)));
-		fromTo.put("to", List.of(ZonedDateTime.now().format(ISO_OFFSET_DATE_TIME)));
+		var from = ZonedDateTime.now().minusDays(1).format(ISO_OFFSET_DATE_TIME);
+		var to = ZonedDateTime.now().format(ISO_OFFSET_DATE_TIME);
 
 		return List.of(
 
@@ -110,8 +104,8 @@ public class ControllerValidationTest {
 				Arguments.of(put("/user/" + USERNAME + "/sleep" + "/1", sleepData), 200),
 				Arguments.of(put("/user/" + USERNAME + "/sleep" + "/1", invalidSleepData), 400),
 
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart", fromTo), 200),
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart", NO_PARAM), 400)
+				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", from).withParam("to", to), 200),
+				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", "").withParam("to", ""), 400)
 		);
 	}
 

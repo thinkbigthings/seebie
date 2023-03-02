@@ -11,6 +11,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -20,6 +24,14 @@ import static org.springframework.util.CollectionUtils.unmodifiableMultiValueMap
 public class MockMvcRunner {
 
     public record EndpointTest(HttpMethod httpMethod, String url, Object reqBody, MultiValueMap<String, String> reqParams) {
+
+        public EndpointTest withParam(String name, String value) {
+            // we don't need to url encode the parameters here
+            var newParams = new LinkedMultiValueMap<String, String>();
+            newParams.putAll(reqParams);
+            newParams.put(name, List.of(value));
+            return new EndpointTest(httpMethod, url, reqBody, newParams);
+        }
 
         public static final MultiValueMap<String,String> NO_PARAM = unmodifiableMultiValueMap(new LinkedMultiValueMap<>());
 
@@ -31,9 +43,6 @@ public class MockMvcRunner {
         }
         public static EndpointTest get(String url) {
             return new EndpointTest(HttpMethod.GET, url, "", NO_PARAM);
-        }
-        public static EndpointTest get(String url, MultiValueMap<String, String> reqParams) {
-            return new EndpointTest(HttpMethod.GET, url, "", reqParams);
         }
         public static EndpointTest delete(String url) {
             return new EndpointTest(HttpMethod.DELETE, url, "", NO_PARAM);

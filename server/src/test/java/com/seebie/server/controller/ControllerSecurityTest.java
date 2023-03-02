@@ -81,7 +81,7 @@ public class ControllerSecurityTest {
 				Arguments.of(get("/actuator/health"), 401),
 				Arguments.of(get("/actuator/info"), 401),
 				Arguments.of(get("/actuator/mappings"), 401),
-				Arguments.of(get("/actuator/sessions?username=admin"), 401),
+				Arguments.of(get("/actuator/sessions").withParam("username", "admin"), 401),
 
 				// unsecured resources
 				Arguments.of(get("/"), 200),
@@ -127,6 +127,7 @@ public class ControllerSecurityTest {
 				Arguments.of(get("/actuator/info"), 200),
 				Arguments.of(get("/actuator/mappings"), 200),
 				Arguments.of(get("/actuator/sessions?username=admin"), 200),
+				Arguments.of(get("/actuator/sessions").withParam("username", "admin"), 200),
 
 				// unsecured resources
 				Arguments.of(get("/"), 200),
@@ -170,7 +171,7 @@ public class ControllerSecurityTest {
 				Arguments.of(get("/actuator/health"), 403),
 				Arguments.of(get("/actuator/info"), 403),
 				Arguments.of(get("/actuator/mappings"), 403),
-				Arguments.of(get("/actuator/sessions?username=admin"), 403),
+				Arguments.of(get("/actuator/sessions").withParam("username", "admin"), 403),
 
 				// unsecured resources
 				Arguments.of(get("/"), 200),
