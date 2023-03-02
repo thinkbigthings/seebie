@@ -119,16 +119,16 @@ public class ControllerValidationTest {
 	@MethodSource("provideAdminTestParameters")
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
-	void testAdminValidation(EndpointTest test, int expectedStatus) throws Exception {
-		mvc.test(test, expectedStatus);
+	void testAdminValidation(EndpointTest testData, int expectedStatus) throws Exception {
+		mvc.test(testData, expectedStatus);
 	}
 
 	@ParameterizedTest
 	@MethodSource("provideUserTestParameters")
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
-	void testUserValidation(EndpointTest test, int expectedStatus) throws Exception {
-		mvc.test(test, expectedStatus);
+	void testUserValidation(EndpointTest testData, int expectedStatus) throws Exception {
+		mvc.test(testData, expectedStatus);
 	}
 
 }

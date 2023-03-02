@@ -58,15 +58,6 @@ public class MockMvcRunner {
                 .andExpect(status().is(expectedStatus));
     }
 
-    public void test(HttpMethod method, String url, Object body, int expectedStatus) throws Exception {
-        mvc.perform(request(method, url)
-                        .content(toJson(body))
-                        .contentType(APPLICATION_JSON)
-                        .secure(true))
-                .andDo(print())
-                .andExpect(status().is(expectedStatus));
-    }
-
     public String toJson(Object requestBody) throws JsonProcessingException {
         return switch (requestBody) {
             case String s -> s;
