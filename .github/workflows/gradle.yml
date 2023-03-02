@@ -36,6 +36,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
 
       - name: Login to Heroku
         uses: akhileshns/heroku-deploy@v3.12.12
@@ -44,11 +48,6 @@ jobs:
           heroku_app_name: "stage"
           heroku_email: "jay@levelstonesoftware.com"
           justlogin: true
-
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build
 
       - name: Deploy to Staging
         uses: gradle/gradle-build-action@v2
