@@ -42,7 +42,8 @@ a docker container with a postgres database which can be left up and running aft
 After a full build, the database should be in a state consistent with the data populated from the integration tests.
 This can be useful for bringing up the application and exploring the data, e.g. for UI development.
 
-Once running, connect to the db through docker directly: `docker exec -it [container_name] bash`
+Once running, connect to the db through docker directly:
+`docker exec -it $(docker ps -q) bash` or `docker exec -it [container_name] bash`
 then : `psql -U test`
 
 or more succinctly:

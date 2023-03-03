@@ -9,7 +9,7 @@ import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.support.MockMvcRunner;
-import jakarta.annotation.PostConstruct;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -44,25 +44,16 @@ import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 @Import(WebSecurityConfig.class)
 public class ControllerSecurityTest {
 
-	private static final String USERNAME = "someuser";
-	private static final String ADMINNAME = "admin";
-
-	// so we get the mapper as configured for the app
-	@Autowired
-	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-	private MappingJackson2HttpMessageConverter converter;
-
-	@Autowired
-	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-	private MockMvc mockMvc;
-
 	@MockBean
 	private UserService service;
 
 	@MockBean
 	private SleepService sleepService;
 
-	private MockMvcRunner mvc;
+	private static MockMvcRunner mvc;
+
+	private static final String USERNAME = "someuser";
+	private static final String ADMINNAME = "admin";
 
 	private static final RegistrationRequest registration = createRandomUserRegistration();
 	private static final SleepData sleepData = new SleepData();
@@ -72,8 +63,9 @@ public class ControllerSecurityTest {
 	private static final String from = ZonedDateTime.now().minusDays(1).format(ISO_OFFSET_DATE_TIME);
 	private static final String to = ZonedDateTime.now().format(ISO_OFFSET_DATE_TIME);
 
-	@PostConstruct
-	public void setup() {
+	@BeforeAll
+	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter, @Autowired MockMvc mockMvc) {
+		// so we get the mapper as configured for the app
 		mvc = new MockMvcRunner(mockMvc, converter);
 	}
 

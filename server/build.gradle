@@ -190,4 +190,6 @@ task genKey(type:Exec) {
 
 }
 
-compileJava.dependsOn('genKey')
+genKey.dependsOn('compileJava')
+bootJar.dependsOn('genKey')
+bootRun.dependsOn('genKey')
