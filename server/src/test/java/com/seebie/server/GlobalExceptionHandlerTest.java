@@ -19,15 +19,4 @@ public class GlobalExceptionHandlerTest {
         assertEquals(BAD_REQUEST, response.getStatusCode());
     }
 
-    @Test
-    public void illegalArgumentWithCause() {
-
-        String exceptionMessage = "message here";
-        NullPointerException e = new NullPointerException("input was missing");
-        var response = handler.handleIllegalArgumentException(new IllegalArgumentException(exceptionMessage, e));
-
-        assertEquals(exceptionMessage, response.getBody().get("message"));
-        assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertTrue(response.getBody().containsKey("exceptionCause"));
-    }
 }

@@ -1,6 +1,7 @@
 package com.seebie.server.controller;
 
 import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.service.SleepService;
 import jakarta.validation.Valid;
@@ -9,8 +10,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.ZonedDateTime;
+import java.util.List;
 
 @RestController
 public class SleepController {
@@ -36,6 +41,18 @@ public class SleepController {
     public Page<SleepDataWithId> getSleepList(@PathVariable String username, @PageableDefault(page = 0, size = 10, sort = {"stopTime"}, direction=Sort.Direction.DESC) Pageable page) {
 
         return sleepService.listSleepData(username, page);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/user/{username}/sleep/chart", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<SleepDataPoint> getChartData(@PathVariable String username, @RequestParam ZonedDateTime from, @RequestParam ZonedDateTime to) {
+
+        if(to.isBefore(from)) {
+            throw new IllegalArgumentException("Request parameter \"from\" must be before \"to\"");
+        }
+
+        return sleepService.listChartData(username, from, to);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")

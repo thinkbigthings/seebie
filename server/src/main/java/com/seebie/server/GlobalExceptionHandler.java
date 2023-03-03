@@ -45,13 +45,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         body.put("message", ex.getMessage());
         body.put("timestamp", Instant.now().toString());
         body.put("status", String.valueOf(status.value()));
-        body.put("error", status.getReasonPhrase());
+        body.put("reason", status.getReasonPhrase());
         body.put("exception", ex.toString());
 
-        Throwable cause = ex.getCause();
-        if (cause != null) {
-            body.put("exceptionCause", ex.getCause().toString());
-        }
         return body;
     }
 }

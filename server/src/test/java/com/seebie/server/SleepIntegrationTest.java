@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import java.util.Collections;
+import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -63,8 +63,11 @@ class SleepIntegrationTest extends IntegrationTest {
 
         int listCount = 40;
 
+        ZonedDateTime latest = sleep.stopTime();
+        ZonedDateTime earliest = sleep.stopTime();
         for(int i=0; i < listCount; i++) {
             sleep = decrementDay(sleep);
+            earliest = sleep.stopTime();
             sleepService.saveNew(username, sleep);
         }
 
@@ -73,6 +76,9 @@ class SleepIntegrationTest extends IntegrationTest {
 
         assertEquals(firstPage.getPageSize(), listing.getNumberOfElements());
         assertEquals(listCount, listing.getTotalElements());
+
+        var graphingData = sleepService.listChartData(username, earliest, latest);
+        System.out.println(graphingData);
     }
 
     private SleepData decrementDay(SleepData data) {
