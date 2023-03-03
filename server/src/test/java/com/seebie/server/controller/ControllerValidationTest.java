@@ -42,9 +42,9 @@ import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 //   Error handling
 
 @WebMvcTest
-@DisplayName("Controller Validation")
 @EnableConfigurationProperties(value = {AppProperties.class})
 @Import(WebSecurityConfig.class)
+@DisplayName("Controller Validation")
 public class ControllerValidationTest {
 
 	@MockBean
