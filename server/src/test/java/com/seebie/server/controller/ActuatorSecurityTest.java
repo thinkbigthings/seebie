@@ -18,7 +18,6 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import java.util.List;
 
 import static com.seebie.server.test.data.HttpCall.get;
-import static com.seebie.server.test.data.HttpCall.toRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -89,20 +88,20 @@ public class ActuatorSecurityTest extends IntegrationTest {
     @MethodSource("provideUnauthenticatedTestParameters")
     @DisplayName("Unauthenticated Access")
     void testUnauthenticatedSecurity(HttpCall testData, int expectedStatus) throws Exception {
-        assertEquals(expectedStatus, unAuthClient.trySend(toRequest(baseUrl, testData)).statusCode());
+        assertEquals(expectedStatus, unAuthClient.trySend(testData.toRequest(baseUrl)).statusCode());
     }
 
     @ParameterizedTest
     @MethodSource("provideAdminTestParameters")
     @DisplayName("Admin Access")
     void testAdminSecurity(HttpCall testData, int expectedStatus) throws Exception {
-        assertEquals(expectedStatus, adminClient.trySend(toRequest(baseUrl, testData)).statusCode());
+        assertEquals(expectedStatus, adminClient.trySend(testData.toRequest(baseUrl)).statusCode());
     }
 
     @ParameterizedTest
     @MethodSource("provideUserTestParameters")
     @DisplayName("User Access")
     void testUserSecurity(HttpCall testData, int expectedStatus) throws Exception {
-        assertEquals(expectedStatus, userClient.trySend(toRequest(baseUrl, testData)).statusCode());
+        assertEquals(expectedStatus, userClient.trySend(testData.toRequest(baseUrl)).statusCode());
     }
 }

@@ -10,12 +10,17 @@ import java.net.http.HttpRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.util.CollectionUtils.unmodifiableMultiValueMap;
 
 /**
- * Could this be replaced with Java's own HttpRequest? WebMvcTest wants MultiValueMap, HttpRequest wants just String.
+ * Could this be replaced with Java's own HttpRequest?
+ * WebMvcTest uses MultiValueMap for request parameters,
+ * but HttpRequest only handles request parameters as embedded in the URI
  */
 public record HttpCall(HttpMethod httpMethod, String url, Object reqBody, MultiValueMap<String, String> reqParams) {
+
+    public static final MultiValueMap<String, String> NO_PARAM = unmodifiableMultiValueMap(new LinkedMultiValueMap<>());
 
     public HttpCall withParam(String name, String value) {
         // we don't need to url encode the parameters here
@@ -24,8 +29,6 @@ public record HttpCall(HttpMethod httpMethod, String url, Object reqBody, MultiV
         newParams.put(name, List.of(value));
         return new HttpCall(httpMethod, url, reqBody, newParams);
     }
-
-    public static final MultiValueMap<String, String> NO_PARAM = unmodifiableMultiValueMap(new LinkedMultiValueMap<>());
 
     public static HttpCall post(String url, Object reqBody) {
         return new HttpCall(HttpMethod.POST, url, reqBody, NO_PARAM);
@@ -36,17 +39,17 @@ public record HttpCall(HttpMethod httpMethod, String url, Object reqBody, MultiV
     }
 
     public static HttpCall get(String url) {
-        return new HttpCall(HttpMethod.GET, url, "", NO_PARAM);
+        return new HttpCall(GET, url, "", NO_PARAM);
     }
 
     public static HttpCall delete(String url) {
         return new HttpCall(HttpMethod.DELETE, url, "", NO_PARAM);
     }
 
-    public static HttpRequest toRequest(String base, HttpCall testData) throws URISyntaxException {
+    public HttpRequest toRequest(String base) throws URISyntaxException {
         return HttpRequest.newBuilder()
                 .GET()
-                .uri(new URI(base + testData.url() + reqParams(testData.reqParams())))
+                .uri(new URI(base + url() + reqParams(reqParams())))
                 .build();
     }
 
