@@ -58,7 +58,7 @@ public class ActuatorSecurityTest extends IntegrationTest {
 				Arguments.of(get("/actuator/health"), 401),
 				Arguments.of(get("/actuator/info"), 401),
 				Arguments.of(get("/actuator/mappings"), 401),
-				Arguments.of(get("/actuator/sessions").withParam("username", "admin"), 401)
+				Arguments.of(get("/actuator/sessions").params("username", "admin"), 401)
             );
     }
 
@@ -69,7 +69,7 @@ public class ActuatorSecurityTest extends IntegrationTest {
 				Arguments.of(get("/actuator/health"), 200),
 				Arguments.of(get("/actuator/info"), 200),
 				Arguments.of(get("/actuator/mappings"), 200),
-				Arguments.of(get("/actuator/sessions").withParam("username", "admin"), 200)
+				Arguments.of(get("/actuator/sessions").params("username", "admin"), 200)
         );
     }
 
@@ -80,7 +80,7 @@ public class ActuatorSecurityTest extends IntegrationTest {
 				Arguments.of(get("/actuator/health"), 403),
 				Arguments.of(get("/actuator/info"), 403),
 				Arguments.of(get("/actuator/mappings"), 403),
-				Arguments.of(get("/actuator/sessions").withParam("username", "admin"), 403)
+				Arguments.of(get("/actuator/sessions").params("username", "admin"), 403)
         );
     }
 

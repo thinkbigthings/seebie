@@ -99,7 +99,7 @@ public class ControllerSecurityTest {
 				Arguments.of(put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData), 401),
 				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 401),
 
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", from).withParam("to", to), 401)
+				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").params("from", from, "to", to), 401)
 
 			);
 	}
@@ -138,7 +138,7 @@ public class ControllerSecurityTest {
 				Arguments.of(put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData), 200),
 				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 200),
 
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", from).withParam("to", to), 200)
+				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").params("from", from, "to", to), 200)
 		);
 	}
 
@@ -176,7 +176,7 @@ public class ControllerSecurityTest {
 				Arguments.of(put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData), 403),
 				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 403),
 
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", from).withParam("to", to), 200)
+				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").params("from", from, "to", to), 200)
 		);
 	}
 
