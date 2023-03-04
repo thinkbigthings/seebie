@@ -8,7 +8,9 @@ import com.seebie.server.dto.SleepData;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.support.MockMvcRunner;
+import com.seebie.server.test.data.AppRequest;
+import com.seebie.server.test.data.DtoJsonMapper;
+import com.seebie.server.test.data.MvcRequestMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,16 +24,18 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.function.Function;
 
+import static com.seebie.server.test.data.AppRequest.*;
 import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
-
-import com.seebie.server.test.data.HttpCall;
-import static com.seebie.server.test.data.HttpCall.*;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @WebMvcTest
@@ -46,8 +50,6 @@ public class ControllerSecurityTest {
 	@MockBean
 	private SleepService sleepService;
 
-	private static MockMvcRunner mvc;
-
 	private static final String USERNAME = "someuser";
 	private static final String ADMINNAME = "admin";
 
@@ -59,10 +61,17 @@ public class ControllerSecurityTest {
 	private static final String from = ZonedDateTime.now().minusDays(1).format(ISO_OFFSET_DATE_TIME);
 	private static final String to = ZonedDateTime.now().format(ISO_OFFSET_DATE_TIME);
 
+	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+	@Autowired
+	private MockMvc mockMvc;
+
+	private static Function<AppRequest, MockHttpServletRequestBuilder> toRequest;
+
 	@BeforeAll
-	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter, @Autowired MockMvc mockMvc) {
+	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
+
 		// so we get the mapper as configured for the app
-		mvc = new MockMvcRunner(mockMvc, converter);
+		toRequest = new MvcRequestMapper(new DtoJsonMapper(converter.getObjectMapper()));
 	}
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
@@ -183,24 +192,30 @@ public class ControllerSecurityTest {
 	@ParameterizedTest
 	@MethodSource("provideUnauthenticatedTestParameters")
 	@DisplayName("Unauthenticated Access")
-	void testUnauthenticatedSecurity(HttpCall testData, int expectedStatus) throws Exception {
-		mvc.test(testData, expectedStatus);
+	void testUnauthenticatedSecurity(AppRequest testData, int expectedStatus) throws Exception {
+		test(testData, expectedStatus);
 	}
 
 	@ParameterizedTest
 	@MethodSource("provideAdminTestParameters")
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
-	void testAdminSecurity(HttpCall testData, int expectedStatus) throws Exception {
-		mvc.test(testData, expectedStatus);
+	void testAdminSecurity(AppRequest testData, int expectedStatus) throws Exception {
+		test(testData, expectedStatus);
 	}
 
 	@ParameterizedTest
 	@MethodSource("provideUserTestParameters")
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
-	void testUserSecurity(HttpCall testData, int expectedStatus) throws Exception {
-		mvc.test(testData, expectedStatus);
+	void testUserSecurity(AppRequest testData, int expectedStatus) throws Exception {
+		test(testData, expectedStatus);
+	}
+
+	private void test(AppRequest testData, int expectedStatus) throws Exception {
+		mockMvc.perform(toRequest.apply(testData))
+				.andDo(print())
+				.andExpect(status().is(expectedStatus));
 	}
 
 }

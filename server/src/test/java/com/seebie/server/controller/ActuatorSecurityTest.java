@@ -4,20 +4,24 @@ import com.seebie.server.IntegrationTest;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.client.ApiClientStateful;
-import com.seebie.server.test.data.HttpCall;
+import com.seebie.server.test.data.AppRequest;
+import com.seebie.server.test.data.DtoJsonMapper;
+import com.seebie.server.test.data.HttpRequestMapper;
+import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
+import java.net.http.HttpRequest;
 import java.util.List;
+import java.util.function.Function;
 
-import static com.seebie.server.test.data.HttpCall.get;
+import static com.seebie.server.test.data.AppRequest.get;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -29,13 +33,32 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class ActuatorSecurityTest extends IntegrationTest {
 
-    private static Logger LOG = LoggerFactory.getLogger(ActuatorSecurityTest.class);
-
     private static String baseUrl;
 
     private static ApiClientStateful adminClient;
     private static ApiClientStateful userClient;
     private static ApiClientStateful unAuthClient;
+
+    private static Function<AppRequest, HttpRequest> toRequest;
+
+    @BeforeAll
+    public static void setup(@LocalServerPort int randomServerPort,
+                             @Autowired UserService userService,
+                             @Autowired MappingJackson2HttpMessageConverter converter)
+    {
+        // so we get the mapper as configured for the app
+        toRequest = new HttpRequestMapper(new DtoJsonMapper(converter.getObjectMapper()));
+
+        baseUrl = "https://localhost:" + randomServerPort;
+
+        adminClient = new ApiClientStateful(baseUrl, "admin", "admin");
+
+        var userRegistration = TestData.createRandomUserRegistration();
+        userService.saveNewUser(userRegistration);
+        userClient = new ApiClientStateful(baseUrl, userRegistration.username(), userRegistration.plainTextPassword());
+
+        unAuthClient = new ApiClientStateful();
+    }
 
     @BeforeAll
     public static void createTestData(@LocalServerPort int randomServerPort, @Autowired UserService userService) {
@@ -87,21 +110,22 @@ public class ActuatorSecurityTest extends IntegrationTest {
     @ParameterizedTest
     @MethodSource("provideUnauthenticatedTestParameters")
     @DisplayName("Unauthenticated Access")
-    void testUnauthenticatedSecurity(HttpCall testData, int expectedStatus) throws Exception {
-        assertEquals(expectedStatus, unAuthClient.trySend(testData.toRequest(baseUrl)).statusCode());
+    void testUnauthenticatedSecurity(AppRequest testData, int expectedStatus) throws Exception {
+        assertEquals(expectedStatus, unAuthClient.trySend(toRequest.apply(testData.urlPrefix(baseUrl))).statusCode());
     }
 
     @ParameterizedTest
     @MethodSource("provideAdminTestParameters")
     @DisplayName("Admin Access")
-    void testAdminSecurity(HttpCall testData, int expectedStatus) throws Exception {
-        assertEquals(expectedStatus, adminClient.trySend(testData.toRequest(baseUrl)).statusCode());
+    void testAdminSecurity(AppRequest testData, int expectedStatus) throws Exception {
+        assertEquals(expectedStatus, adminClient.trySend(toRequest.apply(testData.urlPrefix(baseUrl))).statusCode());
     }
 
     @ParameterizedTest
     @MethodSource("provideUserTestParameters")
     @DisplayName("User Access")
-    void testUserSecurity(HttpCall testData, int expectedStatus) throws Exception {
-        assertEquals(expectedStatus, userClient.trySend(testData.toRequest(baseUrl)).statusCode());
+    void testUserSecurity(AppRequest testData, int expectedStatus) throws Exception {
+        assertEquals(expectedStatus, userClient.trySend(toRequest.apply(testData.urlPrefix(baseUrl))).statusCode());
     }
+
 }
