@@ -10,7 +10,7 @@ import java.net.http.HttpRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.util.CollectionUtils.unmodifiableMultiValueMap;
 
 /**
@@ -31,11 +31,11 @@ public record HttpCall(HttpMethod httpMethod, String url, Object reqBody, MultiV
     }
 
     public static HttpCall post(String url, Object reqBody) {
-        return new HttpCall(HttpMethod.POST, url, reqBody, NO_PARAM);
+        return new HttpCall(POST, url, reqBody, NO_PARAM);
     }
 
     public static HttpCall put(String url, Object reqBody) {
-        return new HttpCall(HttpMethod.PUT, url, reqBody, NO_PARAM);
+        return new HttpCall(PUT, url, reqBody, NO_PARAM);
     }
 
     public static HttpCall get(String url) {
@@ -43,7 +43,7 @@ public record HttpCall(HttpMethod httpMethod, String url, Object reqBody, MultiV
     }
 
     public static HttpCall delete(String url) {
-        return new HttpCall(HttpMethod.DELETE, url, "", NO_PARAM);
+        return new HttpCall(DELETE, url, "", NO_PARAM);
     }
 
     public HttpRequest toRequest(String base) throws URISyntaxException {
