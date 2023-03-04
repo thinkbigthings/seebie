@@ -15,11 +15,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -31,8 +28,9 @@ import java.util.List;
 
 import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
-import static com.seebie.server.test.support.MockMvcRunner.EndpointTest;
-import static com.seebie.server.test.support.MockMvcRunner.EndpointTest.*;
+
+import com.seebie.server.test.data.HttpCall;
+import static com.seebie.server.test.data.HttpCall.*;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
 
@@ -69,20 +67,6 @@ public class ControllerSecurityTest {
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
 		return List.of(
-
-// The next three annotations could be replaced by @WebMvcTest
-// except we need @SpringBootTest to expose actuator endpoints
-//@SpringBootTest
-//@AutoConfigureMockMvc
-//@EnableAutoConfiguration
-
-//				// actuator
-//				Arguments.of(get("/actuator"), 401),
-//				Arguments.of(get("/actuator/flyway"), 401),
-//				Arguments.of(get("/actuator/health"), 401),
-//				Arguments.of(get("/actuator/info"), 401),
-//				Arguments.of(get("/actuator/mappings"), 401),
-//				Arguments.of(get("/actuator/sessions").withParam("username", "admin"), 401),
 
 				// unsecured resources
 				Arguments.of(get("/"), 200),
@@ -123,15 +107,6 @@ public class ControllerSecurityTest {
 	private static List<Arguments> provideAdminTestParameters() {
 		return List.of(
 
-//				// actuator
-//				Arguments.of(get("/actuator"), 200),
-//				Arguments.of(get("/actuator/flyway"), 200),
-//				Arguments.of(get("/actuator/health"), 200),
-//				Arguments.of(get("/actuator/info"), 200),
-//				Arguments.of(get("/actuator/mappings"), 200),
-//				Arguments.of(get("/actuator/sessions?username=admin"), 200),
-//				Arguments.of(get("/actuator/sessions").withParam("username", "admin"), 200),
-
 				// unsecured resources
 				Arguments.of(get("/"), 200),
 				Arguments.of(get("/favicon.ico"), 200),
@@ -169,14 +144,6 @@ public class ControllerSecurityTest {
 
 	private static List<Arguments> provideUserTestParameters() {
 		return List.of(
-
-//				// actuator
-//				Arguments.of(get("/actuator"), 403),
-//				Arguments.of(get("/actuator/flyway"), 403),
-//				Arguments.of(get("/actuator/health"), 403),
-//				Arguments.of(get("/actuator/info"), 403),
-//				Arguments.of(get("/actuator/mappings"), 403),
-//				Arguments.of(get("/actuator/sessions").withParam("username", "admin"), 403),
 
 				// unsecured resources
 				Arguments.of(get("/"), 200),
@@ -216,7 +183,7 @@ public class ControllerSecurityTest {
 	@ParameterizedTest
 	@MethodSource("provideUnauthenticatedTestParameters")
 	@DisplayName("Unauthenticated Access")
-	void testUnauthenticatedSecurity(EndpointTest testData, int expectedStatus) throws Exception {
+	void testUnauthenticatedSecurity(HttpCall testData, int expectedStatus) throws Exception {
 		mvc.test(testData, expectedStatus);
 	}
 
@@ -224,7 +191,7 @@ public class ControllerSecurityTest {
 	@MethodSource("provideAdminTestParameters")
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
-	void testAdminSecurity(EndpointTest testData, int expectedStatus) throws Exception {
+	void testAdminSecurity(HttpCall testData, int expectedStatus) throws Exception {
 		mvc.test(testData, expectedStatus);
 	}
 
@@ -232,7 +199,7 @@ public class ControllerSecurityTest {
 	@MethodSource("provideUserTestParameters")
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
-	void testUserSecurity(EndpointTest testData, int expectedStatus) throws Exception {
+	void testUserSecurity(HttpCall testData, int expectedStatus) throws Exception {
 		mvc.test(testData, expectedStatus);
 	}
 

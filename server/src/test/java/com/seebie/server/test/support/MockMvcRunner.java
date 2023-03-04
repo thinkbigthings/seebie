@@ -5,47 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
-import org.springframework.http.HttpMethod;
+import com.seebie.server.test.data.HttpCall;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
-import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.util.CollectionUtils.unmodifiableMultiValueMap;
 
 public class MockMvcRunner {
-
-    public record EndpointTest(HttpMethod httpMethod, String url, Object reqBody, MultiValueMap<String, String> reqParams) {
-
-        public EndpointTest withParam(String name, String value) {
-            // we don't need to url encode the parameters here
-            var newParams = new LinkedMultiValueMap<String, String>();
-            newParams.putAll(reqParams);
-            newParams.put(name, List.of(value));
-            return new EndpointTest(httpMethod, url, reqBody, newParams);
-        }
-
-        public static final MultiValueMap<String,String> NO_PARAM = unmodifiableMultiValueMap(new LinkedMultiValueMap<>());
-
-        public static EndpointTest post(String url, Object reqBody) {
-            return new EndpointTest(HttpMethod.POST, url, reqBody, NO_PARAM);
-        }
-        public static EndpointTest put(String url, Object reqBody) {
-            return new EndpointTest(HttpMethod.PUT, url, reqBody, NO_PARAM);
-        }
-        public static EndpointTest get(String url) {
-            return new EndpointTest(HttpMethod.GET, url, "", NO_PARAM);
-        }
-        public static EndpointTest delete(String url) {
-            return new EndpointTest(HttpMethod.DELETE, url, "", NO_PARAM);
-        }
-    }
 
     private MockMvc mvc;
     private ObjectMapper mapper;
@@ -55,7 +24,7 @@ public class MockMvcRunner {
         this.mapper = converter.getObjectMapper();
     }
 
-    public void test(EndpointTest test, int expectedStatus) throws Exception {
+    public void test(HttpCall test, int expectedStatus) throws Exception {
         mvc.perform(request(test.httpMethod(), test.url())
                         .content(toJson(test.reqBody()))
                         .params(test.reqParams())

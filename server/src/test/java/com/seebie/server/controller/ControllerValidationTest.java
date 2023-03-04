@@ -29,8 +29,9 @@ import java.util.List;
 
 import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
-import static com.seebie.server.test.support.MockMvcRunner.EndpointTest;
-import static com.seebie.server.test.support.MockMvcRunner.EndpointTest.*;
+
+import com.seebie.server.test.data.HttpCall;
+import static com.seebie.server.test.data.HttpCall.*;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
 // almost of the full stack is used, and your code will be called in exactly the same way
@@ -42,9 +43,9 @@ import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 //   Error handling
 
 @WebMvcTest
+@DisplayName("Controller Validation")
 @EnableConfigurationProperties(value = {AppProperties.class})
 @Import(WebSecurityConfig.class)
-@DisplayName("Controller Validation")
 public class ControllerValidationTest {
 
 	@MockBean
@@ -106,7 +107,7 @@ public class ControllerValidationTest {
 	@MethodSource("provideAdminTestParameters")
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
-	void testAdminValidation(EndpointTest testData, int expectedStatus) throws Exception {
+	void testAdminValidation(HttpCall testData, int expectedStatus) throws Exception {
 		mvc.test(testData, expectedStatus);
 	}
 
@@ -114,7 +115,7 @@ public class ControllerValidationTest {
 	@MethodSource("provideUserTestParameters")
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
-	void testUserValidation(EndpointTest testData, int expectedStatus) throws Exception {
+	void testUserValidation(HttpCall testData, int expectedStatus) throws Exception {
 		mvc.test(testData, expectedStatus);
 	}
 
