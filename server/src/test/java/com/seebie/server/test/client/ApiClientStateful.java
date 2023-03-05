@@ -41,14 +41,22 @@ public class ApiClientStateful {
         System.setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
     }
 
+    /**
+     * Unauthenticated.
+     *
+     */
+    public ApiClientStateful() {
+        client = unAuthClient();
+    }
+
     public ApiClientStateful(String baseUrl, String username, String password) {
         this(URI.create(baseUrl), username, password);
     }
 
     public ApiClientStateful(URI base, String username, String password) {
 
-        login = base.resolve("login");
-        logout = base.resolve("logout");
+        login = base.resolve("/login");
+        logout = base.resolve("/logout");
 
         // HttpClient does not send Basic credentials until challenged for them with a WWW-Authenticate header from the server.
         // Further, the only type of challenge it understands is for Basic authentication.
@@ -66,6 +74,14 @@ public class ApiClientStateful {
 
     public void logout() {
         get(logout);
+    }
+
+    protected HttpClient unAuthClient() {
+        return HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(300))
+                .cookieHandler(new CookieManager())
+                .sslContext(createSsl())
+                .build();
     }
 
     protected HttpClient basicAuthClient(String username, String password) {
@@ -130,16 +146,19 @@ public class ApiClientStateful {
                 .collect(joining(lineSeparator()));
     }
 
+    public HttpResponse<String> trySend(HttpRequest request) throws IOException, InterruptedException {
+        if( ! request.uri().getScheme().equals("https")) {
+            throw new RuntimeException("This client should use https because we are passing around auth info");
+        }
+        // more on body handlers here https://openjdk.java.net/groups/net/httpclient/recipes.html
+        // might be fun to have direct-to-json-object body handler
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
     public HttpResponse<String> send(HttpRequest request) {
 
         try {
 
-            if( ! request.uri().getScheme().equals("https")) {
-                throw new RuntimeException("This client should use https because we are passing around auth info");
-            }
-
-            // more on body handlers here https://openjdk.java.net/groups/net/httpclient/recipes.html
-            // might be fun to have direct-to-json-object body handler
 
 //            System.out.println("Request: " + request.method() + " " + request.uri().getPath());
 //            System.out.println(toString(request.headers()));
@@ -147,7 +166,7 @@ public class ApiClientStateful {
 
 //            Duration randomLatency = Duration.ofMillis(new Random().nextInt(15));
 //            sleep(randomLatency);
-            HttpResponse<String> response = throwOnError(client.send(request, HttpResponse.BodyHandlers.ofString()));
+            HttpResponse<String> response = throwOnError(trySend(request));
 //            sleep(randomLatency);
 
 //            System.out.println("Response: " + request.method() + " " + request.uri().getPath());

@@ -8,40 +8,40 @@ import com.seebie.server.dto.SleepData;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.support.MockMvcRunner;
+import com.seebie.server.test.data.AppRequest;
+import com.seebie.server.test.data.DtoJsonMapper;
+import com.seebie.server.test.data.MvcRequestMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.function.Function;
 
+import static com.seebie.server.test.data.AppRequest.*;
 import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
-import static com.seebie.server.test.support.MockMvcRunner.EndpointTest;
-import static com.seebie.server.test.support.MockMvcRunner.EndpointTest.*;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-// The next three annotations could be replaced by @WebMvcTest
-// except we need @SpringBootTest to expose actuator endpoints
-@SpringBootTest
-@AutoConfigureMockMvc
-@EnableAutoConfiguration
-@DisplayName("Endpoint Security")
+
+@WebMvcTest
 @EnableConfigurationProperties(value = {AppProperties.class})
 @Import(WebSecurityConfig.class)
+@DisplayName("Endpoint Security")
 public class ControllerSecurityTest {
 
 	@MockBean
@@ -49,8 +49,6 @@ public class ControllerSecurityTest {
 
 	@MockBean
 	private SleepService sleepService;
-
-	private static MockMvcRunner mvc;
 
 	private static final String USERNAME = "someuser";
 	private static final String ADMINNAME = "admin";
@@ -63,22 +61,21 @@ public class ControllerSecurityTest {
 	private static final String from = ZonedDateTime.now().minusDays(1).format(ISO_OFFSET_DATE_TIME);
 	private static final String to = ZonedDateTime.now().format(ISO_OFFSET_DATE_TIME);
 
+	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+	@Autowired
+	private MockMvc mockMvc;
+
+	private static Function<AppRequest, MockHttpServletRequestBuilder> toRequest;
+
 	@BeforeAll
-	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter, @Autowired MockMvc mockMvc) {
+	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
+
 		// so we get the mapper as configured for the app
-		mvc = new MockMvcRunner(mockMvc, converter);
+		toRequest = new MvcRequestMapper(new DtoJsonMapper(converter.getObjectMapper()));
 	}
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
 		return List.of(
-
-				// actuator
-				Arguments.of(get("/actuator"), 401),
-				Arguments.of(get("/actuator/flyway"), 401),
-				Arguments.of(get("/actuator/health"), 401),
-				Arguments.of(get("/actuator/info"), 401),
-				Arguments.of(get("/actuator/mappings"), 401),
-				Arguments.of(get("/actuator/sessions").withParam("username", "admin"), 401),
 
 				// unsecured resources
 				Arguments.of(get("/"), 200),
@@ -111,22 +108,13 @@ public class ControllerSecurityTest {
 				Arguments.of(put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData), 401),
 				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 401),
 
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", from).withParam("to", to), 401)
+				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").params("from", from, "to", to), 401)
 
 			);
 	}
 
 	private static List<Arguments> provideAdminTestParameters() {
 		return List.of(
-
-				// actuator
-				Arguments.of(get("/actuator"), 200),
-				Arguments.of(get("/actuator/flyway"), 200),
-				Arguments.of(get("/actuator/health"), 200),
-				Arguments.of(get("/actuator/info"), 200),
-				Arguments.of(get("/actuator/mappings"), 200),
-				Arguments.of(get("/actuator/sessions?username=admin"), 200),
-				Arguments.of(get("/actuator/sessions").withParam("username", "admin"), 200),
 
 				// unsecured resources
 				Arguments.of(get("/"), 200),
@@ -159,20 +147,12 @@ public class ControllerSecurityTest {
 				Arguments.of(put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData), 200),
 				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 200),
 
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", from).withParam("to", to), 200)
+				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").params("from", from, "to", to), 200)
 		);
 	}
 
 	private static List<Arguments> provideUserTestParameters() {
 		return List.of(
-
-				// actuator
-				Arguments.of(get("/actuator"), 403),
-				Arguments.of(get("/actuator/flyway"), 403),
-				Arguments.of(get("/actuator/health"), 403),
-				Arguments.of(get("/actuator/info"), 403),
-				Arguments.of(get("/actuator/mappings"), 403),
-				Arguments.of(get("/actuator/sessions").withParam("username", "admin"), 403),
 
 				// unsecured resources
 				Arguments.of(get("/"), 200),
@@ -205,31 +185,37 @@ public class ControllerSecurityTest {
 				Arguments.of(put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData), 403),
 				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 403),
 
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").withParam("from", from).withParam("to", to), 200)
+				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").params("from", from, "to", to), 200)
 		);
 	}
 
 	@ParameterizedTest
 	@MethodSource("provideUnauthenticatedTestParameters")
 	@DisplayName("Unauthenticated Access")
-	void testUnauthenticatedSecurity(EndpointTest testData, int expectedStatus) throws Exception {
-		mvc.test(testData, expectedStatus);
+	void testUnauthenticatedSecurity(AppRequest testData, int expectedStatus) throws Exception {
+		test(testData, expectedStatus);
 	}
 
 	@ParameterizedTest
 	@MethodSource("provideAdminTestParameters")
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
-	void testAdminSecurity(EndpointTest testData, int expectedStatus) throws Exception {
-		mvc.test(testData, expectedStatus);
+	void testAdminSecurity(AppRequest testData, int expectedStatus) throws Exception {
+		test(testData, expectedStatus);
 	}
 
 	@ParameterizedTest
 	@MethodSource("provideUserTestParameters")
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
-	void testUserSecurity(EndpointTest testData, int expectedStatus) throws Exception {
-		mvc.test(testData, expectedStatus);
+	void testUserSecurity(AppRequest testData, int expectedStatus) throws Exception {
+		test(testData, expectedStatus);
+	}
+
+	private void test(AppRequest testData, int expectedStatus) throws Exception {
+		mockMvc.perform(toRequest.apply(testData))
+				.andDo(print())
+				.andExpect(status().is(expectedStatus));
 	}
 
 }
