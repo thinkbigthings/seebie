@@ -16,45 +16,59 @@ ChartJS.register(
     Legend
 );
 
-const options = {
-    responsive: true,
-    // scales: {
-    //     yAxes: [{
-    //         display: true,
-    //         stacked: true,
-    //         ticks: {
-    //             min: 0, // minimum value
-    //             max: 10 // maximum value
-    //         }
-    //     }]
-    // },
-    plugins: {
-        legend: {
-            position: 'top'
-        },
-        title: {
-            display: true,
-            text: 'Sleep Duration',
-        },
-    },
-};
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+// const options = {
+//     responsive: true,
+//     scales: {
+//         y: {
+//             display: true,
+//             stacked: true,
+//             ticks: {
+//                 min: 0, // minimum value
+//                 max: 10 // maximum value
+//             }
+//         }
+//     },
+//     plugins: {
+//         legend: {
+//             position: 'top'
+//         },
+//         title: {
+//             display: true,
+//             text: 'Sleep Duration',
+//         },
+//     },
+// };
 
-export const data = {
-    labels,
-    datasets: [
-        {
-            fill: true,
-            label: 'Hours Asleep',
-            data: [6,8,7,7.5,6,8, 7.25],
-            borderColor: 'rgb(53, 162, 235)',
-            backgroundColor: 'rgba(53, 162, 235, 0.5)',
-        },
-    ],
-};
 
 function SleepChart() {
+
+    // TODO update options https://react-chartjs-2.js.org/components/line/
+
+    // TODO pre-emptively handle this situation https://react-chartjs-2.js.org/docs/working-with-datasets
+
+    const labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    const data = {
+        labels,
+        datasets: [
+            {
+                fill: true,
+                label: 'Hours Asleep',
+                data: [6,8,7,7.5,6,8, 7.25],
+                borderColor: '#745085',
+                backgroundColor:'#595b7c'
+            },
+        ],
+    };
+
+    const options ={
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    };
 
     return (
         <Line options={options} data={data} />
