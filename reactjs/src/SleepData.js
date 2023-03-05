@@ -1,8 +1,8 @@
 import React from 'react';
 import {CreateSleepSession} from "./CreateSleepSession";
 import {Tab, Tabs} from "react-bootstrap";
-import Container from "react-bootstrap/Container";
 import SleepList from "./SleepList";
+import SleepChart from "./SleepChart";
 
 function SleepData() {
 
@@ -16,8 +16,7 @@ function SleepData() {
                     <SleepList />
                 </Tab>
                 <Tab eventKey="chart" title="Chart">
-                    <Container />
-                    chart goes here
+                    <SleepChart />
                 </Tab>
             </Tabs>
 
