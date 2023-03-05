@@ -2,7 +2,6 @@ import React from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCaretLeft, faCaretRight,} from "@fortawesome/free-solid-svg-icons";
 import Container from "react-bootstrap/Container";
-import {CreateSleepSession} from "./CreateSleepSession";
 import Table from "react-bootstrap/Table";
 import {Link} from "react-router-dom";
 import {toPagingLabel, useApiGet} from './useApiGet.js';
@@ -23,8 +22,6 @@ function SleepList() {
 
     return (
         <div className="container mt-3">
-
-            <CreateSleepSession onSave={pagingControls.reload}/>
 
             <Container className="container mt-3 p-0">
                 <Table striped bordered hover >
