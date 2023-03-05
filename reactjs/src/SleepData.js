@@ -7,7 +7,7 @@ import SleepChart from "./SleepChart";
 function SleepData() {
 
     return (
-        <div id="sleep-data-container" className="container mt-3">
+        <div id="sleep-data-container" className="container mt-3 mb-3">
 
             <CreateSleepSession />
 

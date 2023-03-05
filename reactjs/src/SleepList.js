@@ -21,33 +21,30 @@ function SleepList() {
     const visibility = data.totalElements > 0 ? "visible" : "invisible";
 
     return (
-        <div className="container mt-3">
 
-            <Container className="container mt-3 p-0">
-                <Table striped bordered hover >
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Duration</th>
-                        </tr>
-                    </thead>
-                    <tbody className="clickable-table">
-                        {data.content
-                            .map(sleep => { sleep.sleepData = SleepDataManager.parse(sleep.sleepData); return sleep; })
-                            .map(sleep =>
-                                <tr key={sleep.id}>
-                                    <td>
-                                        <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } >
-                                            {new Date(sleep.sleepData.stopTime).toLocaleDateString()}
-                                        </Link>
-                                    </td>
-                                    <td>{SleepDataManager.formatDuration(sleep.sleepData.startTime, sleep.sleepData.stopTime)}</td>
-                                </tr>
-                        )}
-                    </tbody>
-                </Table>
-            </Container>
-
+        <Container className="container p-0">
+            <Table striped bordered hover >
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody className="clickable-table">
+                    {data.content
+                        .map(sleep => { sleep.sleepData = SleepDataManager.parse(sleep.sleepData); return sleep; })
+                        .map(sleep =>
+                            <tr key={sleep.id}>
+                                <td>
+                                    <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } >
+                                        {new Date(sleep.sleepData.stopTime).toLocaleDateString()}
+                                    </Link>
+                                </td>
+                                <td>{SleepDataManager.formatDuration(sleep.sleepData.startTime, sleep.sleepData.stopTime)}</td>
+                            </tr>
+                    )}
+                </tbody>
+            </Table>
             <ButtonGroup className={"mt-2 " + visibility}>
                 <Button variant="primary" disabled={data.first} onClick={ pagingControls.previous }>
                     <FontAwesomeIcon className="me-2" icon={faCaretLeft} />Previous
@@ -57,8 +54,8 @@ function SleepList() {
                     <FontAwesomeIcon className="me-2" icon={faCaretRight} />Next
                 </Button>
             </ButtonGroup>
+        </Container>
 
-        </div>
     );
 }
 
