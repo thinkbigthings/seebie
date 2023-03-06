@@ -11,7 +11,7 @@ const styleByStatus = {
 
 const initialData = {
     users: {
-        count:0
+        count: '0'
     }
 };
 
