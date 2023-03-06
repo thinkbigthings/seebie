@@ -3,6 +3,8 @@ package com.seebie.server;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataWithId;
+import com.seebie.server.entity.SleepSession;
+import com.seebie.server.repository.SleepRepository;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.TestData;
@@ -14,6 +16,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.ZonedDateTime;
+import java.time.temporal.TemporalAmount;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -28,6 +34,8 @@ class SleepIntegrationTest extends IntegrationTest {
     private UserService userService;
 
     private PageRequest firstPage = PageRequest.of(0, 10);
+
+    private Random random = new Random();
 
     @Test
     public void testDelete() {
@@ -61,16 +69,19 @@ class SleepIntegrationTest extends IntegrationTest {
 
         SleepData sleep = new SleepData();
 
-        int listCount = 40;
+        int listCount = 1000;
 
         ZonedDateTime latest = sleep.stopTime();
         ZonedDateTime earliest = sleep.stopTime();
+        List<SleepData> newData = new ArrayList<>();
         for(int i=0; i < listCount; i++) {
             sleep = decrementDay(sleep);
+            sleep = randomizeDuration(sleep);
             earliest = sleep.stopTime();
-            sleepService.saveNew(username, sleep);
+            newData.add(sleep);
         }
 
+        sleepService.saveNew(username, newData);
 
         Page<SleepDataWithId> listing = sleepService.listSleepData(username, firstPage);
 
@@ -83,5 +94,10 @@ class SleepIntegrationTest extends IntegrationTest {
 
     private SleepData decrementDay(SleepData data) {
         return new SleepData(data.notes(), data.outOfBed(), data.tags(), data.startTime().minusHours(24L), data.stopTime().minusHours(24L));
+    }
+
+    private SleepData randomizeDuration(SleepData data) {
+        return new SleepData(data.notes(), data.outOfBed(), data.tags(),
+                data.startTime().plusMinutes(random.nextInt(150)), data.stopTime().minusHours(24L));
     }
 }

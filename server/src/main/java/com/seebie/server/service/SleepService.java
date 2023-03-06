@@ -3,7 +3,9 @@ package com.seebie.server.service;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
+import com.seebie.server.entity.SleepSession;
 import com.seebie.server.mapper.dtotoentity.TagMapper;
+import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepMapper;
 import com.seebie.server.mapper.entitytodto.SleepMapper;
 import com.seebie.server.repository.SleepRepository;
@@ -22,13 +24,15 @@ public class SleepService {
 
     private SleepRepository sleepRepository;
     private UnsavedSleepMapper toNewEntity;
+    private UnsavedSleepListMapper toNewEntities;
     private TagMapper tagMapper;
 
     private SleepMapper sleepMapper = new SleepMapper();
 
-    public SleepService(SleepRepository sleepRepository, UnsavedSleepMapper toEntity, TagMapper tagMapper) {
+    public SleepService(SleepRepository sleepRepository, UnsavedSleepMapper toEntity, TagMapper tagMapper, UnsavedSleepListMapper toEntities) {
         this.sleepRepository = sleepRepository;
         this.toNewEntity = toEntity;
+        this.toNewEntities = toEntities;
         this.tagMapper = tagMapper;
     }
 
@@ -41,6 +45,20 @@ public class SleepService {
     public SleepDataWithId saveNew(String username, SleepData dto) {
         var entity = sleepRepository.save(toNewEntity.apply(username, dto));
         return new SleepDataWithId(entity.getId(), sleepMapper.apply(entity));
+    }
+
+    /**
+     * This is for test data now, but will eventually be used for bulk import.
+     *
+     * @param username
+     * @param dtos
+     */
+    @Transactional
+    public void saveNew(String username, List<SleepData> dtos) {
+
+        // TODO get better performance for bulk insert, we'll use this for import feature too
+
+        sleepRepository.saveAll(toNewEntities.apply(username, dtos));
     }
 
     @Transactional
