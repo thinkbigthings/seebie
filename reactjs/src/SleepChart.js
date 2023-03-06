@@ -10,6 +10,7 @@ import Row from "react-bootstrap/Row";
 import SleepDataManager from "./SleepDataManager";
 import {GET} from "./BasicHeaders";
 import useCurrentUser from "./useCurrentUser";
+import copy from "./Copier";
 
 
 ChartJS.register(
@@ -75,7 +76,6 @@ function SleepChart() {
     }
 
 
-
     let requestParameters = '?'
         + 'from='+encodeURIComponent(SleepDataManager.toIsoString(range.from))
         + '&'
@@ -83,13 +83,18 @@ function SleepChart() {
 
     const sleepEndpoint = '/user/'+currentUser.username+'/sleep/chart' + requestParameters;
 
-    console.log("Fetching chart data at " + sleepEndpoint);
+    const summaryParser = (json) => {
+        let parsed = {};
+        parsed.stopTime = new Date(Date.parse(json.stopTime));
+        parsed.hours = json.durationMinutes / 60;
+        return parsed;
+    }
 
     useEffect(() => {
         fetch(sleepEndpoint, GET)
             .then(response => response.json())
+            .then(jsonArray => jsonArray.map(json => summaryParser(json)))
             .then(console.log)
-            // .then(SleepDataManager.parse)
             // .then(setChartData)
             // .then(() => setLoaded(true))
     }, [setRange, sleepEndpoint]);
