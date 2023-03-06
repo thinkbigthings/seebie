@@ -3,6 +3,10 @@ import React from 'react';
 
 import {CategoryScale, Chart as ChartJS, Filler, Legend, LinearScale, LineElement, Tooltip, PointElement, Title} from "chart.js";
 import { Line } from 'react-chartjs-2';
+import DatePicker from "react-datepicker";
+import Container from "react-bootstrap/Container";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 
 
 ChartJS.register(
@@ -71,7 +75,42 @@ function SleepChart() {
     };
 
     return (
-        <Line options={options} data={data} />
+        <Container>
+            <Row>
+                <Col>
+                    <label htmlFor="dateStart">From</label>
+                </Col>
+                <Col>
+                    <DatePicker
+                        className="form-control" id="dateStart" placeholder="Start Date"
+                        dateFormat="MMMM d, yyyy"
+                        // showTimeSelect
+                        // timeIntervals={15}
+                        timeCaption="time"
+                        timeFormat="p"
+                        // selected={data.startTime}
+                        // onChange={ date => onChange({startTime : date })}
+                    />
+                </Col>
+                <Col xs={6}></Col>
+                <Col>
+                    <label htmlFor="dateEnd">To</label>
+                </Col>
+                <Col>
+                    <DatePicker
+                        className="form-control" id="dateEnd" placeholder="End Date"
+                        dateFormat="MMMM d, yyyy"
+                        // showTimeSelect
+                        // timeIntervals={15}
+                        timeCaption="time"
+                        timeFormat="p"
+                        // selected={data.stopTime}
+                        // onChange={ date => onChange({stopTime : date })}
+                    />
+                </Col>
+            </Row>
+            <Line options={options} data={data} />
+        </Container>
     );
 }
 
