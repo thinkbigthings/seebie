@@ -1,5 +1,5 @@
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {CategoryScale, Chart as ChartJS, Filler, Legend, LinearScale, LineElement, Tooltip, PointElement, Title} from "chart.js";
 import { Line } from 'react-chartjs-2';
@@ -8,6 +8,8 @@ import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import SleepDataManager from "./SleepDataManager";
+import {GET} from "./BasicHeaders";
+import useCurrentUser from "./useCurrentUser";
 
 
 ChartJS.register(
@@ -23,6 +25,8 @@ ChartJS.register(
 
 
 function SleepChart() {
+
+    const {currentUser} = useCurrentUser();
 
     const labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -53,7 +57,7 @@ function SleepChart() {
                 display: true,
                 text: 'Sleep Duration',
             },
-    },
+        },
     };
 
     let today = new Date();
@@ -65,19 +69,30 @@ function SleepChart() {
     const initialRange = {from: lastMonth, to: today};
     let [range, setRange] = useState(initialRange);
 
-    // TODO update options https://react-chartjs-2.js.org/components/line/
-
-    // TODO pre-emptively handle this situation https://react-chartjs-2.js.org/docs/working-with-datasets
-
-    // TODO check if to is after from
     function updateSearchRange(updateValues) {
         let updatedRange = {...range, ...updateValues};
         setRange(updatedRange);
     }
 
-    console.log("Fetching chart data");
-    console.log("From " + SleepDataManager.toIsoString(range.from));
-    console.log("To " + SleepDataManager.toIsoString(range.to));
+
+
+    let requestParameters = '?'
+        + 'from='+encodeURIComponent(SleepDataManager.toIsoString(range.from))
+        + '&'
+        + 'to='+encodeURIComponent(SleepDataManager.toIsoString(range.to));
+
+    const sleepEndpoint = '/user/'+currentUser.username+'/sleep/chart' + requestParameters;
+
+    console.log("Fetching chart data at " + sleepEndpoint);
+
+    useEffect(() => {
+        fetch(sleepEndpoint, GET)
+            .then(response => response.json())
+            .then(console.log)
+            // .then(SleepDataManager.parse)
+            // .then(setChartData)
+            // .then(() => setLoaded(true))
+    }, [setRange, sleepEndpoint]);
 
     return (
         <Container>
