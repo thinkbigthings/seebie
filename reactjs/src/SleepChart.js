@@ -47,6 +47,8 @@ function SleepChart() {
     };
 
     let today = new Date();
+    // today.setHours(0, 0, 0);
+
 
     let lastMonth = new Date(today.getTime());
     lastMonth.setDate(today.getDate() - 30);
@@ -67,11 +69,18 @@ function SleepChart() {
 
     let [chartData, setChartData] = useState(initialChartData);
 
-    function updateSearchRange(updateValues) {
-        let updatedRange = {...range, ...updateValues};
-        setRange(updatedRange);
+    const isDateRangeValid = (d1, d2)  => {
+        let j1 = d1.toJSON().slice(0, 10);
+        let j2 = d2.toJSON().slice(0, 10);
+        return j1 < j2;
     }
 
+    function updateSearchRange(updateValues) {
+        let updatedRange = {...range, ...updateValues};
+        if( isDateRangeValid(updatedRange.from, updatedRange.to)) {
+            setRange(updatedRange);
+        }
+    }
 
     let requestParameters = '?'
         + 'from='+encodeURIComponent(SleepDataManager.toIsoString(range.from))
