@@ -10,6 +10,7 @@ import Row from "react-bootstrap/Row";
 import SleepDataManager from "./SleepDataManager";
 import {GET} from "./BasicHeaders";
 import useCurrentUser from "./useCurrentUser";
+import copy from "./Copier";
 
 
 ChartJS.register(
@@ -55,11 +56,10 @@ function SleepChart() {
     let [range, setRange] = useState(initialRange);
 
     const initialChartData = {
-        labels: ['from', 'to'],
         datasets: [{
             fill: true,
             label: 'Hours Asleep',
-            data: [8, 8],
+            data: [{x: '2023-01-01', y: 8}, {x: '2023-01-02', y: 8}],
             borderColor: '#745085',
             backgroundColor:'#595b7c'
         }]
@@ -80,37 +80,14 @@ function SleepChart() {
 
     const sleepEndpoint = '/user/'+currentUser.username+'/sleep/chart' + requestParameters;
 
-    const summaryParser = (json) => {
-        let parsed = {};
-        parsed.stopTime = new Date(Date.parse(json.stopTime));
-        parsed.hours = json.durationMinutes / 60;
-        return parsed;
-    }
-
-    const updateChart = (fetchedSleepData) => {
-
-        // TODO server could return responses that are easier to process: separate arrays for x and y
-
-        // TODO copy chart data first
-
-        let x = [];
-        let y = [];
-        for(let i=0 ; i< fetchedSleepData.length; i++) {
-            x[i] = fetchedSleepData[i].stopTime;
-            y[i] = fetchedSleepData[i].hours;
-        }
-        chartData.labels = x;
-        chartData.datasets[0].data = y;
-
-        setChartData(chartData);
-    }
-
     useEffect(() => {
         fetch(sleepEndpoint, GET)
             .then(response => response.json())
-            .then(jsonArray => jsonArray.map(json => summaryParser(json)))
-            .then(console.log)
-            // .then(parsed => updateChart(parsed))
+            .then(json => {
+                let newChartData = copy(chartData);
+                newChartData.datasets[0].data = json;
+                setChartData(newChartData);
+            })
             // .then(() => setLoaded(true))
     }, [range, sleepEndpoint]);
 

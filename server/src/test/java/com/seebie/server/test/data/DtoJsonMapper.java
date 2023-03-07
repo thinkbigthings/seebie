@@ -8,6 +8,10 @@ import com.seebie.server.dto.SleepData;
 
 import java.util.function.Function;
 
+/**
+ * The request object takes a string, so we need to format objects ahead of time
+ * to send a request body into the app.
+ */
 public class DtoJsonMapper implements Function<Object, String> {
 
     private ObjectMapper mapper;

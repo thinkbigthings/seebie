@@ -2,6 +2,7 @@ package com.seebie.server;
 
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.entity.SleepSession;
 import com.seebie.server.repository.SleepRepository;
@@ -14,7 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class SleepIntegrationTest extends IntegrationTest {
 
@@ -32,6 +36,9 @@ class SleepIntegrationTest extends IntegrationTest {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private MappingJackson2HttpMessageConverter converter;
 
     private PageRequest firstPage = PageRequest.of(0, 10);
 
@@ -94,6 +101,19 @@ class SleepIntegrationTest extends IntegrationTest {
 
         var graphingData = sleepService.listChartData(username, earliest, latest);
         // System.out.println(graphingData);
+    }
+
+    @Test
+    public void testChartFormat() throws Exception {
+
+        var mapper = converter.getObjectMapper().writerFor(SleepDataPoint.class);
+
+        var point = new SleepDataPoint(ZonedDateTime.now(), 100);
+
+        var s = mapper.writeValueAsString(point);
+
+        assertNotNull(s);
+
     }
 
     private SleepData decrementDays(SleepData data, long days) {
