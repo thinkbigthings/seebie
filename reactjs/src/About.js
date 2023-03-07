@@ -1,37 +1,37 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 
-import {REACT_APP_API_VERSION} from "./Constants";
-import {GET} from "./BasicHeaders";
+// import {REACT_APP_API_VERSION} from "./Constants";
+// import {GET} from "./BasicHeaders";
 
-const styleByStatus = {
-    "UP" : "text-success",
-    "DOWN" : "text-danger",
-    "UNKNOWN" : "text-warning"
-};
-
-const initialData = {
-    users: {
-        count: '0'
-    }
-};
+// const styleByStatus = {
+//     "UP" : "text-success",
+//     "DOWN" : "text-danger",
+//     "UNKNOWN" : "text-warning"
+// };
+//
+// const initialData = {
+//     users: {
+//         count: '0'
+//     }
+// };
 
 function About() {
 
-    const [info, setInfo] = useState(initialData);
+    // const [info, setInfo] = useState(initialData);
 
-    useEffect(() => {
-        fetch('/actuator/info', GET)
-            .then(response => response.json())
-            .then(setInfo)
-    }, [setInfo]);
-
-    const [serverStatus, setServerStatus] = useState("UNKNOWN");
-
-    useEffect(() => {
-        fetch('/actuator/health', GET)
-            .then(response => setServerStatus("UP"))
-            .catch(response => setServerStatus("DOWN"));
-    }, [setServerStatus]);
+    // useEffect(() => {
+    //     fetch('/actuator/info', GET)
+    //         .then(response => response.json())
+    //         .then(setInfo)
+    // }, [setInfo]);
+    //
+    // const [serverStatus, setServerStatus] = useState("UNKNOWN");
+    //
+    // useEffect(() => {
+    //     fetch('/actuator/health', GET)
+    //         .then(response => setServerStatus("UP"))
+    //         .catch(response => setServerStatus("DOWN"));
+    // }, [setServerStatus]);
 
     return (
         <div className="container mt-3">
@@ -40,15 +40,15 @@ function About() {
             <p>
                 Seebie is a sleep diary and analysis tool to help you get better sleep
             </p>
-            <p>
-                Client API Compatibility Version {REACT_APP_API_VERSION}
-            </p>
-            <p>
-                There are {info.users.count} users in the system.
-            </p>
-            <p><span className={styleByStatus[serverStatus]}>
-                {"Server is "+ serverStatus}</span>
-            </p>
+            {/*<p>*/}
+            {/*    Client API Compatibility Version {REACT_APP_API_VERSION}*/}
+            {/*</p>*/}
+            {/*<p>*/}
+            {/*    There are {info.users.count} users in the system.*/}
+            {/*</p>*/}
+            {/*<p><span className={styleByStatus[serverStatus]}>*/}
+            {/*    {"Server is "+ serverStatus}</span>*/}
+            {/*</p>*/}
         </div>
     );
 

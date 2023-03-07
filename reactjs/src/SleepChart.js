@@ -89,7 +89,7 @@ function SleepChart() {
                 setChartData(newChartData);
             })
             // .then(() => setLoaded(true))
-    }, [range, sleepEndpoint]);
+    }, [sleepEndpoint]);
 
     return (
         <Container>
