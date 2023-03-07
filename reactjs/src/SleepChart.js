@@ -88,8 +88,7 @@ function SleepChart() {
                 newChartData.datasets[0].data = json;
                 setChartData(newChartData);
             })
-            // .then(() => setLoaded(true))
-    }, [sleepEndpoint]);
+    }, [sleepEndpoint, setChartData]);
 
     return (
         <Container>
