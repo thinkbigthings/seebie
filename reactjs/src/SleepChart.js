@@ -10,7 +10,6 @@ import Row from "react-bootstrap/Row";
 import SleepDataManager from "./SleepDataManager";
 import {GET} from "./BasicHeaders";
 import useCurrentUser from "./useCurrentUser";
-import copy from "./Copier";
 
 
 ChartJS.register(
@@ -28,21 +27,6 @@ ChartJS.register(
 function SleepChart() {
 
     const {currentUser} = useCurrentUser();
-
-    const labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
-    const data = {
-        labels,
-        datasets: [
-            {
-                fill: true,
-                label: 'Hours Asleep',
-                data: [6,8,7,7.5,6,8, 7.25],
-                borderColor: '#745085',
-                backgroundColor:'#595b7c'
-            },
-        ],
-    };
 
     const options ={
         scales: {
@@ -70,6 +54,19 @@ function SleepChart() {
     const initialRange = {from: lastMonth, to: today};
     let [range, setRange] = useState(initialRange);
 
+    const initialChartData = {
+        labels: ['from', 'to'],
+        datasets: [{
+            fill: true,
+            label: 'Hours Asleep',
+            data: [8, 8],
+            borderColor: '#745085',
+            backgroundColor:'#595b7c'
+        }]
+    };
+
+    let [chartData, setChartData] = useState(initialChartData);
+
     function updateSearchRange(updateValues) {
         let updatedRange = {...range, ...updateValues};
         setRange(updatedRange);
@@ -90,14 +87,32 @@ function SleepChart() {
         return parsed;
     }
 
+    const updateChart = (fetchedSleepData) => {
+
+        // TODO server could return responses that are easier to process: separate arrays for x and y
+
+        // TODO copy chart data first
+
+        let x = [];
+        let y = [];
+        for(let i=0 ; i< fetchedSleepData.length; i++) {
+            x[i] = fetchedSleepData[i].stopTime;
+            y[i] = fetchedSleepData[i].hours;
+        }
+        chartData.labels = x;
+        chartData.datasets[0].data = y;
+
+        setChartData(chartData);
+    }
+
     useEffect(() => {
         fetch(sleepEndpoint, GET)
             .then(response => response.json())
             .then(jsonArray => jsonArray.map(json => summaryParser(json)))
             .then(console.log)
-            // .then(setChartData)
+            // .then(parsed => updateChart(parsed))
             // .then(() => setLoaded(true))
-    }, [setRange, sleepEndpoint]);
+    }, [range, sleepEndpoint]);
 
     return (
         <Container>
@@ -127,7 +142,7 @@ function SleepChart() {
                     />
                 </Col>
             </Row>
-            <Line options={options} data={data} />
+            <Line datasetIdKey="id" options={options} data={chartData} />
         </Container>
     );
 }

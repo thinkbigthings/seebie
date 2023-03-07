@@ -93,7 +93,7 @@ class SleepIntegrationTest extends IntegrationTest {
         // CHART TESTS
 
         var graphingData = sleepService.listChartData(username, earliest, latest);
-        System.out.println(graphingData);
+        // System.out.println(graphingData);
     }
 
     private SleepData decrementDays(SleepData data, long days) {
