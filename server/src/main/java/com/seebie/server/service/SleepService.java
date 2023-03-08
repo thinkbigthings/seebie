@@ -3,10 +3,8 @@ package com.seebie.server.service;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
-import com.seebie.server.entity.SleepSession;
 import com.seebie.server.mapper.dtotoentity.TagMapper;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
-import com.seebie.server.mapper.dtotoentity.UnsavedSleepMapper;
 import com.seebie.server.mapper.entitytodto.SleepMapper;
 import com.seebie.server.repository.SleepRepository;
 import org.springframework.data.domain.Page;
@@ -23,16 +21,14 @@ import java.util.List;
 public class SleepService {
 
     private SleepRepository sleepRepository;
-    private UnsavedSleepMapper toNewEntity;
-    private UnsavedSleepListMapper toNewEntities;
+    private UnsavedSleepListMapper entityMapper;
     private TagMapper tagMapper;
 
     private SleepMapper sleepMapper = new SleepMapper();
 
-    public SleepService(SleepRepository sleepRepository, UnsavedSleepMapper toEntity, TagMapper tagMapper, UnsavedSleepListMapper toEntities) {
+    public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper) {
         this.sleepRepository = sleepRepository;
-        this.toNewEntity = toEntity;
-        this.toNewEntities = toEntities;
+        this.entityMapper = entityMapper;
         this.tagMapper = tagMapper;
     }
 
@@ -43,7 +39,7 @@ public class SleepService {
 
     @Transactional
     public SleepDataWithId saveNew(String username, SleepData dto) {
-        var entity = sleepRepository.save(toNewEntity.apply(username, dto));
+        var entity = sleepRepository.save(entityMapper.toUnsavedEntity(username, dto));
         return new SleepDataWithId(entity.getId(), sleepMapper.apply(entity));
     }
 
@@ -56,9 +52,7 @@ public class SleepService {
     @Transactional
     public void saveNew(String username, List<SleepData> dtos) {
 
-        // TODO get better performance for bulk insert, we'll use this for import feature too
-
-        sleepRepository.saveAll(toNewEntities.apply(username, dtos));
+        sleepRepository.saveAll(entityMapper.apply(username, dtos));
     }
 
     @Transactional

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.function.BiFunction;
 
-// TODO refactor to remove duplicate code with the other UnsavedSleepMapper
 
 @Component
 public class UnsavedSleepListMapper implements BiFunction<String, List<SleepData>, List<SleepSession>> {
@@ -31,6 +30,10 @@ public class UnsavedSleepListMapper implements BiFunction<String, List<SleepData
         return dtos.stream()
                     .map(dto -> toUnsavedEntity(user, dto))
                     .toList();
+    }
+
+    public SleepSession toUnsavedEntity(String username, SleepData dto) {
+        return apply(username, List.of(dto)).stream().findFirst().get();
     }
 
     public SleepSession toUnsavedEntity(User user, SleepData dto) {
