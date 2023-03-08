@@ -61,13 +61,17 @@ function SleepChart() {
         datasets: [{
             fill: true,
             label: 'Hours Asleep',
-            data: [{x: '2023-01-01', y: 8}, {x: '2023-01-02', y: 8}],
+            data: [],
+            // data: [{x: '2023-01-01', y: 8}, {x: '2023-01-02', y: 8}],
             borderColor: '#745085',
             backgroundColor:'#595b7c'
         }]
     };
 
     let [chartData, setChartData] = useState(initialChartData);
+
+    // If not at least two data points then UI can display "NO DATA"
+    const hasData = chartData.datasets[0].data.length > 1;
 
     const isDateRangeValid = (d1, d2)  => {
         let j1 = d1.toJSON().slice(0, 10);
@@ -127,7 +131,11 @@ function SleepChart() {
                     />
                 </Col>
             </Row>
-            <Line datasetIdKey="id" options={options} data={chartData} />
+            { hasData
+                ?   <Line datasetIdKey="id" options={options} data={chartData} />
+                :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
+            }
+
         </Container>
     );
 }
