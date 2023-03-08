@@ -24,6 +24,17 @@ ChartJS.register(
     Legend
 );
 
+const createInitialRange = () => {
+
+    let today = new Date();
+    today.setHours(23, 59, 59);
+
+    let lastMonth = new Date(today.getTime());
+    lastMonth.setDate(today.getDate() - 30);
+    lastMonth.setHours(0, 0, 0);
+
+    return {from: lastMonth, to: today};
+}
 
 function SleepChart() {
 
@@ -52,22 +63,13 @@ function SleepChart() {
         },
     };
 
-    let today = new Date();
-    // today.setHours(0, 0, 0);
 
-
-    let lastMonth = new Date(today.getTime());
-    lastMonth.setDate(today.getDate() - 30);
-    lastMonth.setHours(0, 0, 0);
-
-    const initialRange = {from: lastMonth, to: today};
-    let [range, setRange] = useState(initialRange);
+    let [range, setRange] = useState(createInitialRange());
 
     const initialChartData = {
         datasets: [{
             fill: true,
             data: [],
-            // data: [{x: '2023-01-01', y: 8}, {x: '2023-01-02', y: 8}],
             borderColor: '#745085',
             backgroundColor:'#595b7c'
         }]
@@ -86,15 +88,16 @@ function SleepChart() {
 
     function updateSearchRange(updateValues) {
         let updatedRange = {...range, ...updateValues};
-        if( isDateRangeValid(updatedRange.from, updatedRange.to)) {
+        if( isDateRangeValid(updatedRange.from, updatedRange.to) ) {
             setRange(updatedRange);
         }
     }
 
     let requestParameters = '?'
-        + 'from='+encodeURIComponent(SleepDataManager.toIsoString(range.from))
-        + '&'
+        + 'from='+encodeURIComponent(SleepDataManager.toIsoString(range.from)) + '&'
         + 'to='+encodeURIComponent(SleepDataManager.toIsoString(range.to));
+
+    console.log("Current request parameters: " + requestParameters);
 
     const sleepEndpoint = '/user/'+currentUser.username+'/sleep/chart' + requestParameters;
 
@@ -110,7 +113,7 @@ function SleepChart() {
 
     return (
         <Container>
-            <Row className="pb-3 pt-3 border-bottom">
+            <Row className="pt-3 pb-6">
                 <Col xs={6}></Col>
 
                 <Col xs={1}>

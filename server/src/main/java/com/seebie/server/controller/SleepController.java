@@ -5,6 +5,8 @@ import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.service.SleepService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,6 +21,8 @@ import java.util.List;
 
 @RestController
 public class SleepController {
+
+    private static Logger LOG = LoggerFactory.getLogger(SleepController.class);
 
     private final SleepService sleepService;
 
@@ -51,6 +55,8 @@ public class SleepController {
         if(to.isBefore(from)) {
             throw new IllegalArgumentException("Request parameter \"from\" must be before \"to\"");
         }
+
+        LOG.info("Requesting chart data with range " + from + " " + to);
 
         return sleepService.listChartData(username, from, to);
     }
