@@ -32,17 +32,23 @@ function SleepChart() {
     const options ={
         scales: {
             y: {
-                beginAtZero: true
+                beginAtZero: true,
+                title: {
+                    text: 'Hours Asleep',
+                    display: true
+                }
             }
+
         },
         plugins: {
             legend: {
+                display: false,
                 position: 'top'
             },
-            title: {
-                display: true,
-                text: 'Sleep Duration',
-            },
+            // title: {
+            //     display: true,
+            //     text: 'Hours Asleep Chart',
+            // },
         },
     };
 
@@ -60,7 +66,6 @@ function SleepChart() {
     const initialChartData = {
         datasets: [{
             fill: true,
-            label: 'Hours Asleep',
             data: [],
             // data: [{x: '2023-01-01', y: 8}, {x: '2023-01-02', y: 8}],
             borderColor: '#745085',
@@ -105,7 +110,7 @@ function SleepChart() {
 
     return (
         <Container>
-            <Row>
+            <Row className="pb-3 pt-3 border-bottom">
                 <Col xs={6}></Col>
 
                 <Col xs={1}>
@@ -132,7 +137,7 @@ function SleepChart() {
                 </Col>
             </Row>
             { hasData
-                ?   <Line datasetIdKey="id" options={options} data={chartData} />
+                ?   <Line className="pt-3" datasetIdKey="id" options={options} data={chartData} />
                 :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
             }
 
