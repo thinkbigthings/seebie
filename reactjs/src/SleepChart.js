@@ -24,6 +24,45 @@ ChartJS.register(
     Legend
 );
 
+
+const chartOptions ={
+    scales: {
+        y: {
+            beginAtZero: true,
+            title: {
+                text: 'Hours Asleep',
+                display: true
+            }
+        }
+
+    },
+    plugins: {
+        legend: {
+            display: false,
+            position: 'top'
+        },
+        // title: {
+        //     display: true,
+        //     text: 'Hours Asleep Chart',
+        // },
+    },
+};
+
+const initialChartData = {
+    datasets: [{
+        fill: true,
+        data: [],
+        borderColor: '#745085',
+        backgroundColor:'#595b7c'
+    }]
+};
+
+const isDateRangeValid = (d1, d2)  => {
+    let j1 = d1.toJSON().slice(0, 10);
+    let j2 = d2.toJSON().slice(0, 10);
+    return j1 < j2;
+}
+
 const createInitialRange = () => {
 
     let today = new Date();
@@ -40,51 +79,8 @@ function SleepChart() {
 
     const {currentUser} = useCurrentUser();
 
-    const options ={
-        scales: {
-            y: {
-                beginAtZero: true,
-                title: {
-                    text: 'Hours Asleep',
-                    display: true
-                }
-            }
-
-        },
-        plugins: {
-            legend: {
-                display: false,
-                position: 'top'
-            },
-            // title: {
-            //     display: true,
-            //     text: 'Hours Asleep Chart',
-            // },
-        },
-    };
-
-
     let [range, setRange] = useState(createInitialRange());
-
-    const initialChartData = {
-        datasets: [{
-            fill: true,
-            data: [],
-            borderColor: '#745085',
-            backgroundColor:'#595b7c'
-        }]
-    };
-
     let [chartData, setChartData] = useState(initialChartData);
-
-    // If not at least two data points then UI can display "NO DATA"
-    const hasData = chartData.datasets[0].data.length > 1;
-
-    const isDateRangeValid = (d1, d2)  => {
-        let j1 = d1.toJSON().slice(0, 10);
-        let j2 = d2.toJSON().slice(0, 10);
-        return j1 < j2;
-    }
 
     function updateSearchRange(updateValues) {
         let updatedRange = {...range, ...updateValues};
@@ -96,8 +92,6 @@ function SleepChart() {
     let requestParameters = '?'
         + 'from='+encodeURIComponent(SleepDataManager.toIsoString(range.from)) + '&'
         + 'to='+encodeURIComponent(SleepDataManager.toIsoString(range.to));
-
-    console.log("Current request parameters: " + requestParameters);
 
     const sleepEndpoint = '/user/'+currentUser.username+'/sleep/chart' + requestParameters;
 
@@ -114,12 +108,12 @@ function SleepChart() {
     return (
         <Container>
             <Row className="pt-3 pb-6">
-                <Col xs={6}></Col>
+                <Col xs={4}></Col>
 
                 <Col xs={1}>
                     <label htmlFor="dateStart">From</label>
                 </Col>
-                <Col xs={2}>
+                <Col xs={3}>
                     <DatePicker
                         className="form-control" id="dateStart" placeholder="Start Date"
                         dateFormat="MMMM d, yyyy"
@@ -130,7 +124,7 @@ function SleepChart() {
                 <Col xs={1}>
                     <label htmlFor="dateEnd">To</label>
                 </Col>
-                <Col xs={2}>
+                <Col xs={3}>
                     <DatePicker
                         className="form-control" id="dateEnd" placeholder="End Date"
                         dateFormat="MMMM d, yyyy"
@@ -139,8 +133,8 @@ function SleepChart() {
                     />
                 </Col>
             </Row>
-            { hasData
-                ?   <Line className="pt-3" datasetIdKey="id" options={options} data={chartData} />
+            { chartData.datasets[0].data.length > 1
+                ?   <Line className="pt-3" datasetIdKey="id" options={chartOptions} data={chartData} />
                 :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
             }
 
