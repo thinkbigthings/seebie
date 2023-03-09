@@ -53,15 +53,12 @@ such as catching non-200 http responses when fetching data, and displaying an ap
 
 ## Debugging
 
-IntelliJ supports debugging JS in the IDE. 
-
-To Debug the UI:
-
-- Start the server from services section
-- Run `npm start`
-- Launch a JavaScript Debug configuration (not Debug on NPM Start)
-
-See the IDE help for more details.
+IntelliJ supports debugging JS in the IDE:
+- Start the server from services section, you can Run or Debug
+- Run `npm start` (do not use a debug configuration)
+- Use a "JavaScript Debug" configuration with the URL set to https://localhost:3000
+  (or the host/port configured by npm start)
+- Set breakpoints in JS files in IntelliJ and enjoy your debugging!
 
 ## Update Dependencies
 
