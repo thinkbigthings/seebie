@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.seebie.server.test.data.TestData.createSleepData;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -74,20 +75,8 @@ class SleepIntegrationTest extends IntegrationTest {
         String username = "testListSleep";
         userService.saveNewUser(new RegistrationRequest(username, "password", "x@y"));
 
-        SleepData today = new SleepData();
-
         int listCount = 1000;
-
-        ZonedDateTime latest = today.stopTime();
-        ZonedDateTime earliest = today.stopTime();
-        List<SleepData> newData = new ArrayList<>();
-        for(int i=0; i < listCount; i++) {
-            SleepData session = decrementDays(today, i);
-            session = randomizeDuration(session);
-            earliest = session.stopTime();
-            newData.add(session);
-        }
-
+        var newData = createSleepData(listCount);
         sleepService.saveNew(username, newData);
 
         Page<SleepDataWithId> listing = sleepService.listSleepData(username, firstPage);
@@ -95,12 +84,6 @@ class SleepIntegrationTest extends IntegrationTest {
         assertEquals(firstPage.getPageSize(), listing.getNumberOfElements());
         assertEquals(listCount, listing.getTotalElements());
 
-
-
-        // CHART TESTS
-
-        var graphingData = sleepService.listChartData(username, earliest, latest);
-        // System.out.println(graphingData);
     }
 
     @Test
@@ -116,15 +99,5 @@ class SleepIntegrationTest extends IntegrationTest {
 
     }
 
-    private SleepData decrementDays(SleepData data, long days) {
-        return new SleepData(data.notes(), data.outOfBed(), data.tags(),
-                data.startTime().minusDays(days),
-                data.stopTime().minusDays(days));
-    }
 
-    private SleepData randomizeDuration(SleepData data) {
-        return new SleepData(data.notes(), data.outOfBed(), data.tags(),
-                data.startTime().plusMinutes(random.nextInt(60)),
-                data.stopTime().minusMinutes(random.nextInt(60)));
-    }
 }
