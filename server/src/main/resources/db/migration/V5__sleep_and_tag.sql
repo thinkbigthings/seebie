@@ -8,7 +8,8 @@ CREATE TABLE sleep_session (
     start_time       TIMESTAMPTZ NOT NULL DEFAULT now(),
     stop_time        TIMESTAMPTZ NOT NULL DEFAULT now(),
     duration_minutes INT4       GENERATED ALWAYS AS (EXTRACT(EPOCH FROM (stop_time - start_time)) / 60) STORED,
-    notes           VARCHAR     NOT NULL DEFAULT ''
+    notes           VARCHAR     NOT NULL DEFAULT '',
+    CONSTRAINT stop_after_start CHECK (stop_time >= start_time)
 );
 
 CREATE INDEX index_sleep_session_user ON sleep_session(user_id);

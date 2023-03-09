@@ -9,10 +9,13 @@ import com.seebie.server.repository.SleepRepository;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.TestData;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -20,13 +23,10 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAmount;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static com.seebie.server.test.data.TestData.createSleepData;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SleepIntegrationTest extends IntegrationTest {
 
@@ -44,6 +44,18 @@ class SleepIntegrationTest extends IntegrationTest {
     private PageRequest firstPage = PageRequest.of(0, 10);
 
     private Random random = new Random();
+
+    @Test
+    public void testConstraint() {
+
+        var registration = TestData.createRandomUserRegistration();
+        String username = registration.username();
+        userService.saveNewUser(registration);
+
+        var badData = new SleepData("", 0, new HashSet<>(), ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
+
+        assertThrows(DataIntegrityViolationException.class, () -> sleepService.saveNew(username, badData));
+    }
 
     @Test
     public void testDelete() {
