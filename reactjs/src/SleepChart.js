@@ -134,7 +134,7 @@ function SleepChart() {
                 </Col>
             </Row>
             { chartData.datasets[0].data.length > 1
-                ?   <Line className="pt-3" datasetIdKey="id" options={chartOptions} data={chartData} />
+                ?   <Line className="pt-3" datasetIdKey="sleepChart" options={chartOptions} data={chartData} />
                 :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
             }
 
