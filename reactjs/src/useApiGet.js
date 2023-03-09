@@ -24,7 +24,7 @@ const toPagingLabel = (pageData) => {
 }
 
 // This is for paging
-const useApiGet = (initialUrl, customPageSize=10) => {
+const useApiGet = (initialUrl, customPageSize, reloadCount) => {
 
     let customizedPage = copy(initialPage);
     customizedPage.pageable.pageSize = customPageSize;
@@ -37,12 +37,6 @@ const useApiGet = (initialUrl, customPageSize=10) => {
     // TODO maybe this should be in a callback hook?
     // const {throwOnHttpError} = useHttpError();
 
-    const [reloadCount, setReloadCount] = useState(0);
-    const reload = useCallback(() => {
-        setReloadCount(p => p + 1);
-    }, []);
-
-
     const movePage = useCallback((amount) => {
         let pageable = copy(data.pageable);
         pageable.pageNumber = pageable.pageNumber + amount;
@@ -53,9 +47,12 @@ const useApiGet = (initialUrl, customPageSize=10) => {
     const previous = useCallback(() => movePage(-1), [movePage]);
 
     const pagingControls = {
-        next, previous, reload
+        next, previous
     }
 
+    // reload count is kind of a synthetic property to trigger state changes which triggers fetch updates
+    // reload count is controlled from outside, so the parent controls re-rendering
+    // this is important when we want to reload from something changing (like creating new data)
     useEffect(() => {
         fetch(url, GET)
             // .then(throwOnHttpError)

@@ -75,7 +75,9 @@ const createInitialRange = () => {
     return {from: lastMonth, to: today};
 }
 
-function SleepChart() {
+function SleepChart(props) {
+
+    const {reloadCount} = props;
 
     const {currentUser} = useCurrentUser();
 
@@ -103,7 +105,7 @@ function SleepChart() {
                 newChartData.datasets[0].data = json;
                 setChartData(newChartData);
             })
-    }, [sleepEndpoint]);
+    }, [sleepEndpoint, reloadCount]);
 
     return (
         <Container>

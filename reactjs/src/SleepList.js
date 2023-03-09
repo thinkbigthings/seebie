@@ -10,15 +10,18 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import SleepDataManager from "./SleepDataManager";
 
-function SleepList() {
+function SleepList(props) {
+
+    const {reloadCount} = props;
 
     const {currentUser} = useCurrentUser();
 
     const sleepUrl = '/user/' + currentUser.username + '/sleep';
 
-    const [data, pagingControls] = useApiGet(sleepUrl, 7);
+    // const [reloadCount, setReloadCount] = useState(0);
+    const [data, pagingControls] = useApiGet(sleepUrl, 7, reloadCount);
 
-    const visibility = data.totalElements > 0 ? "visible" : "invisible";
+    const pagingControlVisibility = data.totalElements > 0 ? "visible" : "invisible";
 
     return (
 
@@ -45,7 +48,7 @@ function SleepList() {
                     )}
                 </tbody>
             </Table>
-            <ButtonGroup className={"mt-2 " + visibility}>
+            <ButtonGroup className={"mt-2 " + pagingControlVisibility}>
                 <Button variant="primary" disabled={data.first} onClick={ pagingControls.previous }>
                     <FontAwesomeIcon className="me-2" icon={faCaretLeft} />Previous
                 </Button>
