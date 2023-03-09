@@ -1,5 +1,5 @@
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {CategoryScale, Chart as ChartJS, Filler, Legend, LinearScale, LineElement, Tooltip, PointElement, Title} from "chart.js";
 import { Line } from 'react-chartjs-2';
@@ -95,17 +95,15 @@ function SleepChart() {
 
     const sleepEndpoint = '/user/'+currentUser.username+'/sleep/chart' + requestParameters;
 
-    const updateChartData = useCallback((json) => {
-        let newChartData = copy(chartData);
-        newChartData.datasets[0].data = json;
-        setChartData(newChartData);
-    }, [chartData]);
-
     useEffect(() => {
         fetch(sleepEndpoint, GET)
             .then(response => response.json())
-            .then(updateChartData)
-    }, [sleepEndpoint, updateChartData]);
+            .then(json => {
+                let newChartData = copy(initialChartData);
+                newChartData.datasets[0].data = json;
+                setChartData(newChartData);
+            })
+    }, [sleepEndpoint]);
 
     return (
         <Container>
