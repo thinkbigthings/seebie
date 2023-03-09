@@ -6,7 +6,6 @@ import Nav from 'react-bootstrap/Nav';
 
 import { HashRouter, Route } from 'react-router-dom';
 
-import SleepList from './SleepList.js';
 import UserList from './UserList.js';
 import About from './About.js';
 import EditUser from './EditUser.js';
