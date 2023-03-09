@@ -43,8 +43,6 @@ class SleepIntegrationTest extends IntegrationTest {
 
     private PageRequest firstPage = PageRequest.of(0, 10);
 
-    private Random random = new Random();
-
     @Test
     public void testConstraint() {
 
