@@ -11,6 +11,7 @@ import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.AppRequest;
 import com.seebie.server.test.data.DtoJsonMapper;
 import com.seebie.server.test.data.MvcRequestMapper;
+import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,7 +31,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.seebie.server.test.data.AppRequest.*;
 import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
@@ -67,48 +67,52 @@ public class ControllerSecurityTest {
 
 	private static Function<AppRequest, MockHttpServletRequestBuilder> toRequest;
 
+	private static TestData.ArgumentBuilder test;
+
 	@BeforeAll
 	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
 
 		// so we get the mapper as configured for the app
 		toRequest = new MvcRequestMapper(new DtoJsonMapper(converter.getObjectMapper()));
+		
+		test = new TestData.ArgumentBuilder();
 	}
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
 		return List.of(
 
 				// unsecured resources
-				Arguments.of(get("/"), 200),
-				Arguments.of(get("/favicon.ico"), 200),
-				Arguments.of(get("/manifest.json"), 200),
+				test.get("/", 200),
+				test.get("/favicon.ico", 200),
+				test.get("/manifest.json", 200),
 
 				// user controller
-				Arguments.of(post("/registration", registration), 401),
-				Arguments.of(get("/login"), 401),
-				Arguments.of(get("/user"), 401),
+				test.post("/registration", registration, 401),
+				test.get("/login", 401),
+				test.get("/user", 401),
 
-				Arguments.of(put("/user/" + USERNAME + "/personalInfo", registration), 401),
-				Arguments.of(post("/user/" + USERNAME + "/password/update", password), 401),
-				Arguments.of(get("/user/" + USERNAME), 401),
+				test.put("/user/" + USERNAME + "/personalInfo", registration, 401),
+				test.post("/user/" + USERNAME + "/password/update", password, 401),
+				test.get("/user/" + USERNAME, 401),
 
-				Arguments.of(put("/user/" + ADMINNAME + "/personalInfo", info), 401),
-				Arguments.of(post("/user/" + ADMINNAME + "/password/update", password), 401),
-				Arguments.of(get("/user/" + ADMINNAME), 401),
+				test.put("/user/" + ADMINNAME + "/personalInfo", info, 401),
+				test.post("/user/" + ADMINNAME + "/password/update", password, 401),
+				test.get("/user/" + ADMINNAME, 401),
 
 				// sleep controller
-				Arguments.of(post("/user/" + USERNAME + "/sleep", sleepData), 401),
-				Arguments.of(get("/user/" + USERNAME + "/sleep"), 401),
-				Arguments.of(get("/user/" + USERNAME + "/sleep" + "/1"), 401),
-				Arguments.of(put("/user/" + USERNAME + "/sleep" + "/1", sleepData), 401),
-				Arguments.of(delete("/user/" + USERNAME + "/sleep" + "/1"), 401),
+				test.post("/user/" + USERNAME + "/sleep", sleepData, 401),
+				test.get("/user/" + USERNAME + "/sleep", 401),
+				test.get("/user/" + USERNAME + "/sleep" + "/1", 401),
+				test.put("/user/" + USERNAME + "/sleep" + "/1", sleepData, 401),
+				test.delete("/user/" + USERNAME + "/sleep" + "/1", 401),
 
-				Arguments.of(post("/user/" + ADMINNAME + "/sleep", sleepData), 401),
-				Arguments.of(get("/user/" + ADMINNAME + "/sleep"), 401),
-				Arguments.of(get("/user/" + ADMINNAME + "/sleep" + "/1"), 401),
-				Arguments.of(put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData), 401),
-				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 401),
+				test.post("/user/" + ADMINNAME + "/sleep", sleepData, 401),
+				test.get("/user/" + ADMINNAME + "/sleep", 401),
+				test.get("/user/" + ADMINNAME + "/sleep" + "/1", 401),
+				test.put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData, 401),
+				test.delete("/user/" + ADMINNAME + "/sleep" + "/1", 401),
 
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").params("from", from, "to", to), 401)
+				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 401)
 
 			);
 	}
@@ -117,37 +121,37 @@ public class ControllerSecurityTest {
 		return List.of(
 
 				// unsecured resources
-				Arguments.of(get("/"), 200),
-				Arguments.of(get("/favicon.ico"), 200),
-				Arguments.of(get("/manifest.json"), 200),
+				test.get("/", 200),
+				test.get("/favicon.ico", 200),
+				test.get("/manifest.json", 200),
 
 				// user controller
-				Arguments.of(post("/registration", registration), 200),
-				Arguments.of(get("/login"), 200),
-				Arguments.of(get("/user"), 200),
+				test.post("/registration", registration, 200),
+				test.get("/login", 200),
+				test.get("/user", 200),
 
-				Arguments.of(put("/user/" + USERNAME + "/personalInfo", info), 200),
-				Arguments.of(post("/user/" + USERNAME + "/password/update", password), 200),
-				Arguments.of(get("/user/" + USERNAME), 200),
+				test.put("/user/" + USERNAME + "/personalInfo", info, 200),
+				test.post("/user/" + USERNAME + "/password/update", password, 200),
+				test.get("/user/" + USERNAME, 200),
 
-				Arguments.of(put("/user/" + ADMINNAME + "/personalInfo", info), 200),
-				Arguments.of(post("/user/" + ADMINNAME + "/password/update", password), 200),
-				Arguments.of(get("/user/" + ADMINNAME), 200),
+				test.put("/user/" + ADMINNAME + "/personalInfo", info, 200),
+				test.post("/user/" + ADMINNAME + "/password/update", password, 200),
+				test.get("/user/" + ADMINNAME, 200),
 
 				// sleep controller
-				Arguments.of(post("/user/" + USERNAME + "/sleep", sleepData), 200),
-				Arguments.of(get("/user/" + USERNAME + "/sleep"), 200),
-				Arguments.of(get("/user/" + USERNAME + "/sleep" + "/1"), 200),
-				Arguments.of(put("/user/" + USERNAME + "/sleep" + "/1", sleepData), 200),
-				Arguments.of(delete("/user/" + USERNAME + "/sleep" + "/1"), 200),
+				test.post("/user/" + USERNAME + "/sleep", sleepData, 200),
+				test.get("/user/" + USERNAME + "/sleep", 200),
+				test.get("/user/" + USERNAME + "/sleep" + "/1", 200),
+				test.put("/user/" + USERNAME + "/sleep" + "/1", sleepData, 200),
+				test.delete("/user/" + USERNAME + "/sleep" + "/1", 200),
 
-				Arguments.of(post("/user/" + ADMINNAME + "/sleep", sleepData), 200),
-				Arguments.of(get("/user/" + ADMINNAME + "/sleep"), 200),
-				Arguments.of(get("/user/" + ADMINNAME + "/sleep" + "/1"), 200),
-				Arguments.of(put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData), 200),
-				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 200),
+				test.post("/user/" + ADMINNAME + "/sleep", sleepData, 200),
+				test.get("/user/" + ADMINNAME + "/sleep", 200),
+				test.get("/user/" + ADMINNAME + "/sleep" + "/1", 200),
+				test.put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData, 200),
+				test.delete("/user/" + ADMINNAME + "/sleep" + "/1", 200),
 
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").params("from", from, "to", to), 200)
+				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 200)
 		);
 	}
 
@@ -155,37 +159,37 @@ public class ControllerSecurityTest {
 		return List.of(
 
 				// unsecured resources
-				Arguments.of(get("/"), 200),
-				Arguments.of(get("/favicon.ico"), 200),
-				Arguments.of(get("/manifest.json"), 200),
+				test.get("/", 200),
+				test.get("/favicon.ico", 200),
+				test.get("/manifest.json", 200),
 
 				// user controller
-				Arguments.of(post("/registration", registration), 403),
-				Arguments.of(get("/login"), 200),
-				Arguments.of(get("/user"), 403),
+				test.post("/registration", registration, 403),
+				test.get("/login", 200),
+				test.get("/user", 403),
 
-				Arguments.of(put("/user/" + USERNAME + "/personalInfo", info), 200),
-				Arguments.of(post("/user/" + USERNAME + "/password/update", password), 200),
-				Arguments.of(get("/user/" + USERNAME), 200),
+				test.put("/user/" + USERNAME + "/personalInfo", info, 200),
+				test.post("/user/" + USERNAME + "/password/update", password, 200),
+				test.get("/user/" + USERNAME, 200),
 
-				Arguments.of(put("/user/" + ADMINNAME + "/personalInfo", info), 403),
-				Arguments.of(post("/user/" + ADMINNAME + "/password/update", password), 403),
-				Arguments.of(get("/user/" + ADMINNAME), 403),
+				test.put("/user/" + ADMINNAME + "/personalInfo", info, 403),
+				test.post("/user/" + ADMINNAME + "/password/update", password, 403),
+				test.get("/user/" + ADMINNAME, 403),
 
 				// sleep controller
-				Arguments.of(post("/user/" + USERNAME + "/sleep", sleepData), 200),
-				Arguments.of(get("/user/" + USERNAME + "/sleep"), 200),
-				Arguments.of(get("/user/" + USERNAME + "/sleep" + "/1"), 200),
-				Arguments.of(put("/user/" + USERNAME + "/sleep" + "/1", sleepData), 200),
-				Arguments.of(delete("/user/" + USERNAME + "/sleep" + "/1"), 200),
+				test.post("/user/" + USERNAME + "/sleep", sleepData, 200),
+				test.get("/user/" + USERNAME + "/sleep", 200),
+				test.get("/user/" + USERNAME + "/sleep" + "/1", 200),
+				test.put("/user/" + USERNAME + "/sleep" + "/1", sleepData, 200),
+				test.delete("/user/" + USERNAME + "/sleep" + "/1", 200),
 
-				Arguments.of(post("/user/" + ADMINNAME + "/sleep", sleepData), 403),
-				Arguments.of(get("/user/" + ADMINNAME + "/sleep"), 403),
-				Arguments.of(get("/user/" + ADMINNAME + "/sleep" + "/1"), 403),
-				Arguments.of(put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData), 403),
-				Arguments.of(delete("/user/" + ADMINNAME + "/sleep" + "/1"), 403),
+				test.post("/user/" + ADMINNAME + "/sleep", sleepData, 403),
+				test.get("/user/" + ADMINNAME + "/sleep", 403),
+				test.get("/user/" + ADMINNAME + "/sleep" + "/1", 403),
+				test.put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData, 403),
+				test.delete("/user/" + ADMINNAME + "/sleep" + "/1", 403),
 
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").params("from", from, "to", to), 200)
+				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 200)
 		);
 	}
 

@@ -4,14 +4,16 @@ import com.seebie.server.dto.SleepData;
 import net.datafaker.Faker;
 import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
+import org.junit.jupiter.params.provider.Arguments;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
 import static java.util.UUID.randomUUID;
+import static org.springframework.http.HttpMethod.*;
+import static org.springframework.http.HttpMethod.DELETE;
 
 public class TestData {
 
@@ -59,5 +61,37 @@ public class TestData {
         return new SleepData(data.notes(), data.outOfBed(), data.tags(),
                 data.startTime().plusMinutes(random.nextInt(60)),
                 data.stopTime().minusMinutes(random.nextInt(60)));
+    }
+
+    public static class ArgumentBuilder {
+
+        private String host;
+
+        public ArgumentBuilder() {
+            this.host = "";
+        }
+        public ArgumentBuilder(String host) {
+            this.host = host;
+        }
+
+        public Arguments post(String urlPath, Object reqBody, int expected) {
+            return Arguments.of(new AppRequest().method(POST).url(host + urlPath).body(reqBody), expected);
+        }
+
+        public Arguments put(String urlPath, Object reqBody, int expected) {
+            return Arguments.of(new AppRequest().method(PUT).url(host + urlPath).body(reqBody), expected);
+        }
+
+        public Arguments get(String urlPath, String[] requestParams, int expected) {
+            return Arguments.of(new AppRequest().method(GET).url(host + urlPath).params(requestParams), expected);
+        }
+
+        public Arguments get(String urlPath, int expected) {
+            return get(urlPath, new String[]{}, expected);
+        }
+
+        public Arguments delete(String urlPath, int expected) {
+            return Arguments.of(new AppRequest().method(DELETE).url(host + urlPath), expected);
+        }
     }
 }
