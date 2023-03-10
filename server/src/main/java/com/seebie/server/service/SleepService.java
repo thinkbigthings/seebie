@@ -4,7 +4,7 @@ import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.mapper.dtotoentity.TagMapper;
-import com.seebie.server.mapper.dtotoentity.UnsavedSleepMapper;
+import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.mapper.entitytodto.SleepMapper;
 import com.seebie.server.repository.SleepRepository;
 import org.springframework.data.domain.Page;
@@ -21,14 +21,14 @@ import java.util.List;
 public class SleepService {
 
     private SleepRepository sleepRepository;
-    private UnsavedSleepMapper toNewEntity;
+    private UnsavedSleepListMapper entityMapper;
     private TagMapper tagMapper;
 
     private SleepMapper sleepMapper = new SleepMapper();
 
-    public SleepService(SleepRepository sleepRepository, UnsavedSleepMapper toEntity, TagMapper tagMapper) {
+    public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper) {
         this.sleepRepository = sleepRepository;
-        this.toNewEntity = toEntity;
+        this.entityMapper = entityMapper;
         this.tagMapper = tagMapper;
     }
 
@@ -39,8 +39,20 @@ public class SleepService {
 
     @Transactional
     public SleepDataWithId saveNew(String username, SleepData dto) {
-        var entity = sleepRepository.save(toNewEntity.apply(username, dto));
+        var entity = sleepRepository.save(entityMapper.toUnsavedEntity(username, dto));
         return new SleepDataWithId(entity.getId(), sleepMapper.apply(entity));
+    }
+
+    /**
+     * This is for test data now, but will eventually be used for bulk import.
+     *
+     * @param username
+     * @param dtos
+     */
+    @Transactional
+    public void saveNew(String username, List<SleepData> dtos) {
+
+        sleepRepository.saveAll(entityMapper.apply(username, dtos));
     }
 
     @Transactional

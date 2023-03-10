@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import { Link } from 'react-router-dom';
 
@@ -16,7 +16,8 @@ import Table from "react-bootstrap/Table";
 
 function UserList() {
 
-    const [data, pagingControls] = useApiGet('/user')
+    const [reloadCount, setReloadCount] = useState(0);
+    const [data, pagingControls] = useApiGet('/user', 10, reloadCount);
 
     const visibility = data.totalElements > 0 ? "visible" : "invisible";
 
@@ -24,7 +25,7 @@ function UserList() {
         <div className="container mt-3">
             <h1>User Management</h1>
 
-            <CreateUser onSave={pagingControls.reload} />
+            <CreateUser onSave={() => setReloadCount(reloadCount + 1)}  />
 
             <Container className="container mt-3">
                 <Table striped bordered hover>

@@ -11,6 +11,7 @@ import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.AppRequest;
 import com.seebie.server.test.data.DtoJsonMapper;
 import com.seebie.server.test.data.MvcRequestMapper;
+import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,7 +36,6 @@ import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
 
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import static com.seebie.server.test.data.AppRequest.*;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -74,6 +74,8 @@ public class ControllerValidationTest {
 	private static final String from = ZonedDateTime.now().minusDays(1).format(ISO_OFFSET_DATE_TIME);
 	private static final String to = ZonedDateTime.now().format(ISO_OFFSET_DATE_TIME);
 
+	private static TestData.ArgumentBuilder test;
+
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	@Autowired
 	private MockMvc mockMvc;
@@ -85,13 +87,15 @@ public class ControllerValidationTest {
 
 		// so we get the mapper as configured for the app
 		toRequest = new MvcRequestMapper(new DtoJsonMapper(converter.getObjectMapper()));
+
+		test = new TestData.ArgumentBuilder();
 	}
 
 	private static List<Arguments> provideAdminTestParameters() {
 		return List.of(
 
-				Arguments.of(post("/registration", registration), 200),
-				Arguments.of(post("/registration", invalidRegistration), 400)
+				test.post("/registration", registration, 200),
+				test.post("/registration", invalidRegistration, 400)
 		);
 	}
 
@@ -99,18 +103,18 @@ public class ControllerValidationTest {
 
 		return List.of(
 
-				Arguments.of(put("/user/" + USERNAME + "/personalInfo", info), 200),
-				Arguments.of(put("/user/" + USERNAME + "/personalInfo", invalidInfo), 400),
+				test.put("/user/" + USERNAME + "/personalInfo", info, 200),
+				test.put("/user/" + USERNAME + "/personalInfo", invalidInfo, 400),
 
-				Arguments.of(post("/user/" + USERNAME + "/sleep", sleepData), 200),
-				Arguments.of(post("/user/" + USERNAME + "/sleep", invalidSleepData), 400),
+				test.post("/user/" + USERNAME + "/sleep", sleepData, 200),
+				test.post("/user/" + USERNAME + "/sleep", invalidSleepData, 400),
 
-				Arguments.of(put("/user/" + USERNAME + "/sleep" + "/1", sleepData), 200),
-				Arguments.of(put("/user/" + USERNAME + "/sleep" + "/1", invalidSleepData), 400),
+				test.put("/user/" + USERNAME + "/sleep" + "/1", sleepData, 200),
+				test.put("/user/" + USERNAME + "/sleep" + "/1", invalidSleepData, 400),
 
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").params("from", from, "to", to),   200),
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").params("from", "",   "to", ""),   400),
-				Arguments.of(get("/user/" + USERNAME + "/sleep/chart").params("from", to,   "to", from), 400)
+				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to},   200),
+				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", "",   "to", ""},   400),
+				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", to,   "to", from}, 400)
 		);
 	}
 

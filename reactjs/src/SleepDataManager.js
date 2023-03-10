@@ -6,7 +6,11 @@
 
 import copy from "./Copier";
 
-const toIsoString = (date) => {
+
+
+const SleepDataManager = { };
+
+SleepDataManager.toIsoString = (date) => {
 
     const tzo = -date.getTimezoneOffset(),
         dif = tzo >= 0 ? '+' : '-',
@@ -24,10 +28,6 @@ const toIsoString = (date) => {
         ':' + pad(Math.abs(tzo) % 60);
 }
 
-
-
-const SleepDataManager = { };
-
 SleepDataManager.parse = (json) => {
     let parsed = copy(json);
     parsed.startTime = new Date(Date.parse(json.startTime));
@@ -41,8 +41,8 @@ SleepDataManager.format = (sleepData) => {
         notes: sleepData.notes,
         outOfBed: sleepData.outOfBed,
         tags: sleepData.tags,
-        startTime: toIsoString(sleepData.startTime),
-        stopTime: toIsoString(sleepData.stopTime)
+        startTime: SleepDataManager.toIsoString(sleepData.startTime),
+        stopTime: SleepDataManager.toIsoString(sleepData.stopTime)
     }
     return JSON.stringify(formattedSleepData);
 }
