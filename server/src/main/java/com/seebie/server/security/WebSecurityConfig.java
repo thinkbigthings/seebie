@@ -1,12 +1,18 @@
 package com.seebie.server.security;
 
+import com.seebie.server.controller.UserController;
 import com.seebie.server.entity.Role;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -15,11 +21,14 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import java.security.Principal;
 import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfig {
+
+    private static Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     private static class BasicAuthPostProcessor implements ObjectPostProcessor<BasicAuthenticationFilter> {
         @Override
@@ -46,13 +55,9 @@ public class WebSecurityConfig {
             .httpBasic(basic -> basic.withObjectPostProcessor(new BasicAuthPostProcessor()))
             .csrf()
                 .disable()
-//            .exceptionHandling()
-//                .accessDeniedHandler((req, resp, e) -> {
-//                    e.printStackTrace();
-//                    resp.setStatus(403);
-//                })
-//                .and()
             .logout()
+                .addLogoutHandler((HttpServletRequest req, HttpServletResponse resp, Authentication auth) ->
+                    LOG.info("Logged out auth name: " + auth.getName()))
                 .invalidateHttpSession(true)
                 .clearAuthentication(true);
 
