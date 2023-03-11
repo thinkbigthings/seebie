@@ -124,6 +124,14 @@ public class ActuatorSecurityTest extends IntegrationTest {
         assertEquals(expectedStatus, userClient.trySend(toRequest.apply(testData)).statusCode());
     }
 
+    /**
+     * We don't return unauthenticated sessions.
+     * For one, it's unnecessary. Also:
+     * we don't want people to farm it for statistics on the cryptography of session tokens.
+     *
+     * @throws Exception
+     */
+    // TODO should probably make separate integration test class around session management and do more tests
     @Test
     void testNoSessionForUnauthenticatedCall() throws Exception {
 
