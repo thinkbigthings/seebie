@@ -48,7 +48,7 @@ public class UserController {
     @RequestMapping(value="/login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public User login(Authentication auth) {
 
-        // login and logout logging should use the same object so we can tie them together
+        // login/logout logging should use the same object, so we can link login events with logout events
         LOG.info("Logged in auth: " + auth);
 
         return userService.loginUser(auth.getName());
