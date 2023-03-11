@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -57,7 +58,8 @@ public class WebSecurityConfig {
                 .disable()
             .logout()
                 .addLogoutHandler((HttpServletRequest req, HttpServletResponse resp, Authentication auth) ->
-                    LOG.info("Logged out auth name: " + auth.getName()))
+                        // login and logout logging should use the same object so we can tie them together
+                        LOG.info("Logged out auth: " + auth))
                 .invalidateHttpSession(true)
                 .clearAuthentication(true);
 

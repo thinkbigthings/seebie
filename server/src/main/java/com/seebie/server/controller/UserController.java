@@ -48,7 +48,8 @@ public class UserController {
     @RequestMapping(value="/login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public User login(Authentication auth) {
 
-        LOG.info("Logged in auth name: " + auth.getName());
+        // login and logout logging should use the same object so we can tie them together
+        LOG.info("Logged in auth: " + auth);
 
         return userService.loginUser(auth.getName());
     }
