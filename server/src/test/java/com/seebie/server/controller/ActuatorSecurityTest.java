@@ -9,6 +9,7 @@ import com.seebie.server.test.data.HttpRequestMapper;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -16,11 +17,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
+import java.net.URI;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 /**
@@ -63,7 +70,6 @@ public class ActuatorSecurityTest extends IntegrationTest {
     }
 
     private static List<Arguments> provideUnauthenticatedTestParameters() {
-        String[] args = {", ", ""};
 
         return List.of(
 				test.get("/actuator", 401),
@@ -118,4 +124,23 @@ public class ActuatorSecurityTest extends IntegrationTest {
         assertEquals(expectedStatus, userClient.trySend(toRequest.apply(testData)).statusCode());
     }
 
+    @Test
+    void testNoSessionForUnauthenticatedCall() throws Exception {
+
+        var unAuthLogin = HttpRequest.newBuilder()
+                .GET()
+                .uri(new URI(baseUrl + "/login"))
+                .build();
+
+        var response = unAuthClient.trySend(unAuthLogin);
+
+        boolean hasSession = response.headers().map().entrySet().stream()
+                .filter(entry -> entry.getKey().equalsIgnoreCase("SET-COOKIE"))
+                .map(Map.Entry::getValue)
+                .flatMap(List::stream)
+                .filter(values -> values.contains("SESSION"))
+                .findAny().isPresent();
+
+        assertFalse(hasSession, "Unauthorized calls should not create sessions");
+    }
 }
