@@ -6,12 +6,15 @@ import com.seebie.server.dto.User;
 import com.seebie.server.dto.UserSummary;
 import com.seebie.server.service.UserService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +23,8 @@ import java.security.Principal;
 
 @RestController
 public class UserController {
+
+    private static Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
 
@@ -36,12 +41,17 @@ public class UserController {
         userService.saveNewUser(newUser);
     }
 
-    // The url /logout is automatically configured by spring security, so it's not mapped in this controller
+    // This url doesn't actually do anything special,
+    // it just provides a convenient endpoint which can be used to go through the authentication process
+    // The url "/logout" is configured by spring security, so it's not mapped in this controller
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value="/login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public User login(Principal principal) {
+    public User login(Authentication auth) {
 
-        return userService.loginUser(principal.getName());
+        // login/logout logging should use the same object, so we can link login events with logout events
+        LOG.info("Logged in auth: " + auth);
+
+        return userService.loginUser(auth.getName());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
