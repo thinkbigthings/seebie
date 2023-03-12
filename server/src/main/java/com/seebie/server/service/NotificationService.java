@@ -1,6 +1,5 @@
 package com.seebie.server.service;
 
-import com.seebie.server.controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -13,9 +12,9 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class NotificationService {
 
-    private static Logger LOG = LoggerFactory.getLogger(NotificationService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NotificationService.class);
 
-    private UserService userService;
+    private final UserService userService;
 
     public NotificationService(UserService userService) {
         this.userService = userService;
