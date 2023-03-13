@@ -14,9 +14,13 @@ import java.util.Set;
 public class Notification implements Serializable {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, insertable = false, nullable = false)
+    @Column(name="user_id")
     private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Basic
     @NotNull
