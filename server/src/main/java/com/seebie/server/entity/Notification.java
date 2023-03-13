@@ -27,8 +27,13 @@ public class Notification implements Serializable {
     private Instant lastSent;
 
 
-    public Notification() {
+    protected Notification() {
 
+    }
+
+    public Notification(User user) {
+        this.user = user;
+        lastSent = Instant.now();
     }
 
     public Instant getLastSent() {
