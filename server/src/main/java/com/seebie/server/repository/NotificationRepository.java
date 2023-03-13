@@ -1,7 +1,6 @@
 package com.seebie.server.repository;
 
 import com.seebie.server.entity.Notification;
-import com.seebie.server.entity.SleepSession;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -12,6 +11,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     @Query("SELECT n FROM Notification n " +
             "WHERE n.user.username=:username ")
-    Optional<SleepSession> findBy(String username);
+    Optional<Notification> findBy(String username);
 
 }
