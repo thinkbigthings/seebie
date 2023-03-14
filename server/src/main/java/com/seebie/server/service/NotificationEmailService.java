@@ -20,12 +20,12 @@ public class NotificationEmailService {
     private final JavaMailSender emailSender;
 
     private final SimpleMailMessage emailTemplate = new SimpleMailMessage();
-    private final NotificationRetrievalService notificationRetrievalServicep;
+    private final NotificationRetrievalService notificationRetrievalService;
     record SendNotification(String email, String username) {  }
 
     public NotificationEmailService(NotificationRetrievalService notificationRetrievalService, JavaMailSender emailSender) {
 
-        this.notificationRetrievalServicep = notificationRetrievalService;
+        this.notificationRetrievalService = notificationRetrievalService;
         this.emailSender = emailSender;
 
         // TODO email message should setFrom() using known spring properties
@@ -38,9 +38,15 @@ public class NotificationEmailService {
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.SECONDS)
     public void scanForNotifications() {
 
-        var listToSend = notificationRetrievalServicep.getUsersToNotify();
+        LOG.info("Email notifications starting...");
+
+        var listToSend = notificationRetrievalService.getUsersToNotify();
+
+        LOG.info("Email notifications found " + listToSend.size() + " users to notify");
 
         listToSend.forEach(this::sendEmail);
+
+        LOG.info("Email notifications complete.");
 
     }
 
