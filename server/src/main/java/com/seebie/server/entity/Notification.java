@@ -2,12 +2,9 @@ package com.seebie.server.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "notification")
@@ -41,19 +38,8 @@ public class Notification implements Serializable {
         return this;
     }
 
-    public Instant getLastSent() {
-        return lastSent;
-    }
-
-    public void setLastSent(Instant lastSent) {
-        this.lastSent = lastSent;
-    }
-
     public User getUser() {
         return user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
 }
