@@ -38,6 +38,10 @@ public class Notification implements Serializable {
         return this;
     }
 
+    public Instant getLastSent() {
+        return lastSent;
+    }
+
     public User getUser() {
         return user;
     }
