@@ -42,16 +42,13 @@ public class NotificationRetrievalService {
         // To run from the webserver in a multi-node system, get an exclusive read-write lock on the notification record
         // Test with multiple servers running locally
 
-        // If last notification was >= 24 hours ago AND the most recent session occurred >= 30 hours ago:
-        // send a notification and update latest time, user gets an email once per day until logging something.
 
         // TODO capture exceptions from inside a stream and continue the stream - could happen trying to obtain a lock
 
-        return new ArrayList<>();
-//        return notificationRepo.findNotificationsBy(ifNotNotifiedSince, ifNotLoggedSince).stream()
-//                .map(notification -> notification.withLastSent(now))
-//                .map(Notification::getUser)
-//                .map(user -> new NotificationEmailService.SendNotification(user.getEmail(), user.getUsername()))
-//                .toList();
+        return notificationRepo.findNotificationsBy(ifNotNotifiedSince, ifNotLoggedSince).stream()
+                .map(notification -> notification.withLastSent(now))
+                .map(Notification::getUser)
+                .map(user -> new NotificationEmailService.SendNotification(user.getEmail(), user.getUsername()))
+                .toList();
     }
 }

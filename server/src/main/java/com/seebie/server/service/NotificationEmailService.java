@@ -48,6 +48,9 @@ public class NotificationEmailService {
         var ifNotNotifiedSince = now.minus(Duration.of(24, ChronoUnit.SECONDS));
         var ifNotLoggedSince = now.minus(Duration.of(30, ChronoUnit.SECONDS));
 
+        // If last notification was >= 24 hours ago AND the most recent session occurred >= 30 hours ago:
+        // send a notification and update latest time, user gets an email once per day until logging something.
+
         var listToSend = notificationRetrievalService.getUsersToNotify(ifNotNotifiedSince, ifNotLoggedSince);
 
         LOG.info("Email notifications found " + listToSend.size() + " users to notify");
