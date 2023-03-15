@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,7 +62,7 @@ public class NotificationIntegrationTest extends IntegrationTest {
         // to the point where what's in the database is older than the threshold for each trigger,
         // in which case notification records should be retrieved
         var notificationTrigger = lastNotification.plusSeconds(60);
-        var sleepTrigger = lastSleepLog.plusSeconds(60);
+        var sleepTrigger = lastSleepLog.plusSeconds(60).toInstant();
 
         var foundNotifications = notificationRepository.findNotificationsBy(notificationTrigger, sleepTrigger);
 
