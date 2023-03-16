@@ -64,8 +64,6 @@ public class SleepService {
         sleepRepository.delete(entity);
     }
 
-    // TODO integration test all the Service methods
-
     @Transactional
     public void update(String username, Long sleepId, SleepData dto) {
 

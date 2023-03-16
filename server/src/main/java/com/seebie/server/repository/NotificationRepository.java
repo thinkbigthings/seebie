@@ -18,9 +18,12 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     Optional<Notification> findBy(String username);
 
     /**
+     * This is a native query because the JPA types were different but the native database types were the same.
+     * Note that the lock needs to be native too ("FOR NO KEY UPDATE")
+     *
      * @param lastNotificationSentBefore If a notification hasn't been sent since this time, then one should be sent.
      * @param lastSleepLoggedBefore If sleep has not been logged since this time, then notification should be sent
-     * @return
+     * @return Notification records that have expired and need to be sent.
      */
 //    @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value = "3000")})
 //    @Lock(LockModeType.PESSIMISTIC_WRITE)

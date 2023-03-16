@@ -9,6 +9,7 @@ import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -54,12 +55,7 @@ public class NotificationIntegrationTest extends IntegrationTest {
         String username = testUserRegistration.username();
 
 
-        // TODO test for no sleep ever logged
-
-        // make this all in the future so the test is not affected by other users and their sleep and notifications
-        // once we have a flag to determine if a user's notifications can be set, then that won't matter
-        // TODO use regular sleep data once we have a flag
-
+        // test with triggers all in the future so the test is not affected by other users
         // keep the sleep data the same, just change the offsets we'll use to detect if it's past due
         // For example: Imagine we've moved forward in time,
         // to the point where what's in the database is older than the threshold for both triggers,
@@ -91,5 +87,35 @@ public class NotificationIntegrationTest extends IntegrationTest {
 
     }
 
+    /**
+     * If you've never logged any sleep ever, there will be no notifications.
+     */
+    @Test
+    public void testNotificationsForNoSleepLogged() {
+
+        RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();
+        userService.saveNewUser(testUserRegistration);
+        String username = testUserRegistration.username();
+
+        var notify = notificationRepository.findBy(username).get();
+
+        var lastNotification = notify.getLastSent();
+        var lastSleepLog = lastNotification;
+
+        var notificationTrigger = lastNotification.plusSeconds(60);
+        var sleepTrigger = lastSleepLog.plusSeconds(60);
+
+        var foundNotifications = notificationRepository.findNotificationsBy(notificationTrigger, sleepTrigger);
+
+        // test for user in results, so test is scoped and can be run in parallel
+        // even though the query is designed to operate across all data in the database
+
+        boolean userHasNotification = foundNotifications.stream()
+                .map(Notification::getUser)
+                .map(User::getUsername)
+                .anyMatch(name -> name.equals(username));
+
+        assertEquals(false, userHasNotification);
+    }
 
 }
