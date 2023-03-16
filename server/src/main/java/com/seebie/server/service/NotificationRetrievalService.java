@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,15 +31,18 @@ public class NotificationRetrievalService {
      * @return
      */
     @Transactional
-    public List<NotificationEmailService.SendNotification> getUsersToNotify(Instant ifNotNotifiedSince, Instant ifNotLoggedSince) {
+    public List<NotificationRequired> getUsersToNotify(Instant ifNotNotifiedSince, Instant ifNotLoggedSince) {
 
         LOG.info("Retrieving Notifications for emails");
 
         var now = Instant.now();
 
+        // TODO notification detection is complicated enough that it should be fully documented in the javadocs
+        // gather together the comments from across the relevant classes
+
         // Don't set up separate nodes just for running scheduled tasks.
         // To run from the webserver in a multi-node system, get an exclusive read-write lock on the notification record
-        // Test with multiple servers running locally
+        // Can test with multiple servers running locally
 
 
         // TODO capture exceptions from inside a stream and continue the stream - could happen trying to obtain a lock
@@ -48,7 +50,7 @@ public class NotificationRetrievalService {
         return notificationRepo.findNotificationsBy(ifNotNotifiedSince, ifNotLoggedSince).stream()
                 .map(notification -> notification.withLastSent(now))
                 .map(Notification::getUser)
-                .map(user -> new NotificationEmailService.SendNotification(user.getEmail(), user.getUsername()))
+                .map(user -> new NotificationRequired(user.getEmail(), user.getUsername()))
                 .toList();
     }
 }

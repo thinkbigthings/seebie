@@ -9,18 +9,16 @@ import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class NotificationIntegrationTest extends IntegrationTest {
@@ -56,14 +54,15 @@ public class NotificationIntegrationTest extends IntegrationTest {
         String username = testUserRegistration.username();
 
 
+        // TODO test for no sleep ever logged
+
         // make this all in the future so the test is not affected by other users and their sleep and notifications
         // once we have a flag to determine if a user's notifications can be set, then that won't matter
         // TODO use regular sleep data once we have a flag
 
         // keep the sleep data the same, just change the offsets we'll use to detect if it's past due
-        // For the notification case:
-        // Imagine we've moved forward in time
-        // to the point where what's in the database is older than the threshold for each trigger,
+        // For example: Imagine we've moved forward in time,
+        // to the point where what's in the database is older than the threshold for both triggers,
         // in which case notification records should be retrieved
 
         SleepData lastSleep = new SleepData(ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2));
@@ -89,11 +88,6 @@ public class NotificationIntegrationTest extends IntegrationTest {
                 .anyMatch(name -> name.equals(username));
 
         assertEquals(expectNotification, userHasNotification);
-
-
-        // TODO refactor SendNotification record
-
-        // TODO test for no sleep ever logged
 
     }
 

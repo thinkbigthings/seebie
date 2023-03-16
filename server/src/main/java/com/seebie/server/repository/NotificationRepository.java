@@ -22,6 +22,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
      * @param lastSleepLoggedBefore If sleep has not been logged since this time, then notification should be sent
      * @return
      */
+    // TODO see if we should use query hints
 //    @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value = "3000")})
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT n FROM Notification n, SleepSession s " +

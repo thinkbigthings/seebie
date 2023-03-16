@@ -15,7 +15,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
-@EnableScheduling
+//@EnableScheduling
 @Service
 public class NotificationEmailService {
 
@@ -26,8 +26,6 @@ public class NotificationEmailService {
 
     private final SimpleMailMessage emailTemplate = new SimpleMailMessage();
 
-    record SendNotification(String email, String username) {  }
-
     public NotificationEmailService(NotificationRetrievalService notificationRetrievalService, JavaMailSender emailSender, Environment env) {
 
         this.notificationRetrievalService = notificationRetrievalService;
@@ -35,7 +33,7 @@ public class NotificationEmailService {
 
         emailTemplate.setFrom(env.getProperty("spring.mail.username"));
         emailTemplate.setSubject("Missing Sleep Log");
-        emailTemplate.setText("You missed recording your last sleep session...");
+        emailTemplate.setText("Hi %s you missed recording your last sleep session...");
     }
 
     // TODO does this schedule run on period or after completion of last run? What if it runs on period and there's overlap?
@@ -60,7 +58,7 @@ public class NotificationEmailService {
         LOG.info("Email notifications complete.");
     }
 
-    private void sendEmail(SendNotification send) {
+    private void sendEmail(NotificationRequired send) {
 
         try {
 
@@ -76,13 +74,12 @@ public class NotificationEmailService {
 
     }
 
-    public SimpleMailMessage createMessage(SendNotification send) {
+    public SimpleMailMessage createMessage(NotificationRequired send) {
 
         var message = new SimpleMailMessage(emailTemplate);
 
-        // TODO apply text with string template, try String.format(template.getText(), templateArgs);
-        // text should include a link to the app
-        // mention how to turn notifications off and include a link to user settings.
+        message.setTo(send.email());
+        message.setText(String.format(emailTemplate.getText(), send.username()));
 
         return message;
     }
