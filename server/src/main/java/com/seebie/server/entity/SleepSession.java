@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,12 +43,6 @@ public class SleepSession implements Serializable {
     @NotNull
     @Column(name="stop_time")
     private ZonedDateTime stopTime = ZonedDateTime.now();
-
-    // this is really just here for the notifications query
-    @Basic
-    @NotNull
-    @Column(name="stop_time", insertable = false, updatable = false)
-    private Instant stopTimeInstant = stopTime.toInstant();
 
     // this is computed inside the database, so is readable but not writable
     @Column(insertable = false, updatable = false)

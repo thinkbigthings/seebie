@@ -22,13 +22,19 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
      * @param lastSleepLoggedBefore If sleep has not been logged since this time, then notification should be sent
      * @return
      */
-    // TODO see if we should use query hints
 //    @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value = "3000")})
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT n FROM Notification n, SleepSession s " +
-            "WHERE n.lastSent < :lastNotificationSentBefore " +
+//    @Lock(LockModeType.PESSIMISTIC_WRITE)
+//    @Query("SELECT n FROM Notification n, SleepSession s " +
+//            "WHERE n.lastSent < :lastNotificationSentBefore " +
+//            "AND EXISTS " +
+//                "(SELECT s FROM SleepSession s WHERE s.user = n.user AND s.stopTimeInstant < :lastSleepLoggedBefore)")
+    @Query(nativeQuery = true, value =
+            "SELECT n.user_id, n.last_sent FROM notification n WHERE n.last_sent < ?1 " +
             "AND EXISTS " +
-                "(SELECT s FROM SleepSession s WHERE s.user = n.user AND s.stopTimeInstant < :lastSleepLoggedBefore)")
+            "(SELECT s.id " +
+                    "FROM sleep_session s, app_user u " +
+                    "WHERE s.user_id = u.id AND s.stop_time < ?2 AND u.id = n.user_id) " +
+            "FOR NO KEY UPDATE" )
     List<Notification> findNotificationsBy(Instant lastNotificationSentBefore, Instant lastSleepLoggedBefore);
 
 }
