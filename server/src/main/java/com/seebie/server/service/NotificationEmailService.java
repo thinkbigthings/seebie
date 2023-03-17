@@ -36,8 +36,6 @@ public class NotificationEmailService {
         emailTemplate.setText("Hi %s you missed recording your last sleep session...");
     }
 
-    // TODO does this schedule run on period or after completion of last run? What if it runs on period and there's overlap?
-
 
     /**
      * As opposed to setting up a separate node just for running scheduled tasks,
@@ -48,8 +46,12 @@ public class NotificationEmailService {
      * For example:
      * If last notification was >= 24 hours ago AND the last sleep logged was >= 30 hours ago:
      * send a notification and update the latest time, user gets an email once per day until logging something.
+     *
+     * Use fixedDelay so that we execute the annotated method with a fixed period
+     * between the end of the last invocation and the start of the next.
+     * That way we avoid overlapping executions.
      */
-    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
     public void scanForNotifications() {
 
         LOG.info("Email notifications starting...");
@@ -71,15 +73,13 @@ public class NotificationEmailService {
 
         try {
 
-            LOG.info("Email going out to " + send.email());
+            LOG.info("Email notification going out to " + send.email());
 
-            // TODO sending email is a blocking operation, could be spun out into own virtual threads
-            // Java 19 has StructuredConcurrency
             // emailSender.send(createMessage(send));
         }
         catch(MailException me) {
 
-            LOG.info("Email failed to send for " + send.email());
+            LOG.info("Email notification failed to send for " + send.email());
 
             me.printStackTrace();
         }
