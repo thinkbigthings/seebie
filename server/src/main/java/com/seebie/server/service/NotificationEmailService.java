@@ -15,7 +15,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
-//@EnableScheduling
+@EnableScheduling
 @Service
 public class NotificationEmailService {
 
@@ -37,7 +37,19 @@ public class NotificationEmailService {
     }
 
     // TODO does this schedule run on period or after completion of last run? What if it runs on period and there's overlap?
-    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.SECONDS)
+
+
+    /**
+     * As opposed to setting up a separate node just for running scheduled tasks,
+     * We can safely run from the webserver in a multi-node system
+     * by obtaining an exclusive read-write lock on the notification records.
+     * See the other Notification related classes for more technical details.
+     *
+     * For example:
+     * If last notification was >= 24 hours ago AND the last sleep logged was >= 30 hours ago:
+     * send a notification and update the latest time, user gets an email once per day until logging something.
+     */
+    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.SECONDS)
     public void scanForNotifications() {
 
         LOG.info("Email notifications starting...");
@@ -46,10 +58,7 @@ public class NotificationEmailService {
         var ifNotNotifiedSince = now.minus(Duration.of(24, ChronoUnit.SECONDS));
         var ifNotLoggedSince = now.minus(Duration.of(30, ChronoUnit.SECONDS));
 
-        // If last notification was >= 24 hours ago AND the most recent session occurred >= 30 hours ago:
-        // send a notification and update latest time, user gets an email once per day until logging something.
-
-        var listToSend = notificationRetrievalService.getUsersToNotify(ifNotNotifiedSince, ifNotLoggedSince);
+        var listToSend = notificationRetrievalService.getUsersToNotify(ifNotNotifiedSince, ifNotLoggedSince, now);
 
         LOG.info("Email notifications found " + listToSend.size() + " users to notify");
 
@@ -69,6 +78,9 @@ public class NotificationEmailService {
             // emailSender.send(createMessage(send));
         }
         catch(MailException me) {
+
+            LOG.info("Email failed to send for " + send.email());
+
             me.printStackTrace();
         }
 

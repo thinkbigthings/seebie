@@ -31,24 +31,12 @@ public class NotificationRetrievalService {
      * @return
      */
     @Transactional
-    public List<NotificationRequired> getUsersToNotify(Instant ifNotNotifiedSince, Instant ifNotLoggedSince) {
+    public List<NotificationRequired> getUsersToNotify(Instant ifNotNotifiedSince, Instant ifNotLoggedSince, Instant newLastScan) {
 
         LOG.info("Retrieving Notifications for emails");
 
-        var now = Instant.now();
-
-        // TODO notification detection is complicated enough that it should be fully documented in the javadocs
-        // gather together the comments from across the relevant classes
-
-        // Don't set up separate nodes just for running scheduled tasks.
-        // To run from the webserver in a multi-node system, get an exclusive read-write lock on the notification record
-        // Can test with multiple servers running locally
-
-
-        // TODO capture exceptions from inside a stream and continue the stream - could happen trying to obtain a lock
-
         return notificationRepo.findNotificationsBy(ifNotNotifiedSince, ifNotLoggedSince).stream()
-                .map(notification -> notification.withLastSent(now))
+                .map(notification -> notification.withLastSent(newLastScan))
                 .map(Notification::getUser)
                 .map(user -> new NotificationRequired(user.getEmail(), user.getUsername()))
                 .toList();
