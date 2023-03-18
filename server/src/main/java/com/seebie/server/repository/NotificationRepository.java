@@ -32,7 +32,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
      * COMMIT;
      *
      * This default behavior is fine: a second query will just find nothing after the last_sent time is updated.
-     * If we WANT another transactional attempt to cause an error,     *
+     * If we WANT another transactional attempt to cause an error,
      * An error can be triggered if a lock timeout is set:
      * SET lock_timeout TO '2s';
      *

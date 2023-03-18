@@ -22,8 +22,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
         "logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE",
         "spring.main.lazy-initialization=true",
         "spring.flyway.enabled=true",
-        "app.notification.scan.enabled=false",
-        "app.notification.output=LOG"
+        "app.notification.scan.enabled=false"
         })
 public class IntegrationTest {
 
