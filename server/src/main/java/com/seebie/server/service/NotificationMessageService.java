@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 @EnableScheduling
@@ -25,6 +24,8 @@ public class NotificationMessageService {
     private final NotificationRetrievalService notificationRetrievalService;
     private boolean scanEnabled;
     private NotificationOutput notificationOutput;
+    private Duration triggerAfterSleepLog;
+    private Duration triggerAfterLastNotified;
 
     private final SimpleMailMessage emailTemplate = new SimpleMailMessage();
 
@@ -35,6 +36,9 @@ public class NotificationMessageService {
 
         scanEnabled = env.getRequiredProperty("app.notification.scan.enabled", Boolean.class);
         notificationOutput = env.getRequiredProperty("app.notification.output", NotificationOutput.class);
+
+        triggerAfterSleepLog = env.getRequiredProperty("app.notification.triggerAfter.sleepLog", Duration.class);
+        triggerAfterLastNotified = env.getRequiredProperty("app.notification.triggerAfter.lastNotified", Duration.class);
 
         emailTemplate.setFrom(env.getProperty("spring.mail.username"));
         emailTemplate.setSubject("Missing Sleep Log");
@@ -72,8 +76,8 @@ public class NotificationMessageService {
         LOG.info("Email notifications starting...");
 
         var now = Instant.now();
-        var ifNotNotifiedSince = now.minus(Duration.of(24, ChronoUnit.SECONDS));
-        var ifNotLoggedSince = now.minus(Duration.of(30, ChronoUnit.SECONDS));
+        var ifNotNotifiedSince = now.minus(triggerAfterLastNotified);
+        var ifNotLoggedSince = now.minus(triggerAfterSleepLog);
 
         var listToSend = notificationRetrievalService.getUsersToNotify(ifNotNotifiedSince, ifNotLoggedSince, now);
 
