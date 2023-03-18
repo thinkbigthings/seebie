@@ -1,7 +1,7 @@
 package com.seebie.server;
 
 import com.seebie.server.dto.RegistrationRequest;
-import com.seebie.server.service.NotificationEmailService;
+import com.seebie.server.service.NotificationMessageService;
 import com.seebie.server.service.NotificationRequired;
 import com.seebie.server.service.NotificationRetrievalService;
 import com.seebie.server.test.data.TestData;
@@ -26,7 +26,7 @@ public class NotificationEmailServiceTest {
 
     private final String sender = "user@email.com";
 
-    private NotificationEmailService service;
+    private NotificationMessageService service;
 
     @BeforeEach
     public void setup() {
@@ -34,7 +34,7 @@ public class NotificationEmailServiceTest {
         when(env.getProperty(eq("spring.mail.username"))).thenReturn(sender);
         when(env.getRequiredProperty(eq("app.notification.scan.enabled"), eq(Boolean.class))).thenReturn(false);
 
-        service = new NotificationEmailService(retrievalService, mailSender, env);
+        service = new NotificationMessageService(retrievalService, mailSender, env);
     }
 
     @Test

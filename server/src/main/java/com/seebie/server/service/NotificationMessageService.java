@@ -17,29 +17,32 @@ import java.util.concurrent.TimeUnit;
 
 @EnableScheduling
 @Service
-public class NotificationEmailService {
+public class NotificationMessageService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NotificationEmailService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NotificationMessageService.class);
 
     private final JavaMailSender emailSender;
     private final NotificationRetrievalService notificationRetrievalService;
     private boolean scanEnabled;
+    private NotificationOutput notificationOutput;
 
     private final SimpleMailMessage emailTemplate = new SimpleMailMessage();
 
-    public NotificationEmailService(NotificationRetrievalService notificationRetrievalService, JavaMailSender emailSender, Environment env) {
+    public NotificationMessageService(NotificationRetrievalService notificationRetrievalService, JavaMailSender emailSender, Environment env) {
 
         this.notificationRetrievalService = notificationRetrievalService;
         this.emailSender = emailSender;
 
         scanEnabled = env.getRequiredProperty("app.notification.scan.enabled", Boolean.class);
+        notificationOutput = env.getRequiredProperty("app.notification.output", NotificationOutput.class);
 
         emailTemplate.setFrom(env.getProperty("spring.mail.username"));
         emailTemplate.setSubject("Missing Sleep Log");
         emailTemplate.setText("Hi %s you missed recording your last sleep session...");
 
-        LOG.info("Instantiated Email Service.");
+        LOG.info("Instantiated Notification Service.");
         LOG.info("Scan schedule enabled is " + scanEnabled);
+        LOG.info("Notification message target is " + notificationOutput);
     }
 
 
@@ -87,8 +90,14 @@ public class NotificationEmailService {
 
             LOG.info("Email notification going out to " + send.email());
 
-            // emailSender.send(createMessage(send));
+            var message = createMessage(send);
+
+            switch(notificationOutput) {
+               case EMAIL -> emailSender.send(message);
+               case LOG -> LOG.info(message.toString());
+            }
         }
+
         catch(MailException me) {
 
             LOG.info("Email notification failed to send for " + send.email());
