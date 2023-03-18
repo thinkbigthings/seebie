@@ -116,6 +116,7 @@ See https://docs.github.com/en/actions/security-guides/encrypted-secrets
 
 If using a Gmail account with 2FA, we can't just set the username/password in the mail properties.
 An `App Password` needs to be generated. See https://support.google.com/accounts/answer/185833
+(Note those directions apply to accounts with 2FA enabled, you should enable 2FA first if it isn't already)
 Once generated, the user can be used with the app password and that should work without triggering the 2FA.
 
 These credentials are sensitive information, so they should NOT be checked in to source control.
