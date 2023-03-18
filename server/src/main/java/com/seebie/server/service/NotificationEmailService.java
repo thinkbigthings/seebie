@@ -23,6 +23,7 @@ public class NotificationEmailService {
 
     private final JavaMailSender emailSender;
     private final NotificationRetrievalService notificationRetrievalService;
+    private boolean scanEnabled;
 
     private final SimpleMailMessage emailTemplate = new SimpleMailMessage();
 
@@ -31,9 +32,14 @@ public class NotificationEmailService {
         this.notificationRetrievalService = notificationRetrievalService;
         this.emailSender = emailSender;
 
+        scanEnabled = env.getRequiredProperty("app.notification.scan.enabled", Boolean.class);
+
         emailTemplate.setFrom(env.getProperty("spring.mail.username"));
         emailTemplate.setSubject("Missing Sleep Log");
         emailTemplate.setText("Hi %s you missed recording your last sleep session...");
+
+        LOG.info("Instantiated Email Service.");
+        LOG.info("Scan schedule enabled is " + scanEnabled);
     }
 
 
@@ -50,9 +56,15 @@ public class NotificationEmailService {
      * Use fixedDelay so that we execute the annotated method with a fixed period
      * between the end of the last invocation and the start of the next.
      * That way we avoid overlapping executions.
+     *
+     * Keep the scan turned off for integration tests, so it doesn't interfere with the notification integration tests.
      */
-    @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedDelayString="${app.notification.scan.schedule.fixedDelay}", timeUnit = TimeUnit.MINUTES)
     public void scanForNotifications() {
+
+        if( !scanEnabled) {
+            return;
+        }
 
         LOG.info("Email notifications starting...");
 

@@ -7,7 +7,6 @@ import com.seebie.server.service.NotificationRetrievalService;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,6 +15,7 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public class NotificationEmailServiceTest {
@@ -31,7 +31,8 @@ public class NotificationEmailServiceTest {
     @BeforeEach
     public void setup() {
 
-        when(env.getProperty(ArgumentMatchers.eq("spring.mail.username"))).thenReturn(sender);
+        when(env.getProperty(eq("spring.mail.username"))).thenReturn(sender);
+        when(env.getRequiredProperty(eq("app.notification.scan.enabled"), eq(Boolean.class))).thenReturn(false);
 
         service = new NotificationEmailService(retrievalService, mailSender, env);
     }
