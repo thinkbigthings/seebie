@@ -9,7 +9,6 @@ import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -18,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -33,14 +33,19 @@ public class NotificationIntegrationTest extends IntegrationTest {
     @Autowired
     private NotificationRepository notificationRepository;
 
+    private static final ZonedDateTime today = ZonedDateTime.now();
+    private static final ZonedDateTime tomorrow = ZonedDateTime.now().plusDays(1);
+    private static final SleepData lastSleep = new SleepData(today, tomorrow);
+
     private static List<Arguments> provideThresholdOffsets() {
 
         return List.of(
 
-                Arguments.of(-60,  60, false), //     notified recent, not logged recent: not notified
-                Arguments.of(-60, -60, false), //     notified recent,     logged recent: not notified
-                Arguments.of( 60,  60, true ), // not notified recent, not logged recent:     notified
-                Arguments.of( 60, -60, false)  // not notified recent, not logged recent: not notified
+                Arguments.of(-60,  60, false, lastSleep),  //     notified recent, not logged recent: not notified
+                Arguments.of(-60, -60, false, lastSleep),  //     notified recent,     logged recent: not notified
+                Arguments.of( 60,  60, true, lastSleep),   // not notified recent, not logged recent:     notified
+                Arguments.of( 60, -60, false, lastSleep),  // not notified recent, not logged recent: not notified
+                Arguments.of( 60,  60, false, null)        //     notified recent,     logged recent: not notified (no sleep ever logged)
         );
     }
 
@@ -48,7 +53,7 @@ public class NotificationIntegrationTest extends IntegrationTest {
     @MethodSource("provideThresholdOffsets")
     @DisplayName("Retrieve notification for missed sleep")
     @Transactional
-    public void testHasNotification(int notificationOffset, int sleepLogOffset, boolean expectNotification) {
+    public void testHasNotification(int notificationOffset, int sleepLogOffset, boolean expectNotification, SleepData lastSleep) {
 
         RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(testUserRegistration);
@@ -61,61 +66,26 @@ public class NotificationIntegrationTest extends IntegrationTest {
         // to the point where what's in the database is older than the threshold for both triggers,
         // in which case notification records should be retrieved
 
-        SleepData lastSleep = new SleepData(ZonedDateTime.now().plusDays(1), ZonedDateTime.now().plusDays(2));
 
-        sleepService.saveNew(username, lastSleep);
+        Optional.ofNullable(lastSleep).ifPresent(s -> sleepService.saveNew(username, s));
 
         var notify = notificationRepository.findBy(username).get();
 
         var lastNotification = notify.getLastSent();
-        var lastSleepLog = lastSleep.stopTime();
+        var lastSleepLog = tomorrow;
 
         var notificationTrigger = lastNotification.plusSeconds(notificationOffset);
         var sleepTrigger = lastSleepLog.plusSeconds(sleepLogOffset).toInstant();
 
-        var foundNotifications = notificationRepository.findNotificationsBy(notificationTrigger, sleepTrigger);
-
         // test for user in results, so test is scoped and can be run in parallel
         // even though the query is designed to operate across all data in the database
 
-        boolean userHasNotification = foundNotifications.stream()
+        boolean userHasNotification = notificationRepository.findNotificationsBy(notificationTrigger, sleepTrigger).stream()
                 .map(Notification::getUser)
                 .map(User::getUsername)
                 .anyMatch(name -> name.equals(username));
 
         assertEquals(expectNotification, userHasNotification);
-
-    }
-
-    /**
-     * If you've never logged any sleep ever, there will be no notifications.
-     */
-    @Test
-    public void testNotificationsForNoSleepLogged() {
-
-        RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();
-        userService.saveNewUser(testUserRegistration);
-        String username = testUserRegistration.username();
-
-        var notify = notificationRepository.findBy(username).get();
-
-        var lastNotification = notify.getLastSent();
-        var lastSleepLog = lastNotification;
-
-        var notificationTrigger = lastNotification.plusSeconds(60);
-        var sleepTrigger = lastSleepLog.plusSeconds(60);
-
-        var foundNotifications = notificationRepository.findNotificationsBy(notificationTrigger, sleepTrigger);
-
-        // test for user in results, so test is scoped and can be run in parallel
-        // even though the query is designed to operate across all data in the database
-
-        boolean userHasNotification = foundNotifications.stream()
-                .map(Notification::getUser)
-                .map(User::getUsername)
-                .anyMatch(name -> name.equals(username));
-
-        assertEquals(false, userHasNotification);
     }
 
 }
