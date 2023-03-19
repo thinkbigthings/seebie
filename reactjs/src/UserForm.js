@@ -84,11 +84,11 @@ function UserForm(props) {
                 </Container>
 
                 <Container className="ps-0 mb-3">
-                    <label htmlFor="notificationsEnabled" className="form-label">Email address</label>
-                    <input type="checkbox" className="form-control" id="notificationsEnabled"
+                    <label htmlFor="notificationsEnabled" className="form-label">Enabled Reminder Emails</label>
+                    <input className="form-check-input mx-3 p-2" type="checkbox" id="notificationsEnabled"
                            placeholder="Enable Reminder Emails"
-                           value={formState.user.personalInfo.notificationsEnabled}
-                           onChange={e => dispatch({type:'UPDATE_USER', payload: {notificationsEnabled: e.target.value }})}/>
+                           checked={formState.user.personalInfo.notificationsEnabled }
+                           onChange={e => dispatch({type:'UPDATE_USER', payload: {notificationsEnabled: e.target.checked }})}/>
                 </Container>
 
                 <div className="d-flex flex-row-reverse">
