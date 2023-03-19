@@ -16,7 +16,7 @@ public class UserMapper implements Function<User, com.seebie.server.dto.User> {
         return new com.seebie.server.dto.User( user.getUsername(),
                 user.getRegistrationTime().toString(),
                 user.getRoles().stream().map(Role::name).collect(toSet()),
-                new PersonalInfo(user.getEmail(), user.getDisplayName()),
+                new PersonalInfo(user.getEmail(), user.getDisplayName(), user.isNotificationsEnabled()),
                 ! user.getSessions().isEmpty());
     }
 

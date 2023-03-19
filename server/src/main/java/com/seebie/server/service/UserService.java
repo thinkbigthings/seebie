@@ -56,6 +56,7 @@ public class UserService {
 
         user.setEmail(userData.email());
         user.setDisplayName(userData.displayName());
+        user.setNotificationsEnabled(userData.notificationsEnabled());
 
         return toUserRecord.apply(user);
     }
