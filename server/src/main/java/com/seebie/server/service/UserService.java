@@ -58,6 +58,9 @@ public class UserService {
         user.setDisplayName(userData.displayName());
         user.setNotificationsEnabled(userData.notificationsEnabled());
 
+        // If user turns it on, set last notification time to current time, so they don't get a barrage of emails
+        notificationRepo.findBy(username).map(n -> n.withLastSent(Instant.now()));
+
         return toUserRecord.apply(user);
     }
 

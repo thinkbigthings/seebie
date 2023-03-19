@@ -9,7 +9,7 @@ public record User(String username,
                    boolean isLoggedIn) {
 
     public User withIsLoggedIn(boolean newValue) {
-        return new User(username(), registrationTime(), roles(), personalInfo(), newValue);
+        return new User(username, registrationTime, roles, personalInfo, newValue);
     }
 }
 

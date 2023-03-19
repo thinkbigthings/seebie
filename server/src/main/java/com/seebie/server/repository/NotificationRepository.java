@@ -46,7 +46,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             AND EXISTS
             (SELECT s.id
                     FROM sleep_session s, app_user u
-                    WHERE s.user_id = u.id AND s.stop_time < ?2 AND u.id = n.user_id)
+                    WHERE s.user_id=u.id AND s.stop_time < ?2 AND u.id=n.user_id AND u.notifications_enabled=TRUE)
             FOR NO KEY UPDATE
     """)
     List<Notification> findNotificationsBy(Instant lastNotificationSentBefore, Instant lastSleepLoggedBefore);

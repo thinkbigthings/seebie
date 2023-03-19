@@ -20,7 +20,8 @@ const blankUser = {
     personalInfo: {
         displayName: '',
         email: ''
-    }
+    },
+    notificationsEnabled: false
 }
 
 function EditUser({history, match}) {

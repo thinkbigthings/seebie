@@ -7,5 +7,9 @@ public record PersonalInfo(@NotBlank String email, @NotBlank String displayName,
     public PersonalInfo(String email, @NotBlank String displayName) {
         this(email, displayName, false);
     }
+
+    public PersonalInfo withNotificationEnabled(boolean newNotificationsEnabled) {
+        return new PersonalInfo(email, displayName, newNotificationsEnabled);
+    }
 }
 

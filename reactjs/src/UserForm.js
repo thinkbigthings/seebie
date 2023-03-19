@@ -74,13 +74,21 @@ function UserForm(props) {
                 </Container>
 
                 <Container className="ps-0 mb-3">
-                    <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
-                    <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                    <label htmlFor="inputEmail" className="form-label">Email address</label>
+                    <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp"
                            placeholder="Enter email"
                            value={formState.user.personalInfo.email}
                            onChange={e => dispatch({type:'UPDATE_USER', payload: {email: e.target.value }})}/>
                     <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone
                         else.</small>
+                </Container>
+
+                <Container className="ps-0 mb-3">
+                    <label htmlFor="notificationsEnabled" className="form-label">Email address</label>
+                    <input type="checkbox" className="form-control" id="notificationsEnabled"
+                           placeholder="Enable Reminder Emails"
+                           value={formState.user.personalInfo.notificationsEnabled}
+                           onChange={e => dispatch({type:'UPDATE_USER', payload: {notificationsEnabled: e.target.value }})}/>
                 </Container>
 
                 <div className="d-flex flex-row-reverse">
