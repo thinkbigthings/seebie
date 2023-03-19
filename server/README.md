@@ -110,10 +110,6 @@ When spring automatically configures and wires the Mail classes, it also sets up
 This will attempt to test the connection during the actuator integration tests, and we do not need to send emails
 at build time, so in general it is disabled as a health endpoint with `management.health.mail.enabled=false`
 
-Since we don't need this at build time, we don't need to set these in Gihub Actions
-although in principle we could set these as secrets assigned to environment variables.
-See https://docs.github.com/en/actions/security-guides/encrypted-secrets
-
 If using a Gmail account with 2FA, we can't just set the username/password in the mail properties.
 An `App Password` needs to be generated. See https://support.google.com/accounts/answer/185833
 (Note those directions apply to accounts with 2FA enabled, you should enable 2FA first if it isn't already)
@@ -133,6 +129,9 @@ Also we can set these locally on the command line:
 
 We will also need to set these as environment variables in the production environment.
 
+Since we don't need to send emails at build time, we don't need to set these in Github Actions
+although in principle we could set these as secrets assigned to environment variables.
+See https://docs.github.com/en/actions/security-guides/encrypted-secrets
 
 
 ## Running
