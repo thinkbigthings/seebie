@@ -52,13 +52,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator:3.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-security:3.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-validation:3.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-mail:3.0.0'
 
     implementation 'org.springframework.session:spring-session-jdbc:3.0.0'
 
     compileOnly 'org.hibernate:hibernate-jpamodelgen:6.1.5.Final'
     annotationProcessor 'org.hibernate:hibernate-jpamodelgen:6.1.5.Final'
-
-    implementation 'org.jsoup:jsoup:1.14.3'
 
     // JAXB was removed in Java 11 so needs to be included here
     implementation 'javax.xml.bind:jaxb-api:2.3.1'

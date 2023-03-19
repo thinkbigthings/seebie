@@ -21,8 +21,9 @@ import org.testcontainers.containers.PostgreSQLContainer;
         "logging.level.org.hibernate.SQL=DEBUG",
         "logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE",
         "spring.main.lazy-initialization=true",
-        "spring.flyway.enabled=true"
-})
+        "spring.flyway.enabled=true",
+        "app.notification.scan.enabled=false"
+        })
 public class IntegrationTest {
 
     private static Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);

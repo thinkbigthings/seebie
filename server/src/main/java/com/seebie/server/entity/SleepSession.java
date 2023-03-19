@@ -41,6 +41,7 @@ public class SleepSession implements Serializable {
 
     @Basic
     @NotNull
+    @Column(name="stop_time")
     private ZonedDateTime stopTime = ZonedDateTime.now();
 
     // this is computed inside the database, so is readable but not writable

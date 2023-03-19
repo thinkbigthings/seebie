@@ -60,6 +60,10 @@ public class User implements Serializable {
         displayName = display;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getUsername() {
         return username;
     }

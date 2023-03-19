@@ -50,7 +50,7 @@ class SleepIntegrationTest extends IntegrationTest {
         String username = registration.username();
         userService.saveNewUser(registration);
 
-        var badData = new SleepData("", 0, new HashSet<>(), ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
+        var badData = new SleepData(ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
 
         assertThrows(DataIntegrityViolationException.class, () -> sleepService.saveNew(username, badData));
     }
@@ -83,7 +83,7 @@ class SleepIntegrationTest extends IntegrationTest {
     public void testListSleep() {
 
         String username = "testListSleep";
-        userService.saveNewUser(new RegistrationRequest(username, "password", "x@y"));
+        userService.saveNewUser(new RegistrationRequest(username, "password", "testListSleep@sleepy.com"));
 
         int listCount = 1000;
         var newData = createSleepData(listCount);

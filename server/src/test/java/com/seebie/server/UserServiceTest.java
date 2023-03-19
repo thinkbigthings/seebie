@@ -1,5 +1,6 @@
 package com.seebie.server;
 
+import com.seebie.server.repository.NotificationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.when;
 public class UserServiceTest {
 
     private UserRepository userRepo = Mockito.mock(UserRepository.class);
+    private NotificationRepository notificationRepo = Mockito.mock(NotificationRepository.class);
     private PasswordEncoder pwEncoder = Mockito.mock(PasswordEncoder.class);
 
     private String savedUsername = "saveduser";
@@ -36,7 +38,7 @@ public class UserServiceTest {
     @BeforeEach
     public void setup() {
 
-        service = new UserService(userRepo, pwEncoder);
+        service = new UserService(userRepo, notificationRepo, pwEncoder);
 
         savedUser.setRegistrationTime(Instant.now());
 
