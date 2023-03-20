@@ -26,6 +26,7 @@ import './App.css';
 import Container from "react-bootstrap/Container";
 import EditSleep from "./EditSleep";
 import SleepData from "./SleepData";
+import Home from "./Home";
 
 function App() {
 
@@ -57,6 +58,7 @@ function UnauthenticatedApp() {
                     </Form>
                 </Container>
             </Navbar>
+            <Route exact path="/" render={() => <Home />}/>
             <Route exact path="/login" component={Login} />
         </HashRouter>
     );
