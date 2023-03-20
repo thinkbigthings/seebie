@@ -84,7 +84,6 @@ function AuthenticatedApp() {
                 <Container>
                     <Navbar.Brand href="/">Seebie<img className="mb-1 px-1" src="favicon.ico" alt="Seebie icon" width="30" height="20"/></Navbar.Brand>
                     <Nav>
-                        <Nav.Link href="/">Sleep</Nav.Link>
                         {usersLink}
                         <Nav.Link href={userUrl}>Profile</Nav.Link>
                         <Nav.Link href="#about">About</Nav.Link>
