@@ -1,4 +1,4 @@
-package com.seebie.server;
+package com.seebie.server.service;
 
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.service.NotificationMessageService;

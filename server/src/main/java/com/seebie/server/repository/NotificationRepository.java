@@ -42,13 +42,19 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
      * @return Notification records that have expired and need to be sent.
      */
     @Query(nativeQuery = true, value = """
-            SELECT n.user_id, n.last_sent FROM notification n WHERE n.last_sent < ?1
-            AND EXISTS
-            (SELECT s.id
-                    FROM sleep_session s, app_user u
-                    WHERE s.user_id=u.id AND s.stop_time < ?2 AND u.id=n.user_id AND u.notifications_enabled=TRUE)
+            SELECT n.user_id, n.last_sent 
+            FROM notification n
+            WHERE n.last_sent < ?1
+            AND EXISTS (
+                SELECT s.id
+                FROM sleep_session s, app_user u
+                WHERE s.user_id=u.id 
+                AND s.stop_time < ?2 
+                AND u.id=n.user_id
+                AND u.notifications_enabled=TRUE
+            )
             FOR NO KEY UPDATE
-    """)
+            """)
     List<Notification> findNotificationsBy(Instant lastNotificationSentBefore, Instant lastSleepLoggedBefore);
 
 }

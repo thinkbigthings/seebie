@@ -1,8 +1,9 @@
-package com.seebie.server;
+package com.seebie.server.repository;
 
 import com.seebie.server.entity.Role;
 import com.seebie.server.entity.User;
 import com.seebie.server.service.UserService;
+import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
@@ -10,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import com.seebie.server.repository.UserRepository;
 
 import java.util.Optional;
 import java.util.Set;

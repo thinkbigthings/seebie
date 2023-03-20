@@ -1,4 +1,4 @@
-package com.seebie.server;
+package com.seebie.server.test;
 
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;

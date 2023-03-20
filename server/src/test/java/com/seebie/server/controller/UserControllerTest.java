@@ -1,4 +1,4 @@
-package com.seebie.server;
+package com.seebie.server.controller;
 
 import com.seebie.server.service.UserService;
 import org.junit.jupiter.api.BeforeEach;

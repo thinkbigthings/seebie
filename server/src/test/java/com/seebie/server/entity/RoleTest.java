@@ -1,4 +1,4 @@
-package com.seebie.server;
+package com.seebie.server.entity;
 
 import org.junit.jupiter.api.Test;
 import com.seebie.server.entity.Role;

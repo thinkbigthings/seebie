@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.User;
+import com.seebie.server.test.IntegrationTest;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,6 @@ import com.seebie.server.test.client.ApiClientStateful;
 import com.seebie.server.test.client.ParsablePage;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import static org.junit.jupiter.api.Assertions.*;
 

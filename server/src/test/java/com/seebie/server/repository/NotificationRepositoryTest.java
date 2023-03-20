@@ -1,10 +1,10 @@
-package com.seebie.server;
+package com.seebie.server.repository;
 
+import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.entity.Notification;
 import com.seebie.server.entity.User;
-import com.seebie.server.repository.NotificationRepository;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.TestData;
@@ -22,7 +22,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class NotificationIntegrationTest extends IntegrationTest {
+public class NotificationRepositoryTest extends IntegrationTest {
 
     @Autowired
     private UserService userService;

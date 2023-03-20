@@ -1,16 +1,11 @@
-package com.seebie.server;
+package com.seebie.server.service;
 
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
-import com.seebie.server.entity.SleepSession;
-import com.seebie.server.repository.SleepRepository;
-import com.seebie.server.service.SleepService;
-import com.seebie.server.service.UserService;
+import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,17 +15,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.time.temporal.TemporalAmount;
-import java.util.*;
 
 import static com.seebie.server.test.data.TestData.createSleepData;
 import static org.junit.jupiter.api.Assertions.*;
 
-class SleepIntegrationTest extends IntegrationTest {
+class SleepServiceIntegrationTest extends IntegrationTest {
 
-    private static Logger LOG = LoggerFactory.getLogger(SleepIntegrationTest.class);
+    private static Logger LOG = LoggerFactory.getLogger(SleepServiceIntegrationTest.class);
 
     @Autowired
     private SleepService sleepService;
@@ -53,6 +45,28 @@ class SleepIntegrationTest extends IntegrationTest {
         var badData = new SleepData(ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
 
         assertThrows(DataIntegrityViolationException.class, () -> sleepService.saveNew(username, badData));
+    }
+
+
+    @Test
+    public void testRetrieveAndUpdate() {
+
+        var registration = TestData.createRandomUserRegistration();
+        String username = registration.username();
+        userService.saveNewUser(registration);
+
+        var originalSleep = new SleepData();
+        var savedSleep = sleepService.saveNew(username, originalSleep);
+
+        // test retrieve
+        SleepData found = sleepService.retrieve(username, savedSleep.id());
+        assertEquals(originalSleep, found);
+
+        // test update
+        var updatedSleep = TestData.randomizeDuration(originalSleep);
+        sleepService.update(username, savedSleep.id(), updatedSleep);
+        found = sleepService.retrieve(username, savedSleep.id());
+        assertEquals(updatedSleep, found);
     }
 
     @Test
@@ -106,7 +120,6 @@ class SleepIntegrationTest extends IntegrationTest {
         var s = mapper.writeValueAsString(point);
 
         assertNotNull(s);
-
     }
 
 

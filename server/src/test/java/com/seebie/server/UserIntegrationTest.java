@@ -1,6 +1,7 @@
 package com.seebie.server;
 
 import com.seebie.server.service.UserService;
+import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.client.ApiClientStateful;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.*;

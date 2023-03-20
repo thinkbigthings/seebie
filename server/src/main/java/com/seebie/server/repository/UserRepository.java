@@ -18,10 +18,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE u.username=?1")
     Optional<User> loadUserWithRoles(String name);
 
-    @Query("SELECT new com.seebie.server.dto.UserSummary" +
-            "(u.username, u.displayName) " +
-            "FROM User u " +
-            "ORDER BY u.username ASC ")
+    @Query("""
+            SELECT new com.seebie.server.dto.UserSummary(u.username, u.displayName)
+            FROM User u
+            ORDER BY u.username ASC 
+            """)
     Page<UserSummary> loadSummaries(Pageable page);
 
     Optional<User> findByUsername(String name);

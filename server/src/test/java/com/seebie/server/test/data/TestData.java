@@ -51,13 +51,13 @@ public class TestData {
         return newData;
     }
 
-    private static SleepData decrementDays(SleepData data, long days) {
+    public static SleepData decrementDays(SleepData data, long days) {
         return new SleepData(data.notes(), data.outOfBed(), data.tags(),
                 data.startTime().minusDays(days),
                 data.stopTime().minusDays(days));
     }
 
-    private static SleepData randomizeDuration(SleepData data) {
+    public static SleepData randomizeDuration(SleepData data) {
         return new SleepData(data.notes(), data.outOfBed(), data.tags(),
                 data.startTime().plusMinutes(random.nextInt(60)),
                 data.stopTime().minusMinutes(random.nextInt(60)));

@@ -15,26 +15,30 @@ import java.util.Optional;
 
 public interface SleepRepository extends JpaRepository<SleepSession, Long> {
 
-    @Query("SELECT s FROM SleepSession s " +
-            "WHERE s.user.username=:username " +
-            "AND s.id=:sleepId ")
+    @Query("""
+            SELECT s FROM SleepSession s
+            WHERE s.user.username=:username
+            AND s.id=:sleepId
+            """)
     Optional<SleepSession> findBy(String username, Long sleepId);
 
     // use both username and sleep id in the query to ensure the given user owns this sleep
-    @Query("SELECT new com.seebie.server.dto.SleepDataWithId" +
-            "(s.id, s.notes, s.outOfBed, s.startTime, s.stopTime) " +
-            "FROM SleepSession s " +
-            "WHERE s.user.username=:username " +
-            "ORDER BY s.stopTime DESC ")
+    @Query("""
+            SELECT new com.seebie.server.dto.SleepDataWithId(s.id, s.notes, s.outOfBed, s.startTime, s.stopTime)
+            FROM SleepSession s
+            WHERE s.user.username=:username
+            ORDER BY s.stopTime DESC 
+            """)
     Page<SleepDataWithId> loadSummaries(Pageable page, String username);
 
     // use both username and sleep id in the query to ensure the given user owns this sleep
-    @Query("SELECT new com.seebie.server.dto.SleepDataPoint" +
-            "(s.stopTime, s.durationMinutes) " +
-            "FROM SleepSession s " +
-            "WHERE s.user.username=:username " +
-            "AND s.stopTime >= :from " +
-            "AND s.stopTime <= :to " +
-            "ORDER BY s.stopTime ASC ")
+    @Query("""
+            SELECT new com.seebie.server.dto.SleepDataPoint(s.stopTime, s.durationMinutes)
+            FROM SleepSession s
+            WHERE s.user.username=:username
+            AND s.stopTime >= :from
+            AND s.stopTime <= :to
+            ORDER BY s.stopTime ASC
+            """)
     List<SleepDataPoint> loadChartData(String username, ZonedDateTime from, ZonedDateTime to);
 }

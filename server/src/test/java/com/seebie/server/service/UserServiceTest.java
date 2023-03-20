@@ -1,4 +1,4 @@
-package com.seebie.server;
+package com.seebie.server.service;
 
 import com.seebie.server.repository.NotificationRepository;
 import org.junit.jupiter.api.BeforeEach;

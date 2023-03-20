@@ -1,6 +1,6 @@
 package com.seebie.server.controller;
 
-import com.seebie.server.IntegrationTest;
+import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.client.ApiClientStateful;
 import com.seebie.server.test.data.AppRequest;
@@ -19,10 +19,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 
 import java.net.URI;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -131,7 +128,7 @@ public class ActuatorSecurityTest extends IntegrationTest {
      *
      * @throws Exception
      */
-    // TODO should probably make separate integration test class around session management and do more tests
+    // TODO move this to separate integration test class around session management and do more session related tests
     @Test
     void testNoSessionForUnauthenticatedCall() throws Exception {
 
