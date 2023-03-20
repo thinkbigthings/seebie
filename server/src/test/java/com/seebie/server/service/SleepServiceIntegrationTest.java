@@ -60,6 +60,10 @@ class SleepServiceIntegrationTest extends IntegrationTest {
 
         // test retrieve
         SleepData found = sleepService.retrieve(username, savedSleep.id());
+
+        LOG.info("Original: " + originalSleep);
+        LOG.info("Found: " + found);
+
         assertEquals(originalSleep, found);
 
         // test update
