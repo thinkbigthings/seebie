@@ -51,6 +51,10 @@ public class User implements Serializable {
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "user")
     private Set<Session> sessions = new HashSet<>();
 
+    // If we start using more user settings, this could be moved to a settings entity.
+    @Basic
+    private boolean notificationsEnabled = false;
+
     protected User() {
         // no arg constructor is required by JPA
     }
@@ -128,4 +132,11 @@ public class User implements Serializable {
         return sessions;
     }
 
+    public boolean isNotificationsEnabled() {
+        return notificationsEnabled;
+    }
+
+    public void setNotificationsEnabled(boolean notificationsEnabled) {
+        this.notificationsEnabled = notificationsEnabled;
+    }
 }
