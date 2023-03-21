@@ -26,6 +26,7 @@ import Container from "react-bootstrap/Container";
 import EditSleep from "./EditSleep";
 import SleepData from "./SleepData";
 import Home from "./Home";
+import {NavDropdown} from "react-bootstrap";
 
 function App() {
 
@@ -84,11 +85,12 @@ function AuthenticatedApp() {
                     <Navbar.Brand href="/">Seebie<img className="mb-1 px-1" src="favicon.ico" alt="Seebie icon" width="30" height="20"/></Navbar.Brand>
                     <Nav>
                         {usersLink}
-                        <Nav.Link href={userUrl}>Profile</Nav.Link>
                     </Nav>
-                    <Form inline="true">
-                        <Nav.Link onClick={onClickLogout}>Logout</Nav.Link>
-                    </Form>
+                    <NavDropdown title={currentUser.personalInfo.displayName} id="userDropdown">
+                        <NavDropdown.Item href={userUrl}>Profile</NavDropdown.Item>
+                        <NavDropdown.Divider />
+                        <NavDropdown.Item onClick={onClickLogout}>Logout</NavDropdown.Item>
+                    </NavDropdown>
                 </Container>
             </Navbar>
             <Route exact path="/" render={() => <SleepData/>}/>
