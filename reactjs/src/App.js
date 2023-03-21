@@ -7,7 +7,6 @@ import Nav from 'react-bootstrap/Nav';
 import { HashRouter, Route } from 'react-router-dom';
 
 import UserList from './UserList.js';
-import About from './About.js';
 import EditUser from './EditUser.js';
 import Login from './Login.js';
 import ErrorBoundary from './ErrorBoundary.js';
@@ -86,7 +85,6 @@ function AuthenticatedApp() {
                     <Nav>
                         {usersLink}
                         <Nav.Link href={userUrl}>Profile</Nav.Link>
-                        <Nav.Link href="#about">About</Nav.Link>
                     </Nav>
                     <Form inline="true">
                         <Nav.Link onClick={onClickLogout}>Logout</Nav.Link>
@@ -95,7 +93,6 @@ function AuthenticatedApp() {
             </Navbar>
             <Route exact path="/" render={() => <SleepData/>}/>
             <Route exact path="/users" render={() => <UserList/>}/>
-            <Route exact path="/about" render={() => <About/>}/>
             <Route exact path="/users/:username/edit" component={EditUser}/>
             <Route exact path="/users/:username/sleep/:sleepId/edit" component={EditSleep}/>
         </HashRouter>
