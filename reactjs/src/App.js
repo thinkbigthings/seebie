@@ -28,7 +28,7 @@ import SleepData from "./SleepData";
 import Home from "./Home";
 import {NavDropdown} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCog, faSignOut, faTrash, faUser} from "@fortawesome/free-solid-svg-icons";
+import {faCog, faSignOut, faUser} from "@fortawesome/free-solid-svg-icons";
 
 function App() {
 
