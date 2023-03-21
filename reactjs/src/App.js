@@ -27,6 +27,8 @@ import EditSleep from "./EditSleep";
 import SleepData from "./SleepData";
 import Home from "./Home";
 import {NavDropdown} from "react-bootstrap";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCog, faSignOut, faTrash, faUser} from "@fortawesome/free-solid-svg-icons";
 
 function App() {
 
@@ -86,10 +88,10 @@ function AuthenticatedApp() {
                     <Nav>
                         {usersLink}
                     </Nav>
-                    <NavDropdown title={currentUser.personalInfo.displayName} id="userDropdown">
-                        <NavDropdown.Item href={userUrl}>Profile</NavDropdown.Item>
+                        <NavDropdown title={<FontAwesomeIcon className="me-2" icon={faUser} />} id="userDropdown">
+                        <NavDropdown.Item href={userUrl}>{<FontAwesomeIcon className="me-2" icon={faCog} />}Profile</NavDropdown.Item>
                         <NavDropdown.Divider />
-                        <NavDropdown.Item onClick={onClickLogout}>Logout</NavDropdown.Item>
+                        <NavDropdown.Item onClick={onClickLogout}>{<FontAwesomeIcon className="me-2" icon={faSignOut} />}Logout</NavDropdown.Item>
                     </NavDropdown>
                 </Container>
             </Navbar>
