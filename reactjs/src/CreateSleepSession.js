@@ -34,8 +34,8 @@ function CreateSleepSession(props) {
 
     return (
         <>
-            <Button variant="primary" className="p-3" onClick={() => setShowModal(true)}>
-                <FontAwesomeIcon className="me-2" icon={faBed} />Log
+            <Button variant="primary" className="p-2" onClick={() => setShowModal(true)}>
+                <FontAwesomeIcon className="me-2" icon={faBed} />Log Sleep
             </Button>
 
             <Modal show={showModal} onHide={() => setShowModal(false)} >

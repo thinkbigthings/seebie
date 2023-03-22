@@ -33,6 +33,7 @@ import Col from "react-bootstrap/Col";
 import {CreateSleepSession} from "./CreateSleepSession";
 import SleepList from "./SleepList";
 import SleepChart from "./SleepChart";
+import Button from "react-bootstrap/Button";
 
 function App() {
 
@@ -95,6 +96,7 @@ function AuthenticatedApp() {
             <Navbar className="border-bottom mb-3">
                 <Container>
                     <Navbar.Brand href="/">Seebie<img className="mb-1 px-1" src="favicon.ico" alt="Seebie icon" width="30" height="20"/></Navbar.Brand>
+                    <CreateSleepSession onSave={() => setCreatedCount(createdCount + 1)} />
                     <NavDropdown title={loggedIn } align="end" flip id="userDropdown">
                         <NavDropdown.Item href={userUrl}>{<FontAwesomeIcon className="me-2" icon={faCog} />}Profile</NavDropdown.Item>
                         <NavDropdown.Divider />
@@ -105,7 +107,7 @@ function AuthenticatedApp() {
             <Container>
                 <Row>
                     <Col className="col-md-auto col-sm-3">
-                        <SideBar hasAdmin={hasAdmin()} createdCount={createdCount} setCreatedCount={setCreatedCount}/>
+                        <SideBar hasAdmin={hasAdmin()} />
                     </Col>
                     <Col>
                         <Route exact path="/list" render={()  => <SleepList reloadCount = {createdCount} />}/>
@@ -124,7 +126,7 @@ function AuthenticatedApp() {
 
 function SideBar(props) {
 
-    const {hasAdmin, createdCount, setCreatedCount} = props;
+    const {hasAdmin} = props;
 
     let usersLink = hasAdmin
         ?   <li className="nav-item">
@@ -145,9 +147,6 @@ function SideBar(props) {
     return (
 
             <ul className="nav flex-column d-inline-block">
-                <li>
-                    <CreateSleepSession onSave={() => setCreatedCount(createdCount + 1)} />
-                </li>
                 <li className="nav-item">
                     <a className="nav-link" href="#/list">
                         <FontAwesomeIcon className="me-2" icon={faList} />List
