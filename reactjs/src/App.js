@@ -27,7 +27,16 @@ import EditSleep from "./EditSleep";
 import Home from "./Home";
 import {NavDropdown} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faChartLine, faCog, faList, faServer, faSignOut, faUser, faUsers} from "@fortawesome/free-solid-svg-icons";
+import {
+    faBook,
+    faChartLine,
+    faCog,
+    faList,
+    faServer,
+    faSignOut, faTag,
+    faUser,
+    faUsers
+} from "@fortawesome/free-solid-svg-icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {CreateSleepSession} from "./CreateSleepSession";
@@ -110,6 +119,7 @@ function AuthenticatedApp() {
                         <SideBar hasAdmin={hasAdmin()} />
                     </Col>
                     <Col>
+                        <Route exact path="/" render={()  => <SleepList reloadCount = {createdCount} />}/>
                         <Route exact path="/list" render={()  => <SleepList reloadCount = {createdCount} />}/>
                         <Route exact path="/chart" render={() => <SleepChart reloadCount = {createdCount} />}/>
                         <Route exact path="/users" render={() => <UserList/>}/>
@@ -155,6 +165,16 @@ function SideBar(props) {
                 <li className="nav-item">
                     <a className="nav-link" href="#/chart">
                         <FontAwesomeIcon className="me-2" icon={faChartLine} />Chart
+                    </a>
+                </li>
+                <li className="nav-item">
+                    <a className="nav-link" href="#/diary">
+                        <FontAwesomeIcon className="me-2" icon={faBook} />Diary
+                    </a>
+                </li>
+                <li className="nav-item">
+                    <a className="nav-link" href="#/diary">
+                        <FontAwesomeIcon className="me-2" icon={faTag} />Tags
                     </a>
                 </li>
                 {usersLink}
