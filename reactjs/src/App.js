@@ -42,7 +42,6 @@ import Col from "react-bootstrap/Col";
 import {CreateSleepSession} from "./CreateSleepSession";
 import SleepList from "./SleepList";
 import SleepChart from "./SleepChart";
-import Button from "react-bootstrap/Button";
 
 function App() {
 
