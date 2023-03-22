@@ -95,7 +95,7 @@ function AuthenticatedApp() {
             <Navbar className="border-bottom mb-3">
                 <Container>
                     <Navbar.Brand href="/">Seebie<img className="mb-1 px-1" src="favicon.ico" alt="Seebie icon" width="30" height="20"/></Navbar.Brand>
-                    <NavDropdown title={loggedIn } id="userDropdown">
+                    <NavDropdown title={loggedIn } align="end" flip id="userDropdown">
                         <NavDropdown.Item href={userUrl}>{<FontAwesomeIcon className="me-2" icon={faCog} />}Profile</NavDropdown.Item>
                         <NavDropdown.Divider />
                         <NavDropdown.Item onClick={onClickLogout}>{<FontAwesomeIcon className="me-2" icon={faSignOut} />}Logout</NavDropdown.Item>
