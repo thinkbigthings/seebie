@@ -85,12 +85,17 @@ function AuthenticatedApp() {
             .then(response => onLogout());
     }
 
+    const loggedIn = <span>
+        <FontAwesomeIcon className="me-2" icon={faUser} ></FontAwesomeIcon>
+        {currentUser.personalInfo.displayName}
+    </span> ;
+
     return (
         <HashRouter>
             <Navbar className="border-bottom mb-3">
                 <Container>
                     <Navbar.Brand href="/">Seebie<img className="mb-1 px-1" src="favicon.ico" alt="Seebie icon" width="30" height="20"/></Navbar.Brand>
-                    <NavDropdown title={<FontAwesomeIcon className="me-2" icon={faUser} />} id="userDropdown">
+                    <NavDropdown title={loggedIn } id="userDropdown">
                         <NavDropdown.Item href={userUrl}>{<FontAwesomeIcon className="me-2" icon={faCog} />}Profile</NavDropdown.Item>
                         <NavDropdown.Divider />
                         <NavDropdown.Item onClick={onClickLogout}>{<FontAwesomeIcon className="me-2" icon={faSignOut} />}Logout</NavDropdown.Item>
@@ -99,7 +104,7 @@ function AuthenticatedApp() {
             </Navbar>
             <Container>
                 <Row>
-                    <Col className="col-md-auto">
+                    <Col className="col-md-auto col-sm-3">
                         <SideBar hasAdmin={hasAdmin()} createdCount={createdCount} setCreatedCount={setCreatedCount}/>
                     </Col>
                     <Col>
@@ -138,7 +143,6 @@ function SideBar(props) {
         :  "";
 
     return (
-        <Container>
 
             <ul className="nav flex-column d-inline-block">
                 <li>
@@ -157,7 +161,6 @@ function SideBar(props) {
                 {usersLink}
                 {systemLink}
             </ul>
-        </Container>
 
     );
 }

@@ -110,12 +110,10 @@ function SleepChart(props) {
     return (
         <Container>
             <Row className="pt-3 pb-6">
-                <Col xs={4}></Col>
-
-                <Col xs={1}>
+                <Col className="col-md-auto" >
                     <label htmlFor="dateStart">From</label>
                 </Col>
-                <Col xs={3}>
+                <Col className="col-md-auto">
                     <DatePicker
                         className="form-control" id="dateStart" placeholder="Start Date"
                         dateFormat="MMMM d, yyyy"
@@ -123,10 +121,10 @@ function SleepChart(props) {
                         onChange={ date => updateSearchRange({from : date })}
                     />
                 </Col>
-                <Col xs={1}>
+                <Col className="col-md-auto">
                     <label htmlFor="dateEnd">To</label>
                 </Col>
-                <Col xs={3}>
+                <Col className="col-md-auto">
                     <DatePicker
                         className="form-control" id="dateEnd" placeholder="End Date"
                         dateFormat="MMMM d, yyyy"
