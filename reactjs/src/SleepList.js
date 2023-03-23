@@ -18,7 +18,6 @@ function SleepList(props) {
 
     const sleepUrl = '/user/' + currentUser.username + '/sleep';
 
-    // const [reloadCount, setReloadCount] = useState(0);
     const [data, pagingControls] = useApiGet(sleepUrl, 7, reloadCount);
 
     const pagingControlVisibility = data.totalElements > 0 ? "visible" : "invisible";

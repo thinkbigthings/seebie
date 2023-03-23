@@ -34,7 +34,7 @@ import {
     faList,
     faServer,
     faSignOut,
-    faTag,
+    faTag, faTools,
     faUser,
     faUsers
 } from "@fortawesome/free-solid-svg-icons";
@@ -132,17 +132,18 @@ function AuthenticatedApp() {
 function SideNav(props) {
 
     const {hasAdmin} = props;
-    let usersLink = hasAdmin ? <NavItem name="Users" icon={faUsers} href="#/users" /> : "";
-    let systemLink = hasAdmin ? <NavItem name="System" icon={faServer} href="#/system" /> : "";
+    let usersNav = hasAdmin ? <NavItem name="Users" icon={faUsers} href="#/users" /> : "";
+    let systemNav = hasAdmin ? <NavItem name="System" icon={faServer} href="#/system" /> : "";
 
     return (
-        <Nav defaultActiveKey="/home" className="flex-column">
+        <Nav defaultActiveKey="/home" className="flex-column col-sm-2">
             <NavItem name="List" icon={faList} href="#/list" />
             <NavItem name="Chart" icon={faChartLine} href="#/chart" />
             <NavItem name="Diary" icon={faBook} href="#/diary" />
             <NavItem name="Tags" icon={faTag} href="#/tags" />
-            {usersLink}
-            {systemLink}
+            <NavItem name="Tools" icon={faTools} href="#/tools" />
+            {usersNav}
+            {systemNav}
         </Nav>
     );
 }
@@ -156,7 +157,7 @@ function NavItem(props) {
 
     return (
         <Nav.Link eventKey={name+"Link"} href={href} className="">
-            <FontAwesomeIcon className="me-2" icon={icon} /><div className="d-none d-sm-inline">{name}</div>
+            <FontAwesomeIcon className="me-2" icon={icon} /><div className="d-none d-sm-inline-block">{name}</div>
         </Nav.Link>
     );
 }
