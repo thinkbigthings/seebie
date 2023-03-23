@@ -1,5 +1,5 @@
 import {useContext} from 'react';
-import { CurrentUserContext, unknownUser } from "./CurrentUserContext";
+import { CurrentUserContext, blankUser } from "./CurrentUserContext";
 
 const useCurrentUser = () => {
 
@@ -12,7 +12,7 @@ const useCurrentUser = () => {
 
     function onLogout() {
         localStorage.removeItem("currentUser");
-        setCurrentUser(unknownUser);
+        setCurrentUser(blankUser);
     }
 
     const hasAdmin = () => hasRole('ADMIN');
