@@ -33,12 +33,11 @@ import {
     faCog,
     faList,
     faServer,
-    faSignOut, faTag,
+    faSignOut,
+    faTag,
     faUser,
     faUsers
 } from "@fortawesome/free-solid-svg-icons";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import {CreateSleepSession} from "./CreateSleepSession";
 import SleepList from "./SleepList";
 import SleepChart from "./SleepChart";
@@ -112,20 +111,17 @@ function AuthenticatedApp() {
                     </NavDropdown>
                 </Container>
             </Navbar>
-            <Container>
-                <Row>
-                    <Col className="col-md-auto col-sm-3">
-                        <SideBar hasAdmin={hasAdmin()} />
-                    </Col>
-                    <Col>
-                        <Route exact path="/" render={()  => <SleepList reloadCount = {createdCount} />}/>
-                        <Route exact path="/list" render={()  => <SleepList reloadCount = {createdCount} />}/>
-                        <Route exact path="/chart" render={() => <SleepChart reloadCount = {createdCount} />}/>
-                        <Route exact path="/users" render={() => <UserList/>}/>
-                        <Route exact path="/users/:username/edit" component={EditUser}/>
-                        <Route exact path="/users/:username/sleep/:sleepId/edit" component={EditSleep}/>
-                    </Col>
-                </Row>
+            <Container className="d-flex">
+
+                <SideNav hasAdmin={hasAdmin()} />
+
+                <Route exact path="/" render={()  => <SleepList reloadCount = {createdCount} />}/>
+                <Route exact path="/list" render={()  => <SleepList reloadCount = {createdCount} />}/>
+                <Route exact path="/chart" render={() => <SleepChart reloadCount = {createdCount} />}/>
+                <Route exact path="/users" render={() => <UserList/>}/>
+                <Route exact path="/users/:username/edit" component={EditUser}/>
+                <Route exact path="/users/:username/sleep/:sleepId/edit" component={EditSleep}/>
+
             </Container>
 
 
@@ -133,53 +129,35 @@ function AuthenticatedApp() {
     );
 }
 
-function SideBar(props) {
+function SideNav(props) {
 
     const {hasAdmin} = props;
-
-    let usersLink = hasAdmin
-        ?   <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#/users">
-                    <FontAwesomeIcon className="me-2" icon={faUsers} />Users
-                </a>
-            </li>
-        :  "";
-
-    let systemLink = hasAdmin
-        ?   <li className="nav-item">
-                <a className="nav-link" href="#/system">
-                    <FontAwesomeIcon className="me-2" icon={faServer} />System
-                </a>
-            </li>
-        :  "";
+    let usersLink = hasAdmin ? <NavItem name="Users" icon={faUsers} href="#/users" /> : "";
+    let systemLink = hasAdmin ? <NavItem name="System" icon={faServer} href="#/system" /> : "";
 
     return (
+        <Nav defaultActiveKey="/home" className="flex-column">
+            <NavItem name="List" icon={faList} href="#/list" />
+            <NavItem name="Chart" icon={faChartLine} href="#/chart" />
+            <NavItem name="Diary" icon={faBook} href="#/diary" />
+            <NavItem name="Tags" icon={faTag} href="#/tags" />
+            {usersLink}
+            {systemLink}
+        </Nav>
+    );
+}
 
-            <ul className="nav flex-column d-inline-block">
-                <li className="nav-item">
-                    <a className="nav-link" href="#/list">
-                        <FontAwesomeIcon className="me-2" icon={faList} />List
-                    </a>
-                </li>
-                <li className="nav-item">
-                    <a className="nav-link" href="#/chart">
-                        <FontAwesomeIcon className="me-2" icon={faChartLine} />Chart
-                    </a>
-                </li>
-                <li className="nav-item">
-                    <a className="nav-link" href="#/diary">
-                        <FontAwesomeIcon className="me-2" icon={faBook} />Diary
-                    </a>
-                </li>
-                <li className="nav-item">
-                    <a className="nav-link" href="#/diary">
-                        <FontAwesomeIcon className="me-2" icon={faTag} />Tags
-                    </a>
-                </li>
-                {usersLink}
-                {systemLink}
-            </ul>
+function NavItem(props) {
 
+    const {name, href, icon} = props;
+
+    // Hidden only on xs 	.d-none .d-sm-block
+    // Visible only on xs 	.d-block .d-sm-none
+
+    return (
+        <Nav.Link eventKey={name+"Link"} href={href} className="">
+            <FontAwesomeIcon className="me-2" icon={icon} /><div className="d-none d-sm-inline">{name}</div>
+        </Nav.Link>
     );
 }
 

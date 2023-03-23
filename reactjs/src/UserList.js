@@ -22,7 +22,7 @@ function UserList() {
     const visibility = data.totalElements > 0 ? "visible" : "invisible";
 
     return (
-        <div className="container mt-3">
+        <Container className="mt-3">
             <h1>User Management</h1>
 
             <CreateUser onSave={() => setReloadCount(reloadCount + 1)}  />
@@ -58,7 +58,7 @@ function UserList() {
                 </Button>
             </ButtonGroup>
 
-        </div>
+        </Container>
 
     );
 }

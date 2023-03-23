@@ -52,7 +52,7 @@ function EditSleep({history, match}) {
     }
 
     return (
-        <div className="container mt-3">
+        <Container className="mt-3">
 
             <Container className="d-flex justify-content-between" >
                 <h1 >Sleep Session</h1>
@@ -86,7 +86,7 @@ function EditSleep({history, match}) {
                 </Modal.Footer>
             </Modal>
 
-        </div>
+        </Container>
     );
 }
 

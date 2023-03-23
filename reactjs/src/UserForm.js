@@ -88,7 +88,7 @@ function UserForm(props) {
                 </Container>
 
                 <Container className="ps-0 mb-3">
-                    <label htmlFor="notificationsEnabled" className="form-label">Enabled Reminder Emails</label>
+                    <label htmlFor="notificationsEnabled" className="form-label">Enable Reminder Emails</label>
                     <input className="form-check-input mx-3 p-2" type="checkbox" id="notificationsEnabled"
                            placeholder="Enable Reminder Emails"
                            checked={formState.user.personalInfo.notificationsEnabled }

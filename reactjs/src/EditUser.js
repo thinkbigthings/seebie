@@ -69,7 +69,7 @@ function EditUser({history, match}) {
     }
 
     return (
-        <div className="container mt-3">
+        <Container className="mt-3">
             <h1>User Profile</h1>
 
             <Button variant="warning" onClick={() => setShowResetPassword(true)}>
@@ -82,7 +82,7 @@ function EditUser({history, match}) {
             <Container id="userFormWrapper" className="pl-0 pr-0">
                 {loaded ? <UserForm onCancel={history.goBack} onSave={onSave} initData={data}/> : <div />}
             </Container>
-        </div>
+        </Container>
     );
 }
 
