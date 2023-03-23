@@ -12,13 +12,13 @@ import SleepDataManager from "./SleepDataManager";
 
 function SleepList(props) {
 
-    const {reloadCount} = props;
+    const {createdCount} = props;
 
     const {currentUser} = useCurrentUser();
 
     const sleepUrl = '/user/' + currentUser.username + '/sleep';
 
-    const [data, pagingControls] = useApiGet(sleepUrl, 7, reloadCount);
+    const [data, pagingControls] = useApiGet(sleepUrl, 7, createdCount);
 
     const pagingControlVisibility = data.totalElements > 0 ? "visible" : "invisible";
 

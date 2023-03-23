@@ -77,7 +77,7 @@ const createInitialRange = () => {
 
 function SleepChart(props) {
 
-    const {reloadCount} = props;
+    const {createdCount} = props;
 
     const {currentUser} = useCurrentUser();
 
@@ -105,7 +105,7 @@ function SleepChart(props) {
                 newChartData.datasets[0].data = json;
                 setChartData(newChartData);
             })
-    }, [sleepEndpoint, reloadCount]);
+    }, [sleepEndpoint, createdCount]);
 
     const chartArea = chartData.datasets[0].data.length > 1
         ?   <Line className="pt-3" datasetIdKey="sleepChart" options={chartOptions} data={chartData} />

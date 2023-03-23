@@ -115,9 +115,9 @@ function AuthenticatedApp() {
 
                 <SideNav hasAdmin={hasAdmin()} />
 
-                <Route exact path="/" render={()  => <SleepList reloadCount = {createdCount} />}/>
-                <Route exact path="/list" render={()  => <SleepList reloadCount = {createdCount} />}/>
-                <Route exact path="/chart" render={() => <SleepChart reloadCount = {createdCount} />}/>
+                <Route exact path="/" render={()  => <SleepList createdCount = {createdCount} />}/>
+                <Route exact path="/list" render={()  => <SleepList createdCount = {createdCount} />}/>
+                <Route exact path="/chart" render={() => <SleepChart createdCount = {createdCount} />}/>
                 <Route exact path="/users" render={() => <UserList/>}/>
                 <Route exact path="/users/:username/edit" component={EditUser}/>
                 <Route exact path="/users/:username/sleep/:sleepId/edit" component={EditSleep}/>
