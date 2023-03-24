@@ -41,6 +41,7 @@ import {
 import {CreateSleepSession} from "./CreateSleepSession";
 import SleepList from "./SleepList";
 import SleepChart from "./SleepChart";
+import System from "./System";
 
 function App() {
 
@@ -121,6 +122,7 @@ function AuthenticatedApp() {
                 <Route exact path="/users" render={() => <UserList/>}/>
                 <Route exact path="/users/:username/edit" component={EditUser}/>
                 <Route exact path="/users/:username/sleep/:sleepId/edit" component={EditSleep}/>
+                <Route exact path="/system" component={System}/>
 
             </Container>
 
