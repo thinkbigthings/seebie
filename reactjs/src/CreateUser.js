@@ -4,6 +4,8 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
 import useApiPost from "./useApiPost";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 
 const blankData = {
     username: '',
@@ -59,7 +61,10 @@ function CreateUser(props) {
 
     return (
         <>
-            <Button variant="primary" className="p-3" onClick={() => setShowCreateUser(true)}>Create User</Button>
+            <Button variant="secondary" onClick={() => setShowCreateUser(true)}>
+                <FontAwesomeIcon className="me-2" icon={faPlus} />
+                Add
+            </Button>
 
             <Modal show={showCreateUser} onHide={onHide} >
                 <Modal.Header closeButton>

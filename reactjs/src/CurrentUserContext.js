@@ -1,14 +1,19 @@
 import React, {useState} from 'react';
 
-const unknownUser = {
-    displayName: '',
+
+const blankUser = {
     username: '',
-    password: '',
     roles: [],
+    registrationTime: '',
+    personalInfo: {
+        displayName: '',
+        email: '',
+        notificationsEnabled: false
+    },
     isLoggedIn: false,
 }
 
-const CurrentUserContext = React.createContext([unknownUser, (user) => {}]);
+const CurrentUserContext = React.createContext([blankUser, (user) => {}]);
 CurrentUserContext.displayName = 'CurrentUserContext';
 
 const CurrentUserProvider = (props) => {
@@ -18,7 +23,7 @@ const CurrentUserProvider = (props) => {
     const currentUserStr = localStorage.getItem('currentUser');
     const user = currentUserStr !== null
         ? JSON.parse(currentUserStr)
-        : unknownUser;
+        : blankUser;
 
     const [currentUser, setCurrentUser] = useState(user);
 
@@ -29,4 +34,4 @@ const CurrentUserProvider = (props) => {
     );
 }
 
-export {CurrentUserContext, CurrentUserProvider, unknownUser};
+export {CurrentUserContext, CurrentUserProvider, blankUser};

@@ -9,23 +9,26 @@ import useCurrentUser from "./useCurrentUser";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import SleepDataManager from "./SleepDataManager";
+import {NavHeader} from "./App";
 
 function SleepList(props) {
 
-    const {reloadCount} = props;
+    const {createdCount} = props;
 
     const {currentUser} = useCurrentUser();
 
     const sleepUrl = '/user/' + currentUser.username + '/sleep';
 
-    // const [reloadCount, setReloadCount] = useState(0);
-    const [data, pagingControls] = useApiGet(sleepUrl, 7, reloadCount);
+    const [data, pagingControls] = useApiGet(sleepUrl, 7, createdCount);
 
     const pagingControlVisibility = data.totalElements > 0 ? "visible" : "invisible";
 
     return (
 
-        <Container className="container p-0">
+        <Container className="container">
+
+            <NavHeader title="Sleep Listing" />
+
             <Table striped bordered hover >
                 <thead>
                     <tr>

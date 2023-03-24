@@ -12,17 +12,9 @@ import useApiPut from "./useApiPut";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./BasicHeaders";
+import {blankUser} from "./CurrentUserContext";
+import {NavHeader} from "./App";
 
-const blankUser = {
-    username: '',
-    roles: [],
-    registrationTime: '',
-    personalInfo: {
-        displayName: '',
-        email: ''
-    },
-    notificationsEnabled: false
-}
 
 function EditUser({history, match}) {
 
@@ -69,20 +61,21 @@ function EditUser({history, match}) {
     }
 
     return (
-        <div className="container mt-3">
-            <h1>User Profile</h1>
+        <Container>
 
-            <Button variant="warning" onClick={() => setShowResetPassword(true)}>
-                <FontAwesomeIcon className="me-2" icon={faKey} />
-                Reset Password
-            </Button>
+            <NavHeader title="User">
+                <Button variant="warning" onClick={() => setShowResetPassword(true)}>
+                    <FontAwesomeIcon className="me-2" icon={faKey} />
+                    Reset Password
+                </Button>
+            </NavHeader>
 
             <ResetPasswordModal show={showResetPassword} onConfirm={onResetPassword} onHide={() => setShowResetPassword(false)} />
 
-            <Container id="userFormWrapper" className="pl-0 pr-0">
+            <Container id="userFormWrapper" className="px-0">
                 {loaded ? <UserForm onCancel={history.goBack} onSave={onSave} initData={data}/> : <div />}
             </Container>
-        </div>
+        </Container>
     );
 }
 

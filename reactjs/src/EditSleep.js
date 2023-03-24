@@ -11,6 +11,7 @@ import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import useApiDelete from "./useApiDelete";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
+import {NavHeader} from "./App";
 
 
 function EditSleep({history, match}) {
@@ -52,23 +53,22 @@ function EditSleep({history, match}) {
     }
 
     return (
-        <div className="container mt-3">
+        <Container>
 
-            <Container className="d-flex justify-content-between" >
-                <h1 >Sleep Session</h1>
+            <NavHeader title="Sleep Session">
                 <Button variant="danger"  onClick={()=>setShowDeleteWarning(true)}>
                     <FontAwesomeIcon className="me-2" icon={faTrash} />
                     Delete
                 </Button>
-            </Container>
+            </NavHeader>
 
-            <Container id="sleepFormWrapper" className="pl-0 pr-0">
+            <Container id="sleepFormWrapper" className="px-0">
                 {loaded ? <SleepForm onChange={updateSleepSession} data={sleepData} /> : <div />}
             </Container>
 
-            <div className="d-flex flex-row-reverse">
-                <Button className="m-1" variant="primary" onClick={onSave} >Save</Button>
-                <Button className="m-1" variant="secondary" onClick={history.goBack}>Cancel</Button>
+            <div className="d-flex flex-row">
+                <Button className="me-3" variant="primary" onClick={onSave} >Save</Button>
+                <Button  variant="secondary" onClick={history.goBack}>Cancel</Button>
             </div>
 
             <Modal show={showDeleteWarning} onHide={() => setShowDeleteWarning(false)} >
@@ -86,7 +86,7 @@ function EditSleep({history, match}) {
                 </Modal.Footer>
             </Modal>
 
-        </div>
+        </Container>
     );
 }
 

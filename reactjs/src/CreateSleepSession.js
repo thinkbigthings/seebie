@@ -6,6 +6,8 @@ import useCurrentUser from "./useCurrentUser";
 import 'react-datepicker/dist/react-datepicker.css';
 import {SleepForm} from "./SleepForm";
 import SleepDataManager from "./SleepDataManager";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 
 function CreateSleepSession(props) {
 
@@ -32,7 +34,9 @@ function CreateSleepSession(props) {
 
     return (
         <>
-            <Button variant="primary" className="p-3" onClick={() => setShowModal(true)}>Log Sleep</Button>
+            <Button variant="secondary" className="px-4 py-2" onClick={() => setShowModal(true)}>
+                <FontAwesomeIcon className="me-2" icon={faPlus} />Log Sleep
+            </Button>
 
             <Modal show={showModal} onHide={() => setShowModal(false)} >
                 <Modal.Header closeButton>

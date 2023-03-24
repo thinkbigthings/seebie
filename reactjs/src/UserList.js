@@ -12,6 +12,7 @@ import CreateUser from "./CreateUser";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCaretLeft, faCaretRight} from "@fortawesome/free-solid-svg-icons";
 import Table from "react-bootstrap/Table";
+import {NavHeader} from "./App";
 
 
 function UserList() {
@@ -22,12 +23,14 @@ function UserList() {
     const visibility = data.totalElements > 0 ? "visible" : "invisible";
 
     return (
-        <div className="container mt-3">
-            <h1>User Management</h1>
+        <Container>
 
-            <CreateUser onSave={() => setReloadCount(reloadCount + 1)}  />
+            <NavHeader title="Users" >
+                <CreateUser onSave={() => setReloadCount(reloadCount + 1)}  />
+            </NavHeader>
 
-            <Container className="container mt-3">
+
+            <Container className="container mt-3 px-0">
                 <Table striped bordered hover>
                     <thead>
                     <tr>
@@ -58,7 +61,7 @@ function UserList() {
                 </Button>
             </ButtonGroup>
 
-        </div>
+        </Container>
 
     );
 }

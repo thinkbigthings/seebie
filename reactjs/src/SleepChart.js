@@ -11,6 +11,7 @@ import SleepDataManager from "./SleepDataManager";
 import {GET} from "./BasicHeaders";
 import useCurrentUser from "./useCurrentUser";
 import copy from "./Copier";
+import {NavHeader} from "./App";
 
 
 ChartJS.register(
@@ -77,7 +78,7 @@ const createInitialRange = () => {
 
 function SleepChart(props) {
 
-    const {reloadCount} = props;
+    const {createdCount} = props;
 
     const {currentUser} = useCurrentUser();
 
@@ -105,40 +106,42 @@ function SleepChart(props) {
                 newChartData.datasets[0].data = json;
                 setChartData(newChartData);
             })
-    }, [sleepEndpoint, reloadCount]);
+    }, [sleepEndpoint, createdCount]);
+
+    const chartArea = chartData.datasets[0].data.length > 1
+        ?   <Line className="pt-3" datasetIdKey="sleepChart" options={chartOptions} data={chartData} />
+        :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
 
     return (
         <Container>
-            <Row className="pt-3 pb-6">
-                <Col xs={4}></Col>
+            <NavHeader title="Sleep Chart" />
 
-                <Col xs={1}>
-                    <label htmlFor="dateStart">From</label>
+            <Row className="pb-3">
+                <Col className="col-2" >
+                    <label className="d-inline-block" htmlFor="dateStart">From</label>
                 </Col>
-                <Col xs={3}>
+                <Col className="col-md-4">
                     <DatePicker
-                        className="form-control" id="dateStart" placeholder="Start Date"
-                        dateFormat="MMMM d, yyyy"
-                        selected={range.from}
+                        className="form-control d-inline-block" id="dateStart" dateFormat="MMMM d, yyyy"
                         onChange={ date => updateSearchRange({from : date })}
-                    />
-                </Col>
-                <Col xs={1}>
-                    <label htmlFor="dateEnd">To</label>
-                </Col>
-                <Col xs={3}>
-                    <DatePicker
-                        className="form-control" id="dateEnd" placeholder="End Date"
-                        dateFormat="MMMM d, yyyy"
-                        selected={range.to}
-                        onChange={ date => updateSearchRange({to : date })}
+                        selected={range.from}
                     />
                 </Col>
             </Row>
-            { chartData.datasets[0].data.length > 1
-                ?   <Line className="pt-3" datasetIdKey="sleepChart" options={chartOptions} data={chartData} />
-                :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
-            }
+            <Row className={"pb-3"}>
+                <Col className="col-2">
+                    <label htmlFor="dateEnd">To</label>
+                </Col>
+                <Col className="col-md-4">
+                    <DatePicker
+                        className="form-control" id="dateEnd" dateFormat="MMMM d, yyyy"
+                        onChange={ date => updateSearchRange({to : date })}
+                        selected={range.to}
+                    />
+                </Col>
+            </Row>
+
+            {chartArea}
 
         </Container>
     );
