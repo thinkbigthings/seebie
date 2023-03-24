@@ -44,11 +44,17 @@ public class TestData {
         List<SleepData> newData = new ArrayList<>();
         for(int i=0; i < listCount; i++) {
             SleepData session = decrementDays(today, i);
-            session = randomizeDuration(session);
+            session = randomDuration(session);
+            session = randomNotes(session);
             newData.add(session);
         }
 
         return newData;
+    }
+
+    public static SleepData randomNotes(SleepData data) {
+        String notes = faker.lorem().paragraph(5);
+        return new SleepData(notes, data.outOfBed(), data.tags(), data.startTime(), data.stopTime());
     }
 
     public static SleepData decrementDays(SleepData data, long days) {
@@ -57,7 +63,7 @@ public class TestData {
                 data.stopTime().minusDays(days));
     }
 
-    public static SleepData randomizeDuration(SleepData data) {
+    public static SleepData randomDuration(SleepData data) {
         return new SleepData(data.notes(), data.outOfBed(), data.tags(),
                 data.startTime().plusMinutes(random.nextInt(60)),
                 data.stopTime().minusMinutes(random.nextInt(60)));

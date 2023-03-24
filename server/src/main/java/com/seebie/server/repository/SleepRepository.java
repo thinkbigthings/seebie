@@ -41,4 +41,12 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             ORDER BY s.stopTime ASC
             """)
     List<SleepDataPoint> loadChartData(String username, ZonedDateTime from, ZonedDateTime to);
+
+    @Query("""
+            SELECT s
+            FROM SleepSession s
+            WHERE s.user.username=:username
+            ORDER BY s.stopTime DESC
+            """)
+    List<SleepSession> findAllByUsername(String username);
 }

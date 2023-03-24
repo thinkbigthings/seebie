@@ -3,10 +3,13 @@ package com.seebie.server.service;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
+import com.seebie.server.entity.SleepSession;
 import com.seebie.server.mapper.dtotoentity.TagMapper;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.mapper.entitytodto.SleepMapper;
 import com.seebie.server.repository.SleepRepository;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -14,8 +17,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.time.ZonedDateTime;
 import java.util.List;
+
+import static com.seebie.server.Functional.uncheck;
 
 @Service
 public class SleepService {
@@ -26,7 +33,7 @@ public class SleepService {
 
     private SleepMapper sleepMapper = new SleepMapper();
 
-    public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper) {
+    public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper) throws IOException {
         this.sleepRepository = sleepRepository;
         this.entityMapper = entityMapper;
         this.tagMapper = tagMapper;
@@ -84,5 +91,24 @@ public class SleepService {
     @Transactional(readOnly = true)
     public List<SleepDataPoint> listChartData(String username, ZonedDateTime from, ZonedDateTime to) {
          return sleepRepository.loadChartData(username, from, to);
+    }
+
+    public String exportCsv(String username) {
+
+       CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
+                .setHeader("Time-Asleep", "Time-Awake", "Duration-Minutes", "Notes")
+                .build();
+
+        StringWriter sw = new StringWriter();
+
+        try (final CSVPrinter printer = new CSVPrinter(sw, csvFormat)) {
+            sleepRepository.findAllByUsername(username)
+                    .forEach(uncheck((SleepSession s) -> printer.printRecord(s.getStartTime(), s.getStopTime(), s.getDurationMinutes(), s.getNotes())));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return sw.toString();
     }
 }
