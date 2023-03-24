@@ -7,7 +7,7 @@ import {Accordion} from "react-bootstrap";
 function Home() {
 
     let [info, setInfo] = useState({})
-    let [flyway, setFlyway] = useState({})
+    let [migrations, setMigrations] = useState({})
     let [health, setHealth] = useState({})
 
 
@@ -22,8 +22,9 @@ function Home() {
     useEffect(() => {
         fetch('/actuator/flyway', GET)
             .then(response => response.json())
-            .then(setFlyway)
-    }, [setFlyway]);
+            .then(flywayRoot => flywayRoot.contexts.application.flywayBeans.flyway.migrations)
+            .then(setMigrations)
+    }, [setMigrations]);
 
     useEffect(() => {
         fetch('/actuator/health', GET)
@@ -40,7 +41,7 @@ function Home() {
 
             <Accordion defaultActiveKey="0">
                 <Section  eventKey="0" header="Info" json={info} name={"info"} />
-                <Section  eventKey="1" header="Flyway" json={flyway} name={"flyway"} />
+                <Section  eventKey="1" header="Flyway" json={migrations} name={"flyway"} />
                 <Section  eventKey="2" header="Health" json={health} name={"health"} />
             </Accordion>
         </div>
