@@ -34,7 +34,8 @@ import {
     faList,
     faServer,
     faSignOut,
-    faTag, faTools, faTrash,
+    faTag,
+    faTools,
     faUser,
     faUsers
 } from "@fortawesome/free-solid-svg-icons";
@@ -42,7 +43,6 @@ import {CreateSleepSession} from "./CreateSleepSession";
 import SleepList from "./SleepList";
 import SleepChart from "./SleepChart";
 import System from "./System";
-import Button from "react-bootstrap/Button";
 
 function App() {
 
@@ -105,12 +105,15 @@ function AuthenticatedApp() {
             <Navbar className="border-bottom mb-3">
                 <Container>
                     <Navbar.Brand href="/">Seebie<img className="mb-1 px-1" src="favicon.ico" alt="Seebie icon" width="30" height="20"/></Navbar.Brand>
+
                     <CreateSleepSession onSave={() => setCreatedCount(createdCount + 1)} />
+
                     <NavDropdown title={loggedIn } align="end" flip id="userDropdown">
                         <NavDropdown.Item href={userUrl}>{<FontAwesomeIcon className="me-2" icon={faCog} />}Profile</NavDropdown.Item>
                         <NavDropdown.Divider />
                         <NavDropdown.Item onClick={onClickLogout}>{<FontAwesomeIcon className="me-2" icon={faSignOut} />}Logout</NavDropdown.Item>
                     </NavDropdown>
+
                 </Container>
             </Navbar>
             <Container className="d-flex">

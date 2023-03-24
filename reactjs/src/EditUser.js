@@ -10,7 +10,7 @@ import useApiPost from "./useApiPost";
 import useApiPut from "./useApiPut";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faKey, faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faKey} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./BasicHeaders";
 import {blankUser} from "./CurrentUserContext";
 import {NavHeader} from "./App";

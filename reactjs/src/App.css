@@ -68,5 +68,23 @@
     background-color: #595b7c;
 }
 .btn-primary:active:focus {
-    background-color: #585fd9;
+    background-color: #484eb2;
+}
+
+
+/* ------------------------------ */
+.btn-secondary {
+    background-color: #6f6f9b;
+}
+
+.btn-secondary:hover {
+    background-color: #7070c2;
+}
+
+.btn-secondary:disabled {
+    background-color: #595b7c;
+}
+
+.btn-secondary:active:focus {
+    background-color: #7070c2;
 }

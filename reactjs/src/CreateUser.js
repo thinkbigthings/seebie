@@ -5,7 +5,7 @@ import Button from "react-bootstrap/Button";
 
 import useApiPost from "./useApiPost";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus, faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 
 const blankData = {
     username: '',
