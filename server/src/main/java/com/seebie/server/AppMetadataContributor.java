@@ -8,12 +8,12 @@ import com.seebie.server.repository.UserRepository;
 import java.util.Map;
 
 @Component
-public class InfoMetadataContributor implements InfoContributor  {
+public class AppMetadataContributor implements InfoContributor  {
 
     private final UserRepository userRepository;
     private final int apiVersion;
 
-    public InfoMetadataContributor(UserRepository userRepository, AppProperties properties) {
+    public AppMetadataContributor(UserRepository userRepository, AppProperties properties) {
         this.userRepository = userRepository;
         this.apiVersion = properties.apiVersion();
     }
@@ -21,9 +21,9 @@ public class InfoMetadataContributor implements InfoContributor  {
     @Override
     public void contribute(Info.Builder builder) {
 
-        var userMetadata = Map.of("count", String.valueOf(userRepository.count()));
-        builder.withDetail("users", userMetadata);
+        var count = Map.of("user", String.valueOf(userRepository.count()));
+        var version = Map.of("apiVersion", apiVersion);
 
-        builder.withDetail("apiVersion", apiVersion);
+        builder.withDetail("app", Map.of("count", count, "version", version));
     }
 }

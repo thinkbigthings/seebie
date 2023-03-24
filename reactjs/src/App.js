@@ -158,7 +158,7 @@ function NavItem(props) {
     // Visible only on xs 	.d-block .d-sm-none
 
     return (
-        <Nav.Link eventKey={name+"Link"} href={href} className="">
+        <Nav.Link eventKey={name+"Link"} href={href} className="ps-0">
             <FontAwesomeIcon className="me-2" icon={icon} /><div className="d-none d-sm-inline-block">{name}</div>
         </Nav.Link>
     );
