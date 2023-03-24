@@ -16,6 +16,18 @@
     padding: 8px;
 }
 
+/* h1 {*/
+/*    margin-bottom: 24px;*/
+/*}*/
+
+.nav-link {
+    color: #8f94f8;
+}
+
+.nav-link.active {
+    color: #ffffff;
+}
+
 /* ------------------------------ */
 /* Override Bootstrap styles      */
 /* ------------------------------ */

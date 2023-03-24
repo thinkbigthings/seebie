@@ -44,7 +44,7 @@ function UserForm(props) {
     }
 
     return (
-        <Container id="userFormId" className="mt-5 ps-0 " >
+        <Container id="userFormId" className="ps-0 " >
 
             <form>
 
@@ -95,10 +95,11 @@ function UserForm(props) {
                            onChange={e => dispatch({type:'UPDATE_USER', payload: {notificationsEnabled: e.target.checked }})}/>
                 </Container>
 
-                <div className="d-flex">
-                    <Button className="m-1" variant="primary" onClick={() => { onSave(formState.user.personalInfo); }} >Save</Button>
-                    <Button className="m-1" variant="secondary" onClick={onCancel}>Cancel</Button>
+                <div className="d-flex flex-row">
+                    <Button className="me-3" variant="primary" onClick={() => { onSave(formState.user.personalInfo); }} >Save</Button>
+                    <Button className="" variant="secondary" onClick={onCancel}>Cancel</Button>
                 </div>
+
             </form>
         </Container>
 

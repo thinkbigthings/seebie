@@ -22,12 +22,12 @@ function UserList() {
     const visibility = data.totalElements > 0 ? "visible" : "invisible";
 
     return (
-        <Container className="mt-3">
+        <Container>
             <h1>User Management</h1>
 
             <CreateUser onSave={() => setReloadCount(reloadCount + 1)}  />
 
-            <Container className="container mt-3">
+            <Container className="container mt-3 px-0">
                 <Table striped bordered hover>
                     <thead>
                     <tr>

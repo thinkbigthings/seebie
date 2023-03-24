@@ -25,6 +25,9 @@ function SleepList(props) {
     return (
 
         <Container className="container p-0">
+
+            <h1>Sleep Listing</h1>
+
             <Table striped bordered hover >
                 <thead>
                     <tr>

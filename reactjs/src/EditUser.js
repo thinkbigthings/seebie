@@ -10,7 +10,7 @@ import useApiPost from "./useApiPost";
 import useApiPut from "./useApiPut";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faKey} from "@fortawesome/free-solid-svg-icons";
+import {faKey, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./BasicHeaders";
 import {blankUser} from "./CurrentUserContext";
 
@@ -60,13 +60,15 @@ function EditUser({history, match}) {
     }
 
     return (
-        <Container className="mt-3">
-            <h1>User Profile</h1>
+        <Container>
 
-            <Button variant="warning" onClick={() => setShowResetPassword(true)}>
-                <FontAwesomeIcon className="me-2" icon={faKey} />
-                Reset Password
-            </Button>
+            <Container className="px-0 pb-3 d-flex" >
+                <h1 className="mb-0 flex-grow-1">Profile</h1>
+                <Button variant="warning" onClick={() => setShowResetPassword(true)}>
+                    <FontAwesomeIcon className="me-2" icon={faKey} />
+                    Reset Password
+                </Button>
+            </Container>
 
             <ResetPasswordModal show={showResetPassword} onConfirm={onResetPassword} onHide={() => setShowResetPassword(false)} />
 

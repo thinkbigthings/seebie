@@ -10,7 +10,7 @@ function SleepForm(props) {
     const {onChange, data} = props;
 
     return (
-        <Container id="userFormId" className="mt-5 ps-0 " >
+        <Container id="userFormId" className="ps-0 " >
 
             <form>
 

@@ -113,6 +113,8 @@ function SleepChart(props) {
 
     return (
         <Container>
+            <h1>Sleep Chart</h1>
+
             <Row className="pb-3">
                 <Col className="col-2" >
                     <label className="d-inline-block" htmlFor="dateStart">From</label>

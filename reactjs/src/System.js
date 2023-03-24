@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import ReactJson from 'react-json-view'
 import {GET} from "./BasicHeaders";
 import {Accordion} from "react-bootstrap";
+import Container from "react-bootstrap/Container";
 
 function Home() {
 
@@ -35,7 +36,7 @@ function Home() {
     // https://www.npmjs.com/package/react-json-view
 
     return (
-        <div className="container mt-3">
+        <Container>
 
             <h1>System</h1>
 
@@ -44,7 +45,7 @@ function Home() {
                 <Section  eventKey="1" header="Flyway" json={migrations} name={"flyway"} />
                 <Section  eventKey="2" header="Health" json={health} name={"health"} />
             </Accordion>
-        </div>
+        </Container>
     );
 }
 

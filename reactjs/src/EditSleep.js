@@ -52,23 +52,23 @@ function EditSleep({history, match}) {
     }
 
     return (
-        <Container className="mt-3">
+        <Container>
 
-            <Container className="d-flex justify-content-between" >
-                <h1 >Sleep Session</h1>
+            <Container className="px-0 pb-3 d-flex" >
+                <h1 className="mb-0 flex-grow-1">Sleep Session</h1>
                 <Button variant="danger"  onClick={()=>setShowDeleteWarning(true)}>
                     <FontAwesomeIcon className="me-2" icon={faTrash} />
                     Delete
                 </Button>
             </Container>
 
-            <Container id="sleepFormWrapper" className="pl-0 pr-0">
+            <Container id="sleepFormWrapper" className="px-0">
                 {loaded ? <SleepForm onChange={updateSleepSession} data={sleepData} /> : <div />}
             </Container>
 
-            <div className="d-flex flex-row-reverse">
-                <Button className="m-1" variant="primary" onClick={onSave} >Save</Button>
-                <Button className="m-1" variant="secondary" onClick={history.goBack}>Cancel</Button>
+            <div className="d-flex flex-row">
+                <Button className="me-3" variant="primary" onClick={onSave} >Save</Button>
+                <Button  variant="secondary" onClick={history.goBack}>Cancel</Button>
             </div>
 
             <Modal show={showDeleteWarning} onHide={() => setShowDeleteWarning(false)} >
