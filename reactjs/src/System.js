@@ -2,24 +2,34 @@ import React, {useEffect, useState} from 'react';
 
 import ReactJson from 'react-json-view'
 import {GET} from "./BasicHeaders";
+import {Accordion} from "react-bootstrap";
 
 function Home() {
 
-    let [actuatorData, setActuatorData] = useState({})
+    let [info, setInfo] = useState({})
+    let [flyway, setFlyway] = useState({})
+    let [health, setHealth] = useState({})
 
-    // TODO
-    // "/actuator"
-    // "/actuator/flyway"
-    // "/actuator/health"
-    // "/actuator/info"
-    // "/actuator/mappings"
-    // "/actuator/sessions"
+
+    // Links could also be retrieved from a call to "/actuator"
 
     useEffect(() => {
         fetch('/actuator/info', GET)
             .then(response => response.json())
-            .then(setActuatorData)
-    }, [setActuatorData]);
+            .then(setInfo)
+    }, [setInfo]);
+
+    useEffect(() => {
+        fetch('/actuator/flyway', GET)
+            .then(response => response.json())
+            .then(setFlyway)
+    }, [setFlyway]);
+
+    useEffect(() => {
+        fetch('/actuator/health', GET)
+            .then(response => response.json())
+            .then(setHealth)
+    }, [setHealth]);
 
     // https://www.npmjs.com/package/react-json-view
 
@@ -28,11 +38,27 @@ function Home() {
 
             <h1>System</h1>
 
-            <ReactJson name="info" src={actuatorData} displayDataTypes={false} displayObjectSize={false} theme={"twilight"}/>
-
+            <Accordion defaultActiveKey="0">
+                <Section  eventKey="0" header="Info" json={info} name={"info"} />
+                <Section  eventKey="1" header="Flyway" json={flyway} name={"flyway"} />
+                <Section  eventKey="2" header="Health" json={health} name={"health"} />
+            </Accordion>
         </div>
     );
+}
 
+function Section(props) {
+
+    const {eventKey, header, name, json} = props;
+
+    return (
+        <Accordion.Item eventKey={eventKey}>
+            <Accordion.Header>{header}</Accordion.Header>
+            <Accordion.Body>
+                <ReactJson name={name} src={json} displayDataTypes={false} displayObjectSize={false} theme={"twilight"} collapsed={true}/>
+            </Accordion.Body>
+        </Accordion.Item>
+    );
 }
 
 export default Home;
