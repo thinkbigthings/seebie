@@ -13,6 +13,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./BasicHeaders";
 import {blankUser} from "./CurrentUserContext";
+import {NavHeader} from "./App";
 
 
 function EditUser({history, match}) {
@@ -62,17 +63,16 @@ function EditUser({history, match}) {
     return (
         <Container>
 
-            <Container className="px-0 pb-3 d-flex" >
-                <h1 className="mb-0 flex-grow-1">Profile</h1>
+            <NavHeader title="User">
                 <Button variant="warning" onClick={() => setShowResetPassword(true)}>
                     <FontAwesomeIcon className="me-2" icon={faKey} />
                     Reset Password
                 </Button>
-            </Container>
+            </NavHeader>
 
             <ResetPasswordModal show={showResetPassword} onConfirm={onResetPassword} onHide={() => setShowResetPassword(false)} />
 
-            <Container id="userFormWrapper" className="pl-0 pr-0">
+            <Container id="userFormWrapper" className="px-0">
                 {loaded ? <UserForm onCancel={history.goBack} onSave={onSave} initData={data}/> : <div />}
             </Container>
         </Container>

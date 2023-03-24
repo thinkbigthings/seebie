@@ -11,6 +11,7 @@ import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import useApiDelete from "./useApiDelete";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
+import {NavHeader} from "./App";
 
 
 function EditSleep({history, match}) {
@@ -54,13 +55,12 @@ function EditSleep({history, match}) {
     return (
         <Container>
 
-            <Container className="px-0 pb-3 d-flex" >
-                <h1 className="mb-0 flex-grow-1">Sleep Session</h1>
+            <NavHeader title="Sleep Session">
                 <Button variant="danger"  onClick={()=>setShowDeleteWarning(true)}>
                     <FontAwesomeIcon className="me-2" icon={faTrash} />
                     Delete
                 </Button>
-            </Container>
+            </NavHeader>
 
             <Container id="sleepFormWrapper" className="px-0">
                 {loaded ? <SleepForm onChange={updateSleepSession} data={sleepData} /> : <div />}

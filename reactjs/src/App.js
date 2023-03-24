@@ -34,7 +34,7 @@ import {
     faList,
     faServer,
     faSignOut,
-    faTag, faTools,
+    faTag, faTools, faTrash,
     faUser,
     faUsers
 } from "@fortawesome/free-solid-svg-icons";
@@ -42,6 +42,7 @@ import {CreateSleepSession} from "./CreateSleepSession";
 import SleepList from "./SleepList";
 import SleepChart from "./SleepChart";
 import System from "./System";
+import Button from "react-bootstrap/Button";
 
 function App() {
 
@@ -164,4 +165,16 @@ function NavItem(props) {
     );
 }
 
-export default App;
+function NavHeader(props) {
+
+    const {title} = props;
+
+    return(
+        <Container className="px-0 pb-3 d-flex" >
+            <h1 className="mb-0 flex-grow-1">{title}</h1>
+            {props.children}
+        </Container>
+    );
+}
+
+export {App, NavHeader};

@@ -11,6 +11,7 @@ import SleepDataManager from "./SleepDataManager";
 import {GET} from "./BasicHeaders";
 import useCurrentUser from "./useCurrentUser";
 import copy from "./Copier";
+import {NavHeader} from "./App";
 
 
 ChartJS.register(
@@ -113,7 +114,7 @@ function SleepChart(props) {
 
     return (
         <Container>
-            <h1>Sleep Chart</h1>
+            <NavHeader title="Sleep Chart" />
 
             <Row className="pb-3">
                 <Col className="col-2" >

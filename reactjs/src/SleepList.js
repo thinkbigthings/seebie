@@ -9,6 +9,7 @@ import useCurrentUser from "./useCurrentUser";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import SleepDataManager from "./SleepDataManager";
+import {NavHeader} from "./App";
 
 function SleepList(props) {
 
@@ -24,9 +25,9 @@ function SleepList(props) {
 
     return (
 
-        <Container className="container p-0">
+        <Container className="container">
 
-            <h1>Sleep Listing</h1>
+            <NavHeader title="Sleep Listing" />
 
             <Table striped bordered hover >
                 <thead>

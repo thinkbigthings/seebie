@@ -4,6 +4,7 @@ import ReactJson from 'react-json-view'
 import {GET} from "./BasicHeaders";
 import {Accordion} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
+import {NavHeader} from "./App";
 
 function Home() {
 
@@ -38,7 +39,7 @@ function Home() {
     return (
         <Container>
 
-            <h1>System</h1>
+            <NavHeader title="System" />
 
             <Accordion defaultActiveKey="0">
                 <Section  eventKey="0" header="Info" json={info} name={"info"} />
