@@ -47,7 +47,7 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             SELECT new com.seebie.server.dto.SleepData(s.notes, s.outOfBed, s.startTime, s.stopTime)
             FROM SleepSession s
             WHERE s.user.username=:username
-            ORDER BY s.stopTime DESC 
+            ORDER BY s.stopTime ASC 
             """)
     List<SleepData> findAllByUsername(String username);
 }

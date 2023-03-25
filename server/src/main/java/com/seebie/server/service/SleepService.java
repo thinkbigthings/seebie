@@ -3,7 +3,6 @@ package com.seebie.server.service;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
-import com.seebie.server.entity.SleepSession;
 import com.seebie.server.mapper.dtotoentity.TagMapper;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.mapper.entitytodto.SleepCsvMapper;
@@ -34,8 +33,11 @@ public class SleepService {
 
     private SleepMapper sleepMapper = new SleepMapper();
     private SleepCsvMapper csvMapper = new SleepCsvMapper();
+    private CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
+            .setHeader("Time-Asleep", "Time-Awake", "Duration-Minutes", "Notes")
+            .build();
 
-    public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper) throws IOException {
+    public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper) {
         this.sleepRepository = sleepRepository;
         this.entityMapper = entityMapper;
         this.tagMapper = tagMapper;
@@ -95,23 +97,17 @@ public class SleepService {
          return sleepRepository.loadChartData(username, from, to);
     }
 
-    public String exportCsv(String username) {
+    @Transactional(readOnly = true)
+    public String exportCsv(String username) throws IOException {
 
-       CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-                .setHeader("Time-Asleep", "Time-Awake", "Duration-Minutes", "Notes")
-                .build();
+        StringWriter stringWriter = new StringWriter();
 
-        StringWriter sw = new StringWriter();
-
-        try (final CSVPrinter printer = new CSVPrinter(sw, csvFormat)) {
+        try (final CSVPrinter printer = new CSVPrinter(stringWriter, csvFormat)) {
             sleepRepository.findAllByUsername(username).stream()
                     .map(csvMapper)
                     .forEach(uncheck((String[] s) -> printer.printRecord(s)));
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        return sw.toString();
+        return stringWriter.toString();
     }
 }

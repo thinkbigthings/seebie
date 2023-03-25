@@ -11,8 +11,6 @@ import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
 @Component
 public class SleepCsvMapper implements Function<SleepData, String[]> {
 
-    private ZonedDateTimeToString dateTimeMapper = new ZonedDateTimeToString();
-
     @Override
     public String[] apply(SleepData data) {
 

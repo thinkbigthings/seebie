@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -90,7 +91,7 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<?> getSleepList(@PathVariable String username) {
+    public ResponseEntity<?> getSleepList(@PathVariable String username) throws IOException {
 
         String filename = "seebie-data-" + username + ".csv";
         String headerValue = "attachment; filename="+filename;

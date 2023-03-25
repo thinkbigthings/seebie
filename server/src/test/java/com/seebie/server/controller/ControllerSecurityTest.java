@@ -5,6 +5,7 @@ import com.seebie.server.AppProperties;
 import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
+import com.seebie.server.entity.User;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
@@ -13,10 +14,12 @@ import com.seebie.server.test.data.DtoJsonMapper;
 import com.seebie.server.test.data.MvcRequestMapper;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -27,6 +30,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Function;
@@ -34,6 +38,9 @@ import java.util.function.Function;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
 import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
+import static java.util.Optional.of;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -68,6 +75,11 @@ public class ControllerSecurityTest {
 	private static Function<AppRequest, MockHttpServletRequestBuilder> toRequest;
 
 	private static TestData.ArgumentBuilder test;
+
+	@BeforeEach
+	public void setup() throws IOException {
+		when(sleepService.exportCsv(ArgumentMatchers.any(String.class))).thenReturn("");
+	}
 
 	@BeforeAll
 	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
@@ -112,8 +124,8 @@ public class ControllerSecurityTest {
 				test.put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData, 401),
 				test.delete("/user/" + ADMINNAME + "/sleep" + "/1", 401),
 
-				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 401)
-
+				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 401),
+				test.get("/user/" + USERNAME + "/sleep/download", 401)
 			);
 	}
 
@@ -151,7 +163,8 @@ public class ControllerSecurityTest {
 				test.put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData, 200),
 				test.delete("/user/" + ADMINNAME + "/sleep" + "/1", 200),
 
-				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 200)
+				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 200),
+				test.get("/user/" + USERNAME + "/sleep/download", 200)
 		);
 	}
 
@@ -189,7 +202,8 @@ public class ControllerSecurityTest {
 				test.put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData, 403),
 				test.delete("/user/" + ADMINNAME + "/sleep" + "/1", 403),
 
-				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 200)
+				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 200),
+				test.get("/user/" + USERNAME + "/sleep/download", 200)
 		);
 	}
 
