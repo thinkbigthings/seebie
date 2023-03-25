@@ -3,6 +3,7 @@ package com.seebie.server.service;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
+import com.seebie.server.mapper.dtotoentity.RowToSleepData;
 import com.seebie.server.mapper.dtotoentity.TagMapper;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.mapper.entitytodto.SleepDataToRow;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -38,7 +40,7 @@ public class SleepService {
     public static final String[] HEADER = new String[] {"Time-Asleep","Time-Awake","Duration-Minutes","Num-Times-Up","Notes"};
     private SleepMapper sleepMapper = new SleepMapper();
     private SleepDataToRow csvMapper = new SleepDataToRow();
-    private CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setHeader(HEADER).build();
+    private CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setSkipHeaderRecord(true).setHeader(HEADER).build();
 
     public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper) {
         this.sleepRepository = sleepRepository;
@@ -55,18 +57,6 @@ public class SleepService {
     public SleepDataWithId saveNew(String username, SleepData dto) {
         var entity = sleepRepository.save(entityMapper.toUnsavedEntity(username, dto));
         return new SleepDataWithId(entity.getId(), sleepMapper.apply(entity));
-    }
-
-    /**
-     * This is for test data now, but will eventually be used for bulk import.
-     *
-     * @param username
-     * @param dtos
-     */
-    @Transactional
-    public void saveNew(String username, List<SleepData> dtos) {
-
-        sleepRepository.saveAll(entityMapper.apply(username, dtos));
     }
 
     @Transactional
@@ -117,5 +107,32 @@ public class SleepService {
         }
 
         return stringWriter.toString();
+    }
+
+    /**
+     * This is for test data now, but will eventually be used for bulk import.
+     *
+     * @param username
+     * @param dtoList
+     */
+    @Transactional
+    public void saveNew(String username, List<SleepData> dtoList) {
+
+        var entityList = entityMapper.apply(username, dtoList);
+        sleepRepository.saveAll(entityList);
+    }
+
+    public long importCsv(String username, String csv) throws IOException {
+
+        var parser = csvFormat.parse(new StringReader(csv));
+        var fromCsv = new RowToSleepData();
+
+        var dtoList = parser.stream().map(fromCsv).toList();
+        var entityList = entityMapper.apply(username, dtoList);
+
+        long count = sleepRepository.saveAll(entityList).size();
+
+        return count;
+//        return csv.lines().count();
     }
 }

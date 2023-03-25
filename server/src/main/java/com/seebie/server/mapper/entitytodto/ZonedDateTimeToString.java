@@ -16,4 +16,8 @@ public class ZonedDateTimeToString implements Function<ZonedDateTime, String> {
     public static String format(ZonedDateTime dateTime) {
         return dateTime.truncatedTo(ChronoUnit.MINUTES).format(ISO_OFFSET_DATE_TIME);
     }
+
+    public static ZonedDateTime parse(String formatted) {
+        return ZonedDateTime.parse(formatted, ISO_OFFSET_DATE_TIME);
+    }
 }

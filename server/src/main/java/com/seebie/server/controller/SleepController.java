@@ -118,10 +118,8 @@ public class SleepController {
     @ResponseBody
     public ResponseEntity<String> uploadSleepData(@PathVariable String username, @RequestParam("file") MultipartFile file) throws IOException {
 
-        String content = new String(file.getBytes(), UTF_8);
+        long numImported = sleepService.importCsv(username, new String(file.getBytes(), UTF_8));
 
-        LOG.info(content);
-
-        return ResponseEntity.status(OK).body("Records were imported");
+        return ResponseEntity.status(OK).body(numImported + "records were imported");
     }
 }
