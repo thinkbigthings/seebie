@@ -27,16 +27,15 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.ZonedDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 
+import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
 import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
 
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -71,8 +70,8 @@ public class ControllerValidationTest {
 	private static final SleepData invalidSleepData = new SleepData(null, null);
 	private static final PersonalInfo invalidInfo = new PersonalInfo(null, null);
 
-	private static final String from = ZonedDateTime.now().minusDays(1).format(ISO_OFFSET_DATE_TIME);
-	private static final String to = ZonedDateTime.now().format(ISO_OFFSET_DATE_TIME);
+	private static final String from = format(ZonedDateTime.now().minusDays(1));
+	private static final String to = format(ZonedDateTime.now());
 
 	private static TestData.ArgumentBuilder test;
 

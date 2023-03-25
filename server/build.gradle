@@ -53,8 +53,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security:3.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-validation:3.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-mail:3.0.0'
-
     implementation 'org.springframework.session:spring-session-jdbc:3.0.0'
+
+    implementation 'org.apache.commons:commons-csv:1.10.0'
 
     compileOnly 'org.hibernate:hibernate-jpamodelgen:6.1.5.Final'
     annotationProcessor 'org.hibernate:hibernate-jpamodelgen:6.1.5.Final'
@@ -63,6 +64,7 @@ dependencies {
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
     implementation 'org.flywaydb:flyway-core:9.8.3'
+
 
     testImplementation 'org.springframework.security:spring-security-test:6.0.1'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.0.0'

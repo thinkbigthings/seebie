@@ -67,7 +67,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         assertEquals(originalSleep, found);
 
         // test update
-        var updatedSleep = TestData.randomizeDuration(originalSleep);
+        var updatedSleep = TestData.randomDuration(originalSleep);
         sleepService.update(username, savedSleep.id(), updatedSleep);
         found = sleepService.retrieve(username, savedSleep.id());
         assertEquals(updatedSleep, found);
@@ -98,12 +98,12 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void testListSleep() {
+    public void testHeavyUser() {
 
-        String username = "testListSleep";
-        userService.saveNewUser(new RegistrationRequest(username, "password", "testListSleep@sleepy.com"));
+        String username = "heavyUser";
+        userService.saveNewUser(new RegistrationRequest(username, "password", "heavyUser@sleepy.com"));
 
-        int listCount = 1000;
+        int listCount = 2000;
         var newData = createSleepData(listCount);
         sleepService.saveNew(username, newData);
 
@@ -111,7 +111,6 @@ class SleepServiceIntegrationTest extends IntegrationTest {
 
         assertEquals(firstPage.getPageSize(), listing.getNumberOfElements());
         assertEquals(listCount, listing.getTotalElements());
-
     }
 
     @Test
