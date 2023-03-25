@@ -1,12 +1,11 @@
 package com.seebie.server.service;
 
-import com.seebie.server.controller.SleepController;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.mapper.dtotoentity.TagMapper;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
-import com.seebie.server.mapper.entitytodto.SleepCsvMapper;
+import com.seebie.server.mapper.entitytodto.SleepDataToRow;
 import com.seebie.server.mapper.entitytodto.SleepMapper;
 import com.seebie.server.repository.SleepRepository;
 import org.apache.commons.csv.CSVFormat;
@@ -37,7 +36,7 @@ public class SleepService {
     private TagMapper tagMapper;
 
     private SleepMapper sleepMapper = new SleepMapper();
-    private SleepCsvMapper csvMapper = new SleepCsvMapper();
+    private SleepDataToRow csvMapper = new SleepDataToRow();
     private CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
             .setHeader("Time-Asleep", "Time-Awake", "Duration-Minutes", "Notes")
             .build();
@@ -110,7 +109,7 @@ public class SleepService {
         try (final CSVPrinter printer = new CSVPrinter(stringWriter, csvFormat)) {
             sleepRepository.findAllByUsername(username).stream()
                     .map(csvMapper)
-                    .forEach(uncheck((String[] s) -> printer.printRecord(s)));
+                    .forEach(uncheck((List<String> s) -> printer.printRecord(s)));
         } catch (IOException e) {
             // I think the IOException is just part of the API that in theory could be triggered by the Appendable
             // (which could be to an Appendable File stream) but which in practice would never happen with a StringWriter.
