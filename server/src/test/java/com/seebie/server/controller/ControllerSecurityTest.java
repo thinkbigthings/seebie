@@ -77,7 +77,7 @@ public class ControllerSecurityTest {
 	private static TestData.ArgumentBuilder test;
 
 	@BeforeEach
-	public void setup() throws IOException {
+	public void setup() {
 		when(sleepService.exportCsv(ArgumentMatchers.any(String.class))).thenReturn("");
 	}
 

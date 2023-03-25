@@ -1,5 +1,6 @@
 package com.seebie.server.service;
 
+import com.seebie.server.controller.SleepController;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
@@ -10,6 +11,8 @@ import com.seebie.server.mapper.entitytodto.SleepMapper;
 import com.seebie.server.repository.SleepRepository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -26,6 +29,8 @@ import static com.seebie.server.Functional.uncheck;
 
 @Service
 public class SleepService {
+
+    private static Logger LOG = LoggerFactory.getLogger(SleepService.class);
 
     private SleepRepository sleepRepository;
     private UnsavedSleepListMapper entityMapper;
@@ -98,7 +103,7 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public String exportCsv(String username) throws IOException {
+    public String exportCsv(String username) {
 
         StringWriter stringWriter = new StringWriter();
 
@@ -106,6 +111,11 @@ public class SleepService {
             sleepRepository.findAllByUsername(username).stream()
                     .map(csvMapper)
                     .forEach(uncheck((String[] s) -> printer.printRecord(s)));
+        } catch (IOException e) {
+            // I think the IOException is just part of the API that in theory could be triggered by the Appendable
+            // (which could be to an Appendable File stream) but which in practice would never happen with a StringWriter.
+            LOG.error("This should never happen.");
+            throw new RuntimeException(e);
         }
 
         return stringWriter.toString();

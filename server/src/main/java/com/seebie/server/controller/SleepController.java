@@ -91,7 +91,7 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<?> getSleepList(@PathVariable String username) throws IOException {
+    public ResponseEntity<?> getSleepList(@PathVariable String username) {
 
         String filename = "seebie-data-" + username + ".csv";
         String headerValue = "attachment; filename="+filename;
