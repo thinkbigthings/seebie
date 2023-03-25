@@ -16,11 +16,20 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.List;
+
+import static java.nio.charset.Charset.forName;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 public class SleepController {
@@ -91,7 +100,7 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<?> getSleepList(@PathVariable String username) {
+    public ResponseEntity<?> downloadSleepData(@PathVariable String username) {
 
         String filename = "seebie-data-" + username + ".csv";
         String headerValue = "attachment; filename="+filename;
@@ -101,7 +110,18 @@ public class SleepController {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
-                .body(csv.getBytes(StandardCharsets.UTF_8));
+                .body(csv.getBytes(UTF_8));
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/user/{username}/sleep/upload", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<String> uploadSleepData(@PathVariable String username, @RequestParam("file") MultipartFile file) throws IOException {
+
+        String content = new String(file.getBytes(), UTF_8);
+
+        LOG.info(content);
+
+        return ResponseEntity.status(OK).body("Records were imported");
+    }
 }
