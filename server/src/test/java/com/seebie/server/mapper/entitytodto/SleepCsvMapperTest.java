@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static com.seebie.server.service.SleepService.HEADER;
 import static java.time.ZonedDateTime.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -43,7 +44,7 @@ public class SleepCsvMapperTest {
         List<String> csvRow = mapper.apply(data);
 
         assertEquals(8, count(newlineNotes, "\n"));
-        assertEquals(4, csvRow.size());
+        assertEquals(HEADER.length, csvRow.size());
     }
 
     @Test
@@ -53,18 +54,15 @@ public class SleepCsvMapperTest {
         var data = new SleepData(notesWithQuotes, 0, now(), now());
 
         List<String> csvRow = mapper.apply(data);
+        assertEquals(HEADER.length, csvRow.size());
 
         String csvNotes = csvRow.get(3);
-        int numQuotes = count(csvNotes, "\"");
+        assertEquals(2, count(csvNotes, "\""));
 
-        // TODO Parameterized tests?
-        int n2 = count("\"asdf\"", "\"");
-        int n3 = count("\"\"", "\"");
-        int n4 = count("\"", "\"");
-
-        assertEquals(2, numQuotes);
-        assertEquals(4, csvRow.size());
-
+        assertEquals(3, count("\"\"\"", "\""));
+        assertEquals(2, count("\"asdf\"", "\""));
+        assertEquals(2, count("\"\"", "\""));
+        assertEquals(1, count("\"", "\""));
     }
 
     @Test
@@ -77,6 +75,6 @@ public class SleepCsvMapperTest {
         assertEquals(25, csvRow.get(0).length());
         assertEquals(25, csvRow.get(1).length());
 
-        assertEquals(4, csvRow.size());
+        assertEquals(HEADER.length, csvRow.size());
     }
 }

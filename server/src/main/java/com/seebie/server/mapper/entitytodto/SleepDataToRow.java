@@ -19,7 +19,8 @@ public class SleepDataToRow implements Function<SleepData, List<String>> {
                         format(data.startTime()),
                         format(data.stopTime()),
                         Long.toString(Duration.between(data.startTime(), data.stopTime()).toMinutes()),
-                        data.notes()
+                        data.notes(),
+                        Integer.toString(data.outOfBed())
                     );
     }
 }

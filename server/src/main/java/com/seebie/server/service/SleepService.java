@@ -35,11 +35,10 @@ public class SleepService {
     private UnsavedSleepListMapper entityMapper;
     private TagMapper tagMapper;
 
+    public static final String[] HEADER = new String[] {"Time-Asleep","Time-Awake","Duration-Minutes","Notes","Num-Times-Up"};
     private SleepMapper sleepMapper = new SleepMapper();
     private SleepDataToRow csvMapper = new SleepDataToRow();
-    private CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-            .setHeader("Time-Asleep", "Time-Awake", "Duration-Minutes", "Notes")
-            .build();
+    private CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setHeader(HEADER).build();
 
     public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper) {
         this.sleepRepository = sleepRepository;
