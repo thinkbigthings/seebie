@@ -6,6 +6,7 @@ import com.seebie.server.dto.SleepDataWithId;
 import com.seebie.server.entity.SleepSession;
 import com.seebie.server.mapper.dtotoentity.TagMapper;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
+import com.seebie.server.mapper.entitytodto.SleepCsvMapper;
 import com.seebie.server.mapper.entitytodto.SleepMapper;
 import com.seebie.server.repository.SleepRepository;
 import org.apache.commons.csv.CSVFormat;
@@ -32,6 +33,7 @@ public class SleepService {
     private TagMapper tagMapper;
 
     private SleepMapper sleepMapper = new SleepMapper();
+    private SleepCsvMapper csvMapper = new SleepCsvMapper();
 
     public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper) throws IOException {
         this.sleepRepository = sleepRepository;
@@ -102,8 +104,9 @@ public class SleepService {
         StringWriter sw = new StringWriter();
 
         try (final CSVPrinter printer = new CSVPrinter(sw, csvFormat)) {
-            sleepRepository.findAllByUsername(username)
-                    .forEach(uncheck((SleepSession s) -> printer.printRecord(s.getStartTime(), s.getStopTime(), s.getDurationMinutes(), s.getNotes())));
+            sleepRepository.findAllByUsername(username).stream()
+                    .map(csvMapper)
+                    .forEach(uncheck((String[] s) -> printer.printRecord(s)));
         }
         catch (IOException e) {
             e.printStackTrace();

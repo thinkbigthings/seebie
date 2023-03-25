@@ -20,8 +20,12 @@ public record SleepData(@NotNull String notes,
         this("", 0, new HashSet<>(), ZonedDateTime.now().minusHours(8L), ZonedDateTime.now());
     }
 
-    public SleepData(ZonedDateTime startTime, @NotNull ZonedDateTime stopTime) {
+    public SleepData(ZonedDateTime startTime, ZonedDateTime stopTime) {
         this("", 0, new HashSet<>(), startTime, stopTime);
+    }
+
+    public SleepData(String notes, int outOfBed, ZonedDateTime startTime, ZonedDateTime stopTime) {
+        this(notes, outOfBed, new HashSet<>(), startTime, stopTime);
     }
 
     public SleepData(String notes, int outOfBed, Set<String> tags, ZonedDateTime startTime, ZonedDateTime stopTime) {
