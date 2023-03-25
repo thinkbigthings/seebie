@@ -31,9 +31,9 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Function;
 
+import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
 import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
-import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,8 +58,8 @@ public class ControllerSecurityTest {
 	private static final PersonalInfo info = createRandomPersonalInfo();
 	private static final String password = "new_password";
 
-	private static final String from = ZonedDateTime.now().minusDays(1).format(ISO_OFFSET_DATE_TIME);
-	private static final String to = ZonedDateTime.now().format(ISO_OFFSET_DATE_TIME);
+	private static final String from = format(ZonedDateTime.now().minusDays(1));
+	private static final String to = format(ZonedDateTime.now());
 
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	@Autowired

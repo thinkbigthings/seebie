@@ -4,20 +4,21 @@ import com.seebie.server.dto.SleepData;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.function.Function;
 
-import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
 
 @Component
 public class SleepCsvMapper implements Function<SleepData, String[]> {
+
+    private ZonedDateTimeToString dateTimeMapper = new ZonedDateTimeToString();
 
     @Override
     public String[] apply(SleepData data) {
 
         return new String[] {
-                        data.startTime().truncatedTo(ChronoUnit.SECONDS).format(ISO_OFFSET_DATE_TIME),
-                        data.stopTime().truncatedTo(ChronoUnit.SECONDS).format(ISO_OFFSET_DATE_TIME),
+                        format(data.startTime()),
+                        format(data.stopTime()),
                         Long.toString(Duration.between(data.startTime(), data.stopTime()).toMinutes()),
                         data.notes()
                     };
