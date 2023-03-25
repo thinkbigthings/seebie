@@ -42,8 +42,8 @@ public class SleepCsvMapperTest {
         var data = new SleepData(newlineNotes, 0, now(), now());
 
         List<String> csvRow = mapper.apply(data);
+        assertEquals(8, count(csvRow.get(4), "\n"));
 
-        assertEquals(8, count(newlineNotes, "\n"));
         assertEquals(HEADER.length, csvRow.size());
     }
 
@@ -56,7 +56,7 @@ public class SleepCsvMapperTest {
         List<String> csvRow = mapper.apply(data);
         assertEquals(HEADER.length, csvRow.size());
 
-        String csvNotes = csvRow.get(3);
+        String csvNotes = csvRow.get(4);
         assertEquals(2, count(csvNotes, "\""));
 
         assertEquals(3, count("\"\"\"", "\""));
