@@ -34,6 +34,7 @@ import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
 import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
 
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -79,7 +80,7 @@ public class ControllerValidationTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-	private static Function<AppRequest, MockHttpServletRequestBuilder> toRequest;
+	private static Function<AppRequest, RequestBuilder> toRequest;
 
 	@BeforeAll
 	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) {

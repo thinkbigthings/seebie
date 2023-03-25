@@ -40,7 +40,7 @@ public class SleepService {
     public static final String[] HEADER = new String[] {"Time-Asleep","Time-Awake","Duration-Minutes","Num-Times-Up","Notes"};
     private SleepMapper sleepMapper = new SleepMapper();
     private SleepDataToRow csvMapper = new SleepDataToRow();
-    private CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setSkipHeaderRecord(true).setHeader(HEADER).build();
+    private CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setHeader(HEADER).build();
 
     public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper) {
         this.sleepRepository = sleepRepository;
@@ -99,7 +99,8 @@ public class SleepService {
             sleepRepository.findAllByUsername(username).stream()
                     .map(csvMapper)
                     .forEach(uncheck((List<String> s) -> printer.printRecord(s)));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             // I think the IOException is just part of the API that in theory could be triggered by the Appendable
             // (which could be to an Appendable File stream) but which in practice would never happen with a StringWriter.
             LOG.error("This should never happen.");
