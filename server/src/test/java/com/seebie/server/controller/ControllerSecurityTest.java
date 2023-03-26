@@ -36,7 +36,7 @@ import java.util.function.Function;
 
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
 import static com.seebie.server.test.data.TestData.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -77,9 +77,7 @@ public class ControllerSecurityTest {
 	@BeforeEach
 	public void setup() {
 
-		when(sleepService.exportCsv(any(String.class))).thenReturn("");
-
-		when(sleepService.saveNew(any(String.class), any(List.class))).thenReturn(0L);
+		when(sleepService.saveNew(anyString(), anyList())).thenReturn(0L);
 	}
 
 	@BeforeAll

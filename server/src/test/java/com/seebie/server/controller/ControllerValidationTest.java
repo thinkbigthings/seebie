@@ -27,18 +27,16 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 
-import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Function;
 
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
-
-import org.springframework.test.web.servlet.RequestBuilder;
-
 import static com.seebie.server.test.data.TestData.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -91,10 +89,7 @@ public class ControllerValidationTest {
 	@BeforeEach
 	public void setup() {
 
-		when(sleepService.exportCsv(any(String.class))).thenReturn("");
-
-		when(sleepService.saveNew(any(String.class), any(List.class))).thenReturn(0L);
-
+		when(sleepService.saveNew(anyString(), anyList())).thenReturn(0L);
 	}
 
 	@BeforeAll

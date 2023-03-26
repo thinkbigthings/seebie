@@ -11,6 +11,7 @@ public class CsvMapperTest {
 
     private CsvToSleepData fromCsv = new CsvToSleepData();
 
+    @Test
     public void testEmptyData() {
 
         assertThrows(IllegalArgumentException.class, () -> fromCsv.apply(TestData.createCsv(0)));

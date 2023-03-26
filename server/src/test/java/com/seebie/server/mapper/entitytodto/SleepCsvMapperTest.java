@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.seebie.server.service.SleepService.HEADER;
+import static com.seebie.server.mapper.dtotoentity.SleepDataToCsv.HEADER;
 import static java.time.ZonedDateTime.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
