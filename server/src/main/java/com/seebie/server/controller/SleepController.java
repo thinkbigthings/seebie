@@ -3,6 +3,7 @@ package com.seebie.server.controller;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
+import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.service.SleepService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -31,6 +33,8 @@ public class SleepController {
     private static Logger LOG = LoggerFactory.getLogger(SleepController.class);
 
     private final SleepService sleepService;
+
+    private CsvToSleepData fromCsvMapper = new CsvToSleepData();
 
     // if there's only one constructor, can omit Autowired and Inject
     public SleepController(SleepService sleepService) {
@@ -112,8 +116,10 @@ public class SleepController {
     @ResponseBody
     public ResponseEntity<String> uploadSleepData(@PathVariable String username, @RequestParam("file") MultipartFile file) throws IOException {
 
-        long numImported = sleepService.importCsv(username, new String(file.getBytes(), UTF_8));
+        List<SleepData> parsedData = fromCsvMapper.apply(new String(file.getBytes(), UTF_8));
 
-        return ResponseEntity.status(OK).body(numImported + "records were imported");
+        long numImported = sleepService.saveNew(username, parsedData);
+
+        return ResponseEntity.status(OK).body(numImported + " records were imported");
     }
 }

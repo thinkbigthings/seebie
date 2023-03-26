@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -39,6 +38,8 @@ public class SleepService {
 
     public static final String[] HEADER = new String[] {"Time-Asleep","Time-Awake","Duration-Minutes","Num-Times-Up","Notes"};
     private SleepMapper sleepMapper = new SleepMapper();
+    private RowToSleepData fromCsv = new RowToSleepData();
+
     private SleepDataToRow csvMapper = new SleepDataToRow();
     private CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setHeader(HEADER).build();
 
@@ -111,29 +112,14 @@ public class SleepService {
     }
 
     /**
-     * This is for test data now, but will eventually be used for bulk import.
      *
      * @param username
      * @param dtoList
      */
     @Transactional
-    public void saveNew(String username, List<SleepData> dtoList) {
-
+    public long saveNew(String username, List<SleepData> dtoList) {
         var entityList = entityMapper.apply(username, dtoList);
-        sleepRepository.saveAll(entityList);
+        return sleepRepository.saveAll(entityList).size();
     }
 
-    public long importCsv(String username, String csv) throws IOException {
-
-        var parser = csvFormat.parse(new StringReader(csv));
-        var fromCsv = new RowToSleepData();
-
-        var dtoList = parser.stream().map(fromCsv).toList();
-        var entityList = entityMapper.apply(username, dtoList);
-
-        long count = sleepRepository.saveAll(entityList).size();
-
-        return count;
-//        return csv.lines().count();
-    }
 }

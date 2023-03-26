@@ -13,6 +13,7 @@ import com.seebie.server.test.data.DtoJsonMapper;
 import com.seebie.server.test.data.MvcRequestMapper;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -23,20 +24,22 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Function;
 
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
-import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
-import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
 
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import static com.seebie.server.test.data.TestData.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -74,6 +77,9 @@ public class ControllerValidationTest {
 	private static final String from = format(ZonedDateTime.now().minusDays(1));
 	private static final String to = format(ZonedDateTime.now());
 
+	private static final MockMultipartFile badFile = createMultipart("text");
+	private static final MockMultipartFile goodFile = createMultipart(createCsv(1));
+
 	private static TestData.ArgumentBuilder test;
 
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
@@ -81,6 +87,15 @@ public class ControllerValidationTest {
 	private MockMvc mockMvc;
 
 	private static Function<AppRequest, RequestBuilder> toRequest;
+
+	@BeforeEach
+	public void setup() {
+
+		when(sleepService.exportCsv(any(String.class))).thenReturn("");
+
+		when(sleepService.saveNew(any(String.class), any(List.class))).thenReturn(0L);
+
+	}
 
 	@BeforeAll
 	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
@@ -114,7 +129,10 @@ public class ControllerValidationTest {
 
 				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to},   200),
 				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", "",   "to", ""},   400),
-				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", to,   "to", from}, 400)
+				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", to,   "to", from}, 400),
+
+				test.post("/user/" + USERNAME + "/sleep/upload", badFile, 400),
+				test.post("/user/" + USERNAME + "/sleep/upload", goodFile, 200)
 		);
 	}
 

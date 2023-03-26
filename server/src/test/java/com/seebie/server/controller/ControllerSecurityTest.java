@@ -35,14 +35,11 @@ import java.util.List;
 import java.util.function.Function;
 
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
-import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
-import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static com.seebie.server.test.data.TestData.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.util.MimeTypeUtils.TEXT_PLAIN_VALUE;
 
 
 @WebMvcTest
@@ -64,7 +61,7 @@ public class ControllerSecurityTest {
 	private static final SleepData sleepData = new SleepData();
 	private static final PersonalInfo info = createRandomPersonalInfo();
 	private static final String password = "new_password";
-	private static final MockMultipartFile file = new MockMultipartFile("file","export.csv", TEXT_PLAIN_VALUE, "data".getBytes());
+	private static final MockMultipartFile file = createMultipart(createCsv(1));
 
 	private static final String from = format(ZonedDateTime.now().minusDays(1));
 	private static final String to = format(ZonedDateTime.now());
@@ -78,12 +75,11 @@ public class ControllerSecurityTest {
 	private static TestData.ArgumentBuilder test;
 
 	@BeforeEach
-	public void setup() throws IOException {
+	public void setup() {
 
 		when(sleepService.exportCsv(any(String.class))).thenReturn("");
 
-		when(sleepService.importCsv(any(String.class),any(String.class))).thenReturn(0L);
-
+		when(sleepService.saveNew(any(String.class), any(List.class))).thenReturn(0L);
 	}
 
 	@BeforeAll
