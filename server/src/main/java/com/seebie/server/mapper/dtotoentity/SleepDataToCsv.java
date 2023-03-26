@@ -10,8 +10,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.seebie.server.Functional.uncheck;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
@@ -21,16 +23,25 @@ public class SleepDataToCsv implements Function<List<SleepData>, String> {
 
     private static Logger LOG = LoggerFactory.getLogger(SleepDataToCsv.class);
 
-    public static final String[] HEADER = new String[] {"Time-Asleep","Time-Awake","Duration-Minutes","Num-Times-Up","Notes"};
+//    public static final String[] HEADER = new String[] {"Time-Asleep","Time-Awake","Duration-Minutes","Num-Times-Up","Notes"};
+    public enum HEADER {
+        TIME_ASLEEP, TIME_AWAKE, DURATION_MINUTES, NUM_TIMES_UP, NOTES
+    }
 
     public static final CSVFormat CSV_OUTPUT = CSVFormat.RFC4180.builder()
-                                                                .setHeader(HEADER)
+                                                                .setHeader(HEADER.class)
                                                                 .build();
+
+    public static String headerRow() {
+        return Arrays.asList(CSV_OUTPUT.getHeader()).stream().collect(Collectors.joining(","));
+    }
+
 
     @Override
     public String apply(List<SleepData> data) {
 
         StringWriter stringWriter = new StringWriter();
+
 
         try (final CSVPrinter printer = new CSVPrinter(stringWriter, CSV_OUTPUT)) {
                     data.stream()

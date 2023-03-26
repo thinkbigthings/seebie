@@ -19,7 +19,7 @@ public class CsvToSleepData implements Function<String, List<SleepData>> {
     public static final CSVFormat CSV_INPUT = CSVFormat.RFC4180.builder()
                                                                 .setAllowMissingColumnNames(false)
                                                                 .setSkipHeaderRecord(true)
-                                                                .setHeader(HEADER)
+                                                                .setHeader(HEADER.class)
                                                                 .build();
 
     @Override
@@ -43,10 +43,10 @@ public class CsvToSleepData implements Function<String, List<SleepData>> {
 
     private SleepData fromCsvRow(CSVRecord record) {
 
-        var start = parse(record.get(HEADER[0]));
-        var end = parse(record.get(HEADER[1]));
-        var numTimesUp = Integer.parseInt(record.get(HEADER[3]));
-        var notes = record.get(HEADER[4]);
+        var start = parse(record.get(HEADER.TIME_ASLEEP));
+        var end = parse(record.get(HEADER.TIME_AWAKE));
+        var numTimesUp = Integer.parseInt(record.get(HEADER.NUM_TIMES_UP));
+        var notes = record.get(HEADER.NOTES);
 
         return new SleepData(notes, numTimesUp, start, end);
     }
