@@ -5,7 +5,6 @@ import com.seebie.server.AppProperties;
 import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
-import com.seebie.server.entity.User;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
@@ -19,16 +18,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -36,10 +35,8 @@ import java.util.List;
 import java.util.function.Function;
 
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
-import static com.seebie.server.test.data.TestData.createRandomPersonalInfo;
-import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
-import static java.util.Optional.of;
-import static org.mockito.ArgumentMatchers.eq;
+import static com.seebie.server.test.data.TestData.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -64,6 +61,7 @@ public class ControllerSecurityTest {
 	private static final SleepData sleepData = new SleepData();
 	private static final PersonalInfo info = createRandomPersonalInfo();
 	private static final String password = "new_password";
+	private static final MockMultipartFile file = createMultipart(createCsv(1));
 
 	private static final String from = format(ZonedDateTime.now().minusDays(1));
 	private static final String to = format(ZonedDateTime.now());
@@ -72,13 +70,14 @@ public class ControllerSecurityTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-	private static Function<AppRequest, MockHttpServletRequestBuilder> toRequest;
+	private static Function<AppRequest, RequestBuilder> toRequest;
 
 	private static TestData.ArgumentBuilder test;
 
 	@BeforeEach
 	public void setup() {
-		when(sleepService.exportCsv(ArgumentMatchers.any(String.class))).thenReturn("");
+
+		when(sleepService.saveNew(anyString(), anyList())).thenReturn(0L);
 	}
 
 	@BeforeAll
@@ -125,8 +124,11 @@ public class ControllerSecurityTest {
 				test.delete("/user/" + ADMINNAME + "/sleep" + "/1", 401),
 
 				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 401),
-				test.get("/user/" + USERNAME + "/sleep/download", 401)
-			);
+				test.get("/user/" + USERNAME + "/sleep/download", 401),
+				test.post("/user/" + USERNAME + "/sleep/upload", file, 401)
+
+
+		);
 	}
 
 	private static List<Arguments> provideAdminTestParameters() {
@@ -164,7 +166,8 @@ public class ControllerSecurityTest {
 				test.delete("/user/" + ADMINNAME + "/sleep" + "/1", 200),
 
 				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 200),
-				test.get("/user/" + USERNAME + "/sleep/download", 200)
+				test.get("/user/" + USERNAME + "/sleep/download", 200),
+				test.post("/user/" + USERNAME + "/sleep/upload", file, 200)
 		);
 	}
 
@@ -185,6 +188,7 @@ public class ControllerSecurityTest {
 				test.post("/user/" + USERNAME + "/password/update", password, 200),
 				test.get("/user/" + USERNAME, 200),
 
+				// user controller - should not access other user endpoints
 				test.put("/user/" + ADMINNAME + "/personalInfo", info, 403),
 				test.post("/user/" + ADMINNAME + "/password/update", password, 403),
 				test.get("/user/" + ADMINNAME, 403),
@@ -196,14 +200,21 @@ public class ControllerSecurityTest {
 				test.put("/user/" + USERNAME + "/sleep" + "/1", sleepData, 200),
 				test.delete("/user/" + USERNAME + "/sleep" + "/1", 200),
 
+				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 200),
+				test.get("/user/" + USERNAME + "/sleep/download", 200),
+				test.post("/user/" + USERNAME + "/sleep/upload", file, 200),
+
+				// sleep controller - should not access other user endpoints
+
 				test.post("/user/" + ADMINNAME + "/sleep", sleepData, 403),
 				test.get("/user/" + ADMINNAME + "/sleep", 403),
 				test.get("/user/" + ADMINNAME + "/sleep" + "/1", 403),
 				test.put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData, 403),
 				test.delete("/user/" + ADMINNAME + "/sleep" + "/1", 403),
 
-				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 200),
-				test.get("/user/" + USERNAME + "/sleep/download", 200)
+				test.get("/user/" + ADMINNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 403),
+				test.get("/user/" + ADMINNAME + "/sleep/download", 403),
+				test.post("/user/" + ADMINNAME + "/sleep/upload", file, 403)
 		);
 	}
 

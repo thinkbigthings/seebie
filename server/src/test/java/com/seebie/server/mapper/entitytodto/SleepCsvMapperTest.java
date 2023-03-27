@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.seebie.server.service.SleepService.HEADER;
+import static com.seebie.server.mapper.dtotoentity.SleepDataToCsv.HEADER;
 import static java.time.ZonedDateTime.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -45,7 +45,7 @@ public class SleepCsvMapperTest {
         List<String> csvRow = mapper.apply(data);
         assertEquals(8, count(csvRow.get(4), "\n"));
 
-        assertEquals(HEADER.length, csvRow.size());
+        assertEquals(HEADER.values().length, csvRow.size());
     }
 
     @Test
@@ -55,7 +55,7 @@ public class SleepCsvMapperTest {
         var data = new SleepData(notesWithQuotes, 0, now(), now());
 
         List<String> csvRow = mapper.apply(data);
-        assertEquals(HEADER.length, csvRow.size());
+        assertEquals(HEADER.values().length, csvRow.size());
 
         String csvNotes = csvRow.get(4);
         assertEquals(2, count(csvNotes, "\""));
@@ -81,6 +81,6 @@ public class SleepCsvMapperTest {
         assertEquals(25, csvRow.get(0).length());
         assertEquals(25, csvRow.get(1).length());
 
-        assertEquals(HEADER.length, csvRow.size());
+        assertEquals(HEADER.values().length, csvRow.size());
     }
 }

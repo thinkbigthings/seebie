@@ -205,8 +205,12 @@ post:
 or if the json is in a file:
 `curl -k -X POST -H "Content-Type: application/json" -d @data-file.json https://localhost:9000/user`
 
+
 Can download large sets of data like so:
 `curl -kv --user heavyUser:password "https://localhost:9000/user/heavyUser/sleep/download" > seebie-data-heavyUser.csv`
+
+Can upload large sets of data like so:
+`curl -kv --user heavyUser:password -F 'file=@/Users/jasonyoung/Downloads/seebie-data-heavyUser.csv' https://localhost:9000/user/heavyUser/sleep/upload`
 
 ### Web
 

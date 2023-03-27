@@ -58,7 +58,7 @@ function Section(props) {
         <Accordion.Item eventKey={eventKey}>
             <Accordion.Header>{header}</Accordion.Header>
             <Accordion.Body>
-                <ReactJson name={name} src={json} displayDataTypes={false} displayObjectSize={false} theme={"twilight"} collapsed={true}/>
+                <ReactJson name={name} src={json} displayDataTypes={false} displayObjectSize={false} theme={"twilight"} collapsed={1}/>
             </Accordion.Body>
         </Accordion.Item>
     );

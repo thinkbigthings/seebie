@@ -3,6 +3,8 @@ package com.seebie.server.controller;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
+import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
+import com.seebie.server.mapper.dtotoentity.SleepDataToCsv;
 import com.seebie.server.service.SleepService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -16,11 +18,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 public class SleepController {
@@ -28,6 +33,9 @@ public class SleepController {
     private static Logger LOG = LoggerFactory.getLogger(SleepController.class);
 
     private final SleepService sleepService;
+
+    private CsvToSleepData fromCsv = new CsvToSleepData();
+    private SleepDataToCsv toCsv = new SleepDataToCsv();
 
     // if there's only one constructor, can omit Autowired and Inject
     public SleepController(SleepService sleepService) {
@@ -91,17 +99,28 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<?> getSleepList(@PathVariable String username) {
+    public ResponseEntity<?> downloadSleepData(@PathVariable String username) {
 
         String filename = "seebie-data-" + username + ".csv";
         String headerValue = "attachment; filename="+filename;
 
-        String csv = sleepService.exportCsv(username);
+        String csv = toCsv.apply(sleepService.retrieveAll(username));
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
-                .body(csv.getBytes(StandardCharsets.UTF_8));
+                .body(csv.getBytes(UTF_8));
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/user/{username}/sleep/upload", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<String> uploadSleepData(@PathVariable String username, @RequestParam("file") MultipartFile file) throws IOException {
+
+        List<SleepData> parsedData = fromCsv.apply(new String(file.getBytes(), UTF_8));
+
+        long numImported = sleepService.saveNew(username, parsedData);
+
+        return ResponseEntity.status(OK).body(numImported + " records were imported");
+    }
 }
