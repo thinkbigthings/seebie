@@ -13,10 +13,6 @@ function Tools() {
 
     const downloadUrl = "/user/" + currentUser.username + "/sleep/download";
 
-    const downloadFile = () => {
-        console.log("download logic goes here")
-    }
-
     return (
         <Container>
 
@@ -24,7 +20,7 @@ function Tools() {
 
             <p>
                 <a href={downloadUrl}>
-                    <Button variant="secondary" onClick={downloadFile} >
+                    <Button variant="secondary" >
                         <FontAwesomeIcon className="me-2" icon={faDownload} />
                         Download sleep data to CSV file
                     </Button>
