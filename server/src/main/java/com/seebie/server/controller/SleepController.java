@@ -3,6 +3,7 @@ package com.seebie.server.controller;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDataWithId;
+import com.seebie.server.dto.UploadResponse;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.mapper.dtotoentity.SleepDataToCsv;
 import com.seebie.server.service.SleepService;
@@ -115,12 +116,18 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/upload", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> uploadSleepData(@PathVariable String username, @RequestParam("file") MultipartFile file) throws IOException {
+    public UploadResponse uploadSleepData(@PathVariable String username, @RequestParam("file") MultipartFile file) throws IOException {
+
+        LOG.info("Upload started. Parsing file...");
 
         List<SleepData> parsedData = fromCsv.apply(new String(file.getBytes(), UTF_8));
 
+        LOG.info("Saving data... ");
+
         long numImported = sleepService.saveNew(username, parsedData);
 
-        return ResponseEntity.status(OK).body(numImported + " records were imported");
+        LOG.info("Imported " + numImported + " records.");
+
+        return new UploadResponse(numImported, username);
     }
 }
