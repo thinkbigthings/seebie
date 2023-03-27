@@ -3,10 +3,19 @@ import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faDownload, faPlus, faUpload} from "@fortawesome/free-solid-svg-icons";
+import {faDownload, faUpload} from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
+import useCurrentUser from "./useCurrentUser";
 
 function Tools() {
 
+    const {currentUser} = useCurrentUser();
+
+    const downloadUrl = "/user/" + currentUser.username + "/sleep/download";
+
+    const downloadFile = () => {
+        console.log("download logic goes here")
+    }
 
     return (
         <Container>
@@ -14,10 +23,12 @@ function Tools() {
             <NavHeader title="Tools" />
 
             <p>
-                <Button variant="secondary" >
-                    <FontAwesomeIcon className="me-2" icon={faDownload} />
-                    Download sleep data to CSV file
-                </Button>
+                <a href={downloadUrl}>
+                    <Button variant="secondary" onClick={downloadFile} >
+                        <FontAwesomeIcon className="me-2" icon={faDownload} />
+                        Download sleep data to CSV file
+                    </Button>
+                </a>
             </p>
 
             <p>
