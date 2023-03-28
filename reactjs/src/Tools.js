@@ -9,7 +9,6 @@ import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import Form from 'react-bootstrap/Form';
 import Row from "react-bootstrap/Row";
-import {FormLabel} from "react-bootstrap";
 
 function Tools() {
 
@@ -27,7 +26,11 @@ function Tools() {
     console.log(selectedFile);
 
     const changeHandler = (event) => {
-        setSelectedFile(event.target.files[0]);
+
+        // TODO if type is not  then reject it
+        let proposedFile = event.target.files[0];
+
+        setSelectedFile(proposedFile);
         setIsFilePicked(true);
     }
 
@@ -55,6 +58,8 @@ function Tools() {
             .catch((error) => console.error('Error:', error));
     }
 
+    const isCsv = selectedFile.type === "text/csv";
+
     return (
         <Container>
 
@@ -76,8 +81,8 @@ function Tools() {
 
             <hr />
 
-            <Container className="mx-0 my-5">
-                <h4 className="mb-3" >Export</h4>
+            <Container className="mx-0 px-0 my-5">
+                 <h4 className="mb-3" >Export</h4>
                 <label className="d-block mb-3">You have sleep records that you can download to CSV</label>
                 <a href={downloadUrl}>
                     <Button variant="secondary" >
@@ -89,28 +94,32 @@ function Tools() {
 
             <hr />
 
-            <Container className="mx-0 my-5">
+            <Container className="mx-0 px-0 my-5">
                 <h4 className="mb-3" >Import</h4>
 
                 <Form.Group controlId="formFile" className="mb-3">
                     <Form.Label>Select CSV file with sleep data to upload</Form.Label>
                     <Form.Control type="file" name={"file"} onChange={changeHandler} />
-
                     {
-                        isFilePicked ?
+                        ! isCsv ?
                             <Container>
-                                <Row>File name: {selectedFile.name} </Row>
-                                <Row>File type: {selectedFile.type} </Row>
-                                <Row>File size: {selectedFile.size} bytes </Row>
-                                <Row>lastModifiedDate:{' '}  {selectedFile.lastModifiedDate.toLocaleDateString()}</Row>
-
+                                <Row>You must select a CSV file</Row>
+                            </Container>
+                        : ""
+                    }
+                    {
+                        isFilePicked && isCsv ?
+                            <Container>
+                                <Row>File: {selectedFile.name} </Row>
+                                <Row>Last Modified: {selectedFile.lastModifiedDate.toLocaleDateString()}</Row>
+                                <Row>Size: {selectedFile.size} bytes </Row>
                             </Container>
                             : ""
                     }
 
                 </Form.Group>
 
-                <Button variant="secondary" onClick={handleSubmission} disabled={ ! isFilePicked} >
+                <Button variant="secondary" onClick={handleSubmission} disabled={ (!isFilePicked) || (!isCsv) } >
                     <FontAwesomeIcon className="me-2" icon={faUpload} />
                     Upload
                 </Button>
