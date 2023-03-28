@@ -10,6 +10,7 @@ import Alert from "react-bootstrap/Alert";
 import Form from 'react-bootstrap/Form';
 import Row from "react-bootstrap/Row";
 import useHttpError from "./useHttpError";
+import {useApiGet} from "./useApiGet";
 
 function Tools() {
 
@@ -25,6 +26,14 @@ function Tools() {
 
     const downloadUrl = "/user/" + username + "/sleep/download";
     const uploadUrl = "/user/" + username + "/sleep/upload";
+
+    const sleepUrl = '/user/' + username + '/sleep';
+
+    // so we can retrieve the total number of records for the user
+    const [data, pagingControls] = useApiGet(sleepUrl, 1, 0);
+    const numUserRecords = data.totalElements;
+
+    console.log(data);
 
     const changeHandler = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -56,6 +65,7 @@ function Tools() {
             .catch((error) => console.error('Error:', error));
     }
 
+
     const isCsv = isFilePicked && selectedFile !== undefined && selectedFile.type === "text/csv";
 
     return (
@@ -81,7 +91,7 @@ function Tools() {
 
             <Container className="mx-0 px-0 my-5">
                  <h4 className="mb-3" >Export</h4>
-                <label className="d-block mb-3">You have sleep records that you can download to CSV</label>
+                <label className="d-block mb-3">You have {numUserRecords} sleep records that you can download to CSV</label>
                 <a href={downloadUrl}>
                     <Button variant="secondary" >
                         <FontAwesomeIcon className="me-2" icon={faDownload} />
