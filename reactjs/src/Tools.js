@@ -9,13 +9,16 @@ import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import Form from 'react-bootstrap/Form';
 import Row from "react-bootstrap/Row";
+import useHttpError from "./useHttpError";
 
 function Tools() {
 
     const {currentUser} = useCurrentUser();
     const username = currentUser.username;
 
-    const [selectedFile, setSelectedFile] = useState();
+    const {throwOnHttpError} = useHttpError();
+
+    const [selectedFile, setSelectedFile] = useState({});
     const [isFilePicked, setIsFilePicked] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [uploadSuccessInfo, setUploadSuccessInfo] = useState({numImported: 0, username: username});
@@ -23,14 +26,8 @@ function Tools() {
     const downloadUrl = "/user/" + username + "/sleep/download";
     const uploadUrl = "/user/" + username + "/sleep/upload";
 
-    console.log(selectedFile);
-
     const changeHandler = (event) => {
-
-        // TODO if type is not  then reject it
-        let proposedFile = event.target.files[0];
-
-        setSelectedFile(proposedFile);
+        setSelectedFile(event.target.files[0]);
         setIsFilePicked(true);
     }
 
@@ -53,12 +50,13 @@ function Tools() {
         };
 
         return fetch(uploadUrl, requestMeta)
+            .then(throwOnHttpError)
             .then((response) => response.json())
             .then(onUploadSuccess)
             .catch((error) => console.error('Error:', error));
     }
 
-    const isCsv = selectedFile.type === "text/csv";
+    const isCsv = isFilePicked && selectedFile !== undefined && selectedFile.type === "text/csv";
 
     return (
         <Container>
