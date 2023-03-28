@@ -7,6 +7,9 @@ import {faDownload, faUpload} from "@fortawesome/free-solid-svg-icons";
 import useCurrentUser from "./useCurrentUser";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
+import Form from 'react-bootstrap/Form';
+import Row from "react-bootstrap/Row";
+import {FormLabel} from "react-bootstrap";
 
 function Tools() {
 
@@ -20,6 +23,8 @@ function Tools() {
 
     const downloadUrl = "/user/" + username + "/sleep/download";
     const uploadUrl = "/user/" + username + "/sleep/upload";
+
+    console.log(selectedFile);
 
     const changeHandler = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -69,37 +74,48 @@ function Tools() {
 
             <NavHeader title="Tools" />
 
-            <p>
+            <hr />
+
+            <Container className="mx-0 my-5">
+                <h4 className="mb-3" >Export</h4>
+                <label className="d-block mb-3">You have sleep records that you can download to CSV</label>
                 <a href={downloadUrl}>
                     <Button variant="secondary" >
                         <FontAwesomeIcon className="me-2" icon={faDownload} />
-                        Download sleep data to CSV file
+                        Download
                     </Button>
                 </a>
-            </p>
+            </Container>
 
-            {isFilePicked ? (
+            <hr />
 
-                <div>
-                    <p>Filename: {selectedFile.name}</p>
-                    <p>Filetype: {selectedFile.type}</p>
-                    <p>Size in bytes: {selectedFile.size}</p>
-                    <p>
-                        lastModifiedDate:{' '}
-                        {selectedFile.lastModifiedDate.toLocaleDateString()}
-                    </p>
-                </div>
+            <Container className="mx-0 my-5">
+                <h4 className="mb-3" >Import</h4>
 
-            ) : (
-                <p>Select a file to show details</p>
-            )}
-            <p>
-                <input type="file" name="file" onChange={changeHandler} />
+                <Form.Group controlId="formFile" className="mb-3">
+                    <Form.Label>Select CSV file with sleep data to upload</Form.Label>
+                    <Form.Control type="file" name={"file"} onChange={changeHandler} />
+
+                    {
+                        isFilePicked ?
+                            <Container>
+                                <Row>File name: {selectedFile.name} </Row>
+                                <Row>File type: {selectedFile.type} </Row>
+                                <Row>File size: {selectedFile.size} bytes </Row>
+                                <Row>lastModifiedDate:{' '}  {selectedFile.lastModifiedDate.toLocaleDateString()}</Row>
+
+                            </Container>
+                            : ""
+                    }
+
+                </Form.Group>
+
                 <Button variant="secondary" onClick={handleSubmission} disabled={ ! isFilePicked} >
                     <FontAwesomeIcon className="me-2" icon={faUpload} />
-                    Upload CSV file with sleep data
+                    Upload
                 </Button>
-            </p>
+
+            </Container>
 
         </Container>
     );
