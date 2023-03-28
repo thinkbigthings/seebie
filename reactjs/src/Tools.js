@@ -30,10 +30,8 @@ function Tools() {
     const sleepUrl = '/user/' + username + '/sleep';
 
     // so we can retrieve the total number of records for the user
-    const [data, pagingControls] = useApiGet(sleepUrl, 1, 0);
+    const [data] = useApiGet(sleepUrl, 1, 0);
     const numUserRecords = data.totalElements;
-
-    console.log(data);
 
     const changeHandler = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -43,6 +41,7 @@ function Tools() {
     const onUploadSuccess = (uploadResponse) => {
         setUploadSuccessInfo(uploadResponse);
         setShowSuccessModal(true);
+        setSelectedFile({});
         setIsFilePicked(false);
     }
 
@@ -66,7 +65,7 @@ function Tools() {
     }
 
 
-    const isCsv = isFilePicked && selectedFile !== undefined && selectedFile.type === "text/csv";
+    const isCsv = selectedFile !== undefined && selectedFile.type === "text/csv";
 
     return (
         <Container>
@@ -109,22 +108,21 @@ function Tools() {
                     <Form.Label>Select CSV file with sleep data to upload</Form.Label>
                     <Form.Control type="file" name={"file"} onChange={changeHandler} />
                     {
-                        ! isCsv ?
+                        (isFilePicked) && (! isCsv) ?
                             <Container>
                                 <Row>You must select a CSV file</Row>
                             </Container>
                         : ""
                     }
                     {
-                        isFilePicked && isCsv ?
+                        (isFilePicked && isCsv) ?
                             <Container>
                                 <Row>File: {selectedFile.name} </Row>
                                 <Row>Last Modified: {selectedFile.lastModifiedDate.toLocaleDateString()}</Row>
                                 <Row>Size: {selectedFile.size} bytes </Row>
                             </Container>
-                            : ""
+                        : ""
                     }
-
                 </Form.Group>
 
                 <Button variant="secondary" onClick={handleSubmission} disabled={ (!isFilePicked) || (!isCsv) } >
