@@ -44,7 +44,13 @@ public class SleepSession implements Serializable {
     @Column(name="stop_time")
     private ZonedDateTime stopTime = ZonedDateTime.now();
 
-    // this is computed inside the database, so is readable but not writable
+    /**
+     * We want to keep the duration in the database, so we can do things like query against it,
+     * and it should be calculated there to ensure it is always correct.
+     * And only calculated in one place so there is only one place to update the calculation.
+     *
+     * This is computed inside the database, so is readable but not writable.
+     */
     @Column(insertable = false, updatable = false)
     private int minutesAsleep;
 

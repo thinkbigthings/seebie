@@ -2,10 +2,10 @@ package com.seebie.server.controller;
 
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
-import com.seebie.server.dto.SleepDataWithId;
+import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.dto.UploadResponse;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
-import com.seebie.server.mapper.dtotoentity.SleepDataToCsv;
+import com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv;
 import com.seebie.server.service.SleepService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -26,7 +26,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 public class SleepController {
@@ -36,7 +35,7 @@ public class SleepController {
     private final SleepService sleepService;
 
     private CsvToSleepData fromCsv = new CsvToSleepData();
-    private SleepDataToCsv toCsv = new SleepDataToCsv();
+    private SleepDetailsToCsv toCsv = new SleepDetailsToCsv();
 
     // if there's only one constructor, can omit Autowired and Inject
     public SleepController(SleepService sleepService) {
@@ -54,7 +53,7 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Page<SleepDataWithId> getSleepList(@PathVariable String username, @PageableDefault(page = 0, size = 10, sort = {"stopTime"}, direction=Sort.Direction.DESC) Pageable page) {
+    public Page<SleepDetails> getSleepList(@PathVariable String username, @PageableDefault(page = 0, size = 10, sort = {"stopTime"}, direction=Sort.Direction.DESC) Pageable page) {
 
         return sleepService.listSleepData(username, page);
     }

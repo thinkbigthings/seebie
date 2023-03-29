@@ -2,7 +2,7 @@ package com.seebie.server.service;
 
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
-import com.seebie.server.dto.SleepDataWithId;
+import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.mapper.dtotoentity.TagMapper;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.mapper.entitytodto.SleepMapper;
@@ -33,14 +33,14 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public Page<SleepDataWithId> listSleepData(String username, Pageable page) {
+    public Page<SleepDetails> listSleepData(String username, Pageable page) {
         return sleepRepository.loadSummaries(username, page);
     }
 
     @Transactional
-    public SleepDataWithId saveNew(String username, SleepData dto) {
+    public SleepDetails saveNew(String username, SleepData dto) {
         var entity = sleepRepository.save(entityMapper.toUnsavedEntity(username, dto));
-        return new SleepDataWithId(entity.getId(), sleepMapper.apply(entity));
+        return new SleepDetails(entity.getId(), entity.getMinutesAsleep(), sleepMapper.apply(entity));
     }
 
     @Transactional
@@ -75,7 +75,7 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public List<SleepData> retrieveAll(String username) {
+    public List<SleepDetails> retrieveAll(String username) {
         return sleepRepository.findAllByUsername(username);
     }
 

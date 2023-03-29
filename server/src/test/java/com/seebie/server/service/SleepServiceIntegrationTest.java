@@ -3,7 +3,7 @@ package com.seebie.server.service;
 import com.seebie.server.controller.SleepController;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
-import com.seebie.server.dto.SleepDataWithId;
+import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.Disabled;
@@ -77,7 +77,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         userService.saveNewUser(registration);
 
         // preconditions
-        Page<SleepDataWithId> listing = sleepService.listSleepData(username, firstPage);
+        Page<SleepDetails> listing = sleepService.listSleepData(username, firstPage);
         assertEquals(0, listing.getTotalElements());
 
         // set up test data
@@ -103,7 +103,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         var newData = createSleepData(listCount);
         sleepService.saveNew(username, newData);
 
-        Page<SleepDataWithId> listing = sleepService.listSleepData(username, firstPage);
+        Page<SleepDetails> listing = sleepService.listSleepData(username, firstPage);
 
         assertEquals(firstPage.getPageSize(), listing.getNumberOfElements());
         assertEquals(listCount, listing.getTotalElements());

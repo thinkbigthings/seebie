@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.parse;
-import static com.seebie.server.mapper.dtotoentity.SleepDataToCsv.HEADER;
+import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.HEADER;
 
 @Component
 public class CsvToSleepData implements Function<String, List<SleepData>> {
