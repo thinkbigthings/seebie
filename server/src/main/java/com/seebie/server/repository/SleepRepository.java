@@ -34,7 +34,7 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
 
     // use both username and sleep id in the query to ensure the given user owns this sleep
     @Query("""
-            SELECT new com.seebie.server.dto.SleepDataPoint(s.stopTime, s.durationMinutes)
+            SELECT new com.seebie.server.dto.SleepDataPoint(s.stopTime, s.minutesAsleep)
             FROM SleepSession s
             WHERE s.user.username=:username
             AND s.stopTime >= :from

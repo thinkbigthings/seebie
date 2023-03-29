@@ -46,7 +46,7 @@ public class SleepSession implements Serializable {
 
     // this is computed inside the database, so is readable but not writable
     @Column(insertable = false, updatable = false)
-    private int durationMinutes;
+    private int minutesAsleep;
 
     public SleepSession() {
         // no arg constructor is required by JPA
@@ -72,8 +72,8 @@ public class SleepSession implements Serializable {
         this.stopTime = stopTime;
     }
 
-    public int getDurationMinutes() {
-        return durationMinutes;
+    public int getMinutesAsleep() {
+        return minutesAsleep;
     }
 
     public void setSleepData(int outOfBed, String notes, Set<Tag> newTags, ZonedDateTime start, ZonedDateTime stop) {
