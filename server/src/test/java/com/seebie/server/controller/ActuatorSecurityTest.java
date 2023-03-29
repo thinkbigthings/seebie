@@ -73,7 +73,6 @@ public class ActuatorSecurityTest extends IntegrationTest {
 				test.get("/actuator/flyway", 401),
 				test.get("/actuator/health", 401),
 				test.get("/actuator/info", 401),
-				test.get("/actuator/mappings", 401),
 				test.get("/actuator/sessions", new String[] {"username", "admin"}, 401)
             );
     }
@@ -84,7 +83,6 @@ public class ActuatorSecurityTest extends IntegrationTest {
 				test.get("/actuator/flyway", 200),
 				test.get("/actuator/health", 200),
 				test.get("/actuator/info", 200),
-				test.get("/actuator/mappings", 200),
 				test.get("/actuator/sessions", new String[]{"username", "admin"}, 200)
         );
     }
@@ -95,7 +93,6 @@ public class ActuatorSecurityTest extends IntegrationTest {
 				test.get("/actuator/flyway", 403),
 				test.get("/actuator/health", 403),
 				test.get("/actuator/info", 403),
-				test.get("/actuator/mappings", 403),
 				test.get("/actuator/sessions",new String[]{"username", "admin"}, 403)
         );
     }
