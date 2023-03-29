@@ -44,10 +44,10 @@ function SleepForm(props) {
                                value={SleepDataManager.formatDuration(data.startTime, data.stopTime)} />
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="outOfBed" className="form-label">Out Of Bed (number of times)</label>
-                        <input type="text"  className="form-control" id="outOfBed" placeholder="Out of Bed (number of times)"
-                               value={data.outOfBed}
-                               onChange={e => onChange({outOfBed : e.target.value})} />
+                        <label htmlFor="minutesAwake" className="form-label">Time Awake During Sleep Period (minutes)</label>
+                        <input type="text"  className="form-control" id="minutesAwake" placeholder="Time Awake During Sleep Period (minutes)"
+                               value={data.minutesAwake}
+                               onChange={e => onChange({minutesAwake : e.target.value})} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="notes" className="form-label">Notes</label>

@@ -33,7 +33,7 @@ public class SleepSession implements Serializable {
     private Set<Tag> tags = new HashSet<>();
 
     @Basic
-    private int outOfBed = 0;
+    private int minutesAwake = 0;
 
     @Basic
     @NotNull
@@ -76,9 +76,9 @@ public class SleepSession implements Serializable {
         return minutesAsleep;
     }
 
-    public void setSleepData(int outOfBed, String notes, Set<Tag> newTags, ZonedDateTime start, ZonedDateTime stop) {
+    public void setSleepData(int minutesAwake, String notes, Set<Tag> newTags, ZonedDateTime start, ZonedDateTime stop) {
 
-        setOutOfBed(outOfBed);
+        setMinutesAwake(minutesAwake);
         setNotes(notes);
         setStartTime(start);
         setStopTime(stop);
@@ -111,12 +111,12 @@ public class SleepSession implements Serializable {
         this.tags = tags;
     }
 
-    public int getOutOfBed() {
-        return outOfBed;
+    public int getMinutesAwake() {
+        return minutesAwake;
     }
 
-    public void setOutOfBed(int outOfBed) {
-        this.outOfBed = outOfBed;
+    public void setMinutesAwake(int minutesAwake) {
+        this.minutesAwake = minutesAwake;
     }
 
 }

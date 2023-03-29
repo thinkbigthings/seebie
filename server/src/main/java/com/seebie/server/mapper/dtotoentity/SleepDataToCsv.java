@@ -25,7 +25,7 @@ public class SleepDataToCsv implements Function<List<SleepData>, String> {
 
 //    public static final String[] HEADER = new String[] {"Time-Asleep","Time-Awake","Duration-Minutes","Num-Times-Up","Notes"};
     public enum HEADER {
-        TIME_ASLEEP, TIME_AWAKE, DURATION_MINUTES, NUM_TIMES_UP, NOTES
+        TIME_ASLEEP, TIME_AWAKE, DURATION_MINUTES, MINUTES_AWAKE, NOTES
     }
 
     public static final CSVFormat CSV_OUTPUT = CSVFormat.RFC4180.builder()
@@ -64,7 +64,7 @@ public class SleepDataToCsv implements Function<List<SleepData>, String> {
                 format(data.startTime()),
                 format(data.stopTime()),
                 Long.toString(Duration.between(data.startTime(), data.stopTime()).toMinutes()),
-                Integer.toString(data.outOfBed()),
+                Integer.toString(data.minutesAwake()),
                 data.notes()
         );
     }

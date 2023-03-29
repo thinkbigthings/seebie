@@ -39,7 +39,7 @@ SleepDataManager.format = (sleepData) => {
 
     const formattedSleepData = {
         notes: sleepData.notes,
-        outOfBed: sleepData.outOfBed,
+        minutesAwake: sleepData.minutesAwake,
         tags: sleepData.tags,
         startTime: SleepDataManager.toIsoString(sleepData.startTime),
         stopTime: SleepDataManager.toIsoString(sleepData.stopTime)
@@ -60,7 +60,7 @@ SleepDataManager.createInitSleepData = () => {
         startTime: yesterday,
         stopTime: today,
         notes: '',
-        outOfBed: 0,
+        minutesAwake: 0,
         tags: [],
     }
 }
@@ -89,7 +89,7 @@ const minuteToHrMin = (minutes) => {
 
 SleepDataManager.isDataValid = (sleepData) => {
     const numericRegex=/^[0-9]+$/;
-    if( numericRegex.test(sleepData.outOfBed)) {
+    if( numericRegex.test(sleepData.minutesAwake)) {
         return true;
     }
     return false;
