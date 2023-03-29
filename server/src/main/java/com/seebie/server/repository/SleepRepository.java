@@ -30,7 +30,7 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             WHERE s.user.username=:username
             ORDER BY s.stopTime DESC 
             """)
-    Page<SleepDataWithId> loadSummaries(Pageable page, String username);
+    Page<SleepDataWithId> loadSummaries(String username, Pageable page);
 
     // use both username and sleep id in the query to ensure the given user owns this sleep
     @Query("""

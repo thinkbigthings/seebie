@@ -34,7 +34,7 @@ public class SleepService {
 
     @Transactional(readOnly = true)
     public Page<SleepDataWithId> listSleepData(String username, Pageable page) {
-        return sleepRepository.loadSummaries(page, username);
+        return sleepRepository.loadSummaries(username, page);
     }
 
     @Transactional
