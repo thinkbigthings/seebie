@@ -43,6 +43,7 @@ import {CreateSleepSession} from "./CreateSleepSession";
 import SleepList from "./SleepList";
 import SleepChart from "./SleepChart";
 import System from "./System";
+import Tools from "./Tools";
 
 function App() {
 
@@ -127,6 +128,7 @@ function AuthenticatedApp() {
                 <Route exact path="/users/:username/edit" component={EditUser}/>
                 <Route exact path="/users/:username/sleep/:sleepId/edit" component={EditSleep}/>
                 <Route exact path="/system" component={System}/>
+                <Route exact path="/tools" component={Tools}/>
 
             </Container>
 
