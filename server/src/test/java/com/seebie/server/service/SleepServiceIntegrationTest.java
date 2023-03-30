@@ -4,8 +4,11 @@ import com.seebie.server.controller.SleepController;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDetails;
+import com.seebie.server.entity.SleepSession;
+import com.seebie.server.repository.SleepRepository;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +16,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import java.lang.reflect.Field;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 
 import static com.seebie.server.test.data.TestData.createSleepData;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,12 +32,34 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     private SleepService sleepService;
 
     @Autowired
+    private SleepRepository sleepRepository;
+
+    @Autowired
     private UserService userService;
 
     private PageRequest firstPage = PageRequest.of(0, 10);
 
     @Test
-    public void testConstraint() {
+    public void testDbCalculationConstraint() throws NoSuchFieldException, IllegalAccessException {
+
+        var registration = TestData.createRandomUserRegistration();
+        String username = registration.username();
+        userService.saveNewUser(registration);
+
+        var badData = new SleepSession();
+        badData.setSleepData(30, "", new HashSet<>(), ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
+
+        // use reflection to hack our way into setting bad data
+        // because it should be hard to do the wrong thing
+        Field minutesAsleepField = SleepSession.class.getDeclaredField("minutesAsleep");
+        minutesAsleepField.setAccessible(true);
+        minutesAsleepField.set(badData, 15);
+
+        assertThrows(ConstraintViolationException.class, () -> sleepRepository.save(badData));
+    }
+
+    @Test
+    public void testDbTimeOrderConstraint() {
 
         var registration = TestData.createRandomUserRegistration();
         String username = registration.username();

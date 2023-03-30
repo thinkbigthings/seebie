@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,12 +48,10 @@ public class SleepSession implements Serializable {
 
     /**
      * We want to keep the duration in the database, so we can do things like query against it,
-     * and it should be calculated there to ensure it is always correct.
+     * and have a constraint to ensure it is always correct.
      * And only calculated in one place so there is only one place to update the calculation.
-     *
-     * This is computed inside the database, so is readable but not writable.
      */
-    @Column(insertable = false, updatable = false)
+    @Column
     private int minutesAsleep;
 
     public SleepSession() {
@@ -66,16 +66,8 @@ public class SleepSession implements Serializable {
         return startTime;
     }
 
-    public void setStartTime(ZonedDateTime startTime) {
-        this.startTime = startTime;
-    }
-
     public ZonedDateTime getStopTime() {
         return stopTime;
-    }
-
-    public void setStopTime(ZonedDateTime stopTime) {
-        this.stopTime = stopTime;
     }
 
     public int getMinutesAsleep() {
@@ -84,21 +76,19 @@ public class SleepSession implements Serializable {
 
     public void setSleepData(int minutesAwake, String notes, Set<Tag> newTags, ZonedDateTime start, ZonedDateTime stop) {
 
-        setMinutesAwake(minutesAwake);
-        setNotes(notes);
-        setStartTime(start);
-        setStopTime(stop);
+        this.minutesAwake = minutesAwake;
+        this.notes = notes;
+        this.startTime = start.truncatedTo(ChronoUnit.MINUTES);
+        this.stopTime = stop.truncatedTo(ChronoUnit.MINUTES);
 
-        tags.clear();
-        tags.addAll(newTags);
+        this.minutesAsleep = (int)Duration.between(startTime, stopTime).abs().toMinutes() - minutesAwake;
+
+        this.tags.clear();
+        this.tags.addAll(newTags);
     }
 
     public String getNotes() {
         return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
     }
 
     public User getUser() {
@@ -119,10 +109,6 @@ public class SleepSession implements Serializable {
 
     public int getMinutesAwake() {
         return minutesAwake;
-    }
-
-    public void setMinutesAwake(int minutesAwake) {
-        this.minutesAwake = minutesAwake;
     }
 
 }

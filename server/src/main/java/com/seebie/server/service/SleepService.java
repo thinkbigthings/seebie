@@ -39,6 +39,9 @@ public class SleepService {
 
     @Transactional
     public SleepDetails saveNew(String username, SleepData dto) {
+
+        // The computed value for timeAsleep isn't calculated until the transaction is closed
+        // so the entity does not have the correct value here.
         var entity = sleepRepository.save(entityMapper.toUnsavedEntity(username, dto));
         return new SleepDetails(entity.getId(), entity.getMinutesAsleep(), sleepMapper.apply(entity));
     }

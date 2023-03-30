@@ -15,7 +15,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.seebie.server.Functional.uncheck;
-import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
+import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 
 @Component
 public class SleepDetailsToCsv implements Function<List<SleepDetails>, String> {
