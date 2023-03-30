@@ -206,11 +206,19 @@ or if the json is in a file:
 `curl -k -X POST -H "Content-Type: application/json" -d @data-file.json https://localhost:9000/user`
 
 
-Can download large sets of data like so:
-`curl -kv --user heavyUser:password "https://localhost:9000/user/heavyUser/sleep/download" > seebie-data-heavyUser.csv`
+Can download all of your data like so:
+`curl -kv --user myusername:password "https://localhost:9000/user/myusername/sleep/download" > seebie-data-heavyUser.csv`
 
-Can upload large sets of data like so:
-`curl -kv --user heavyUser:password -F 'file=@/Users/jasonyoung/Downloads/seebie-data-heavyUser.csv' https://localhost:9000/user/heavyUser/sleep/upload`
+Can upload the same data like so:
+`curl -kv --user myusername:password -F 'file=@/Users/myusername/Downloads/seebie-data-myusername.csv' https://localhost:9000/user/myusername/sleep/upload`
+
+You can even set up local cron job to download data daily via the API if you want your own personal backup. 
+1. Open a terminal and type crontab -e to edit the current user's crontab file.
+2. Add the following line to the end of the file (replace "username" and "password"
+with your own of course, and the path is just a suggestion)
+    > `0 12 * * * curl -kv --user username:password "https://stage.herokuapp.com/user/username/sleep/download" > /Users/localuser/Documents/seebie-data-username-$(date +'%Y-%m-%m').csv`
+3. Save and exit the crontab file.
+
 
 ### Web
 

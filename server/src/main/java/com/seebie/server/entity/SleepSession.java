@@ -81,6 +81,10 @@ public class SleepSession implements Serializable {
         this.startTime = start.truncatedTo(ChronoUnit.MINUTES);
         this.stopTime = stop.truncatedTo(ChronoUnit.MINUTES);
 
+        // this is calculated here and not in the database
+        // (despite the calculation being done in the database anyway to check the constraint)
+        // because after saving, database computed values are not available until after the transaction closes
+        // and the returned entity after save won't have the updated value
         this.minutesAsleep = (int)Duration.between(startTime, stopTime).abs().toMinutes() - minutesAwake;
 
         this.tags.clear();
