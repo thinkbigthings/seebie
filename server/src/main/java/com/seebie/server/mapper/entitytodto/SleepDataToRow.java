@@ -7,7 +7,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
+import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 
 @Component
 public class SleepDataToRow implements Function<SleepData, List<String>> {
@@ -19,7 +19,7 @@ public class SleepDataToRow implements Function<SleepData, List<String>> {
                         format(data.startTime()),
                         format(data.stopTime()),
                         Long.toString(Duration.between(data.startTime(), data.stopTime()).toMinutes()),
-                        Integer.toString(data.outOfBed()),
+                        Integer.toString(data.minutesAwake()),
                         data.notes()
                     );
     }

@@ -29,12 +29,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
-import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
+import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;

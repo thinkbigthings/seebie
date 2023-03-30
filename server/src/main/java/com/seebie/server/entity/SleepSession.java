@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,7 +35,7 @@ public class SleepSession implements Serializable {
     private Set<Tag> tags = new HashSet<>();
 
     @Basic
-    private int outOfBed = 0;
+    private int minutesAwake = 0;
 
     @Basic
     @NotNull
@@ -44,9 +46,13 @@ public class SleepSession implements Serializable {
     @Column(name="stop_time")
     private ZonedDateTime stopTime = ZonedDateTime.now();
 
-    // this is computed inside the database, so is readable but not writable
-    @Column(insertable = false, updatable = false)
-    private int durationMinutes;
+    /**
+     * We want to keep the duration in the database, so we can do things like query against it,
+     * and have a constraint to ensure it is always correct.
+     * And only calculated in one place so there is only one place to update the calculation.
+     */
+    @Column
+    private int minutesAsleep;
 
     public SleepSession() {
         // no arg constructor is required by JPA
@@ -60,39 +66,33 @@ public class SleepSession implements Serializable {
         return startTime;
     }
 
-    public void setStartTime(ZonedDateTime startTime) {
-        this.startTime = startTime;
-    }
-
     public ZonedDateTime getStopTime() {
         return stopTime;
     }
 
-    public void setStopTime(ZonedDateTime stopTime) {
-        this.stopTime = stopTime;
+    public int getMinutesAsleep() {
+        return minutesAsleep;
     }
 
-    public int getDurationMinutes() {
-        return durationMinutes;
-    }
+    public void setSleepData(int minutesAwake, String notes, Set<Tag> newTags, ZonedDateTime start, ZonedDateTime stop) {
 
-    public void setSleepData(int outOfBed, String notes, Set<Tag> newTags, ZonedDateTime start, ZonedDateTime stop) {
+        this.minutesAwake = minutesAwake;
+        this.notes = notes;
+        this.startTime = start.truncatedTo(ChronoUnit.MINUTES);
+        this.stopTime = stop.truncatedTo(ChronoUnit.MINUTES);
 
-        setOutOfBed(outOfBed);
-        setNotes(notes);
-        setStartTime(start);
-        setStopTime(stop);
+        // this is calculated here and not in the database
+        // (despite the calculation being done in the database anyway to check the constraint)
+        // because after saving, database computed values are not available until after the transaction closes
+        // and the returned entity after save won't have the updated value
+        this.minutesAsleep = (int)Duration.between(startTime, stopTime).abs().toMinutes() - minutesAwake;
 
-        tags.clear();
-        tags.addAll(newTags);
+        this.tags.clear();
+        this.tags.addAll(newTags);
     }
 
     public String getNotes() {
         return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
     }
 
     public User getUser() {
@@ -111,12 +111,8 @@ public class SleepSession implements Serializable {
         this.tags = tags;
     }
 
-    public int getOutOfBed() {
-        return outOfBed;
-    }
-
-    public void setOutOfBed(int outOfBed) {
-        this.outOfBed = outOfBed;
+    public int getMinutesAwake() {
+        return minutesAwake;
     }
 
 }

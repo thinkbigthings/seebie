@@ -10,8 +10,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.*;
 
-import static com.seebie.server.mapper.dtotoentity.SleepDataToCsv.HEADER;
-import static com.seebie.server.mapper.dtotoentity.SleepDataToCsv.headerRow;
+import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.joining;
 import static org.springframework.http.HttpMethod.*;
@@ -81,17 +80,17 @@ public class TestData {
 
     public static SleepData randomNotes(SleepData data) {
         String notes = faker.lorem().paragraph(5);
-        return new SleepData(notes, data.outOfBed(), data.tags(), data.startTime(), data.stopTime());
+        return new SleepData(notes, data.minutesAwake(), data.tags(), data.startTime(), data.stopTime());
     }
 
     public static SleepData decrementDays(SleepData data, long days) {
-        return new SleepData(data.notes(), data.outOfBed(), data.tags(),
+        return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
                 data.startTime().minusDays(days),
                 data.stopTime().minusDays(days));
     }
 
     public static SleepData randomDuration(SleepData data) {
-        return new SleepData(data.notes(), data.outOfBed(), data.tags(),
+        return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
                 data.startTime().plusMinutes(random.nextInt(60)),
                 data.stopTime().minusMinutes(random.nextInt(60)));
     }

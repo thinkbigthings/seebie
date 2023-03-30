@@ -1,6 +1,6 @@
 package com.seebie.server.mapper.dtotoentity;
 
-import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.SleepDetails;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
@@ -9,23 +9,20 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.seebie.server.Functional.uncheck;
-import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.format;
+import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 
 @Component
-public class SleepDataToCsv implements Function<List<SleepData>, String> {
+public class SleepDetailsToCsv implements Function<List<SleepDetails>, String> {
+    private static Logger LOG = LoggerFactory.getLogger(SleepDetailsToCsv.class);
 
-    private static Logger LOG = LoggerFactory.getLogger(SleepDataToCsv.class);
-
-//    public static final String[] HEADER = new String[] {"Time-Asleep","Time-Awake","Duration-Minutes","Num-Times-Up","Notes"};
     public enum HEADER {
-        TIME_ASLEEP, TIME_AWAKE, DURATION_MINUTES, NUM_TIMES_UP, NOTES
+        TIME_ASLEEP, TIME_AWAKE, MINUTES_ASLEEP, MINUTES_AWAKE, NOTES
     }
 
     public static final CSVFormat CSV_OUTPUT = CSVFormat.RFC4180.builder()
@@ -38,7 +35,7 @@ public class SleepDataToCsv implements Function<List<SleepData>, String> {
 
 
     @Override
-    public String apply(List<SleepData> data) {
+    public String apply(List<SleepDetails> data) {
 
         StringWriter stringWriter = new StringWriter();
 
@@ -58,13 +55,13 @@ public class SleepDataToCsv implements Function<List<SleepData>, String> {
         return stringWriter.toString();
     }
 
-    private List<String> toCsvRow(SleepData data) {
-
+    private List<String> toCsvRow(SleepDetails details) {
+        var data = details.sleepData();
         return List.of(
                 format(data.startTime()),
                 format(data.stopTime()),
-                Long.toString(Duration.between(data.startTime(), data.stopTime()).toMinutes()),
-                Integer.toString(data.outOfBed()),
+                Integer.toString(details.minutesAsleep()),
+                Integer.toString(data.minutesAwake()),
                 data.notes()
         );
     }

@@ -2,7 +2,7 @@ package com.seebie.server.service;
 
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
-import com.seebie.server.dto.SleepDataWithId;
+import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.mapper.dtotoentity.TagMapper;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.mapper.entitytodto.SleepMapper;
@@ -33,14 +33,17 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public Page<SleepDataWithId> listSleepData(String username, Pageable page) {
-        return sleepRepository.loadSummaries(page, username);
+    public Page<SleepDetails> listSleepData(String username, Pageable page) {
+        return sleepRepository.loadSummaries(username, page);
     }
 
     @Transactional
-    public SleepDataWithId saveNew(String username, SleepData dto) {
+    public SleepDetails saveNew(String username, SleepData dto) {
+
+        // The computed value for timeAsleep isn't calculated until the transaction is closed
+        // so the entity does not have the correct value here.
         var entity = sleepRepository.save(entityMapper.toUnsavedEntity(username, dto));
-        return new SleepDataWithId(entity.getId(), sleepMapper.apply(entity));
+        return new SleepDetails(entity.getId(), entity.getMinutesAsleep(), sleepMapper.apply(entity));
     }
 
     @Transactional
@@ -58,7 +61,7 @@ public class SleepService {
         var entity = sleepRepository.findBy(username, sleepId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sleep session not found"));
 
-        entity.setSleepData(dto.outOfBed(), dto.notes(), tagMapper.apply(dto.tags()), dto.startTime(), dto.stopTime());
+        entity.setSleepData(dto.minutesAwake(), dto.notes(), tagMapper.apply(dto.tags()), dto.startTime(), dto.stopTime());
     }
 
     @Transactional(readOnly = true)
@@ -75,7 +78,7 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public List<SleepData> retrieveAll(String username) {
+    public List<SleepDetails> retrieveAll(String username) {
         return sleepRepository.findAllByUsername(username);
     }
 

@@ -2,7 +2,6 @@ import React from 'react';
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
 import Container from "react-bootstrap/Container";
-import SleepDataManager from "./SleepDataManager";
 
 
 function SleepForm(props) {
@@ -15,7 +14,7 @@ function SleepForm(props) {
             <form>
 
                 <div className="mb-3">
-                        <label htmlFor="dateStart" className="form-label">Sleep Session Start</label>
+                        <label htmlFor="dateStart" className="form-label">Time Fell Asleep</label>
                         <DatePicker
                             className="form-control" id="dateStart" placeholder="Start Time"
                             dateFormat="MMMM d, yyyy h:mm aa"
@@ -27,7 +26,7 @@ function SleepForm(props) {
                             onChange={ date => onChange({startTime : date })} />
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="dateEnd" className="form-label">Sleep Session End</label>
+                        <label htmlFor="dateEnd" className="form-label">Time Woke Up</label>
                         <DatePicker
                             className="form-control" id="dateEnd" placeholder="Stop Time"
                             dateFormat="MMMM d, yyyy h:mm aa"
@@ -39,15 +38,10 @@ function SleepForm(props) {
                             onChange={ date => onChange({stopTime : date })} />
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="calculatedMinutes" className="form-label">Time Asleep</label>
-                        <input disabled className="form-control" id="calculatedMinutes" placeholder="Time Asleep"
-                               value={SleepDataManager.formatDuration(data.startTime, data.stopTime)} />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="outOfBed" className="form-label">Out Of Bed (number of times)</label>
-                        <input type="text"  className="form-control" id="outOfBed" placeholder="Out of Bed (number of times)"
-                               value={data.outOfBed}
-                               onChange={e => onChange({outOfBed : e.target.value})} />
+                        <label htmlFor="minutesAwake" className="form-label">Time Awake During Sleep Period (minutes)</label>
+                        <input type="text"  className="form-control" id="minutesAwake" placeholder="Time Awake During Sleep Period (minutes)"
+                               value={data.minutesAwake}
+                               onChange={e => onChange({minutesAwake : e.target.value})} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="notes" className="form-label">Notes</label>

@@ -46,7 +46,7 @@ function SleepList(props) {
                                         {new Date(sleep.sleepData.stopTime).toLocaleDateString()}
                                     </Link>
                                 </td>
-                                <td>{SleepDataManager.formatDuration(sleep.sleepData.startTime, sleep.sleepData.stopTime)}</td>
+                                <td>{SleepDataManager.minuteToHrMin(sleep.minutesAsleep)}</td>
                             </tr>
                     )}
                 </tbody>

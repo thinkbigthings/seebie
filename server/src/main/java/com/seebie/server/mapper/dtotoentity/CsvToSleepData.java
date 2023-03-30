@@ -9,8 +9,8 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.seebie.server.mapper.entitytodto.ZonedDateTimeToString.parse;
-import static com.seebie.server.mapper.dtotoentity.SleepDataToCsv.HEADER;
+import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.parse;
+import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.HEADER;
 
 @Component
 public class CsvToSleepData implements Function<String, List<SleepData>> {
@@ -45,10 +45,10 @@ public class CsvToSleepData implements Function<String, List<SleepData>> {
 
         var start = parse(record.get(HEADER.TIME_ASLEEP));
         var end = parse(record.get(HEADER.TIME_AWAKE));
-        var numTimesUp = Integer.parseInt(record.get(HEADER.NUM_TIMES_UP));
+        var minutesAwake = Integer.parseInt(record.get(HEADER.MINUTES_AWAKE));
         var notes = record.get(HEADER.NOTES);
 
-        return new SleepData(notes, numTimesUp, start, end);
+        return new SleepData(notes, minutesAwake, start, end);
     }
 
 }

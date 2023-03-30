@@ -55,7 +55,7 @@ function EditSleep({history, match}) {
     return (
         <Container>
 
-            <NavHeader title="Sleep Session">
+            <NavHeader title="Sleep Details">
                 <Button variant="danger"  onClick={()=>setShowDeleteWarning(true)}>
                     <FontAwesomeIcon className="me-2" icon={faTrash} />
                     Delete

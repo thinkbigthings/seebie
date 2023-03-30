@@ -39,7 +39,7 @@ SleepDataManager.format = (sleepData) => {
 
     const formattedSleepData = {
         notes: sleepData.notes,
-        outOfBed: sleepData.outOfBed,
+        minutesAwake: sleepData.minutesAwake,
         tags: sleepData.tags,
         startTime: SleepDataManager.toIsoString(sleepData.startTime),
         stopTime: SleepDataManager.toIsoString(sleepData.stopTime)
@@ -60,27 +60,12 @@ SleepDataManager.createInitSleepData = () => {
         startTime: yesterday,
         stopTime: today,
         notes: '',
-        outOfBed: 0,
+        minutesAwake: 0,
         tags: [],
     }
 }
 
-const minutesBetween = (date1, date2) => {
-
-    // if (typeof date1 === 'string' || date1 instanceof String) {
-    //     date1 = new Date(date1);
-    // }
-    //
-    // if (typeof date2 === 'string' || date2 instanceof String) {
-    //     date2 = new Date(date2);
-    // }
-
-    let diff = (date2.getTime() - date1.getTime()) / 1000;
-    diff /= 60;
-    return Math.abs(Math.round(diff));
-}
-
-const minuteToHrMin = (minutes) => {
+SleepDataManager.minuteToHrMin = (minutes) => {
 
     const hr = Math.floor(minutes / 60);
     const m = minutes % 60;
@@ -89,14 +74,10 @@ const minuteToHrMin = (minutes) => {
 
 SleepDataManager.isDataValid = (sleepData) => {
     const numericRegex=/^[0-9]+$/;
-    if( numericRegex.test(sleepData.outOfBed)) {
+    if( numericRegex.test(sleepData.minutesAwake)) {
         return true;
     }
     return false;
-}
-
-SleepDataManager.formatDuration = (date1, date2) => {
-    return minuteToHrMin(minutesBetween(date1, date2));
 }
 
 export default SleepDataManager;

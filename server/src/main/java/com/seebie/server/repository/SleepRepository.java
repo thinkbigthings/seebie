@@ -2,7 +2,7 @@ package com.seebie.server.repository;
 
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
-import com.seebie.server.dto.SleepDataWithId;
+import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.entity.SleepSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,16 +25,16 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
 
     // use both username and sleep id in the query to ensure the given user owns this sleep
     @Query("""
-            SELECT new com.seebie.server.dto.SleepDataWithId(s.id, s.notes, s.outOfBed, s.startTime, s.stopTime)
+            SELECT new com.seebie.server.dto.SleepDetails(s.id, s.minutesAsleep, s.notes, s.minutesAwake, s.startTime, s.stopTime)
             FROM SleepSession s
             WHERE s.user.username=:username
             ORDER BY s.stopTime DESC 
             """)
-    Page<SleepDataWithId> loadSummaries(Pageable page, String username);
+    Page<SleepDetails> loadSummaries(String username, Pageable page);
 
     // use both username and sleep id in the query to ensure the given user owns this sleep
     @Query("""
-            SELECT new com.seebie.server.dto.SleepDataPoint(s.stopTime, s.durationMinutes)
+            SELECT new com.seebie.server.dto.SleepDataPoint(s.stopTime, s.minutesAsleep)
             FROM SleepSession s
             WHERE s.user.username=:username
             AND s.stopTime >= :from
@@ -44,10 +44,10 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
     List<SleepDataPoint> loadChartData(String username, ZonedDateTime from, ZonedDateTime to);
 
     @Query("""
-            SELECT new com.seebie.server.dto.SleepData(s.notes, s.outOfBed, s.startTime, s.stopTime)
+            SELECT new com.seebie.server.dto.SleepDetails(s.id, s.minutesAsleep, s.notes, s.minutesAwake, s.startTime, s.stopTime)
             FROM SleepSession s
             WHERE s.user.username=:username
             ORDER BY s.stopTime ASC 
             """)
-    List<SleepData> findAllByUsername(String username);
+    List<SleepDetails> findAllByUsername(String username);
 }

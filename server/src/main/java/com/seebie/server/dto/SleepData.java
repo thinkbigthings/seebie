@@ -10,7 +10,7 @@ import java.util.Set;
 import static java.util.Collections.unmodifiableSet;
 
 public record SleepData(@NotNull String notes,
-                        @PositiveOrZero int outOfBed,
+                        @PositiveOrZero int minutesAwake,
                         @NotNull Set<String> tags,
                         @NotNull ZonedDateTime startTime,
                         @NotNull ZonedDateTime stopTime)
@@ -24,13 +24,13 @@ public record SleepData(@NotNull String notes,
         this("", 0, new HashSet<>(), startTime, stopTime);
     }
 
-    public SleepData(String notes, int outOfBed, ZonedDateTime startTime, ZonedDateTime stopTime) {
-        this(notes, outOfBed, new HashSet<>(), startTime, stopTime);
+    public SleepData(String notes, int minutesAwake, ZonedDateTime startTime, ZonedDateTime stopTime) {
+        this(notes, minutesAwake, new HashSet<>(), startTime, stopTime);
     }
 
-    public SleepData(String notes, int outOfBed, Set<String> tags, ZonedDateTime startTime, ZonedDateTime stopTime) {
+    public SleepData(String notes, int minutesAwake, Set<String> tags, ZonedDateTime startTime, ZonedDateTime stopTime) {
         this.notes = notes;
-        this.outOfBed = outOfBed;
+        this.minutesAwake = minutesAwake;
         this.tags = unmodifiableSet(tags);
         this.startTime = startTime;
         this.stopTime = stopTime;
