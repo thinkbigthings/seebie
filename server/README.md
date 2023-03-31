@@ -216,7 +216,7 @@ You can even set up local cron job to download data daily via the API if you wan
 1. Open a terminal and type crontab -e to edit the current user's crontab file.
 2. Add the following line to the end of the file (replace "username" and "password"
 with your own of course, and the path is just a suggestion)
-    > `0 12 * * * curl -kv --user username:password "https://stage.herokuapp.com/user/username/sleep/download" > /Users/localuser/Documents/seebie-data-username-$(date +'%Y-%m-%m').csv`
+    > `0 12 * * * curl -kv --user username:password "https://stage.herokuapp.com/user/username/sleep/download" > /Users/localuser/Documents/seebie-data-username-$(date +'%Y-%m-%d').csv`
 3. Save and exit the crontab file.
 
 
