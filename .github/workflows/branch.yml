@@ -6,7 +6,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "suppress-keyboard-on-mobile" ]
+    branches: [ "notification-bug" ]
 
 permissions:
   contents: read

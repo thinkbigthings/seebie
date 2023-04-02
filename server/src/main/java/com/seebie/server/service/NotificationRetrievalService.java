@@ -26,14 +26,18 @@ public class NotificationRetrievalService {
      * Transactional must be called from a separate class from the Scheduled method anyway.
      *
      * This sets the last sent time of the Notification record,
-     * that way another transaction that tries to read that record will ignore it.
+     * that way another scan transaction (maybe by another node) that tries to read that record will ignore it.
      *
      * @return
      */
     @Transactional
     public List<NotificationRequired> getUsersToNotify(Instant ifNotNotifiedSince, Instant ifNotLoggedSince, Instant newLastScan) {
 
-        LOG.info("Retrieving Notifications for emails");
+        LOG.info("Retrieving Notification records for users. Notifications will be sent to users " +
+                        "who have not been notified since " + ifNotNotifiedSince + " " +
+                        "and have not logged sleep since " + ifNotLoggedSince + ". " +
+                        "Last scan date for notified users will be set to " + newLastScan + "."
+                );
 
         return notificationRepo.findNotificationsBy(ifNotNotifiedSince, ifNotLoggedSince).stream()
                 .map(notification -> notification.withLastSent(newLastScan))
