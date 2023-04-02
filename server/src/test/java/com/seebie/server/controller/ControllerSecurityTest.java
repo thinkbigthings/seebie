@@ -41,6 +41,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
+/**
+ * This class tests that security annotations are applied and that appropriate responses are returned.
+ * It is specific to testing annotations on controllers.
+ *
+ * If it tried to test access to unsecure static resources like "/", "/favicon.ico", "/manifest.json", and so on,
+ * the controller would fail with a 404 instead of 200 unless those static resources were present
+ * in server/build/resources/main/static in which case the test would pass.
+ * Since that would require copying contents of reactjs/public into server/build/resources/main/static
+ * as a dependency of the test phase, it doesn't really fit as a unit test.
+ *
+ * testing open access to static resources is really a better job of an integration test that happens after the
+ * web content is copied from the ui anyway.
+ *
+ */
 @WebMvcTest
 @EnableConfigurationProperties(value = {AppProperties.class})
 @Import(WebSecurityConfig.class)
@@ -91,11 +105,6 @@ public class ControllerSecurityTest {
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
 		return List.of(
 
-				// unsecured resources
-				test.get("/", 200),
-				test.get("/favicon.ico", 200),
-				test.get("/manifest.json", 200),
-
 				// user controller
 				test.post("/registration", registration, 401),
 				test.get("/login", 401),
@@ -133,11 +142,6 @@ public class ControllerSecurityTest {
 	private static List<Arguments> provideAdminTestParameters() {
 		return List.of(
 
-				// unsecured resources
-				test.get("/", 200),
-				test.get("/favicon.ico", 200),
-				test.get("/manifest.json", 200),
-
 				// user controller
 				test.post("/registration", registration, 200),
 				test.get("/login", 200),
@@ -172,11 +176,6 @@ public class ControllerSecurityTest {
 
 	private static List<Arguments> provideUserTestParameters() {
 		return List.of(
-
-				// unsecured resources
-				test.get("/", 200),
-				test.get("/favicon.ico", 200),
-				test.get("/manifest.json", 200),
 
 				// user controller
 				test.post("/registration", registration, 403),
