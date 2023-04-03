@@ -1,15 +1,14 @@
 package com.seebie.server.repository;
 
-import com.seebie.server.service.NotificationRequired;
-import com.seebie.server.service.NotificationRetrievalService;
-import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
+import com.seebie.server.service.NotificationRequired;
+import com.seebie.server.service.NotificationRetrievalService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
+import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -17,14 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
-import static com.seebie.server.service.NotificationRetrievalService.toLocale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -76,39 +71,30 @@ public class NotificationRepositoryTest extends IntegrationTest {
     @Transactional
     public void testTest(boolean lastLogWasRecent, boolean lastNotifiedWasRecent, boolean expectNotification, SleepData lastSleep, boolean notificationsEnabled) {
 
+        // these will be used
         Duration lastLoggedAgo = lastLogWasRecent ? triggerAfterSleepLogAged.minusHours(1) : triggerAfterSleepLogAged.plusHours(1);
         Duration lastNotifiedAgo = lastNotifiedWasRecent ? triggerAfterLastNotifiedAged.minusHours(1) : triggerAfterLastNotifiedAged.plusHours(1);
 
-        // create new user and enable notifications
+        // create new user and update notification setting
         RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(testUserRegistration);
         String username = testUserRegistration.username();
         userService.updateUser(username, userService.getUser(username).personalInfo().withNotificationEnabled(notificationsEnabled));
 
-        // save sleep session if user logged it
+        // save sleep session if there is one
         var lastSleepLogged = Optional.ofNullable(lastSleep)
                 .map(s -> TestData.decrement(s, lastLoggedAgo))
                 .map(s -> sleepService.saveNew(username, s))
                 .map(s -> s.sleepData().stopTime().toInstant())
                 .orElse(null);
 
-        // save last notification
+        // update last notification
         var notify = notificationRepository.findBy(username).get();
         notify.withLastSent(notify.getLastSent().minus(lastNotifiedAgo));
 
-        String lastLoggedEst = toLocale(lastSleepLogged);
-        String lastNotifiedEst = toLocale(notify.getLastSent());
-
-        // TODO maybe property names should have "age" in them as a more descriptive name
-
-        // TODO also do requests for after the notification is updated
-
-        System.out.println("User's last notification was " + lastNotifiedEst);
-        System.out.println("User's last sleep log was " + lastLoggedEst);
-
+        // look for notifications given the thresholds
         var lastNotificationSentBefore = now.minus(triggerAfterLastNotifiedAged).toInstant();
         var lastSleepLoggedBefore = now.minus(triggerAfterSleepLogAged).toInstant();
-
         var notificationsToSend = notificationService.getUsersToNotify(lastNotificationSentBefore, lastSleepLoggedBefore, now.toInstant());
 
         // test for user in results, so test is scoped and can be run in parallel
