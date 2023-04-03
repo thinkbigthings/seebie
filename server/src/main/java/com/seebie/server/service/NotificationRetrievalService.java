@@ -8,7 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Objects;
+
+import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 
 @Service
 public class NotificationRetrievalService {
@@ -31,18 +35,31 @@ public class NotificationRetrievalService {
      * @return
      */
     @Transactional
-    public List<NotificationRequired> getUsersToNotify(Instant ifNotNotifiedSince, Instant ifNotLoggedSince, Instant newLastScan) {
+    public List<NotificationRequired> getUsersToNotify(Instant lastNotifiedBefore, Instant lastLoggedBefore, Instant scanDate) {
 
-        LOG.info("Retrieving Notification records for users. Notifications will be sent to users " +
-                        "who have not been notified since " + ifNotNotifiedSince + " " +
-                        "and have not logged sleep since " + ifNotLoggedSince + ". " +
-                        "Last scan date for notified users will be set to " + newLastScan + "."
-                );
+        LOG.info("Retrieving Notification records for users.");
+        LOG.info("Notifications will be sent to users " +
+                "who have not been notified since " + toLocale(lastNotifiedBefore) + " " +
+                "and have not logged sleep since " + toLocale(lastLoggedBefore) + ". " +
+                "Last scan date for notified users will be set to " + scanDate + "."
+            );
 
-        return notificationRepo.findNotificationsBy(ifNotNotifiedSince, ifNotLoggedSince).stream()
-                .map(notification -> notification.withLastSent(newLastScan))
+        return notificationRepo.findNotificationsBy(lastNotifiedBefore, lastLoggedBefore).stream()
+                .peek(notification -> LOG.info(createLogMessage(notification, scanDate)))
+                .map(notification -> notification.withLastSent(scanDate))
                 .map(Notification::getUser)
                 .map(user -> new NotificationRequired(user.getEmail(), user.getUsername()))
                 .toList();
     }
+
+    private String createLogMessage(Notification notification, Instant scanDate) {
+        return "Updating notification record for " + notification.getUser().getUsername()
+                + " from " + toLocale(notification.getLastSent())
+                + " to " + scanDate;
+    }
+
+    public static String toLocale(Instant instant) {
+        return Objects.isNull(instant) ? "null" : format(instant.atZone(ZoneId.systemDefault()));
+    }
+
 }

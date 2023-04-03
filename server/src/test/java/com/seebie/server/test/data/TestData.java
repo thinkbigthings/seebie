@@ -8,6 +8,7 @@ import com.seebie.server.dto.RegistrationRequest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.time.Duration;
 import java.util.*;
 
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
@@ -83,10 +84,14 @@ public class TestData {
         return new SleepData(notes, data.minutesAwake(), data.tags(), data.startTime(), data.stopTime());
     }
 
-    public static SleepData decrementDays(SleepData data, long days) {
+    public static SleepData decrement(SleepData data, Duration amountToSubtract) {
         return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
-                data.startTime().minusDays(days),
-                data.stopTime().minusDays(days));
+                data.startTime().minus(amountToSubtract),
+                data.stopTime().minus(amountToSubtract));
+    }
+
+    public static SleepData decrementDays(SleepData data, long days) {
+        return decrement(data, Duration.ofDays(days));
     }
 
     public static SleepData randomDuration(SleepData data) {

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static com.seebie.server.service.NotificationRetrievalService.toLocale;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @RestController
@@ -47,6 +48,7 @@ public class SleepController {
     @ResponseBody
     public void saveSleepSession(@Valid @RequestBody SleepData dto, @PathVariable String username) {
 
+        LOG.info("Saving sleep data " + dto + " for " + username + " with logged date " + toLocale(dto.stopTime().toInstant()));
         sleepService.saveNew(username, dto);
     }
 
