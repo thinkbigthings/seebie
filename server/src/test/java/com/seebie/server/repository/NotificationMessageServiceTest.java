@@ -51,9 +51,11 @@ public class NotificationMessageServiceTest extends IntegrationTest {
     @Test
     public void testScanForNotifications() {
 
-        // TODO also test with notifications disabled and with missing sleep
+        // TODO Parameterize by notifications enabled, by sleep log period (12, 24, 96)
+        // assert by the number of expected notifications (0, 1, 2...)
+        // put the synthetic test duration in a property and can reference it
+        // delete the old tests
 
-        // TODO test with user adding sleep on time or only adding the first one
 
         // create new user and update notification setting
         RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();
@@ -67,7 +69,7 @@ public class NotificationMessageServiceTest extends IntegrationTest {
 
         var notify = new ArrayList<String>();
 
-        for(int hoursPassed = 0; hoursPassed < 96; hoursPassed++) {
+        for(int hoursPassed = 0; hoursPassed < 72; hoursPassed++) {
 
             if(hoursPassed % 12 == 0) {
                 var nextSleep = TestData.increment(firstSleepData, Duration.ofHours(hoursPassed));
