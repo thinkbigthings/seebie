@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @EnableScheduling
@@ -60,32 +61,35 @@ public class NotificationMessageService {
      * If last notification was >= 24 hours ago AND the last sleep logged was >= 30 hours ago:
      * send a notification and update the latest time, user gets an email once per day until logging something.
      *
-     * Use fixedDelay so that we execute the annotated method with a fixed period
+     * Use fixedDelayMinutes so that we execute the annotated method with a fixed period
      * between the end of the last invocation and the start of the next.
      * That way we avoid overlapping executions.
      *
      * Keep the scan turned off for integration tests, so it doesn't interfere with the notification integration tests.
      */
-    @Scheduled(fixedDelayString="${app.notification.scan.schedule.fixedDelay}", timeUnit = TimeUnit.MINUTES)
-    public void scanForNotifications() {
+    @Scheduled(fixedDelayString="${app.notification.scan.schedule.fixedDelayMinutes}", timeUnit = TimeUnit.MINUTES)
+    public void runOnSchedule() {
 
-        if( !scanEnabled) {
+        if( ! scanEnabled) {
             LOG.info("Email notifications schedule was triggered but scan was disabled.");
             return;
         }
 
         LOG.info("Email notifications scan is starting...");
 
-        var now = Instant.now();
-        var ifNotNotifiedSince = now.minus(triggerAfterLastNotified);
-        var ifNotLoggedSince = now.minus(triggerAfterSleepLog);
-        var listToSend = notificationRetrievalService.getUsersToNotify(ifNotNotifiedSince, ifNotLoggedSince, now);
+        var listToSend = findUsersToNotify(Instant.now());
 
         LOG.info("Email notifications found " + listToSend.size() + " users to notify");
 
         listToSend.forEach(this::sendEmail);
 
         LOG.info("Email notifications complete.");
+    }
+
+    public List<NotificationRequired> findUsersToNotify(Instant now) {
+        var ifNotNotifiedSince = now.minus(triggerAfterLastNotified);
+        var ifNotLoggedSince = now.minus(triggerAfterSleepLog);
+        return notificationRetrievalService.getUsersToNotify(ifNotNotifiedSince, ifNotLoggedSince, now);
     }
 
     private void sendEmail(NotificationRequired send) {

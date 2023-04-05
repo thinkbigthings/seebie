@@ -23,7 +23,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class NotificationRepositoryTest extends IntegrationTest {
+public class NotificationServiceTest extends IntegrationTest {
 
     @Autowired
     private UserService userService;
@@ -38,7 +38,7 @@ public class NotificationRepositoryTest extends IntegrationTest {
     private NotificationRepository notificationRepository;
 
     private static final ZonedDateTime now = ZonedDateTime.now();
-    private static final SleepData sleepToday = new SleepData(ZonedDateTime.now().minusHours(8), now);
+    private static final SleepData sleepToday = new SleepData(now.minusHours(8), now);
 
     // app.notification.triggerAfter.sleepLog=30h
     // pp.notification.triggerAfter.lastNotified=24h
@@ -69,7 +69,7 @@ public class NotificationRepositoryTest extends IntegrationTest {
     @MethodSource("provideThresholdOffsets")
     @DisplayName("Retrieve notification for missed sleep")
     @Transactional
-    public void testTest(boolean lastLogWasRecent, boolean lastNotifiedWasRecent, boolean expectNotification, SleepData lastSleep, boolean notificationsEnabled) {
+    public void testFindNotifications(boolean lastLogWasRecent, boolean lastNotifiedWasRecent, boolean expectNotification, SleepData lastSleep, boolean notificationsEnabled) {
 
         // these will be used
         Duration lastLoggedAgo = lastLogWasRecent ? triggerAfterSleepLogAged.minusHours(1) : triggerAfterSleepLogAged.plusHours(1);
@@ -107,7 +107,7 @@ public class NotificationRepositoryTest extends IntegrationTest {
 
 
         // Test for after the notification is updated
-        // if the user didn't need to be notified or was just notified, there should never be notifications sent
+        // if the user was just notified, there should never be notifications sent
         notificationsToSend = notificationService.getUsersToNotify(lastNotificationSentBefore, lastSleepLoggedBefore, now.toInstant());
         userHasNotification = notificationsToSend.stream()
                 .map(NotificationRequired::username)

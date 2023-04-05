@@ -41,7 +41,7 @@ public class NotificationRetrievalService {
         LOG.info("Notifications will be sent to users " +
                 "who have not been notified since " + toLocale(lastNotifiedBefore) + " " +
                 "and have not logged sleep since " + toLocale(lastLoggedBefore) + ". " +
-                "Last scan date for notified users will be set to " + scanDate + "."
+                "Last scan date for notified users will be set to " + toLocale(scanDate) + "."
             );
 
         return notificationRepo.findNotificationsBy(lastNotifiedBefore, lastLoggedBefore).stream()

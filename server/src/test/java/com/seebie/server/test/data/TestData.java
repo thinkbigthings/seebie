@@ -84,6 +84,12 @@ public class TestData {
         return new SleepData(notes, data.minutesAwake(), data.tags(), data.startTime(), data.stopTime());
     }
 
+    public static SleepData increment(SleepData data, Duration amountToAdd) {
+        return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
+                data.startTime().plus(amountToAdd),
+                data.stopTime().plus(amountToAdd));
+    }
+
     public static SleepData decrement(SleepData data, Duration amountToSubtract) {
         return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
                 data.startTime().minus(amountToSubtract),
