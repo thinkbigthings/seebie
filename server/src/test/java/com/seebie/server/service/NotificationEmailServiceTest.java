@@ -33,6 +33,7 @@ public class NotificationEmailServiceTest {
 
         when(env.getProperty(eq("spring.mail.username"))).thenReturn(sender);
         when(env.getRequiredProperty(eq("app.notification.scan.enabled"), eq(Boolean.class))).thenReturn(false);
+        when(env.getRequiredProperty(eq("app.notification.output"), eq(NotificationOutput.class))).thenReturn(NotificationOutput.LOG);
 
         service = new NotificationMessageService(retrievalService, mailSender, env);
     }
