@@ -27,13 +27,17 @@ public class TestData {
         return new PersonalInfo(faker.internet().emailAddress(), faker.name().name());
     }
 
-    public static RegistrationRequest createRandomUserRegistration() {
+    public static RegistrationRequest createRandomUserRegistration(String usernamePrefix) {
 
-        String username = "user-" + randomUUID();
+        String username = usernamePrefix + "-" + randomUUID();
         String password = "password";
         PersonalInfo info = createRandomPersonalInfo();
 
         return new RegistrationRequest(username, password, info.email());
+    }
+
+    public static RegistrationRequest createRandomUserRegistration() {
+        return createRandomUserRegistration("user-");
     }
 
     public static MockMultipartFile createMultipart(String content) {

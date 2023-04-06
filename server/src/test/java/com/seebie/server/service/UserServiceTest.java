@@ -1,5 +1,6 @@
 package com.seebie.server.service;
 
+import com.seebie.server.entity.Notification;
 import com.seebie.server.repository.NotificationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ public class UserServiceTest {
 
     private String savedUsername = "saveduser";
     private User savedUser = new User(savedUsername, savedUsername);
+    private Notification notification = new Notification(savedUser);
     private String strongPasswordHash = "strongencryptedpasswordhere";
 
     private UserService service;
@@ -46,6 +48,8 @@ public class UserServiceTest {
         when(userRepo.saveAndFlush(ArgumentMatchers.any(User.class))).then(AdditionalAnswers.returnsFirstArg());
         when(userRepo.findByUsername(eq(savedUser.getUsername()))).thenReturn(of(savedUser));
         when(pwEncoder.encode(ArgumentMatchers.any(String.class))).thenReturn(strongPasswordHash);
+        when(notificationRepo.findBy(eq(savedUser.getUsername()))).thenReturn(of(notification));
+
     }
 
     @Test

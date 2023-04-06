@@ -43,7 +43,7 @@ public class NotificationMessageService {
 
         emailTemplate.setFrom(env.getProperty("spring.mail.username"));
         emailTemplate.setSubject("Missing Sleep Log");
-        emailTemplate.setText("Hi %s you missed recording your last sleep session...");
+        emailTemplate.setText("Hi %s you missed recording your last sleep session. You can turn off notifications in your user settings.");
 
         LOG.info("Instantiated Notification Service.");
         LOG.info("Scan schedule enabled is " + scanEnabled);

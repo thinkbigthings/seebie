@@ -8,15 +8,16 @@ import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
@@ -45,33 +46,55 @@ public class NotificationMessageServiceTest extends IntegrationTest {
     private NotificationRepository notificationRepository;
 
     private static final ZonedDateTime start = ZonedDateTime.now();
-    private static final SleepData sleepToday = new SleepData(start.minusHours(8), start);
+    private static final SleepData firstSleepLog = new SleepData(start.minusHours(8), start);
+    private static final int testDurationHours = 72;
 
+    // What's the difference between wrapping the values here vs just having them already unwrapped in the test method?
+    // Using a record allows us to name the parameters at the point of declaration instead of at the point of use.
+    record TestParameters(boolean notificationsEnabled, int logSleepEveryNumHours, int expectedNotificationCount) {}
 
-    @Test
-    public void testScanForNotifications() {
+    private static List<Arguments> provideSleepLogParameters() {
+        return List.of(
+                Arguments.of(new TestParameters(true, 12, 0)),
+                Arguments.of(new TestParameters(true, 24, 0)),
+                Arguments.of(new TestParameters(true, 48, 1)),
+                Arguments.of(new TestParameters(true, 96, 2)),
 
-        // TODO Parameterize by notifications enabled, by sleep log period (12, 24, 96)
-        // assert by the number of expected notifications (0, 1, 2...)
-        // put the synthetic test duration in a property and can reference it
-        // delete the old tests
+                Arguments.of(new TestParameters(false, 12, 0)),
+                Arguments.of(new TestParameters(false, 24, 0)),
+                Arguments.of(new TestParameters(false, 48, 0)),
+                Arguments.of(new TestParameters(false, 96, 0))
+        );
+    }
 
+    @ParameterizedTest
+    @MethodSource("provideSleepLogParameters")
+    public void testScanForNotifications(TestParameters params) {
 
-        // create new user and update notification setting
-        RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();
+        String userPrefix = String.join( "-", "notify",
+                Boolean.toString(params.notificationsEnabled()),
+                Integer.toString(params.logSleepEveryNumHours()) );
+
+        // create new user
+        RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration(userPrefix);
         userService.saveNewUser(testUserRegistration);
         String username = testUserRegistration.username();
-        userService.updateUser(username, userService.getUser(username).personalInfo().withNotificationEnabled(true));
+
+        // update notification settings
+        var updatedInfo = userService.getUser(username)
+                .personalInfo()
+                .withNotificationEnabled(params.notificationsEnabled());
+
+        userService.updateUser(username, updatedInfo);
 
         // save sleep session
-        var firstSleepData = sleepService.saveNew(username, sleepToday).sleepData();
+        var firstSleepData = sleepService.saveNew(username, firstSleepLog).sleepData();
 
 
-        var notify = new ArrayList<String>();
+        long numNotifications = 0L;
+        for(int hoursPassed = 0; hoursPassed < testDurationHours; hoursPassed++) {
 
-        for(int hoursPassed = 0; hoursPassed < 72; hoursPassed++) {
-
-            if(hoursPassed % 12 == 0) {
+            if(hoursPassed % params.logSleepEveryNumHours() == 0) {
                 var nextSleep = TestData.increment(firstSleepData, Duration.ofHours(hoursPassed));
                 sleepService.saveNew(username, nextSleep).sleepData();
             }
@@ -79,17 +102,13 @@ public class NotificationMessageServiceTest extends IntegrationTest {
             var present = start.plusHours(hoursPassed);
             var notificationsToSend = notificationService.findUsersToNotify(present.toInstant());
 
-            final int hours = hoursPassed;
-            notificationsToSend.stream()
+            numNotifications += notificationsToSend.stream()
                     .map(NotificationRequired::username)
                     .filter(username::equals)
-                    .map(name -> "Hours Passed: " + hours + " and user has notifications.")
-                    .collect(Collectors.toCollection(() -> notify));
+                    .count();
         }
 
-        var message = "No notifications should be sent, but have : " + System.lineSeparator();
-        message += String.join(System.lineSeparator(), notify);
-        assertTrue(notify.isEmpty(), message);
+        assertEquals(params.expectedNotificationCount(), numNotifications);
     }
 
 }
