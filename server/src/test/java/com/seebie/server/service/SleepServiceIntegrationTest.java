@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Field;
 import java.time.ZonedDateTime;
@@ -128,7 +129,15 @@ class SleepServiceIntegrationTest extends IntegrationTest {
 
         int listCount = 2000;
         var newData = createSleepData(listCount);
+
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         sleepService.saveNew(username, newData);
+        stopWatch.stop();
+
+        // generally in the 4.1 - 4.4 second range
+        double importSeconds = stopWatch.getTotalTimeSeconds();
+        assertTrue(importSeconds < 5);
 
         Page<SleepDetails> listing = sleepService.listSleepData(username, firstPage);
 
