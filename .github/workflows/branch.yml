@@ -6,7 +6,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "import-performance" ]
+    branches: [ "NOT-import-performance" ]
 
 permissions:
   contents: read

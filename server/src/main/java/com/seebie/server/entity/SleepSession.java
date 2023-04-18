@@ -15,10 +15,9 @@ import java.util.Set;
 public class SleepSession implements Serializable {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sleep_session_generator")
-//    @SequenceGenerator(name="sleep_session_generator", sequenceName = "sleep_session_sequence")
-    @Column(name = "id", updatable = false, insertable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sleep_session_generator")
+    @SequenceGenerator(name="sleep_session_generator", sequenceName = "sleep_session_sequence", allocationSize = 1)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
     @NotNull

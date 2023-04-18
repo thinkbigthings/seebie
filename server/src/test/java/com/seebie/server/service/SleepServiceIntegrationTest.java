@@ -135,7 +135,8 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         sleepService.saveNew(username, newData);
         stopWatch.stop();
 
-        // generally in the 4.0 - 4.4 second range
+        // with identity it's 4.0 - 4.4 seconds
+        // with sequence it's like 2.3 seconds
         double importSeconds = stopWatch.getTotalTimeSeconds();
         assertTrue(importSeconds < 5);
 
