@@ -46,7 +46,7 @@ jobs:
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "stage"
-          heroku_email: "jay@levelstonesoftware.com"
+          heroku_email: "thinkbigthings@gmail.com"
           justlogin: true
 
       - name: Deploy to Staging
