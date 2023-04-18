@@ -135,7 +135,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         sleepService.saveNew(username, newData);
         stopWatch.stop();
 
-        // generally in the 4.1 - 4.4 second range
+        // generally in the 4.0 - 4.4 second range
         double importSeconds = stopWatch.getTotalTimeSeconds();
         assertTrue(importSeconds < 5);
 

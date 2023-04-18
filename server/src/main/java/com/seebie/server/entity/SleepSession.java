@@ -16,6 +16,8 @@ public class SleepSession implements Serializable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sleep_session_generator")
+//    @SequenceGenerator(name="sleep_session_generator", sequenceName = "sleep_session_sequence")
     @Column(name = "id", updatable = false, insertable = false, nullable = false)
     private Long id;
 

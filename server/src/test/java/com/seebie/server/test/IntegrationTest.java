@@ -22,7 +22,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
         "logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE",
         "spring.main.lazy-initialization=true",
         "spring.flyway.enabled=true",
-        "app.notification.scan.enabled=false"
+        "app.notification.scan.enabled=false",
+        "spring.jpa.properties.hibernate.jdbc.batch_size=25",
+        "spring.jpa.properties.hibernate.order_inserts=true",
+        "spring.jpa.properties.hibernate.order_updates=true"
         })
 public class IntegrationTest {
 
