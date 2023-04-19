@@ -15,6 +15,8 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+import static com.github.dockerjava.api.model.Ports.Binding.bindPort;
+
 
 @Tag("integration")
 @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
@@ -23,9 +25,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
         "spring.main.lazy-initialization=true",
         "spring.flyway.enabled=true",
         "app.notification.scan.enabled=false",
-        "spring.jpa.properties.hibernate.jdbc.batch_size=25",
-        "spring.jpa.properties.hibernate.order_inserts=true",
-        "spring.jpa.properties.hibernate.order_updates=true"
         })
 public class IntegrationTest {
 
@@ -55,15 +54,14 @@ public class IntegrationTest {
         // need "autosave conservative" config, otherwise pg driver has caching issues with blue-green deployment
         // (org.postgresql.util.PSQLException: ERROR: cached plan must not change result type)
 
+        var hostConfig = new HostConfig().withPortBindings(new PortBinding(bindPort(PG_PORT), new ExposedPort(PG_PORT)));
         postgres = new PostgreSQLContainer<>(POSTGRES_IMAGE)
                 .withUrlParam("autosave", "conservative")
                 .withReuse(leaveRunningAfterTests)
                 .withUsername("test")
                 .withPassword("test")
                 .withExposedPorts(PG_PORT)
-                .withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
-                        new HostConfig().withPortBindings(new PortBinding(Ports.Binding.bindPort(PG_PORT), new ExposedPort(PG_PORT)))
-                ));
+                .withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(hostConfig));
 
         // call start ourselves so we can reuse
         // instead of letting library manage it with @TestContainers and @Container

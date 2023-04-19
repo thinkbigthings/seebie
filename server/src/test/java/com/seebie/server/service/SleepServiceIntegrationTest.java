@@ -11,6 +11,8 @@ import com.seebie.server.test.data.TestData;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,8 @@ import static com.seebie.server.test.data.TestData.createSleepData;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SleepServiceIntegrationTest extends IntegrationTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SleepServiceIntegrationTest.class);
 
     @Autowired
     private SleepController sleepController;
@@ -130,6 +134,8 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         int listCount = 2000;
         var newData = createSleepData(listCount);
 
+        // batching means statements are sent to the DB in a batch, not that there is a single insert statement.
+        // so it's ok that we see a ton of insert statements.
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         sleepService.saveNew(username, newData);
@@ -138,7 +144,8 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         // with identity it's 4.0 - 4.4 seconds
         // with sequence it's like 2.3 seconds
         double importSeconds = stopWatch.getTotalTimeSeconds();
-        assertTrue(importSeconds < 5);
+        LOG.info("Import time for " + listCount + " records was " + importSeconds + " seconds.");
+        assertTrue(importSeconds < 3);
 
         Page<SleepDetails> listing = sleepService.listSleepData(username, firstPage);
 

@@ -14,6 +14,9 @@ import java.util.Set;
 @Table(name = "sleep_session")
 public class SleepSession implements Serializable {
 
+    /**
+     * We should prefer SEQUENCE over IDENTITY. Hibernate silently disables batch inserts for IDENTITY generators.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sleep_session_generator")
     @SequenceGenerator(name="sleep_session_generator", sequenceName = "sleep_session_sequence", allocationSize = 1)
