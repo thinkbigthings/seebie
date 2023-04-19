@@ -60,7 +60,6 @@ public class IntegrationTest {
                 .withReuse(leaveRunningAfterTests)
                 .withUsername("test")
                 .withPassword("test")
-                .withExposedPorts(PG_PORT)
                 .withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(hostConfig));
 
         // call start ourselves so we can reuse
