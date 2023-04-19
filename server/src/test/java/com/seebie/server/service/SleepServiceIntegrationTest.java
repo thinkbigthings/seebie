@@ -59,15 +59,15 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         userService.saveNewUser(registration);
 
         var oneHour = new SleepData(ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
-        var badData = sleepListMapper.toUnsavedEntity(username, oneHour);
+        var badCalculation = sleepListMapper.toUnsavedEntity(username, oneHour);
 
         // use reflection to hack our way into setting bad data
         // setter is missing because it should be hard to do the wrong thing
         Field minutesAsleepField = SleepSession.class.getDeclaredField("minutesAsleep");
         minutesAsleepField.setAccessible(true);
-        minutesAsleepField.set(badData, 15);
+        minutesAsleepField.set(badCalculation, 15);
 
-        var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepRepository.save(badData));
+        var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepRepository.save(badCalculation));
         assertEquals("correct_calculation", ((ConstraintViolationException)exception.getCause()).getConstraintName());
 
     }
@@ -82,7 +82,8 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         // test with the start and stop times switched
         var badData = new SleepData(ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
 
-        assertThrows(DataIntegrityViolationException.class, () -> sleepService.saveNew(username, badData));
+        var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepService.saveNew(username, badData));
+        assertEquals("stop_after_start", ((ConstraintViolationException)exception.getCause()).getConstraintName());
     }
 
 

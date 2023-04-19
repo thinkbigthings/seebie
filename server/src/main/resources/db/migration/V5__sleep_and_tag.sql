@@ -12,7 +12,7 @@ CREATE TABLE sleep_session (
     minutes_asleep  INT4        NOT NULL DEFAULT 0,
     notes           VARCHAR     NOT NULL DEFAULT '',
     CONSTRAINT stop_after_start CHECK (stop_time >= start_time),
-    CONSTRAINT correct_calculation CHECK ( ((EXTRACT(EPOCH FROM (stop_time - start_time)) / 60) - minutes_awake) = minutes_asleep)
+    CONSTRAINT correct_calculation CHECK ( ABS((EXTRACT(EPOCH FROM (stop_time - start_time)) / 60) - minutes_awake) = minutes_asleep)
 );
 
 CREATE INDEX index_sleep_session_user ON sleep_session(user_id);
