@@ -24,6 +24,8 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 
 import static com.seebie.server.test.data.TestData.createSleepData;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SleepServiceIntegrationTest extends IntegrationTest {
@@ -145,7 +147,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         // with sequence it's like 2.3 seconds
         double importSeconds = stopWatch.getTotalTimeSeconds();
         LOG.info("Import time for " + listCount + " records was " + importSeconds + " seconds.");
-        assertTrue(importSeconds < 3);
+        assertThat("import time", importSeconds, lessThan(3d));
 
         Page<SleepDetails> listing = sleepService.listSleepData(username, firstPage);
 
