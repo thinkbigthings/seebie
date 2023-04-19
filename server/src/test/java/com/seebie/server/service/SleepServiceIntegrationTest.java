@@ -5,10 +5,11 @@ import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.entity.SleepSession;
+import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.repository.SleepRepository;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
-import jakarta.validation.ConstraintViolationException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -21,12 +22,12 @@ import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Field;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
 
 import static com.seebie.server.test.data.TestData.createSleepData;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SleepServiceIntegrationTest extends IntegrationTest {
 
@@ -44,6 +45,10 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UnsavedSleepListMapper sleepListMapper;
+
+
     private PageRequest firstPage = PageRequest.of(0, 10);
 
     @Test
@@ -53,16 +58,18 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         String username = registration.username();
         userService.saveNewUser(registration);
 
-        var badData = new SleepSession();
-        badData.setSleepData(30, "", new HashSet<>(), ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
+        var oneHour = new SleepData(ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
+        var badData = sleepListMapper.toUnsavedEntity(username, oneHour);
 
         // use reflection to hack our way into setting bad data
-        // because it should be hard to do the wrong thing
+        // setter is missing because it should be hard to do the wrong thing
         Field minutesAsleepField = SleepSession.class.getDeclaredField("minutesAsleep");
         minutesAsleepField.setAccessible(true);
         minutesAsleepField.set(badData, 15);
 
-        assertThrows(ConstraintViolationException.class, () -> sleepRepository.save(badData));
+        var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepRepository.save(badData));
+        assertEquals("correct_calculation", ((ConstraintViolationException)exception.getCause()).getConstraintName());
+
     }
 
     @Test
@@ -143,8 +150,6 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         sleepService.saveNew(username, newData);
         stopWatch.stop();
 
-        // with identity it's 4.0 - 4.4 seconds
-        // with sequence it's like 2.3 seconds
         double importSeconds = stopWatch.getTotalTimeSeconds();
         LOG.info("Import time for " + listCount + " records was " + importSeconds + " seconds.");
         assertThat("import time", importSeconds, lessThan(3d));
