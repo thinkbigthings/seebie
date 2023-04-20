@@ -5,25 +5,33 @@ import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.entity.SleepSession;
+import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.repository.SleepRepository;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
-import jakarta.validation.ConstraintViolationException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Field;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
 
 import static com.seebie.server.test.data.TestData.createSleepData;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.lessThan;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SleepServiceIntegrationTest extends IntegrationTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SleepServiceIntegrationTest.class);
 
     @Autowired
     private SleepController sleepController;
@@ -37,6 +45,10 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UnsavedSleepListMapper sleepListMapper;
+
+
     private PageRequest firstPage = PageRequest.of(0, 10);
 
     @Test
@@ -46,16 +58,18 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         String username = registration.username();
         userService.saveNewUser(registration);
 
-        var badData = new SleepSession();
-        badData.setSleepData(30, "", new HashSet<>(), ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
+        var oneHour = new SleepData(ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
+        var badCalculation = sleepListMapper.toUnsavedEntity(username, oneHour);
 
         // use reflection to hack our way into setting bad data
-        // because it should be hard to do the wrong thing
+        // setter is missing because it should be hard to do the wrong thing
         Field minutesAsleepField = SleepSession.class.getDeclaredField("minutesAsleep");
         minutesAsleepField.setAccessible(true);
-        minutesAsleepField.set(badData, 15);
+        minutesAsleepField.set(badCalculation, 15);
 
-        assertThrows(ConstraintViolationException.class, () -> sleepRepository.save(badData));
+        var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepRepository.save(badCalculation));
+        assertEquals("correct_calculation", ((ConstraintViolationException)exception.getCause()).getConstraintName());
+
     }
 
     @Test
@@ -68,7 +82,8 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         // test with the start and stop times switched
         var badData = new SleepData(ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
 
-        assertThrows(DataIntegrityViolationException.class, () -> sleepService.saveNew(username, badData));
+        var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepService.saveNew(username, badData));
+        assertEquals("stop_after_start", ((ConstraintViolationException)exception.getCause()).getConstraintName());
     }
 
 
@@ -128,7 +143,17 @@ class SleepServiceIntegrationTest extends IntegrationTest {
 
         int listCount = 2000;
         var newData = createSleepData(listCount);
+
+        // batching means statements are sent to the DB in a batch, not that there is a single insert statement.
+        // so it's ok that we see a ton of insert statements.
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         sleepService.saveNew(username, newData);
+        stopWatch.stop();
+
+        double importSeconds = stopWatch.getTotalTimeSeconds();
+        LOG.info("Import time for " + listCount + " records was " + importSeconds + " seconds.");
+        assertThat("import time", importSeconds, lessThan(3d));
 
         Page<SleepDetails> listing = sleepService.listSleepData(username, firstPage);
 
