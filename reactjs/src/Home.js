@@ -5,7 +5,7 @@ function Home() {
     return (
         <div className="container mt-3">
 
-            <h1>Seebie Sleep Tracker</h1>
+            <h1>Seebie Sleep Diary</h1>
             <p>
                 Seebie is a sleep diary and analysis tool to help you get better sleep.
             </p>
