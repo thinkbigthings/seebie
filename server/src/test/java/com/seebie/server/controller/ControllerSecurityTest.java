@@ -29,6 +29,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
+import javax.sql.DataSource;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Function;
@@ -60,6 +61,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(WebSecurityConfig.class)
 @DisplayName("Endpoint Security")
 public class ControllerSecurityTest {
+
+	@MockBean
+	private DataSource dataSource;
 
 	@MockBean
 	private UserService service;

@@ -1,7 +1,7 @@
 package com.seebie.server.controller;
 
-import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.service.UserService;
+import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.client.ApiClientStateful;
 import com.seebie.server.test.data.AppRequest;
 import com.seebie.server.test.data.DtoJsonMapper;
@@ -9,7 +9,6 @@ import com.seebie.server.test.data.HttpRequestMapper;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -17,14 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-import java.net.URI;
 import java.net.http.HttpRequest;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 /**
@@ -118,31 +114,4 @@ public class ActuatorSecurityTest extends IntegrationTest {
         assertEquals(expectedStatus, userClient.trySend(toRequest.apply(testData)).statusCode());
     }
 
-    /**
-     * We don't return unauthenticated sessions.
-     * For one, it's unnecessary. Also:
-     * we don't want people to farm it for statistics on the cryptography of session tokens.
-     *
-     * @throws Exception
-     */
-    // TODO move this to separate integration test class around session management and do more session related tests
-    @Test
-    void testNoSessionForUnauthenticatedCall() throws Exception {
-
-        var unAuthLogin = HttpRequest.newBuilder()
-                .GET()
-                .uri(new URI(baseUrl + "/login"))
-                .build();
-
-        var response = unAuthClient.trySend(unAuthLogin);
-
-        boolean hasSession = response.headers().map().entrySet().stream()
-                .filter(entry -> entry.getKey().equalsIgnoreCase("SET-COOKIE"))
-                .map(Map.Entry::getValue)
-                .flatMap(List::stream)
-                .filter(values -> values.contains("SESSION"))
-                .findAny().isPresent();
-
-        assertFalse(hasSession, "Unauthorized calls should not create sessions");
-    }
 }

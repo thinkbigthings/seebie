@@ -24,7 +24,7 @@ import static com.github.dockerjava.api.model.Ports.Binding.bindPort;
         "logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE",
         "spring.main.lazy-initialization=true",
         "spring.flyway.enabled=true",
-        "app.notification.scan.enabled=false",
+        "app.notification.scan.enabled=false"
         })
 public class IntegrationTest {
 

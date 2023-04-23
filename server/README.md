@@ -176,7 +176,18 @@ Then see output in build/reports/jacoco/html/index.html
 
 curl quick guide: https://gist.github.com/subfuzion/08c5d85437d5d4f00e58
 
-WITH SECURITY
+#### Test admin functions and listing parameters
+
+See most recent users:
+`curl -k "https://localhost:9000/user?page=0&size=2&sort=registrationTime,desc"`
+
+post:
+`curl -k -X POST -H "Content-Type: application/json" -d '{"username":"user1", "displayName":"user1", "email":"us@r.com"}' https://localhost:9000/user`
+or if the json is in a file:
+`curl -k -X POST -H "Content-Type: application/json" -d @data-file.json https://localhost:9000/user`
+
+
+#### Test Session Security
 
 (this one should fail)
 curl -kv --user user:password "https://localhost:9000/user/admin"
@@ -195,16 +206,77 @@ curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"
 cat cookies.txt
 rm cookies.txt
 
-Run the server, then from another command line run `curl -k https://localhost:9000/user`
+#### Test remember-me security
 
-See most recent users:
-`curl -k "https://localhost:9000/user?page=0&size=2&sort=registrationTime,desc"`
+I think the parameter to trigger the remember-me functionality can be either a request header 
+or a request parameter, e.g.
 
-post:
-`curl -k -X POST -H "Content-Type: application/json" -d '{"username":"user1", "displayName":"user1", "email":"us@r.com"}' https://localhost:9000/user`
-or if the json is in a file:
-`curl -k -X POST -H "Content-Type: application/json" -d @data-file.json https://localhost:9000/user`
+    curl -i -u username:password "https://example.com/login?remember-me=true"
+    curl -i -u username:password -H "remember-me: true" https://example.com/login
 
+
+
+Manually demonstrate persistent login
+
+---------------------------------------
+
+Start with a clean slate
+
+    rm cookies.txt
+
+---------------------------------------
+
+Attempt to access secured endpoint while unauthenticated
+
+    curl -kv  "https://localhost:9000/user/admin"    
+
+Result is a 401
+
+---------------------------------------
+
+Login without remember-me and access secured endpoint
+
+    curl -kv -b cookies.txt -c cookies.txt --user admin:admin "https://localhost:9000/login?remember-me=false"
+    curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"   
+
+Result is a 200, Session cookie is set
+
+---------------------------------------
+
+Wait for session timeout, then attempt to access secured endpoint
+
+    curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"   
+
+Result is a 401, Session is invalid, no session cookie is returned
+
+---------------------------------------
+
+login with remember-me and access secured endpoint
+
+    curl -kv -b cookies.txt -c cookies.txt --user admin:admin "https://localhost:9000/login?remember-me=true"
+    curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"   
+
+result is a 200, Session cookie is set and remember-me cookie is set
+
+---------------------------------------
+
+Wait for session timeout, then attempt to access secured endpoint again
+
+    curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"   
+
+Result is a 200, Session cookie is set to a new session id
+
+---------------------------------------
+
+Wait for remember-me timeout, then attempt to access secured endpoint again
+
+    curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"   
+
+Result is a 401, Session is invalid, no session cookie or remember-me cookie is returned
+
+---------------------------------------
+
+#### Test import / export
 
 Can download all of your data like so:
 `curl -kv --user myusername:password "https://localhost:9000/user/myusername/sleep/download" > seebie-data-heavyUser.csv`
@@ -212,12 +284,6 @@ Can download all of your data like so:
 Can upload the same data like so:
 `curl -kv --user myusername:password -F 'file=@/Users/myusername/Downloads/seebie-data-myusername.csv' https://localhost:9000/user/myusername/sleep/upload`
 
-You can even set up local cron job to download data daily via the API if you want your own personal backup. 
-1. Open a terminal and type crontab -e to edit the current user's crontab file.
-2. Add the following line to the end of the file (replace "username" and "password"
-with your own of course, and the path is just a suggestion)
-    > `0 12 * * * curl -kv --user username:password "https://stage.herokuapp.com/user/username/sleep/download" > /Users/localuser/Documents/seebie-data-username-$(date +'%Y-%m-%d').csv`
-3. Save and exit the crontab file.
 
 
 ### Web
