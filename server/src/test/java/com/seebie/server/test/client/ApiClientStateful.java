@@ -37,10 +37,6 @@ public class ApiClientStateful {
     private URI logout;
     private HttpClient client;
 
-    static {
-        System.setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
-    }
-
     /**
      * Unauthenticated.
      *
@@ -76,7 +72,7 @@ public class ApiClientStateful {
         get(logout);
     }
 
-    protected HttpClient unAuthClient() {
+    public static HttpClient unAuthClient() {
         return HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(300))
                 .cookieHandler(new CookieManager())
@@ -84,7 +80,7 @@ public class ApiClientStateful {
                 .build();
     }
 
-    protected HttpClient basicAuthClient(String username, String password) {
+    public static HttpClient basicAuthClient(String username, String password) {
         return HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(300))
                 .cookieHandler(new CookieManager())
@@ -93,7 +89,7 @@ public class ApiClientStateful {
                 .build();
     }
 
-    protected HttpClient removeBasicAuth(HttpClient client) {
+    public static HttpClient removeBasicAuth(HttpClient client) {
         return HttpClient.newBuilder()
                 .connectTimeout(client.connectTimeout().get())
                 .cookieHandler(client.cookieHandler().get())
@@ -101,7 +97,7 @@ public class ApiClientStateful {
                 .build();
     }
 
-    protected SSLContext createSsl() {
+    protected static SSLContext createSsl() {
         try {
             // don't check certificates so we can use self-signed certs
             SSLContext sc = SSLContext.getInstance("TLSv1.3");

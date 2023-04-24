@@ -37,7 +37,7 @@ public class TestData {
     }
 
     public static RegistrationRequest createRandomUserRegistration() {
-        return createRandomUserRegistration("user-");
+        return createRandomUserRegistration("user");
     }
 
     public static MockMultipartFile createMultipart(String content) {

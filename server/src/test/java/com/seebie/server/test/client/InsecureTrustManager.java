@@ -1,9 +1,18 @@
 package com.seebie.server.test.client;
 
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.X509ExtendedTrustManager;
+import java.net.Socket;
 import java.security.cert.X509Certificate;
 
-public class InsecureTrustManager implements X509TrustManager {
+/**
+ *
+ * Trust manager that trusts all certificates.
+ *
+ * Hostname verification is disabled.
+ *
+ */
+public class InsecureTrustManager extends X509ExtendedTrustManager {
 
     public X509Certificate[] getAcceptedIssuers() {
         return null;
@@ -16,4 +25,25 @@ public class InsecureTrustManager implements X509TrustManager {
     @Override
     public void checkServerTrusted(X509Certificate[] certs, String authType) {
     }
+
+    @Override
+    public void checkClientTrusted(X509Certificate[] chain, String authType, Socket socket) {
+
+    }
+
+    @Override
+    public void checkServerTrusted(X509Certificate[] chain, String authType, Socket socket) {
+
+    }
+
+    @Override
+    public void checkClientTrusted(X509Certificate[] chain, String authType, SSLEngine engine) {
+
+    }
+
+    @Override
+    public void checkServerTrusted(X509Certificate[] chain, String authType, SSLEngine engine) {
+
+    }
+
 }
