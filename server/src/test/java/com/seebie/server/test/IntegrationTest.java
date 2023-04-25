@@ -25,8 +25,8 @@ import static com.github.dockerjava.api.model.Ports.Binding.bindPort;
         "spring.main.lazy-initialization=true",
         "spring.flyway.enabled=true",
         "app.notification.scan.enabled=false",
-        "app.security.rememberMe.tokenValidity=15s",
-        "spring.session.timeout=5s"
+        "app.security.rememberMe.tokenValidity=3s",
+        "spring.session.timeout=2s"
         })
 public class IntegrationTest {
 
