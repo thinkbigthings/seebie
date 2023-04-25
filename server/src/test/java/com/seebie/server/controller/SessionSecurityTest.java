@@ -5,6 +5,7 @@ import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.client.ApiClientStateful;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -29,34 +30,44 @@ public class SessionSecurityTest extends IntegrationTest {
     private static final String SESSION_COOKIE = "SESSION";
     private static final String REMEMBER_ME_COOKIE = "remember-me";
 
-    private static String testUserName;
-    private static String testUserPassword;
+    private static String baseUrl;
 
     private static HttpRequest loginSession;
     private static HttpRequest loginRememberMe;
-    private static HttpRequest userInfoRequest;
 
     private static Duration sessionTimeout;
     private static Duration rememberMeTimeout;
 
-    @BeforeAll
-    public static void setup(@LocalServerPort int randomServerPort,
-                             @Autowired UserService userService,
-                             @Autowired Environment env)
-    {
+    private String testUserName;
+    private String testUserPassword;
+    private HttpRequest userInfoRequest;
+
+    @BeforeEach
+    public void setupTestUser(@Autowired UserService userService) {
+
+        // each test should have its own test user so these could be run in parallel
+
         var userRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(userRegistration);
+
         testUserName = userRegistration.username();
         testUserPassword = userRegistration.plainTextPassword();
 
-        var baseUrl = "https://localhost:" + randomServerPort;
+        userInfoRequest = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/user/" + userRegistration.username()))
+                .GET()
+                .build();
+    }
+
+    @BeforeAll
+    public static void setup(@LocalServerPort int randomServerPort, @Autowired Environment env) {
+
+        baseUrl = "https://localhost:" + randomServerPort;
         var loginUri = URI.create(baseUrl + "/login?remember-me=false");
         var rememberMeUri = URI.create(baseUrl + "/login?remember-me=true");
-        var securedUserUri = URI.create(baseUrl + "/user/" + userRegistration.username());
 
         loginSession = HttpRequest.newBuilder().GET().uri(loginUri).build();
         loginRememberMe = HttpRequest.newBuilder().GET().uri(rememberMeUri).build();
-        userInfoRequest = HttpRequest.newBuilder().GET().uri(securedUserUri).build();
 
         // See timeout values set in IntegrationTest
         sessionTimeout = env.getProperty("spring.session.timeout", Duration.class);
@@ -165,7 +176,7 @@ public class SessionSecurityTest extends IntegrationTest {
         var response = basicAuth.send(loginRememberMe, ofString());
         assertResponse(response, 200, true, true);
 
-        // subsequent requests should NOT have session cookie set, cookie is sent in subsequent requests
+        // subsequent requests should NOT have session cookie set, cookie is sent from client in subsequent requests
         var sessionAuth = ApiClientStateful.removeBasicAuth(basicAuth);
         response = sessionAuth.send(userInfoRequest, ofString());
         assertResponse(response, 200, false, false);
@@ -182,13 +193,6 @@ public class SessionSecurityTest extends IntegrationTest {
         // once remember me cookie is cleared, any subsequent response will not try to set either cookie
         response = sessionAuth.send(userInfoRequest, ofString());
         assertResponse(response, 401, false, false);
-
-        // TODO each test should have its own test user so these could be run in parallel
-
-        // TODO monitor remote build, it is failing
-
-        // TODO this is setup differently in EndToEndIntegrationTest, should be consistent
-
     }
 
 
