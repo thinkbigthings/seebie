@@ -64,14 +64,40 @@ public class SessionSecurityTest extends IntegrationTest {
     }
 
     @Test
-    public void testUnauthenticatedCreatesNoSession() throws Exception {
+    public void testUnauthenticatedCallFails() throws Exception {
+
+        // We don't return session tokens for unauthenticated calls, it is unnecessary.
+        // Also, we don't want people to farm it for statistics on the cryptography of session tokens.
+
+        // Attempt to access secured endpoint while unauthenticated
+        var withoutAuth = ApiClientStateful.unAuthClient();
+        var response = withoutAuth.send(userInfoRequest, ofString());
+
+        assertResponse(response, 401, false, false);
+    }
+
+    @Test
+    public void testUnauthenticatedLoginCreatesNoSession() throws Exception {
 
         // We don't return session tokens for unauthenticated calls, it is unnecessary.
         // Also we don't want people to farm it for statistics on the cryptography of session tokens.
 
         // Attempt to access secured endpoint while unauthenticated
         var withoutAuth = ApiClientStateful.unAuthClient();
-        var response = withoutAuth.send(userInfoRequest, ofString());
+        var response = withoutAuth.send(loginSession, ofString());
+
+        assertResponse(response, 401, false, false);
+    }
+
+    @Test
+    public void testUnauthenticatedLoginCreatesNoRememberMe() throws Exception {
+
+        // We don't return session tokens for unauthenticated calls, it is unnecessary.
+        // Also we don't want people to farm it for statistics on the cryptography of session tokens.
+
+        // Attempt to access secured endpoint while unauthenticated
+        var withoutAuth = ApiClientStateful.unAuthClient();
+        var response = withoutAuth.send(loginRememberMe, ofString());
 
         assertResponse(response, 401, false, false);
     }
@@ -159,7 +185,7 @@ public class SessionSecurityTest extends IntegrationTest {
 
         // TODO each test should have its own test user so these could be run in parallel
 
-        // TODO test that the remember-me token isn't created if the flag is set but the call is unauthenticated
+        // TODO monitor remote build, it is failing
 
         // TODO this is setup differently in EndToEndIntegrationTest, should be consistent
 
