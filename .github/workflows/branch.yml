@@ -36,8 +36,6 @@ jobs:
 
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
-        env:
-          APP_SECURITY_REMEMBERME_KEY: ${{APP_SECURITY_REMEMBERME_KEY}}
         with:
           arguments: build
 
