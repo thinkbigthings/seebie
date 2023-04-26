@@ -112,6 +112,9 @@ For tests, it is set to a dummy UUID value in test properties:
 
     app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4
 
+Since the test value is set inside the test configuration,
+we do not need to set the value in GitHub Actions.
+
 When running from the IDE it should be configured as an environment variable
 in a Run/Debug Configuration in IntelliJ:
 
@@ -121,10 +124,7 @@ Also, we can set it locally on the command line:
 
     export APP_SECURITY_REMEMBERME_KEY=0ef16205-ba16-4154-b843-8bd1709b1ef4 
 
-We will also need to set these as environment variables in the production environment.
-
-Since we do need to run log in tests, we need to set this in Github Actions
-See https://docs.github.com/en/actions/security-guides/encrypted-secrets
+We will also need to set this as an environment variable in the production environment.
 
 
 ## Email
