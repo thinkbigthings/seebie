@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.env.Environment;
 
 import java.net.HttpCookie;
@@ -29,8 +30,20 @@ public class SessionSecurityTest extends IntegrationTest {
     private static final String SESSION_COOKIE = "SESSION";
     private static final String REMEMBER_ME_COOKIE = "remember-me";
 
+
+    protected static String baseUrl;
+
+    protected static URI loginUri;
+    protected static URI rememberMeUri;
+
+    protected static HttpRequest loginRequest;
+    protected static HttpRequest loginRememberMe;
+
+
+
+
     private static Duration sessionTimeout;
-    private static Duration     rememberMeTimeout;
+    private static Duration rememberMeTimeout;
 
     private String testUserName;
     private String testUserPassword;
@@ -54,7 +67,15 @@ public class SessionSecurityTest extends IntegrationTest {
     }
 
     @BeforeAll
-    public static void setup(@Autowired Environment env) {
+    public static void setup(@Autowired Environment env, @LocalServerPort int randomServerPort) {
+
+        baseUrl = "https://localhost:" + randomServerPort;
+
+        loginUri = URI.create(baseUrl + "/login?remember-me=false");
+        rememberMeUri = URI.create(baseUrl + "/login?remember-me=true");
+
+        loginRequest = HttpRequest.newBuilder().GET().uri(loginUri).build();
+        loginRememberMe = HttpRequest.newBuilder().GET().uri(rememberMeUri).build();
 
         // See timeout values set in IntegrationTest
         sessionTimeout = env.getProperty("spring.session.timeout", Duration.class);

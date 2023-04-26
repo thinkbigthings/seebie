@@ -3,8 +3,6 @@ package com.seebie.server.test;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.PortBinding;
-import com.github.dockerjava.api.model.Ports;
-import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -12,13 +10,7 @@ import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
-
-import java.net.URI;
-import java.net.http.HttpRequest;
 
 import static com.github.dockerjava.api.model.Ports.Binding.bindPort;
 
@@ -46,24 +38,9 @@ public class IntegrationTest {
 
     protected static PostgreSQLContainer<?> postgres;
 
-    protected static String baseUrl;
-
-    protected static URI loginUri;
-    protected static URI rememberMeUri;
-
-    protected static HttpRequest loginRequest;
-    protected static HttpRequest loginRememberMe;
-
     @BeforeAll
-    static void setupDatabase(@LocalServerPort int randomServerPort) {
+    static void setupDatabase() {
 
-        baseUrl = "https://localhost:" + randomServerPort;
-
-        loginUri = URI.create(baseUrl + "/login?remember-me=false");
-        rememberMeUri = URI.create(baseUrl + "/login?remember-me=true");
-
-        loginRequest = HttpRequest.newBuilder().GET().uri(loginUri).build();
-        loginRememberMe = HttpRequest.newBuilder().GET().uri(rememberMeUri).build();
 
         // need "autosave conservative" config, otherwise pg driver has caching issues with blue-green deployment
         // (org.postgresql.util.PSQLException: ERROR: cached plan must not change result type)
@@ -87,7 +64,6 @@ public class IntegrationTest {
         LOG.info("");
         LOG.info("=======================================================================================");
         LOG.info("Executing test " + testInfo.getDisplayName());
-        LOG.info("using web server base " + baseUrl);
         LOG.info("TestContainer jdbc url: " + postgres.getJdbcUrl());
         LOG.info("TestContainer username: " + postgres.getUsername());
         LOG.info("TestContainer password: " + postgres.getPassword());

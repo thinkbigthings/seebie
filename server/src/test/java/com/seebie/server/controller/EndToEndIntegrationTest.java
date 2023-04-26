@@ -35,6 +35,8 @@ public class EndToEndIntegrationTest extends IntegrationTest {
 
     protected static Logger LOG = LoggerFactory.getLogger(EndToEndIntegrationTest.class);
 
+    private static String baseUrl;
+
     private static URI users;
 
     private static String testUserName;
@@ -54,14 +56,15 @@ public class EndToEndIntegrationTest extends IntegrationTest {
     }
 
     @BeforeAll
-    public static void createTestData(@Autowired UserService userService) {
+    public static void createTestData(@Autowired UserService userService, @LocalServerPort int randomServerPort) {
 
         LOG.info("");
         LOG.info("=======================================================================================");
         LOG.info("Creating test data");
         LOG.info("");
 
-        users = URI.create(baseUrl + "/user");
+        baseUrl = "https://localhost:" + randomServerPort + "/";
+        users = URI.create(baseUrl + "user");
 
         adminClient = new ApiClientStateful(baseUrl, "admin", "admin");
 
