@@ -50,7 +50,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //   Serialization / Deserialization
 //   Error handling
 
-@WebMvcTest
+@WebMvcTest(properties = {
+		// this is a sensitive property and should not be included in the main application.properties
+		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
+})
 @DisplayName("Controller Validation")
 @EnableConfigurationProperties(value = {AppProperties.class})
 @Import(WebSecurityConfig.class)

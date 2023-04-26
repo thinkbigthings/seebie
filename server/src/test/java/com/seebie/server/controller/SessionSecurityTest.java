@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.env.Environment;
 
 import java.net.HttpCookie;
@@ -30,13 +29,8 @@ public class SessionSecurityTest extends IntegrationTest {
     private static final String SESSION_COOKIE = "SESSION";
     private static final String REMEMBER_ME_COOKIE = "remember-me";
 
-    private static String baseUrl;
-
-    private static HttpRequest loginSession;
-    private static HttpRequest loginRememberMe;
-
     private static Duration sessionTimeout;
-    private static Duration rememberMeTimeout;
+    private static Duration     rememberMeTimeout;
 
     private String testUserName;
     private String testUserPassword;
@@ -60,14 +54,7 @@ public class SessionSecurityTest extends IntegrationTest {
     }
 
     @BeforeAll
-    public static void setup(@LocalServerPort int randomServerPort, @Autowired Environment env) {
-
-        baseUrl = "https://localhost:" + randomServerPort;
-        var loginUri = URI.create(baseUrl + "/login?remember-me=false");
-        var rememberMeUri = URI.create(baseUrl + "/login?remember-me=true");
-
-        loginSession = HttpRequest.newBuilder().GET().uri(loginUri).build();
-        loginRememberMe = HttpRequest.newBuilder().GET().uri(rememberMeUri).build();
+    public static void setup(@Autowired Environment env) {
 
         // See timeout values set in IntegrationTest
         sessionTimeout = env.getProperty("spring.session.timeout", Duration.class);
@@ -88,14 +75,14 @@ public class SessionSecurityTest extends IntegrationTest {
     }
 
     @Test
-    public void testUnauthenticatedLoginCreatesNoSession() throws Exception {
+    public void testUnauthenticatedLoginCreatesNoSessions() throws Exception {
 
         // We don't return session tokens for unauthenticated calls, it is unnecessary.
         // Also we don't want people to farm it for statistics on the cryptography of session tokens.
 
         // Attempt to access secured endpoint while unauthenticated
         var withoutAuth = ApiClientStateful.unAuthClient();
-        var response = withoutAuth.send(loginSession, ofString());
+        var response = withoutAuth.send(loginRequest, ofString());
 
         assertResponse(response, 401, false, false);
     }
@@ -114,11 +101,11 @@ public class SessionSecurityTest extends IntegrationTest {
     }
 
     @Test
-    public void testSessionCookieExpiration() throws Exception {
+    public void testSessionCookieTimeoutWithoutRememberMe() throws Exception {
 
         // Login without remember-me, and access secured endpoint
         var basicAuth = ApiClientStateful.basicAuthClient(testUserName, testUserPassword);
-        var response = basicAuth.send(loginSession, ofString());
+        var response = basicAuth.send(loginRequest, ofString());
         assertResponse(response, 200, true, false);
 
         // Session cookie is set in first response, no cookie in second response
@@ -126,8 +113,7 @@ public class SessionSecurityTest extends IntegrationTest {
         response = sessionAuth.send(userInfoRequest, ofString());
         assertResponse(response, 200, false, false);
 
-        // Wait for session timeout
-        Thread.sleep(sessionTimeout.toMillis());
+        waitForExpiration(sessionTimeout);
 
         // Then attempt to access secured endpoint
         // Result is a 401, Session is invalid, no session cookie is returned
@@ -136,7 +122,7 @@ public class SessionSecurityTest extends IntegrationTest {
     }
 
     @Test
-    public void testRememberMeSessionExpiration() throws Exception {
+    public void testSessionCookieTimeoutWithRememberMe() throws Exception {
 
         // Login with remember-me and access secured endpoint
         // Result is a 200, Session cookie is set and remember-me cookie is set
@@ -154,7 +140,7 @@ public class SessionSecurityTest extends IntegrationTest {
         assertResponse(response, 200, false, false);
 
         // Wait for session timeout but don't let remember-me timeout
-        Thread.sleep(sessionTimeout.toMillis());
+        waitForExpiration(sessionTimeout);
 
         // Then attempt to access secured endpoint again
         response = sessionAuth.send(userInfoRequest, ofString());
@@ -168,7 +154,7 @@ public class SessionSecurityTest extends IntegrationTest {
     }
 
     @Test
-    public void testRememberMeCookieExpiration() throws Exception {
+    public void testRememberMeCookieTimeout() throws Exception {
 
         // Login with remember-me and access secured endpoint
         // Result is a 200, Session cookie is set and remember-me cookie is set
@@ -184,7 +170,7 @@ public class SessionSecurityTest extends IntegrationTest {
         // Wait for remember-me timeout, then attempt to access secured endpoint again
         // Result is a 401, Session is invalid, no session cookie is returned, remember-me cookie is cleared
 
-        Thread.sleep(rememberMeTimeout.toMillis());
+        waitForExpiration(rememberMeTimeout);
 
         response = sessionAuth.send(userInfoRequest, ofString());
         assertResponse(response, 401, false, true);
@@ -195,6 +181,9 @@ public class SessionSecurityTest extends IntegrationTest {
         assertResponse(response, 401, false, false);
     }
 
+    private void waitForExpiration(Duration timeout) throws Exception {
+        Thread.sleep(timeout.toMillis());
+    }
 
     public void assertResponse(HttpResponse response, int expectedStatusCode, boolean setsSessionCookie, boolean setsRememberMeCookie) {
         assertEquals(expectedStatusCode, response.statusCode());

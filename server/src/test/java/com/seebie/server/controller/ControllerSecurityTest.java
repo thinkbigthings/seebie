@@ -56,7 +56,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * web content is copied from the ui anyway.
  *
  */
-@WebMvcTest
+@WebMvcTest(properties = {
+		// this is a sensitive property and should not be included in the main application.properties
+		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
+})
 @EnableConfigurationProperties(value = {AppProperties.class})
 @Import(WebSecurityConfig.class)
 @DisplayName("Endpoint Security")

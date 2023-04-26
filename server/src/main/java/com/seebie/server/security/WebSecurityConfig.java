@@ -28,7 +28,6 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import javax.sql.DataSource;
 import java.time.Duration;
 import java.util.List;
-import java.util.UUID;
 
 @Configuration
 @EnableMethodSecurity
@@ -50,9 +49,7 @@ public class WebSecurityConfig {
                     + "but for security reasons must be <= " + NINETY_DAYS_IN_SECONDS);
         }
 
-
-        rememberMeKey = UUID.randomUUID().toString(); // env.getRequiredProperty("app.security.rememberMe.key", String.class);
-
+        rememberMeKey = env.getRequiredProperty("app.security.rememberMe.key", String.class);
     }
 
     // This can be replaced with a simpler API call as of Spring Security 6.1.0
