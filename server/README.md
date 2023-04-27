@@ -235,32 +235,17 @@ rm cookies.txt
 
 #### Test remember-me security
 
-I think the parameter to trigger the remember-me functionality can be a url parameter.
-Maybe also a request header but we haven't tested that.
+Can test this from IDE, set env vars in run config
+
+    APP_SECURITY_REMEMBERME_TOKENVALIDITY 15s
+    SPRING_SESSION_TIMEOUT 7S
+
+The parameter to trigger the remember-me functionality is a url parameter.
 
     curl -i -u username:password "https://example.com/login?remember-me=true"
 
-
-Manually demonstrate persistent login:
-
-Start with a clean slate
-
-    rm cookies.txt
-
-Attempt to access secured endpoint while unauthenticated
-
-    curl -kv  "https://localhost:9000/user/admin"
-
-Login without remember-me and access secured endpoint
-
-    curl -kv -b cookies.txt -c cookies.txt --user admin:admin "https://localhost:9000/login?remember-me=false"
-    curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"   
-
-Wait for session timeout, then attempt to access secured endpoint
-
-    curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"
-
-login with remember-me and access secured endpoint
+Functionality can be demonstrated manually with curl as in the other tests.
+For example: login with remember-me and access secured endpoint
 
     curl -kv -b cookies.txt -c cookies.txt --user admin:admin "https://localhost:9000/login?remember-me=true"
     curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"
@@ -268,10 +253,6 @@ login with remember-me and access secured endpoint
 Wait for session timeout, then attempt to access secured endpoint again
 
     curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"
-
-Wait for remember-me timeout, then attempt to access secured endpoint again
-
-    curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"   
 
 
 #### Test import / export
