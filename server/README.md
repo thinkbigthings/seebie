@@ -235,73 +235,44 @@ rm cookies.txt
 
 #### Test remember-me security
 
-I think the parameter to trigger the remember-me functionality can be either a request header 
-or a request parameter, e.g.
+I think the parameter to trigger the remember-me functionality can be a url parameter.
+Maybe also a request header but we haven't tested that.
 
     curl -i -u username:password "https://example.com/login?remember-me=true"
-    curl -i -u username:password -H "remember-me: true" https://example.com/login
 
 
-
-Manually demonstrate persistent login
-
----------------------------------------
+Manually demonstrate persistent login:
 
 Start with a clean slate
 
     rm cookies.txt
 
----------------------------------------
-
 Attempt to access secured endpoint while unauthenticated
 
-    curl -kv  "https://localhost:9000/user/admin"    
-
-Result is a 401
-
----------------------------------------
+    curl -kv  "https://localhost:9000/user/admin"
 
 Login without remember-me and access secured endpoint
 
     curl -kv -b cookies.txt -c cookies.txt --user admin:admin "https://localhost:9000/login?remember-me=false"
     curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"   
 
-Result is a 200, Session cookie is set
-
----------------------------------------
-
 Wait for session timeout, then attempt to access secured endpoint
 
-    curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"   
-
-Result is a 401, Session is invalid, no session cookie is returned
-
----------------------------------------
+    curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"
 
 login with remember-me and access secured endpoint
 
     curl -kv -b cookies.txt -c cookies.txt --user admin:admin "https://localhost:9000/login?remember-me=true"
-    curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"   
-
-result is a 200, Session cookie is set and remember-me cookie is set
-
----------------------------------------
+    curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"
 
 Wait for session timeout, then attempt to access secured endpoint again
 
-    curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"   
-
-Result is a 200, Session cookie is set to a new session id
-
----------------------------------------
+    curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"
 
 Wait for remember-me timeout, then attempt to access secured endpoint again
 
     curl -kv -b cookies.txt -c cookies.txt "https://localhost:9000/user/admin"   
 
-Result is a 401, Session is invalid, no session cookie or remember-me cookie is returned
-
----------------------------------------
 
 #### Test import / export
 

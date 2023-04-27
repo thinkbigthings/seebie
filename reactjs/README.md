@@ -1,6 +1,6 @@
-# Project Argus
+# Seebie - Sleep Analysis Tool
 
-This is a project to aggregate inventory across physical dispensaries.
+This is a project to record and analyze your sleep.
 
 ## Prerequisites
 
