@@ -1,5 +1,6 @@
 package com.seebie.server.security;
 
+import com.seebie.server.AppProperties;
 import com.seebie.server.entity.Role;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -7,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,7 +26,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import javax.sql.DataSource;
-import java.time.Duration;
 import java.util.List;
 
 @Configuration
@@ -34,7 +33,6 @@ import java.util.List;
 public class WebSecurityConfig {
 
     private static Logger LOG = LoggerFactory.getLogger(WebSecurityConfig.class);
-    private static final  int NINETY_DAYS_IN_SECONDS = 60 * 60 * 24 * 90;
 
     public static final String SESSION_COOKIE = "SESSION";
     public static final String REMEMBER_ME_COOKIE = "remember-me";
@@ -42,17 +40,9 @@ public class WebSecurityConfig {
     private int rememberMeTokenValiditySeconds;
     private String rememberMeKey;
 
-    public WebSecurityConfig(Environment env) {
-
-        var validity = env.getRequiredProperty("app.security.rememberMe.tokenValidity", Duration.class);
-        rememberMeTokenValiditySeconds = (int)validity.toSeconds();
-        if(rememberMeTokenValiditySeconds > NINETY_DAYS_IN_SECONDS) {
-            throw new IllegalArgumentException("rememberMeTokenValidity as seconds was "
-                    + rememberMeTokenValiditySeconds + " "
-                    + "but for security reasons must be <= " + NINETY_DAYS_IN_SECONDS);
-        }
-
-        rememberMeKey = env.getRequiredProperty("app.security.rememberMe.key", String.class);
+    public WebSecurityConfig(AppProperties appProperties) {
+        rememberMeTokenValiditySeconds = (int)appProperties.security().rememberMe().tokenValidity().toSeconds();
+        rememberMeKey = appProperties.security().rememberMe().key();
     }
 
     // This can be replaced with a simpler API call as of Spring Security 6.1.0

@@ -10,7 +10,7 @@ import static com.seebie.server.ApiVersionInterceptor.API_VERSION;
 
 public class ApiVersionInterceptorTest {
 
-    private final AppProperties properties = new AppProperties(1);
+    private final AppProperties properties = new AppProperties();
     private MockHttpServletRequest request = new MockHttpServletRequest();
     private MockHttpServletResponse response = new MockHttpServletResponse();
 
