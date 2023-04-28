@@ -30,6 +30,15 @@ public class NotificationMessageService {
 
     private final SimpleMailMessage emailTemplate = new SimpleMailMessage();
 
+    /**
+     * This takes an Environment object instead of a Java Record for the properties because it wouldn't work with the
+     * Spring properties (here, spring.mail.username could not be injected as a custom nested record into AppProperties).
+     * So since an Environment has to be used here anyway, we might as well use it for all the properties.
+     *
+     * @param notificationRetrievalService
+     * @param emailSender
+     * @param env
+     */
     public NotificationMessageService(NotificationRetrievalService notificationRetrievalService, JavaMailSender emailSender, Environment env) {
 
         this.notificationRetrievalService = notificationRetrievalService;
