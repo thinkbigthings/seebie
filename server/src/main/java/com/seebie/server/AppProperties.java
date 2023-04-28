@@ -15,12 +15,27 @@ import static java.util.UUID.randomUUID;
 @ConfigurationProperties(prefix="app")
 public record AppProperties(@Positive Integer apiVersion, @NotNull Security security) {
 
+//    scanEnabled = env.getRequiredProperty("app.notification.scan.enabled", Boolean.class);
+//    notificationOutput = env.getRequiredProperty("app.notification.output", NotificationOutput .class);
+//
+//    triggerAfterLastNotified = env.getRequiredProperty("app.notification.triggerAfter.lastNotified", Duration.class);
+//    triggerAfterSleepLog = env.getRequiredProperty("app.notification.triggerAfter.sleepLog", Duration.class);
+
     public record Security(@NotNull RememberMe rememberMe) {
-        public record RememberMe(@NotNull Duration tokenValidity, @NotEmpty String key) {}
+        public record RememberMe(@NotNull Duration tokenValidity, @NotEmpty String key) {
+            public int tokenValiditySeconds() {
+                return (int) tokenValidity.toSeconds();
+            }
+        }
     }
 
-    public AppProperties() {
-        this(1, new Security(new Security.RememberMe(ofDays(30), randomUUID().toString())));
+    /**
+     * As of this writing, Spring Configuration only allows for one constructor,
+     * we can use a record creation method to provide default values.
+     */
+    public static AppProperties newAppProperties(int rememberMeTokenValidityDays) {
+        return new AppProperties(1, new Security(
+                new Security.RememberMe(ofDays(rememberMeTokenValidityDays), randomUUID().toString())));
     }
 
     public AppProperties {

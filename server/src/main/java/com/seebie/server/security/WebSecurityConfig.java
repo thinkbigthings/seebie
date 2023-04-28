@@ -37,12 +37,11 @@ public class WebSecurityConfig {
     public static final String SESSION_COOKIE = "SESSION";
     public static final String REMEMBER_ME_COOKIE = "remember-me";
 
-    private int rememberMeTokenValiditySeconds;
-    private String rememberMeKey;
+    // TODO inject just the rememberMeConfig?
+    private AppProperties.Security.RememberMe rememberMeConfig;
 
     public WebSecurityConfig(AppProperties appProperties) {
-        rememberMeTokenValiditySeconds = (int)appProperties.security().rememberMe().tokenValidity().toSeconds();
-        rememberMeKey = appProperties.security().rememberMe().key();
+        rememberMeConfig = appProperties.security().rememberMe();
     }
 
     // This can be replaced with a simpler API call as of Spring Security 6.1.0
@@ -92,8 +91,8 @@ public class WebSecurityConfig {
                 .and()
             .rememberMe(rememberMe -> rememberMe
                     .rememberMeServices(rememberMeServices)
-                    .key(rememberMeKey)
-                    .tokenValiditySeconds(rememberMeTokenValiditySeconds));
+                    .key(rememberMeConfig.key())
+                    .tokenValiditySeconds(rememberMeConfig.tokenValiditySeconds()));
 
         return http.build();
     }
@@ -108,11 +107,11 @@ public class WebSecurityConfig {
     @Bean
     public RememberMeServices rememberMeServices(PersistentTokenRepository persistentTokenRepo, UserDetailsService userDetailsService) {
 
-        var rememberMe = new PersistentTokenBasedRememberMeServices(rememberMeKey, userDetailsService, persistentTokenRepo);
+        var rememberMe = new PersistentTokenBasedRememberMeServices(rememberMeConfig.key(), userDetailsService, persistentTokenRepo);
 
-        rememberMe.setParameter("remember-me");
-        rememberMe.setTokenValiditySeconds(rememberMeTokenValiditySeconds);
-        rememberMe.setCookieName("remember-me");
+        rememberMe.setParameter(REMEMBER_ME_COOKIE);
+        rememberMe.setTokenValiditySeconds(rememberMeConfig.tokenValiditySeconds());
+        rememberMe.setCookieName(REMEMBER_ME_COOKIE);
         rememberMe.setUseSecureCookie(true);
 
         return rememberMe;

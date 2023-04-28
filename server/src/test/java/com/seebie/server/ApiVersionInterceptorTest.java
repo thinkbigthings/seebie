@@ -1,16 +1,16 @@
 package com.seebie.server;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static com.seebie.server.ApiVersionInterceptor.API_VERSION;
+import static com.seebie.server.AppProperties.newAppProperties;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApiVersionInterceptorTest {
 
-    private final AppProperties properties = new AppProperties();
+    private final AppProperties properties = newAppProperties(30);
     private MockHttpServletRequest request = new MockHttpServletRequest();
     private MockHttpServletResponse response = new MockHttpServletResponse();
 
