@@ -37,11 +37,10 @@ public class WebSecurityConfig {
     public static final String SESSION_COOKIE = "SESSION";
     public static final String REMEMBER_ME_COOKIE = "remember-me";
 
-    // TODO inject just the rememberMeConfig?
     private AppProperties.Security.RememberMe rememberMeConfig;
 
-    public WebSecurityConfig(AppProperties appProperties) {
-        rememberMeConfig = appProperties.security().rememberMe();
+    public WebSecurityConfig(AppProperties app) {
+        rememberMeConfig = app.security().rememberMe();
     }
 
     // This can be replaced with a simpler API call as of Spring Security 6.1.0

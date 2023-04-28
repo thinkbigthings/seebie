@@ -15,12 +15,6 @@ import static java.util.UUID.randomUUID;
 @ConfigurationProperties(prefix="app")
 public record AppProperties(@Positive Integer apiVersion, @NotNull Security security) {
 
-//    scanEnabled = env.getRequiredProperty("app.notification.scan.enabled", Boolean.class);
-//    notificationOutput = env.getRequiredProperty("app.notification.output", NotificationOutput .class);
-//
-//    triggerAfterLastNotified = env.getRequiredProperty("app.notification.triggerAfter.lastNotified", Duration.class);
-//    triggerAfterSleepLog = env.getRequiredProperty("app.notification.triggerAfter.sleepLog", Duration.class);
-
     public record Security(@NotNull RememberMe rememberMe) {
         public record RememberMe(@NotNull Duration tokenValidity, @NotEmpty String key) {
             public int tokenValiditySeconds() {
