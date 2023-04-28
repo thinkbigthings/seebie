@@ -36,6 +36,7 @@ public class EndToEndIntegrationTest extends IntegrationTest {
     protected static Logger LOG = LoggerFactory.getLogger(EndToEndIntegrationTest.class);
 
     private static String baseUrl;
+
     private static URI users;
 
     private static String testUserName;
@@ -47,11 +48,6 @@ public class EndToEndIntegrationTest extends IntegrationTest {
 
     private static ApiClientStateful adminClient;
     private static ApiClientStateful userClient;
-
-    // this plugs in just a piece of the running app to our test code
-    // we can use it for quickly bootstrapping test data without going through the web API
-    @Autowired
-    private UserService userService;
 
     @BeforeEach
     public void setup(@Autowired MappingJackson2HttpMessageConverter converter) {

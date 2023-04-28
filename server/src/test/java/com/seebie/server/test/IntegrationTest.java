@@ -3,16 +3,13 @@ package com.seebie.server.test;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.PortBinding;
-import com.github.dockerjava.api.model.Ports;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import static com.github.dockerjava.api.model.Ports.Binding.bindPort;
@@ -25,6 +22,9 @@ import static com.github.dockerjava.api.model.Ports.Binding.bindPort;
         "spring.main.lazy-initialization=true",
         "spring.flyway.enabled=true",
         "app.notification.scan.enabled=false",
+        "app.security.rememberMe.tokenValidity=6s",
+        "spring.session.timeout=4s",
+        "app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
         })
 public class IntegrationTest {
 
@@ -38,17 +38,8 @@ public class IntegrationTest {
 
     protected static PostgreSQLContainer<?> postgres;
 
-    @LocalServerPort
-    protected int randomServerPort;
-
-    @DynamicPropertySource
-    static void useDynamicProperties(DynamicPropertyRegistry registry) {
-
-        // Since we exposed the pg port we can set static connection properties in application.properties directly.
-        // If we were not using withCreateContainerCmdModifier() we'd use @DynamicPropertySource
-        // to populate the DynamicPropertyRegistry, write the properties to build/postgres.properties,
-        // and could have in application.properties a reference to it like
-        // spring.config.import=optional:file:./build/postgres.properties
+    @BeforeAll
+    static void setupDatabase() {
 
 
         // need "autosave conservative" config, otherwise pg driver has caching issues with blue-green deployment
@@ -73,7 +64,6 @@ public class IntegrationTest {
         LOG.info("");
         LOG.info("=======================================================================================");
         LOG.info("Executing test " + testInfo.getDisplayName());
-        LOG.info("using web server port " + randomServerPort);
         LOG.info("TestContainer jdbc url: " + postgres.getJdbcUrl());
         LOG.info("TestContainer username: " + postgres.getUsername());
         LOG.info("TestContainer password: " + postgres.getPassword());

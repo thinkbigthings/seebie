@@ -29,6 +29,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
+import javax.sql.DataSource;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Function;
@@ -49,11 +50,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //   Serialization / Deserialization
 //   Error handling
 
-@WebMvcTest
+@WebMvcTest(properties = {
+		// this is a sensitive property and should not be included in the main application.properties
+		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
+})
 @DisplayName("Controller Validation")
 @EnableConfigurationProperties(value = {AppProperties.class})
 @Import(WebSecurityConfig.class)
 public class ControllerValidationTest {
+
+	@MockBean
+	private DataSource dataSource;
 
 	@MockBean
 	private UserService service;

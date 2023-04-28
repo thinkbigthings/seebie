@@ -7,6 +7,7 @@ import useCurrentUser from "./useCurrentUser";
 import useHttpError from "./useHttpError";
 import {GET} from "./BasicHeaders";
 import copy from "./Copier";
+import Container from "react-bootstrap/Container";
 
 
 function getWithCreds(url, credentials) {
@@ -25,6 +26,7 @@ function Login({history}) {
     // local form state
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [rememberMe, setRememberMe] = useState(true);
 
     const {onLogin} = useCurrentUser();
     const {throwOnHttpError} = useHttpError();
@@ -36,9 +38,13 @@ function Login({history}) {
         }
     }
 
-    const loginUrl = '/login';
+    const loginUrl = '/login?remember-me=' + (rememberMe ? 'true' : 'false');
+
+    console.log('remember me is ' + rememberMe);
 
     const onClickLogin = () => {
+
+        console.log('logging in to ' + loginUrl);
 
         getWithCreds(loginUrl, { username, password })
             .then(throwOnHttpError)
@@ -69,29 +75,39 @@ function Login({history}) {
 
     return (
 
-        <div className="login container-sm mt-5">
+        <Container className="login container-sm mt-5">
 
-            <form>
-                <div className="mb-3">
+
+            <Container className="ps-0 mb-3">
                     <label htmlFor="inputUsername" className="form-label">Username</label>
                     <input type="email" className="form-control" id="inputUsername" aria-describedby="emailHelp"
                            placeholder="Username"
                            value={username}
                            onChange={e => setUsername(e.target.value)}
                     />
-                </div>
-                <div className="mb-3">
+            </Container>
+            <Container className="ps-0 mb-3">
                     <label htmlFor="inputPassword" className="form-label">Password</label>
                     <input type="password" className="form-control" id="inputPassword" placeholder="Password"
                                value={password}
                                onChange={e => setPassword(e.target.value)}
                                onKeyPress={e => callOnEnter(e, onClickLogin)}
                     />
-                </div>
-                <Button variant="primary" onClick={() => onClickLogin() }>Login</Button>
-            </form>
+            </Container>
+            <Container className="ps-0 mb-3">
+                    <label htmlFor="rememberMe" className="form-label">Remember Me</label>
+                    <input className="form-check-input mx-3 p-2" type="checkbox"  id="rememberMe"
+                           placeholder="Remember Me"
+                           checked={rememberMe}
+                           onChange={e => setRememberMe(e.target.checked)}
+                           onKeyPress={e => callOnEnter(e, onClickLogin)}
+                    />
+            </Container>
 
-        </div>
+            <Button variant="primary" onClick={() => onClickLogin() }>Login</Button>
+
+
+        </Container>
     );
 }
 

@@ -1,6 +1,6 @@
-# Seebie Project
+# Seebie - Sleep Analysis Tool
 
-This is a sleep diary app.
+This is a project to record and analyze your sleep.
 
 
 ## Setup
