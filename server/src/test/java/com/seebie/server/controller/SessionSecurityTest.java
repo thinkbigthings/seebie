@@ -20,16 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.seebie.server.security.WebSecurityConfig.REMEMBER_ME_COOKIE;
+import static com.seebie.server.security.WebSecurityConfig.SESSION_COOKIE;
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 
 public class SessionSecurityTest extends IntegrationTest {
-
-    private static final String SESSION_COOKIE = "SESSION";
-    private static final String REMEMBER_ME_COOKIE = "remember-me";
-
 
     protected static String baseUrl;
 
@@ -38,9 +36,6 @@ public class SessionSecurityTest extends IntegrationTest {
 
     protected static HttpRequest loginRequest;
     protected static HttpRequest loginRememberMe;
-
-
-
 
     private static Duration sessionTimeout;
     private static Duration rememberMeTimeout;

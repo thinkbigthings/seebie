@@ -115,6 +115,8 @@ For tests, it is set to a dummy UUID value in test properties:
 Since the test value is set inside the test configuration,
 we do not need to set the value in GitHub Actions.
 
+We DO need to configure it as an environment variable in Heroku.
+
 When running from the IDE it should be configured as an environment variable
 in a Run/Debug Configuration in IntelliJ:
 

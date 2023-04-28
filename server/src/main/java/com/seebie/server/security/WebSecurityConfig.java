@@ -36,6 +36,9 @@ public class WebSecurityConfig {
     private static Logger LOG = LoggerFactory.getLogger(WebSecurityConfig.class);
     private static final  int NINETY_DAYS_IN_SECONDS = 60 * 60 * 24 * 90;
 
+    public static final String SESSION_COOKIE = "SESSION";
+    public static final String REMEMBER_ME_COOKIE = "remember-me";
+
     private int rememberMeTokenValiditySeconds;
     private String rememberMeKey;
 
@@ -95,7 +98,7 @@ public class WebSecurityConfig {
                 .addLogoutHandler((req, resp, auth) -> LOG.info("Logged out auth: " + auth))
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
-                .deleteCookies("JSESSIONID", "remember-me")
+                .deleteCookies(SESSION_COOKIE, REMEMBER_ME_COOKIE)
                 .and()
             .rememberMe(rememberMe -> rememberMe
                     .rememberMeServices(rememberMeServices)
