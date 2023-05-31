@@ -7,19 +7,21 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 
 
+const ButtonWrapper = React.forwardRef(({value, onClick, className}, ref) => {
+    return (
+        <Button ref={ref} onClick={onClick} className={className}>
+            {value}
+        </Button>
+    );
+});
+
 function SleepForm(props) {
 
     const {onChange, data} = props;
 
-    const CustomInput = ({ value, onClick }) => {
-        return (
-            <Button onClick={onClick}>
-                {value}
-            </Button>
-        );
-    }
+    console.log('Local Timezone is ' + Intl.DateTimeFormat().resolvedOptions().timeZone);
 
-    const MyDatePicker = ({selectTime, onSelection}) => {
+    const DatePickerButton = ({selectTime, onSelection}) => {
         return (
             <DatePicker
                 selected={selectTime}
@@ -30,7 +32,7 @@ function SleepForm(props) {
                 timeCaption="time"
                 timeFormat="p"
                 onChange={ onSelection }
-                customInput={<CustomInput />}
+                customInput={<ButtonWrapper />}
             />
         );
     }
@@ -41,11 +43,11 @@ function SleepForm(props) {
                 <Col md={6} className={"pe-4"}>
                     <div className="mb-3">
                         <label htmlFor="dateStart" className="form-label">Time Fell Asleep</label>
-                        <MyDatePicker selectTime={data.startTime} onSelection={ date => onChange({startTime : date })} />
+                        <DatePickerButton selectTime={data.startTime} onSelection={ date => onChange({startTime : date })} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="dateEnd" className="form-label">Time Woke Up</label>
-                        <MyDatePicker selectTime={data.stopTime} onSelection={ date => onChange({stopTime : date })} />
+                        <DatePickerButton selectTime={data.stopTime} onSelection={ date => onChange({stopTime : date })} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="minutesAwake" className="form-label">Minutes Awake During Sleep Period</label>

@@ -40,11 +40,7 @@ function Login({history}) {
 
     const loginUrl = '/login?remember-me=' + (rememberMe ? 'true' : 'false');
 
-    console.log('remember me is ' + rememberMe);
-
     const onClickLogin = () => {
-
-        console.log('logging in to ' + loginUrl);
 
         getWithCreds(loginUrl, { username, password })
             .then(throwOnHttpError)
