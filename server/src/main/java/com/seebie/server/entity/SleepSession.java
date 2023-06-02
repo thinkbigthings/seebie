@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.time.Duration;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
@@ -58,6 +59,9 @@ public class SleepSession implements Serializable {
     @Column
     private int minutesAsleep;
 
+    @NotNull
+    private String zoneId;
+
     public SleepSession() {
         // no arg constructor is required by JPA
     }
@@ -66,24 +70,28 @@ public class SleepSession implements Serializable {
         return id;
     }
 
+    public ZoneId getZoneId() {
+        return ZoneId.of(zoneId);
+    }
+
     public ZonedDateTime getStartTime() {
-        return startTime;
+        return startTime.withZoneSameInstant(getZoneId());
     }
 
     public ZonedDateTime getStopTime() {
-        return stopTime;
+        return stopTime.withZoneSameInstant(getZoneId());
     }
-
     public int getMinutesAsleep() {
         return minutesAsleep;
     }
 
-    public void setSleepData(int minutesAwake, String notes, Set<Tag> newTags, ZonedDateTime start, ZonedDateTime stop) {
+    public void setSleepData(int minutesAwake, String notes, Set<Tag> newTags, ZonedDateTime start, ZonedDateTime stop, String zoneId) {
 
         this.minutesAwake = minutesAwake;
         this.notes = notes;
         this.startTime = start.truncatedTo(ChronoUnit.MINUTES);
         this.stopTime = stop.truncatedTo(ChronoUnit.MINUTES);
+        this.zoneId = zoneId;
 
         // this is calculated here and not in the database
         // (despite the calculation being done in the database anyway to check the constraint)

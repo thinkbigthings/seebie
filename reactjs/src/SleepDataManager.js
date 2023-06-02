@@ -37,13 +37,11 @@ SleepDataManager.parse = (json) => {
 
 SleepDataManager.format = (sleepData) => {
 
-    const formattedSleepData = {
-        notes: sleepData.notes,
-        minutesAwake: sleepData.minutesAwake,
-        tags: sleepData.tags,
-        startTime: SleepDataManager.toIsoString(sleepData.startTime),
-        stopTime: SleepDataManager.toIsoString(sleepData.stopTime)
-    }
+    const formattedSleepData = copy(sleepData);
+
+    formattedSleepData.startTime = SleepDataManager.toIsoString(sleepData.startTime);
+    formattedSleepData.stopTime = SleepDataManager.toIsoString(sleepData.stopTime);
+
     return JSON.stringify(formattedSleepData);
 }
 
@@ -62,6 +60,7 @@ SleepDataManager.createInitSleepData = () => {
         notes: '',
         minutesAwake: 0,
         tags: [],
+        zoneId: Intl.DateTimeFormat().resolvedOptions().timeZone
     }
 }
 

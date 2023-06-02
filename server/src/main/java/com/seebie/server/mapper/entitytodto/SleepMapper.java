@@ -17,7 +17,7 @@ public class SleepMapper implements Function<SleepSession, SleepData> {
 
         var tags = entity.getTags().stream().map(Tag::getText).collect(toSet());
         var dto = new SleepData(entity.getNotes(), entity.getMinutesAwake(),
-                tags, entity.getStartTime(), entity.getStopTime());
+                tags, entity.getStartTime(), entity.getStopTime(), entity.getZoneId().getId());
 
         return dto;
     }

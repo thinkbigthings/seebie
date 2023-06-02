@@ -1,6 +1,7 @@
 package com.seebie.server.test.data;
 
 import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.ZoneIds;
 import com.seebie.server.mapper.entitytodto.SleepDataToRow;
 import net.datafaker.Faker;
 import com.seebie.server.dto.PersonalInfo;
@@ -11,6 +12,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.time.Duration;
 import java.util.*;
 
+import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.joining;
@@ -85,19 +87,19 @@ public class TestData {
 
     public static SleepData randomNotes(SleepData data) {
         String notes = faker.lorem().paragraph(5);
-        return new SleepData(notes, data.minutesAwake(), data.tags(), data.startTime(), data.stopTime());
+        return new SleepData(notes, data.minutesAwake(), data.tags(), data.startTime(), data.stopTime(), data.zoneId());
     }
 
     public static SleepData increment(SleepData data, Duration amountToAdd) {
         return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
                 data.startTime().plus(amountToAdd),
-                data.stopTime().plus(amountToAdd));
+                data.stopTime().plus(amountToAdd), data.zoneId());
     }
 
     public static SleepData decrement(SleepData data, Duration amountToSubtract) {
         return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
                 data.startTime().minus(amountToSubtract),
-                data.stopTime().minus(amountToSubtract));
+                data.stopTime().minus(amountToSubtract), data.zoneId());
     }
 
     public static SleepData decrementDays(SleepData data, long days) {
@@ -107,7 +109,7 @@ public class TestData {
     public static SleepData randomDuration(SleepData data) {
         return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
                 data.startTime().plusMinutes(random.nextInt(60)),
-                data.stopTime().minusMinutes(random.nextInt(60)));
+                data.stopTime().minusMinutes(random.nextInt(60)), data.zoneId());
     }
 
     public static class ArgumentBuilder {

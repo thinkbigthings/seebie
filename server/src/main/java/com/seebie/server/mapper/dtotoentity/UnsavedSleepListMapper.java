@@ -39,7 +39,7 @@ public class UnsavedSleepListMapper implements BiFunction<String, List<SleepData
     public SleepSession toUnsavedEntity(User user, SleepData dto) {
         SleepSession entity = new SleepSession();
         entity.setUser(user);
-        entity.setSleepData(dto.minutesAwake(), dto.notes(), tagMapper.apply(dto.tags()), dto.startTime(), dto.stopTime());
+        entity.setSleepData(dto.minutesAwake(), dto.notes(), tagMapper.apply(dto.tags()), dto.startTime(), dto.stopTime(), dto.zoneId());
         return entity;
     }
 
