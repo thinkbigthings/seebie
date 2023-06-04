@@ -21,9 +21,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Field;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 
-import static com.seebie.server.test.data.TestData.createSleepData;
+import static com.seebie.server.test.data.TestData.createRandomSleepData;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -87,15 +90,18 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     }
 
 
-    @Disabled("Fails on Github, need to upload test output to be able to investigate")
+//    @Disabled("Fails on Github, need to upload test output to be able to investigate")
     @Test
     public void testRetrieveAndUpdate() {
 
-        var registration = TestData.createRandomUserRegistration();
+        var registration = TestData.createRandomUserRegistration("phoenix-user");
         String username = registration.username();
         userService.saveNewUser(registration);
 
-        var originalSleep = new SleepData();
+        var end = ZonedDateTime.now(ZoneId.of("America/Phoenix")).truncatedTo(ChronoUnit.MINUTES);
+        var start = end.minusHours(8);
+
+        var originalSleep = new SleepData("", 0, start, end,"America/Phoenix" );
         var savedSleep = sleepService.saveNew(username, originalSleep);
 
         // test retrieve
@@ -142,7 +148,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         userService.saveNewUser(new RegistrationRequest(username, "password", "heavyUser@sleepy.com"));
 
         int listCount = 2000;
-        var newData = createSleepData(listCount);
+        var newData = createRandomSleepData(listCount);
 
         // batching means statements are sent to the DB in a batch, not that there is a single insert statement.
         // so it's ok that we see a ton of insert statements.

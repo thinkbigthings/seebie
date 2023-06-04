@@ -1,7 +1,6 @@
 package com.seebie.server.test.data;
 
 import com.seebie.server.dto.SleepData;
-import com.seebie.server.dto.ZoneIds;
 import com.seebie.server.mapper.entitytodto.SleepDataToRow;
 import net.datafaker.Faker;
 import com.seebie.server.dto.PersonalInfo;
@@ -10,9 +9,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
-import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.joining;
@@ -48,7 +48,7 @@ public class TestData {
 
     public static String createCsv(int listCount) {
 
-        var data = createSleepData(listCount);
+        var data = createRandomSleepData(listCount);
 
         SleepDataToRow toCsv = new SleepDataToRow();
 
@@ -66,11 +66,30 @@ public class TestData {
         return csvString.toString();
     }
 
+
+    public static List<SleepData> createSleepData(int listCount, ZoneId tz) {
+        return createSleepData(listCount, ZonedDateTime.now(tz));
+    }
+
+    public static List<SleepData> createSleepData(int listCount, ZonedDateTime startDate) {
+
+        SleepData start = new SleepData(startDate.minusHours(8), startDate);
+
+        List<SleepData> newData = new ArrayList<>();
+        for(int i=0; i < listCount; i++) {
+            SleepData session = decrementDays(start, i);
+            newData.add(session);
+        }
+
+        return newData;
+    }
+
+
     /**
      *
      * @return A list whose zeroth element is today and last element is .length() days ago.
      */
-    public static List<SleepData> createSleepData(int listCount) {
+    public static List<SleepData> createRandomSleepData(int listCount) {
 
         SleepData today = new SleepData();
 

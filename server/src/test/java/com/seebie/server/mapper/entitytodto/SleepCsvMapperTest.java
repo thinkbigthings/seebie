@@ -71,7 +71,7 @@ public class SleepCsvMapperTest {
     @Test
     public void testDateTimeFormat() {
 
-        var data = TestData.createSleepData(1).get(0);
+        var data = TestData.createRandomSleepData(1).get(0);
 
         List<String> csvRow = mapper.apply(data);
 
