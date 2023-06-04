@@ -6,7 +6,7 @@ name: Push to Branch
 
 on:
   push:
-    branches: [ "timezone-saved" ]
+    branches: [ "timezone-saved-stop" ]
 
 permissions:
   contents: read

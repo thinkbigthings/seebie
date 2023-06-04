@@ -10,6 +10,15 @@ import java.util.Set;
 import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
 import static java.util.Collections.unmodifiableSet;
 
+/**
+ *
+ * @param notes
+ * @param minutesAwake
+ * @param tags
+ * @param startTime
+ * @param stopTime
+ * @param zoneId A zone id parsable by ZoneId.of() Also see https://www.iana.org/time-zones
+ */
 public record SleepData(@NotNull String notes,
                         @PositiveOrZero int minutesAwake,
                         @NotNull Set<String> tags,

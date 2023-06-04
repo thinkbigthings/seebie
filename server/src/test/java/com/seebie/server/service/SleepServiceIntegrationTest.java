@@ -89,8 +89,6 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         assertEquals("stop_after_start", ((ConstraintViolationException)exception.getCause()).getConstraintName());
     }
 
-
-//    @Disabled("Fails on Github, need to upload test output to be able to investigate")
     @Test
     public void testRetrieveAndUpdate() {
 
