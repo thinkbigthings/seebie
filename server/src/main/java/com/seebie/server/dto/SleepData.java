@@ -1,6 +1,5 @@
 package com.seebie.server.dto;
 
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
@@ -16,7 +15,7 @@ public record SleepData(@NotNull String notes,
                         @NotNull Set<String> tags,
                         @NotNull ZonedDateTime startTime,
                         @NotNull ZonedDateTime stopTime,
-                        @NotEmpty String zoneId)
+                        @ZoneIdConstraint String zoneId)
 {
 
     public SleepData() {
