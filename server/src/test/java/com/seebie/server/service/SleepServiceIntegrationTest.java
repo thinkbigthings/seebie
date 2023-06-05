@@ -165,4 +165,11 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         assertEquals(listCount, listing.getTotalElements());
     }
 
+    @Test
+    public void testZoneIdsInDbAreParsable() {
+        var zones = sleepRepository.findTimezoneIds().stream().map(ZoneId::of).toList();
+        assertEquals(3, zones.size());
+    }
+
+
 }
