@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 
 import static com.seebie.server.test.data.TestData.createRandomSleepData;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -85,6 +86,23 @@ class SleepServiceIntegrationTest extends IntegrationTest {
 
         var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepService.saveNew(username, badData));
         assertEquals("stop_after_start", ((ConstraintViolationException)exception.getCause()).getConstraintName());
+    }
+
+    @Test
+    public void testDbTimezoneConstraint() {
+
+        var registration = TestData.createRandomUserRegistration();
+        String username = registration.username();
+        userService.saveNewUser(registration);
+
+        var now = ZonedDateTime.now();
+        var data = new SleepData(now.minusHours(1), now);
+        var badTimezone = sleepListMapper.toUnsavedEntity(username, data);
+
+        badTimezone.setSleepData(60, "", new HashSet<>(), data.startTime(), data.stopTime(), "nowhere/badZone");
+
+        var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepRepository.save(badTimezone));
+        assertEquals("sleep_session_zone_id_fkey", ((ConstraintViolationException)exception.getCause()).getConstraintName());
     }
 
     @Test
