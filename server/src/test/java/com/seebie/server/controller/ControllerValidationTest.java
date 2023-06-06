@@ -96,7 +96,8 @@ public class ControllerValidationTest {
 	@BeforeEach
 	public void setup() {
 
-		when(sleepService.saveNew(anyString(), anyList())).thenReturn(0L);
+		when(sleepService.saveCsv(anyString(), anyString())).thenReturn(0L);
+		when(sleepService.retrieveCsv(anyString())).thenReturn("");
 	}
 
 	@BeforeAll

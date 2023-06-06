@@ -4,8 +4,6 @@ import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.dto.UploadResponse;
-import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
-import com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv;
 import com.seebie.server.service.SleepService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -22,9 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static com.seebie.server.mapper.dtotoentity.CsvToSleepData.CSV_INPUT;
 import static com.seebie.server.service.NotificationRetrievalService.toLocale;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -34,9 +34,6 @@ public class SleepController {
     private static Logger LOG = LoggerFactory.getLogger(SleepController.class);
 
     private final SleepService sleepService;
-
-    private CsvToSleepData fromCsv = new CsvToSleepData();
-    private SleepDetailsToCsv toCsv = new SleepDetailsToCsv();
 
     // if there's only one constructor, can omit Autowired and Inject
     public SleepController(SleepService sleepService) {
@@ -104,9 +101,9 @@ public class SleepController {
     public ResponseEntity<?> downloadSleepData(@PathVariable String username) {
 
         String filename = "seebie-data-" + username + ".csv";
-        String headerValue = "attachment; filename="+filename;
+        String headerValue = "attachment; filename=" + filename;
 
-        String csv = toCsv.apply(sleepService.retrieveAll(username));
+        String csv = sleepService.retrieveCsv(username);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -119,13 +116,20 @@ public class SleepController {
     @ResponseBody
     public UploadResponse uploadSleepData(@PathVariable String username, @RequestParam("file") MultipartFile file) throws IOException {
 
-        LOG.info("Upload started. Parsing file...");
+        String rawCsv = new String(file.getBytes(), UTF_8);
 
-        List<SleepData> parsedData = fromCsv.apply(new String(file.getBytes(), UTF_8));
+        // validate first
+        try {
+            if(CSV_INPUT.parse(new StringReader(rawCsv)).stream().count() == 0) {
+                throw new IllegalArgumentException("No records were present");
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Could not parse CSV", e);
+        }
 
-        LOG.info("Saving data... ");
+        LOG.info("Upload started...");
 
-        long numImported = sleepService.saveNew(username, parsedData);
+        long numImported = sleepService.saveCsv(username, rawCsv);
 
         LOG.info("Imported " + numImported + " records.");
 

@@ -5,6 +5,7 @@ import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.entity.SleepSession;
+import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.repository.SleepRepository;
 import com.seebie.server.test.IntegrationTest;
@@ -25,6 +26,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 
+import static com.seebie.server.test.data.TestData.createCsv;
 import static com.seebie.server.test.data.TestData.createRandomSleepData;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
@@ -162,13 +164,13 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         userService.saveNewUser(new RegistrationRequest(username, "password", "heavyUser@sleepy.com"));
 
         int listCount = 2000;
-        var newData = createRandomSleepData(listCount);
+        var newData = createCsv(listCount);
 
         // batching means statements are sent to the DB in a batch, not that there is a single insert statement.
         // so it's ok that we see a ton of insert statements.
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        sleepService.saveNew(username, newData);
+        sleepService.saveCsv(username, newData);
         stopWatch.stop();
 
         double importSeconds = stopWatch.getTotalTimeSeconds();

@@ -30,7 +30,7 @@ public class CsvToSleepData implements Function<String, List<SleepData>> {
             var records = CSV_INPUT.parse(new StringReader(rawCsv)).getRecords();
 
             if(records.isEmpty()) {
-                throw new RuntimeException("No records were present.");
+                throw new IllegalArgumentException("No records were present.");
             }
 
             return records.stream()
