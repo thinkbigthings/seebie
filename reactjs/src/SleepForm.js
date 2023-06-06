@@ -19,8 +19,6 @@ function SleepForm(props) {
 
     const {onChange, data} = props;
 
-    console.log('Local Timezone is ' + Intl.DateTimeFormat().resolvedOptions().timeZone);
-
     const DatePickerButton = ({selectTime, onSelection}) => {
         return (
             <DatePicker

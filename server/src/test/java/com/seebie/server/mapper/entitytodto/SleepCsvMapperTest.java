@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.HEADER;
 import static java.time.ZonedDateTime.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,7 +41,7 @@ public class SleepCsvMapperTest {
                 """;
 
 
-        var data = new SleepData(newlineNotes, 0, now(), now());
+        var data = new SleepData(newlineNotes, 0, now(), now(), AMERICA_NEW_YORK);
 
         List<String> csvRow = mapper.apply(data);
         assertEquals(8, count(csvRow.get(4), "\n"));
@@ -52,7 +53,7 @@ public class SleepCsvMapperTest {
     public void testFormatWithQuotes() {
 
         String notesWithQuotes = "This is a note \"with quotes\" in it.";
-        var data = new SleepData(notesWithQuotes, 0, now(), now());
+        var data = new SleepData(notesWithQuotes, 0, now(), now(), AMERICA_NEW_YORK);
 
         List<String> csvRow = mapper.apply(data);
         assertEquals(HEADER.values().length, csvRow.size());
@@ -70,7 +71,7 @@ public class SleepCsvMapperTest {
     @Test
     public void testDateTimeFormat() {
 
-        var data = TestData.createSleepData(1).get(0);
+        var data = TestData.createRandomSleepData(1).get(0);
 
         List<String> csvRow = mapper.apply(data);
 

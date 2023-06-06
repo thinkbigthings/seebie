@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.function.Function;
 
+import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.parse;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.HEADER;
 
@@ -48,7 +49,7 @@ public class CsvToSleepData implements Function<String, List<SleepData>> {
         var minutesAwake = Integer.parseInt(record.get(HEADER.MINUTES_AWAKE));
         var notes = record.get(HEADER.NOTES);
 
-        return new SleepData(notes, minutesAwake, start, end);
+        return new SleepData(notes, minutesAwake, start, end, AMERICA_NEW_YORK);
     }
 
 }

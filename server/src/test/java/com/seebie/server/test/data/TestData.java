@@ -9,6 +9,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
@@ -46,7 +48,7 @@ public class TestData {
 
     public static String createCsv(int listCount) {
 
-        var data = createSleepData(listCount);
+        var data = createRandomSleepData(listCount);
 
         SleepDataToRow toCsv = new SleepDataToRow();
 
@@ -64,11 +66,30 @@ public class TestData {
         return csvString.toString();
     }
 
+
+    public static List<SleepData> createSleepData(int listCount, ZoneId tz) {
+        return createSleepData(listCount, ZonedDateTime.now(tz));
+    }
+
+    public static List<SleepData> createSleepData(int listCount, ZonedDateTime startDate) {
+
+        SleepData start = new SleepData(startDate.minusHours(8), startDate);
+
+        List<SleepData> newData = new ArrayList<>();
+        for(int i=0; i < listCount; i++) {
+            SleepData session = decrementDays(start, i);
+            newData.add(session);
+        }
+
+        return newData;
+    }
+
+
     /**
      *
      * @return A list whose zeroth element is today and last element is .length() days ago.
      */
-    public static List<SleepData> createSleepData(int listCount) {
+    public static List<SleepData> createRandomSleepData(int listCount) {
 
         SleepData today = new SleepData();
 
@@ -85,19 +106,19 @@ public class TestData {
 
     public static SleepData randomNotes(SleepData data) {
         String notes = faker.lorem().paragraph(5);
-        return new SleepData(notes, data.minutesAwake(), data.tags(), data.startTime(), data.stopTime());
+        return new SleepData(notes, data.minutesAwake(), data.tags(), data.startTime(), data.stopTime(), data.zoneId());
     }
 
     public static SleepData increment(SleepData data, Duration amountToAdd) {
         return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
                 data.startTime().plus(amountToAdd),
-                data.stopTime().plus(amountToAdd));
+                data.stopTime().plus(amountToAdd), data.zoneId());
     }
 
     public static SleepData decrement(SleepData data, Duration amountToSubtract) {
         return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
                 data.startTime().minus(amountToSubtract),
-                data.stopTime().minus(amountToSubtract));
+                data.stopTime().minus(amountToSubtract), data.zoneId());
     }
 
     public static SleepData decrementDays(SleepData data, long days) {
@@ -107,7 +128,7 @@ public class TestData {
     public static SleepData randomDuration(SleepData data) {
         return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
                 data.startTime().plusMinutes(random.nextInt(60)),
-                data.stopTime().minusMinutes(random.nextInt(60)));
+                data.stopTime().minusMinutes(random.nextInt(60)), data.zoneId());
     }
 
     public static class ArgumentBuilder {

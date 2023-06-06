@@ -20,6 +20,7 @@ function CreateSleepSession(props) {
     const post = useApiPost();
 
     const saveData = () => {
+
         post(sleepUrl, SleepDataManager.format(sleepData))
             .then(result => setShowModal(false))
             .then(props.onSave);
