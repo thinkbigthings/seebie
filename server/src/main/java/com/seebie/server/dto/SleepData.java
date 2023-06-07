@@ -27,10 +27,6 @@ public record SleepData(@NotNull String notes,
                         @ZoneIdConstraint String zoneId)
 {
 
-    public SleepData() {
-        this("", 0, new HashSet<>(), ZonedDateTime.now().minusHours(8L), ZonedDateTime.now(), AMERICA_NEW_YORK);
-    }
-
     public SleepData(ZonedDateTime startTime, ZonedDateTime stopTime) {
         this("", 0, new HashSet<>(), startTime, stopTime, AMERICA_NEW_YORK);
     }

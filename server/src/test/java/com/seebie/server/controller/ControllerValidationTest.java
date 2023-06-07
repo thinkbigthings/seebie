@@ -72,7 +72,7 @@ public class ControllerValidationTest {
 	private static final String ADMINNAME = "admin";
 
 	private static final RegistrationRequest registration = createRandomUserRegistration();
-	private static final SleepData sleepData = new SleepData();
+	private static final SleepData sleepData = createRandomSleepData();
 	private static final PersonalInfo info = createRandomPersonalInfo();
 
 	private static final RegistrationRequest invalidRegistration = new RegistrationRequest("", null, null);

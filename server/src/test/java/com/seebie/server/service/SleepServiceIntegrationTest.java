@@ -5,7 +5,6 @@ import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.entity.SleepSession;
-import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.repository.SleepRepository;
 import com.seebie.server.test.IntegrationTest;
@@ -26,12 +25,12 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 
+import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.test.data.TestData.createCsv;
 import static com.seebie.server.test.data.TestData.createRandomSleepData;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SleepServiceIntegrationTest extends IntegrationTest {
 
@@ -145,7 +144,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         assertEquals(0, listing.getTotalElements());
 
         // set up test data
-        var sleep = sleepService.saveNew(username, new SleepData());
+        var sleep = sleepService.saveNew(username, createRandomSleepData());
         listing = sleepService.listSleepData(username, firstPage);
         assertEquals(1, listing.getTotalElements());
 
@@ -164,7 +163,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         userService.saveNewUser(new RegistrationRequest(username, "password", "heavyUser@sleepy.com"));
 
         int listCount = 2000;
-        var newData = createCsv(listCount);
+        var newData = createCsv(listCount, AMERICA_NEW_YORK);
 
         // batching means statements are sent to the DB in a batch, not that there is a single insert statement.
         // so it's ok that we see a ton of insert statements.
@@ -189,5 +188,30 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         assertEquals(3, zones.size());
     }
 
+    @Test
+    public void testDownloadDifferentTz() {
+
+        var registration = TestData.createRandomUserRegistration();
+        String user1 = registration.username();
+        userService.saveNewUser(registration);
+
+        registration = TestData.createRandomUserRegistration();
+        String user2 = registration.username();
+        userService.saveNewUser(registration);
+
+        sleepService.saveCsv(user1, createCsv(3, AMERICA_NEW_YORK));
+        var retrievedCsv1 = sleepService.retrieveCsv(user1);
+
+        sleepService.saveCsv(user2, retrievedCsv1);
+        var retrievedCsv2 = sleepService.retrieveCsv(user2);
+
+        // export, import, re-export, and the two exports should be identical
+        assertEquals(retrievedCsv1, retrievedCsv2);
+        assertTrue(retrievedCsv1.contains(AMERICA_NEW_YORK));
+
+        // TODO test with different timezones
+
+
+    }
 
 }

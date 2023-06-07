@@ -6,6 +6,8 @@ import org.apache.commons.csv.CSVRecord;
 import org.springframework.stereotype.Component;
 
 import java.io.StringReader;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.function.Function;
 
@@ -46,10 +48,13 @@ public class CsvToSleepData implements Function<String, List<SleepData>> {
 
         var start = parse(record.get(HEADER.TIME_ASLEEP));
         var end = parse(record.get(HEADER.TIME_AWAKE));
+        var zoneId = record.get(HEADER.TIMEZONE);
         var minutesAwake = Integer.parseInt(record.get(HEADER.MINUTES_AWAKE));
         var notes = record.get(HEADER.NOTES);
 
-        return new SleepData(notes, minutesAwake, start, end, AMERICA_NEW_YORK);
-    }
+        start = start.withZoneSameInstant(ZoneId.of(zoneId)).truncatedTo(ChronoUnit.MINUTES);
+        end = end.withZoneSameInstant(ZoneId.of(zoneId)).truncatedTo(ChronoUnit.MINUTES);
 
+        return new SleepData(notes, minutesAwake, start, end, zoneId);
+    }
 }

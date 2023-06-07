@@ -1,24 +1,26 @@
 package com.seebie.server.mapper.entitytodto;
 
-import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.SleepDetails;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.function.Function;
 
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 
 @Component
-public class SleepDataToRow implements Function<SleepData, List<String>> {
+public class SleepDetailsToCsvRow implements Function<SleepDetails, List<String>> {
 
     @Override
-    public List<String> apply(SleepData data) {
+    public List<String> apply(SleepDetails details) {
+
+        var data = details.sleepData();
 
         return List.of(
                         format(data.startTime()),
                         format(data.stopTime()),
-                        Long.toString(Duration.between(data.startTime(), data.stopTime()).toMinutes()),
+                        data.zoneId(),
+                        Integer.toString(details.minutesAsleep()),
                         Integer.toString(data.minutesAwake()),
                         data.notes()
                     );

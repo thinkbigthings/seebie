@@ -32,13 +32,15 @@ public class SleepService {
 
     private SleepMapper sleepMapper = new SleepMapper();
 
-    private CsvToSleepData fromCsv = new CsvToSleepData();
-    private SleepDetailsToCsv toCsv = new SleepDetailsToCsv();
+    private CsvToSleepData fromCsv;
+    private SleepDetailsToCsv toCsv;
 
-    public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper) {
+    public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper, CsvToSleepData fromCsv, SleepDetailsToCsv toCsv) {
         this.sleepRepository = sleepRepository;
         this.entityMapper = entityMapper;
         this.tagMapper = tagMapper;
+        this.fromCsv = fromCsv;
+        this.toCsv = toCsv;
     }
 
     @Transactional(readOnly = true)

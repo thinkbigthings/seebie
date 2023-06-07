@@ -78,7 +78,7 @@ public class ControllerSecurityTest {
 	private static final String ADMINNAME = "admin";
 
 	private static final RegistrationRequest registration = createRandomUserRegistration();
-	private static final SleepData sleepData = new SleepData();
+	private static final SleepData sleepData = createRandomSleepData();
 	private static final PersonalInfo info = createRandomPersonalInfo();
 	private static final String password = "new_password";
 	private static final MockMultipartFile file = createMultipart(createCsv(1));

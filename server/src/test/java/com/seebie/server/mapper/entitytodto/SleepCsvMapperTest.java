@@ -1,20 +1,22 @@
 package com.seebie.server.mapper.entitytodto;
 
 import com.seebie.server.dto.SleepData;
-import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.HEADER;
+import static com.seebie.server.test.data.TestData.createRandomSleepData;
+import static com.seebie.server.test.data.TestData.fromSleepData;
 import static java.time.ZonedDateTime.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SleepCsvMapperTest {
 
-    private SleepDataToRow mapper = new SleepDataToRow();
+    private SleepDetailsToCsvRow mapper = new SleepDetailsToCsvRow();
 
     private int count(String toSearch, String toFind) {
         int index = toSearch.indexOf(toFind);
@@ -43,8 +45,8 @@ public class SleepCsvMapperTest {
 
         var data = new SleepData(newlineNotes, 0, now(), now(), AMERICA_NEW_YORK);
 
-        List<String> csvRow = mapper.apply(data);
-        assertEquals(8, count(csvRow.get(4), "\n"));
+        List<String> csvRow = mapper.apply(fromSleepData(data));
+        assertEquals(8, count(csvRow.get(5), "\n"));
 
         assertEquals(HEADER.values().length, csvRow.size());
     }
@@ -55,10 +57,10 @@ public class SleepCsvMapperTest {
         String notesWithQuotes = "This is a note \"with quotes\" in it.";
         var data = new SleepData(notesWithQuotes, 0, now(), now(), AMERICA_NEW_YORK);
 
-        List<String> csvRow = mapper.apply(data);
+        List<String> csvRow = mapper.apply(fromSleepData(data));
         assertEquals(HEADER.values().length, csvRow.size());
 
-        String csvNotes = csvRow.get(4);
+        String csvNotes = csvRow.get(5);
         assertEquals(2, count(csvNotes, "\""));
 
         assertEquals(3, count("\"\"\"", "\""));
@@ -71,9 +73,9 @@ public class SleepCsvMapperTest {
     @Test
     public void testDateTimeFormat() {
 
-        var data = TestData.createRandomSleepData(1).get(0);
+        var data = createRandomSleepData(ZonedDateTime.now(), AMERICA_NEW_YORK);
 
-        List<String> csvRow = mapper.apply(data);
+        List<String> csvRow = mapper.apply(fromSleepData(data));
 
         // TODO this breaks the build but works locally
         // it's not a "great" test but I do expect the format to be consistent across locales.
