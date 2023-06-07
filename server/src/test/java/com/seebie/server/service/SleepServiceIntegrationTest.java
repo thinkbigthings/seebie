@@ -209,9 +209,6 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         assertEquals(retrievedCsv1, retrievedCsv2);
         assertTrue(retrievedCsv1.contains(AMERICA_NEW_YORK));
 
-        // TODO test with different timezones
-
-
     }
 
 }
