@@ -6,7 +6,7 @@ name: Push to Branch
 
 on:
   push:
-    branches: [ "--------" ]
+    branches: [ "timezone-csv" ]
 
 permissions:
   contents: read

@@ -69,7 +69,6 @@ public class SleepCsvMapperTest {
         assertEquals(1, count("\"", "\""));
     }
 
-    @Disabled("Fails on Github, need to upload test output to be able to investigate")
     @Test
     public void testDateTimeFormat() {
 
