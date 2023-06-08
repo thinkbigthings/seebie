@@ -1,7 +1,8 @@
 package com.seebie.server.test.data;
 
 import com.seebie.server.dto.SleepData;
-import com.seebie.server.mapper.entitytodto.SleepDataToRow;
+import com.seebie.server.dto.SleepDetails;
+import com.seebie.server.mapper.entitytodto.SleepDetailsToCsvRow;
 import net.datafaker.Faker;
 import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
@@ -13,6 +14,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.joining;
@@ -47,16 +49,26 @@ public class TestData {
     }
 
     public static String createCsv(int listCount) {
+        return createCsv(listCount, AMERICA_NEW_YORK);
+    }
 
-        var data = createRandomSleepData(listCount);
+    public static SleepDetails toSleepDetails(SleepData data) {
+        int minutesAsleep = (int) Duration.between(data.startTime(), data.stopTime()).toMinutes();
+        return new SleepDetails(0L, minutesAsleep, data);
+    }
 
-        SleepDataToRow toCsv = new SleepDataToRow();
+    public static String createCsv(int listCount, String zoneId) {
 
+        var data = createRandomSleepData(listCount, zoneId);
+
+        SleepDetailsToCsvRow toCsv = new SleepDetailsToCsvRow();
         StringBuilder csvString = new StringBuilder();
 
         String headerRow = headerRow() + "\r\n";
 
-        String body = data.stream().map(toCsv)
+        String body = data.stream()
+                .map(TestData::toSleepDetails)
+                .map(toCsv)
                 .map(row -> String.join(",", row))
                 .collect(joining("\r\n"));
 
@@ -66,47 +78,35 @@ public class TestData {
         return csvString.toString();
     }
 
-
-    public static List<SleepData> createSleepData(int listCount, ZoneId tz) {
-        return createSleepData(listCount, ZonedDateTime.now(tz));
-    }
-
-    public static List<SleepData> createSleepData(int listCount, ZonedDateTime startDate) {
-
-        SleepData start = new SleepData(startDate.minusHours(8), startDate);
-
-        List<SleepData> newData = new ArrayList<>();
-        for(int i=0; i < listCount; i++) {
-            SleepData session = decrementDays(start, i);
-            newData.add(session);
-        }
-
-        return newData;
-    }
-
-
     /**
      *
-     * @return A list whose zeroth element is today and last element is .length() days ago.
+     * @return A list of daily SleepData whose zeroth element is today and last element is listCount days ago.
      */
-    public static List<SleepData> createRandomSleepData(int listCount) {
+    public static List<SleepData> createRandomSleepData(int listCount, String zoneId) {
 
-        SleepData today = new SleepData();
+        var stopTime = ZonedDateTime.now();
+        var newData = new ArrayList<SleepData>();
+        SleepData current;
 
-        List<SleepData> newData = new ArrayList<>();
         for(int i=0; i < listCount; i++) {
-            SleepData session = decrementDays(today, i);
-            session = randomDuration(session);
-            session = randomNotes(session);
-            newData.add(session);
+            current = createRandomSleepData(stopTime, zoneId);
+            newData.add(current);
+            stopTime = stopTime.minusDays(1);
         }
 
         return newData;
     }
 
-    public static SleepData randomNotes(SleepData data) {
-        String notes = faker.lorem().paragraph(5);
-        return new SleepData(notes, data.minutesAwake(), data.tags(), data.startTime(), data.stopTime(), data.zoneId());
+    public static SleepData createRandomSleepData() {
+        return createRandomSleepData(ZonedDateTime.now(), AMERICA_NEW_YORK);
+    }
+
+    public static SleepData createRandomSleepData(ZonedDateTime stopTime, String zoneId) {
+        var startTime = stopTime.withZoneSameInstant(ZoneId.of(zoneId)).minusHours(8L);
+        return new SleepData(faker.lorem().paragraph(3), 0, new HashSet<>(),
+                startTime.plusMinutes(random.nextInt(60)),
+                stopTime.minusMinutes(random.nextInt(60)),
+                zoneId);
     }
 
     public static SleepData increment(SleepData data, Duration amountToAdd) {

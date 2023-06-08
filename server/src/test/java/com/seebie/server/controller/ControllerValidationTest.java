@@ -72,7 +72,7 @@ public class ControllerValidationTest {
 	private static final String ADMINNAME = "admin";
 
 	private static final RegistrationRequest registration = createRandomUserRegistration();
-	private static final SleepData sleepData = new SleepData();
+	private static final SleepData sleepData = createRandomSleepData();
 	private static final PersonalInfo info = createRandomPersonalInfo();
 
 	private static final RegistrationRequest invalidRegistration = new RegistrationRequest("", null, null);
@@ -96,7 +96,8 @@ public class ControllerValidationTest {
 	@BeforeEach
 	public void setup() {
 
-		when(sleepService.saveNew(anyString(), anyList())).thenReturn(0L);
+		when(sleepService.saveCsv(anyString(), anyString())).thenReturn(0L);
+		when(sleepService.retrieveCsv(anyString())).thenReturn("");
 	}
 
 	@BeforeAll

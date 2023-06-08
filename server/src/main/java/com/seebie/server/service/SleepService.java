@@ -3,10 +3,14 @@ package com.seebie.server.service;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDetails;
+import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
+import com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv;
 import com.seebie.server.mapper.dtotoentity.TagMapper;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.mapper.entitytodto.SleepMapper;
 import com.seebie.server.repository.SleepRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,16 +24,23 @@ import java.util.List;
 @Service
 public class SleepService {
 
+    private static Logger LOG = LoggerFactory.getLogger(SleepService.class);
+
     private SleepRepository sleepRepository;
     private UnsavedSleepListMapper entityMapper;
     private TagMapper tagMapper;
 
     private SleepMapper sleepMapper = new SleepMapper();
 
-    public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper) {
+    private CsvToSleepData fromCsv;
+    private SleepDetailsToCsv toCsv;
+
+    public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper, CsvToSleepData fromCsv, SleepDetailsToCsv toCsv) {
         this.sleepRepository = sleepRepository;
         this.entityMapper = entityMapper;
         this.tagMapper = tagMapper;
+        this.fromCsv = fromCsv;
+        this.toCsv = toCsv;
     }
 
     @Transactional(readOnly = true)
@@ -78,14 +89,20 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public List<SleepDetails> retrieveAll(String username) {
-        return sleepRepository.findAllByUsername(username);
+    public String retrieveCsv(String username) {
+        return toCsv.apply(sleepRepository.findAllByUsername(username));
     }
 
     @Transactional
-    public long saveNew(String username, List<SleepData> dtoList) {
-        var entityList = entityMapper.apply(username, dtoList);
-        return sleepRepository.saveAll(entityList).size();
-    }
+    public long saveCsv(String username, String csvData) {
 
+        LOG.info("Parsing data...");
+        List<SleepData> parsedData = fromCsv.apply(csvData);
+
+        LOG.info("Saving data... ");
+        var entityList = entityMapper.apply(username, parsedData);
+        int count = sleepRepository.saveAll(entityList).size();
+
+        return count;
+    }
 }
