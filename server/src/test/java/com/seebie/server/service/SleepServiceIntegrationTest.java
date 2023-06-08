@@ -189,7 +189,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void testDownloadDifferentTz() {
+    public void testDownloadWithTimezone() {
 
         var registration = TestData.createRandomUserRegistration();
         String user1 = registration.username();
@@ -205,7 +205,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         sleepService.saveCsv(user2, retrievedCsv1);
         var retrievedCsv2 = sleepService.retrieveCsv(user2);
 
-        // export, import, re-export, and the two exports should be identical
+        // after an export, import, and re-export: the two exports should be identical
         assertEquals(retrievedCsv1, retrievedCsv2);
         assertTrue(retrievedCsv1.contains(AMERICA_NEW_YORK));
     }

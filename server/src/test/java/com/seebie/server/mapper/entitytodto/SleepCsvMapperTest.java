@@ -10,13 +10,13 @@ import java.util.List;
 import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.HEADER;
 import static com.seebie.server.test.data.TestData.createRandomSleepData;
-import static com.seebie.server.test.data.TestData.fromSleepData;
+import static com.seebie.server.test.data.TestData.toSleepDetails;
 import static java.time.ZonedDateTime.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SleepCsvMapperTest {
 
-    private SleepDetailsToCsvRow mapper = new SleepDetailsToCsvRow();
+    private SleepDetailsToCsvRow detailsToCsv = new SleepDetailsToCsvRow();
 
     private int count(String toSearch, String toFind) {
         int index = toSearch.indexOf(toFind);
@@ -45,7 +45,7 @@ public class SleepCsvMapperTest {
 
         var data = new SleepData(newlineNotes, 0, now(), now(), AMERICA_NEW_YORK);
 
-        List<String> csvRow = mapper.apply(fromSleepData(data));
+        List<String> csvRow = detailsToCsv.apply(toSleepDetails(data));
         assertEquals(8, count(csvRow.get(5), "\n"));
 
         assertEquals(HEADER.values().length, csvRow.size());
@@ -57,7 +57,7 @@ public class SleepCsvMapperTest {
         String notesWithQuotes = "This is a note \"with quotes\" in it.";
         var data = new SleepData(notesWithQuotes, 0, now(), now(), AMERICA_NEW_YORK);
 
-        List<String> csvRow = mapper.apply(fromSleepData(data));
+        List<String> csvRow = detailsToCsv.apply(toSleepDetails(data));
         assertEquals(HEADER.values().length, csvRow.size());
 
         String csvNotes = csvRow.get(5);
@@ -75,14 +75,14 @@ public class SleepCsvMapperTest {
 
         var data = createRandomSleepData(ZonedDateTime.now(), AMERICA_NEW_YORK);
 
-        List<String> csvRow = mapper.apply(fromSleepData(data));
+        List<String> csvRow = detailsToCsv.apply(toSleepDetails(data));
 
         // TODO this breaks the build but works locally
         // it's not a "great" test but I do expect the format to be consistent across locales.
         //2023-03-25T13:44:00-04:00
 
-        assertEquals(25, csvRow.get(0).length());
-        assertEquals(25, csvRow.get(1).length());
+        assertEquals(25, csvRow.get(0).length(), "Expected 25 characters, got: " + csvRow.get(0));
+        assertEquals(25, csvRow.get(1).length(), "Expected 25 characters, got: " + csvRow.get(1));
 
         assertEquals(HEADER.values().length, csvRow.size());
     }

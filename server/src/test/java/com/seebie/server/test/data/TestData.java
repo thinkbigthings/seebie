@@ -52,7 +52,7 @@ public class TestData {
         return createCsv(listCount, AMERICA_NEW_YORK);
     }
 
-    public static SleepDetails fromSleepData(SleepData data) {
+    public static SleepDetails toSleepDetails(SleepData data) {
         int minutesAsleep = (int) Duration.between(data.startTime(), data.stopTime()).toMinutes();
         return new SleepDetails(0L, minutesAsleep, data);
     }
@@ -67,7 +67,7 @@ public class TestData {
         String headerRow = headerRow() + "\r\n";
 
         String body = data.stream()
-                .map(TestData::fromSleepData)
+                .map(TestData::toSleepDetails)
                 .map(toCsv)
                 .map(row -> String.join(",", row))
                 .collect(joining("\r\n"));
