@@ -45,7 +45,6 @@ public class SleepController {
     @ResponseBody
     public void saveSleepSession(@Valid @RequestBody SleepData dto, @PathVariable String username) {
 
-        LOG.info("Saving sleep data " + dto + " for " + username + " with logged date " + toLocale(dto.stopTime().toInstant()));
         sleepService.saveNew(username, dto);
     }
 
