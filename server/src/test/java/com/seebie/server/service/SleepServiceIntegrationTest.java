@@ -26,8 +26,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 
 import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
-import static com.seebie.server.test.data.TestData.createCsv;
-import static com.seebie.server.test.data.TestData.createRandomSleepData;
+import static com.seebie.server.test.data.TestData.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,7 +60,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         String username = registration.username();
         userService.saveNewUser(registration);
 
-        var oneHour = new SleepData(ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
+        var oneHour = createStandardSleepData(ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
         var badCalculation = sleepListMapper.toUnsavedEntity(username, oneHour);
 
         // use reflection to hack our way into setting bad data
@@ -83,7 +82,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         userService.saveNewUser(registration);
 
         // test with the start and stop times switched
-        var badData = new SleepData(ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
+        var badData = createStandardSleepData(ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
 
         var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepService.saveNew(username, badData));
         assertEquals("stop_after_start", ((ConstraintViolationException)exception.getCause()).getConstraintName());
@@ -97,7 +96,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         userService.saveNewUser(registration);
 
         var now = ZonedDateTime.now();
-        var data = new SleepData(now.minusHours(1), now);
+        var data = createStandardSleepData(now.minusHours(1), now);
         var badTimezone = sleepListMapper.toUnsavedEntity(username, data);
 
         badTimezone.setSleepData(60, "", new HashSet<>(), data.startTime(), data.stopTime(), "nowhere/badZone");

@@ -7,7 +7,6 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
 import static java.util.Collections.unmodifiableSet;
 
 /**
@@ -26,10 +25,6 @@ public record SleepData(@NotNull String notes,
                         @NotNull ZonedDateTime stopTime,
                         @ZoneIdConstraint String zoneId)
 {
-
-    public SleepData(ZonedDateTime startTime, ZonedDateTime stopTime) {
-        this("", 0, new HashSet<>(), startTime, stopTime, AMERICA_NEW_YORK);
-    }
 
     public SleepData(String notes, int minutesAwake, ZonedDateTime startTime, ZonedDateTime stopTime, String zoneId) {
         this(notes, minutesAwake, new HashSet<>(), startTime, stopTime, zoneId);

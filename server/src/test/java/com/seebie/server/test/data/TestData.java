@@ -97,6 +97,10 @@ public class TestData {
         return newData;
     }
 
+    public static SleepData createStandardSleepData(ZonedDateTime startTime, ZonedDateTime stopTime) {
+        return new SleepData("", 0, new HashSet<>(), startTime, stopTime, AMERICA_NEW_YORK);
+    }
+
     public static SleepData createRandomSleepData() {
         return createRandomSleepData(ZonedDateTime.now(), AMERICA_NEW_YORK);
     }

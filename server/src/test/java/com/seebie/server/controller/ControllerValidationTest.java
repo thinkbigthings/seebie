@@ -76,7 +76,7 @@ public class ControllerValidationTest {
 	private static final PersonalInfo info = createRandomPersonalInfo();
 
 	private static final RegistrationRequest invalidRegistration = new RegistrationRequest("", null, null);
-	private static final SleepData invalidSleepData = new SleepData(null, null);
+	private static final SleepData invalidSleepData = createStandardSleepData(null, null);
 	private static final PersonalInfo invalidInfo = new PersonalInfo(null, null);
 
 	private static final String from = format(ZonedDateTime.now().minusDays(1));

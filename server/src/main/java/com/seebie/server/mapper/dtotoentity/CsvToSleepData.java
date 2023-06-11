@@ -11,7 +11,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.parse;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.HEADER;
 
