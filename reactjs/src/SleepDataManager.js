@@ -30,8 +30,12 @@ SleepDataManager.toIsoString = (date) => {
 
 SleepDataManager.parse = (json) => {
     let parsed = copy(json);
-    parsed.startTime = new Date(Date.parse(json.startTime));
-    parsed.stopTime = new Date(Date.parse(json.stopTime));
+    // keep the local time without the offset for display purposes
+    parsed.localStartTime = new Date(Date.parse(json.startTime.substring(0, 19)));
+    parsed.localStopTime = new Date(Date.parse(json.stopTime.substring(0, 19)));
+    // leave the original startTime and stopTime as strings
+    // parsed.startTime = new Date(Date.parse(json.startTime));
+    // parsed.stopTime = new Date(Date.parse(json.stopTime));
     return parsed;
 }
 
@@ -55,6 +59,8 @@ SleepDataManager.createInitSleepData = () => {
     yesterday.setHours(21, 45, 0);
 
     return {
+        localStartTime: yesterday,
+        localStopTime: today,
         startTime: yesterday,
         stopTime: today,
         notes: '',

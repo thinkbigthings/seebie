@@ -35,13 +35,19 @@ function EditSleep({history, match}) {
             .then(() => setLoaded(true))
     }, [setSleepData, sleepEndpoint]);
 
-
     const onSave = () => {
         put(sleepEndpoint, sleepData).then(history.goBack);
     }
 
     function updateSleepSession(updateValues) {
         let updatedSleep = {...sleepData, ...updateValues};
+
+        // use the local time without the offset for display purposes
+        let localStartTime = SleepDataManager.toIsoString(updatedSleep.localStartTime).substring(0, 19);
+        let localStopTime = SleepDataManager.toIsoString(updatedSleep.localStopTime).substring(0, 19);
+        updatedSleep.startTime = localStartTime + sleepData.startTime.substring(19);
+        updatedSleep.stopTime = localStopTime + sleepData.stopTime.substring(19);
+
         if(SleepDataManager.isDataValid(updatedSleep)) {
             setSleepData(updatedSleep);
         }
