@@ -2,36 +2,40 @@ package com.seebie.server.dto;
 
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RegistrationRequestValidationTest {
 
     private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    @Test
-    public void testValidValues() {
+    private static final String username = "username_here";
+    private static final String password = "password";
+    private static final String email = "x@y.com";
 
-        // annotations are applied on record components
-        var validRegistration = new RegistrationRequest("username_here", "password", "x@y.com");
-
-        // these will be applied on sending to a controller
-        var violations = validator.validate(validRegistration);
-
-        assertTrue(violations.isEmpty());
+    private static List<Arguments> provideRegistrationArguments() {
+        return List.of(
+                Arguments.of(new RegistrationRequest(username, password, email), 0),
+                Arguments.of(new RegistrationRequest("spaces require encoding", password, email), 1),
+                Arguments.of(new RegistrationRequest("spaces require encoding", "", email), 2),
+                Arguments.of(new RegistrationRequest("spaces require encoding", "", ""), 3)
+        );
     }
 
-    @Test
-    public void testInvalidValues() {
+    @ParameterizedTest
+    @MethodSource("provideRegistrationArguments")
+    public void testScanForNotifications(RegistrationRequest data, int numberViolations) {
 
         // annotations are applied on record components
-        var invalidRegistration = new RegistrationRequest("spaces require encoding", "password", "x@y.com");
-
         // these will be applied on sending to a controller
-        var violations = validator.validate(invalidRegistration);
 
-        assertEquals(1, violations.size());
+        var violations = validator.validate(data);
+
+        assertEquals(numberViolations, violations.size());
     }
 }
