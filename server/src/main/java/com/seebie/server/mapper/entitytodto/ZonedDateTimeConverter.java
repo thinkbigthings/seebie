@@ -8,7 +8,7 @@ import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 public class ZonedDateTimeConverter {
 
     public static String format(ZonedDateTime dateTime) {
-        return dateTime.truncatedTo(ChronoUnit.MINUTES).format(ISO_OFFSET_DATE_TIME);
+        return dateTime.format(ISO_OFFSET_DATE_TIME);
     }
 
     public static ZonedDateTime parse(String formatted) {

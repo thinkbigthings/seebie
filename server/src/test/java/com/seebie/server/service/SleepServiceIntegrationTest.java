@@ -25,7 +25,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 
-import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
+import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.test.data.TestData.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
@@ -112,7 +112,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         String username = registration.username();
         userService.saveNewUser(registration);
 
-        var end = ZonedDateTime.now(ZoneId.of("America/Phoenix")).truncatedTo(ChronoUnit.MINUTES);
+        var end = ZonedDateTime.now();
         var start = end.minusHours(8);
 
         var originalSleep = new SleepData("", 0, start, end,"America/Phoenix" );

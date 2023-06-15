@@ -1,19 +1,18 @@
 package com.seebie.server.dto;
 
 import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 
-import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RegistrationValidationRequest {
+public class RegistrationRequestValidationTest {
 
+    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
     public void testValidValues() {
-
-        var validator = Validation.buildDefaultValidatorFactory().getValidator();
 
         // annotations are applied on record components
         var validRegistration = new RegistrationRequest("username_here", "password", "x@y.com");
@@ -26,8 +25,6 @@ public class RegistrationValidationRequest {
 
     @Test
     public void testInvalidValues() {
-
-        var validator = Validation.buildDefaultValidatorFactory().getValidator();
 
         // annotations are applied on record components
         var invalidRegistration = new RegistrationRequest("spaces require encoding", "password", "x@y.com");

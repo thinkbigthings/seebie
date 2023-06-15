@@ -14,7 +14,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
+import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.joining;
@@ -123,10 +123,6 @@ public class TestData {
         return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
                 data.startTime().minus(amountToSubtract),
                 data.stopTime().minus(amountToSubtract), data.zoneId());
-    }
-
-    public static SleepData decrementDays(SleepData data, long days) {
-        return decrement(data, Duration.ofDays(days));
     }
 
     public static SleepData randomDuration(SleepData data) {

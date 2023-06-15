@@ -30,13 +30,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
 import javax.sql.DataSource;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Function;
 
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
-import static org.mockito.ArgumentMatchers.anyList;
+import static java.time.ZonedDateTime.now;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -79,8 +78,8 @@ public class ControllerValidationTest {
 	private static final SleepData invalidSleepData = createStandardSleepData(null, null);
 	private static final PersonalInfo invalidInfo = new PersonalInfo(null, null);
 
-	private static final String from = format(ZonedDateTime.now().minusDays(1));
-	private static final String to = format(ZonedDateTime.now());
+	private static final String from = format(now().minusDays(1));
+	private static final String to = format(now());
 
 	private static final MockMultipartFile badFile = createMultipart("text");
 	private static final MockMultipartFile goodFile = createMultipart(createCsv(1));

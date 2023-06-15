@@ -51,9 +51,6 @@ public class CsvToSleepData implements Function<String, List<SleepData>> {
         var minutesAwake = Integer.parseInt(record.get(HEADER.MINUTES_AWAKE));
         var notes = record.get(HEADER.NOTES);
 
-        start = start.withZoneSameInstant(ZoneId.of(zoneId)).truncatedTo(ChronoUnit.MINUTES);
-        end = end.withZoneSameInstant(ZoneId.of(zoneId)).truncatedTo(ChronoUnit.MINUTES);
-
         return new SleepData(notes, minutesAwake, start, end, zoneId);
     }
 }
