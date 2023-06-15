@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static com.seebie.server.test.data.TestData.createStandardSleepData;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -46,7 +47,7 @@ public class NotificationMessageServiceTest extends IntegrationTest {
     private NotificationRepository notificationRepository;
 
     private static final ZonedDateTime start = ZonedDateTime.now();
-    private static final SleepData firstSleepLog = new SleepData(start.minusHours(8), start);
+    private static final SleepData firstSleepLog = createStandardSleepData(start.minusHours(8), start);
     private static final int testDurationHours = 72;
 
     public interface RecordArguments extends Arguments {

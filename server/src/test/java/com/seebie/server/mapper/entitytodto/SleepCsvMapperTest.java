@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
+import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.HEADER;
 import static com.seebie.server.test.data.TestData.createRandomSleepData;
 import static com.seebie.server.test.data.TestData.toSleepDetails;

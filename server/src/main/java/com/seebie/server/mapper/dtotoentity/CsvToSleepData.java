@@ -11,7 +11,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.parse;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.HEADER;
 
@@ -51,9 +50,6 @@ public class CsvToSleepData implements Function<String, List<SleepData>> {
         var zoneId = record.get(HEADER.TIMEZONE);
         var minutesAwake = Integer.parseInt(record.get(HEADER.MINUTES_AWAKE));
         var notes = record.get(HEADER.NOTES);
-
-        start = start.withZoneSameInstant(ZoneId.of(zoneId)).truncatedTo(ChronoUnit.MINUTES);
-        end = end.withZoneSameInstant(ZoneId.of(zoneId)).truncatedTo(ChronoUnit.MINUTES);
 
         return new SleepData(notes, minutesAwake, start, end, zoneId);
     }

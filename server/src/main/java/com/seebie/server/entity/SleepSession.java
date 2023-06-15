@@ -89,8 +89,8 @@ public class SleepSession implements Serializable {
 
         this.minutesAwake = minutesAwake;
         this.notes = notes;
-        this.startTime = start.truncatedTo(ChronoUnit.MINUTES);
-        this.stopTime = stop.truncatedTo(ChronoUnit.MINUTES);
+        this.startTime = start;
+        this.stopTime = stop;
         this.zoneId = zoneId;
 
         // this is calculated here and not in the database

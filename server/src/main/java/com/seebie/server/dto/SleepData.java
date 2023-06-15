@@ -3,12 +3,14 @@ package com.seebie.server.dto;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
-import static com.seebie.server.dto.ZoneIds.AMERICA_NEW_YORK;
-import static java.util.Collections.unmodifiableSet;
+import static java.util.Objects.isNull;
 
 /**
  *
@@ -27,20 +29,26 @@ public record SleepData(@NotNull String notes,
                         @ZoneIdConstraint String zoneId)
 {
 
-    public SleepData(ZonedDateTime startTime, ZonedDateTime stopTime) {
-        this("", 0, new HashSet<>(), startTime, stopTime, AMERICA_NEW_YORK);
-    }
-
     public SleepData(String notes, int minutesAwake, ZonedDateTime startTime, ZonedDateTime stopTime, String zoneId) {
         this(notes, minutesAwake, new HashSet<>(), startTime, stopTime, zoneId);
     }
 
     public SleepData(String notes, int minutesAwake, Set<String> tags, ZonedDateTime startTime, ZonedDateTime stopTime, String zoneId) {
+
         this.notes = notes;
         this.minutesAwake = minutesAwake;
-        this.tags = unmodifiableSet(tags);
-        this.startTime = startTime;
-        this.stopTime = stopTime;
+        this.tags = tags;
+
+        this.startTime = Optional.ofNullable(startTime)
+                .map(t -> t.truncatedTo(ChronoUnit.MINUTES))
+                .map(t -> isNull(zoneId) ? t : t.withZoneSameInstant(ZoneId.of(zoneId)))
+                .orElse(null);
+
+        this.stopTime = Optional.ofNullable(stopTime)
+                .map(t -> t.truncatedTo(ChronoUnit.MINUTES))
+                .map(t -> isNull(zoneId) ? t : t.withZoneSameInstant(ZoneId.of(zoneId)))
+                .orElse(null);
+
         this.zoneId = zoneId;
     }
 

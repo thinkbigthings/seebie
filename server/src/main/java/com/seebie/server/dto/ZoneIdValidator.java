@@ -3,13 +3,14 @@ package com.seebie.server.dto;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class ZoneIdValidator implements ConstraintValidator<ZoneIdConstraint, String> {
+import java.time.DateTimeException;
+import java.time.ZoneId;
 
-    private String[] allowedZoneIds;
+public class ZoneIdValidator implements ConstraintValidator<ZoneIdConstraint, String> {
 
     @Override
     public void initialize(ZoneIdConstraint constraint) {
-        allowedZoneIds = ZoneIds.ALL;
+
     }
 
     @Override
@@ -20,12 +21,13 @@ public class ZoneIdValidator implements ConstraintValidator<ZoneIdConstraint, St
             return false;
         }
 
-        for (String zoneId : allowedZoneIds) {
-            if (zoneId.equals(value)) {
-                return true;
-            }
+        try {
+            ZoneId.of(value);
+        }
+        catch (DateTimeException e) {
+            return false;
         }
 
-        return false;
+        return true;
     }
 }
