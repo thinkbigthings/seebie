@@ -40,6 +40,7 @@ function EditSleep({history, match}) {
     }
 
     function updateSleepSession(updateValues) {
+
         let updatedSleep = {...sleepData, ...updateValues};
 
         // use the local time without the offset for display purposes

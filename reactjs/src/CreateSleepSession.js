@@ -21,13 +21,23 @@ function CreateSleepSession(props) {
 
     const saveData = () => {
 
-        post(sleepUrl, SleepDataManager.format(sleepData))
+        const formattedData = SleepDataManager.format(sleepData);
+
+        post(sleepUrl, formattedData)
             .then(result => setShowModal(false))
             .then(props.onSave);
     }
 
     function updateSleepSession(updateValues) {
+
         let updatedSleep = {...sleepData, ...updateValues};
+
+        // use the local time without the offset for display purposes
+        let localStartTime = SleepDataManager.toIsoString(updatedSleep.localStartTime).substring(0, 19);
+        let localStopTime = SleepDataManager.toIsoString(updatedSleep.localStopTime).substring(0, 19);
+        updatedSleep.startTime = localStartTime + sleepData.startTime.substring(19);
+        updatedSleep.stopTime = localStopTime + sleepData.stopTime.substring(19);
+
         if(SleepDataManager.isDataValid(updatedSleep)) {
             setSleepData(updatedSleep);
         }

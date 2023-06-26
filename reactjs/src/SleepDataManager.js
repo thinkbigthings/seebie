@@ -43,9 +43,6 @@ SleepDataManager.format = (sleepData) => {
 
     const formattedSleepData = copy(sleepData);
 
-    formattedSleepData.startTime = SleepDataManager.toIsoString(sleepData.startTime);
-    formattedSleepData.stopTime = SleepDataManager.toIsoString(sleepData.stopTime);
-
     return JSON.stringify(formattedSleepData);
 }
 
@@ -61,8 +58,8 @@ SleepDataManager.createInitSleepData = () => {
     return {
         localStartTime: yesterday,
         localStopTime: today,
-        startTime: yesterday,
-        stopTime: today,
+        startTime: SleepDataManager.toIsoString(yesterday),
+        stopTime: SleepDataManager.toIsoString(today),
         notes: '',
         minutesAwake: 0,
         tags: [],
