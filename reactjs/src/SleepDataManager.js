@@ -55,6 +55,7 @@ SleepDataManager.createInitSleepData = () => {
     yesterday.setDate(today.getDate() - 1);
     yesterday.setHours(21, 45, 0);
 
+    // leave the startTime and stopTime as strings
     return {
         localStartTime: yesterday,
         localStopTime: today,
