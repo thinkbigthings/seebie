@@ -39,20 +39,6 @@ function EditSleep({history, match}) {
         put(sleepEndpoint, sleepData).then(history.goBack);
     }
 
-    function updateSleepSession(updateValues) {
-        let updatedSleep = {...sleepData, ...updateValues};
-
-        // use the local time without the offset for display purposes
-        let localStartTime = SleepDataManager.toIsoString(updatedSleep.localStartTime).substring(0, 19);
-        let localStopTime = SleepDataManager.toIsoString(updatedSleep.localStopTime).substring(0, 19);
-        updatedSleep.startTime = localStartTime + sleepData.startTime.substring(19);
-        updatedSleep.stopTime = localStopTime + sleepData.stopTime.substring(19);
-
-        if(SleepDataManager.isDataValid(updatedSleep)) {
-            setSleepData(updatedSleep);
-        }
-    }
-
     const deleteById = () => {
         callDelete(sleepEndpoint)
             .then(history.goBack);
@@ -69,7 +55,7 @@ function EditSleep({history, match}) {
             </NavHeader>
 
             <Container id="sleepFormWrapper" className="px-0">
-                {loaded ? <SleepForm onChange={updateSleepSession} data={sleepData} /> : <div />}
+                {loaded ? <SleepForm setSleepData={setSleepData} sleepData={sleepData} /> : <div />}
             </Container>
 
             <div className="d-flex flex-row">

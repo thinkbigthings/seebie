@@ -5,6 +5,7 @@ import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import SleepDataManager from "./SleepDataManager";
 
 
 const ButtonWrapper = React.forwardRef(({value, onClick, className}, ref) => {
@@ -17,7 +18,22 @@ const ButtonWrapper = React.forwardRef(({value, onClick, className}, ref) => {
 
 function SleepForm(props) {
 
-    const {onChange, data} = props;
+    const {setSleepData, sleepData} = props;
+
+    function updateSleepSession(updateValues) {
+
+        let updatedSleep = {...sleepData, ...updateValues};
+
+        // use the local time without the offset for display purposes
+        let localStartTime = SleepDataManager.toIsoString(updatedSleep.localStartTime).substring(0, 19);
+        let localStopTime = SleepDataManager.toIsoString(updatedSleep.localStopTime).substring(0, 19);
+        updatedSleep.startTime = localStartTime + sleepData.startTime.substring(19);
+        updatedSleep.stopTime = localStopTime + sleepData.stopTime.substring(19);
+
+        if(SleepDataManager.isDataValid(updatedSleep)) {
+            setSleepData(updatedSleep);
+        }
+    }
 
     const DatePickerButton = ({selectTime, onSelection}) => {
         return (
@@ -41,26 +57,26 @@ function SleepForm(props) {
                 <Col md={6} className={"pe-4"}>
                     <div className="mb-3">
                         <label htmlFor="dateStart" className="form-label">Time Fell Asleep</label>
-                        <DatePickerButton selectTime={data.localStartTime} onSelection={ date => onChange({localStartTime : date })} />
+                        <DatePickerButton selectTime={sleepData.localStartTime} onSelection={ date => updateSleepSession({localStartTime : date })} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="dateEnd" className="form-label">Time Woke Up</label>
-                        <DatePickerButton selectTime={data.localStopTime} onSelection={ date => onChange({localStopTime : date })} />
+                        <DatePickerButton selectTime={sleepData.localStopTime} onSelection={ date => updateSleepSession({localStopTime : date })} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="minutesAwake" className="form-label">Minutes Awake During Sleep Period</label>
                         <input type="text" className="form-control w-25" id="minutesAwake"
                                placeholder="Minutes Awake During Sleep Period"
-                               value={data.minutesAwake}
-                               onChange={e => onChange({minutesAwake : e.target.value})} />
+                               value={sleepData.minutesAwake}
+                               onChange={e => updateSleepSession({minutesAwake : e.target.value})} />
                     </div>
                 </Col>
                 <Col md={6} className={"pe-0"}>
                     <div className="mb-3">
                         <label htmlFor="notes" className="form-label">Notes</label>
                         <textarea rows="8" className="form-control" id="notes" placeholder="Notes"
-                                  value={data.notes}
-                                  onChange={e => onChange({notes : e.target.value })} />
+                                  value={sleepData.notes}
+                                  onChange={e => updateSleepSession({notes : e.target.value })} />
                     </div>
                 </Col>
             </Row>

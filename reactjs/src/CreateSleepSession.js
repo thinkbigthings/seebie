@@ -21,16 +21,11 @@ function CreateSleepSession(props) {
 
     const saveData = () => {
 
-        post(sleepUrl, SleepDataManager.format(sleepData))
+        const formattedData = SleepDataManager.format(sleepData);
+
+        post(sleepUrl, formattedData)
             .then(result => setShowModal(false))
             .then(props.onSave);
-    }
-
-    function updateSleepSession(updateValues) {
-        let updatedSleep = {...sleepData, ...updateValues};
-        if(SleepDataManager.isDataValid(updatedSleep)) {
-            setSleepData(updatedSleep);
-        }
     }
 
     return (
@@ -44,7 +39,7 @@ function CreateSleepSession(props) {
                     <Modal.Title>Log Sleep</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <SleepForm onChange={updateSleepSession} data={sleepData} />
+                    <SleepForm setSleepData={setSleepData} sleepData={sleepData} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={ () => setShowModal(false) }>Cancel</Button>
