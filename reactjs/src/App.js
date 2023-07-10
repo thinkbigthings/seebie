@@ -29,7 +29,7 @@ import {NavDropdown} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faBook,
-    faChartLine,
+    faChartLine, faChartSimple,
     faCog,
     faList,
     faServer,
@@ -147,6 +147,7 @@ function SideNav(props) {
         <Nav defaultActiveKey="/home" className="flex-column col-sm-2">
             <NavItem name="List" icon={faList} href="#/list" />
             <NavItem name="Chart" icon={faChartLine} href="#/chart" />
+            <NavItem name="Histogram" icon={faChartSimple} href="#/histogram" />
             <NavItem name="Diary" icon={faBook} href="#/diary" />
             <NavItem name="Tags" icon={faTag} href="#/tags" />
             <NavItem name="Tools" icon={faTools} href="#/tools" />
