@@ -17,33 +17,22 @@ import {NavHeader} from "./App";
 
 Chart.register(...registerables)
 
-const chartOptions ={
+const histOptions = {
     scales: {
-        y: {
-            beginAtZero: true,
-            title: {
-                text: 'Hours Asleep',
-                display: true
+        x: {
+            offset: true,
+            grid: {
+                offset: true
             }
         }
-
-    },
-    plugins: {
-        legend: {
-            display: false,
-            position: 'top'
-        },
-        // title: {
-        //     display: true,
-        //     text: 'Hours Asleep Chart',
-        // },
-    },
-};
+    }
+}
 
 const initialChartData = {
     datasets: [{
         fill: true,
         data: [],
+        label: 'Hours Asleep',
         borderColor: '#745085',
         backgroundColor:'#595b7c'
     }]
@@ -89,25 +78,6 @@ function Histogram(props) {
 
     const sleepEndpoint = '/user/'+currentUser.username+'/sleep/chart' + requestParameters;
 
-    const testData = [
-        {
-            "x": "2023-06-11",
-            "y": 7.35
-        },
-        {
-            "x": "2023-06-12",
-            "y": 6.82
-        },
-        {
-            "x": "2023-06-13",
-            "y": 6.93
-        },
-        {
-            "x": "2023-06-14",
-            "y": 6.88
-        }
-    ];
-
     function histInt(arr) {
         const histogram = arr.reduce((histogram, value) => {
             histogram[value] = histogram.hasOwnProperty(value) ? histogram[value] + 1 : 1;
@@ -125,46 +95,20 @@ function Histogram(props) {
         };
     }
 
-    console.log(histInt(testData.map(e=>e.y).map(e=>Math.floor(e))));
-
-
     useEffect(() => {
         fetch(sleepEndpoint, GET)
             .then(response => response.json())
             .then(json => {
                 let newChartData = copy(initialChartData);
-                newChartData.datasets[0].data = json;
+                let histData = histInt(json.map(e=>e.y).map(e=>Math.floor(e)))
+                newChartData.labels = histData.labels;
+                newChartData.datasets[0].data = histData.data;
                 setChartData(newChartData);
             })
     }, [sleepEndpoint, createdCount]);
 
-
-    // was chartData
-    const data = {
-            labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-            datasets: [{
-                label: 'Number of Arrivals',
-                data: [0, 0, 0, 1, 1, 3, 19, 18, 2, 0],
-                borderColor: '#745085',
-                backgroundColor:'#595b7c'
-            }]
-        };
-
-    const histOptions = {
-            scales: {
-                x: {
-                    offset: true,
-                    grid: {
-                        offset: true
-                    }
-                }
-            }
-        }
-
-    // TODO https://www.chartjs.org/docs/latest/charts/bar.html
-
     const chartArea = chartData.datasets[0].data.length > 1
-        ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={data} />
+        ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={chartData} />
         :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
 
     return (
