@@ -29,7 +29,7 @@ import {NavDropdown} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faBook,
-    faChartLine,
+    faChartLine, faChartSimple,
     faCog,
     faList,
     faServer,
@@ -42,6 +42,7 @@ import {
 import {CreateSleepSession} from "./CreateSleepSession";
 import SleepList from "./SleepList";
 import SleepChart from "./SleepChart";
+import Histogram from "./Histogram";
 import System from "./System";
 import Tools from "./Tools";
 
@@ -124,6 +125,7 @@ function AuthenticatedApp() {
                 <Route exact path="/" render={()  => <SleepList createdCount = {createdCount} />}/>
                 <Route exact path="/list" render={()  => <SleepList createdCount = {createdCount} />}/>
                 <Route exact path="/chart" render={() => <SleepChart createdCount = {createdCount} />}/>
+                <Route exact path="/histogram" render={() => <Histogram createdCount = {createdCount} />}/>
                 <Route exact path="/users" render={() => <UserList/>}/>
                 <Route exact path="/users/:username/edit" component={EditUser}/>
                 <Route exact path="/users/:username/sleep/:sleepId/edit" component={EditSleep}/>
@@ -147,6 +149,7 @@ function SideNav(props) {
         <Nav defaultActiveKey="/home" className="flex-column col-sm-2">
             <NavItem name="List" icon={faList} href="#/list" />
             <NavItem name="Chart" icon={faChartLine} href="#/chart" />
+            <NavItem name="Analysis" icon={faChartSimple} href="#/histogram" />
             <NavItem name="Diary" icon={faBook} href="#/diary" />
             <NavItem name="Tags" icon={faTag} href="#/tags" />
             <NavItem name="Tools" icon={faTools} href="#/tools" />

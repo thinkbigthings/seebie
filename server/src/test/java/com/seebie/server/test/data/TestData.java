@@ -105,8 +105,25 @@ public class TestData {
         return createRandomSleepData(ZonedDateTime.now(), AMERICA_NEW_YORK);
     }
 
+    public static int getGaussianRandom(int min, int max) {
+        if (min > max) {
+            throw new IllegalArgumentException("Max must be greater than min");
+        }
+
+        int mid = (max + min) / 2;
+        double sd = (max - min) / 6.0;  // Standard Deviation, 99.7% values lies within mean ± 3*SD for normal distribution
+        double result;
+
+        do {
+            result = (random.nextGaussian() * sd) + mid;
+        } while (result < min || result > max); // repeat until a valid number in range is generated
+
+        return (int) Math.round(result);
+    }
+
     public static SleepData createRandomSleepData(ZonedDateTime stopTime, String zoneId) {
-        var startTime = stopTime.withZoneSameInstant(ZoneId.of(zoneId)).minusHours(8L);
+        long sleepDuration = getGaussianRandom(3*60, 9*60);
+        var startTime = stopTime.withZoneSameInstant(ZoneId.of(zoneId)).minusMinutes(sleepDuration);
         return new SleepData(faker.lorem().paragraph(3), 0, new HashSet<>(),
                 startTime.plusMinutes(random.nextInt(60)),
                 stopTime.minusMinutes(random.nextInt(60)),
