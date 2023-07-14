@@ -23,8 +23,13 @@ const histOptions = {
             offset: true,
             grid: {
                 offset: true
+            },
+            ticks: {
+                font: {
+                    size: 30
+                }
             }
-        }
+        },
     }
 }
 
@@ -78,15 +83,26 @@ function Histogram(props) {
 
     const sleepEndpoint = '/user/'+currentUser.username+'/sleep/chart' + requestParameters;
 
-    function histInt(arr) {
-        const histogram = arr.reduce((histogram, value) => {
-            histogram[value] = histogram.hasOwnProperty(value) ? histogram[value] + 1 : 1;
-            return histogram;
+    function createHistogram(arr) {
+        const histogram = arr.reduce((hist, value) => {
+            hist[value] = hist.hasOwnProperty(value) ? hist[value] + 1 : 1;
+            return hist;
         }, {});
 
+        // Get the minimum and maximum value of the array
+        const minVal = Math.min(...arr);
+        const maxVal = Math.max(...arr);
+
+        // Include "empty" bins
+        for (let i = minVal; i <= maxVal; i += 0.5) {
+            if (!histogram.hasOwnProperty(i)) {
+                histogram[i] = 0;
+            }
+        }
+
         // Extract the keys (bins) and values (counts) from the histogram
-        const bins = Object.keys(histogram).map(Number);
-        const counts = Object.values(histogram);
+        const bins = Object.keys(histogram).map(Number).sort((a, b) => a - b);
+        const counts = bins.map(bin => histogram[bin]);
 
         // Return the data in the desired format
         return {
@@ -95,12 +111,23 @@ function Histogram(props) {
         };
     }
 
+    function roundToNearestHalf(num) {
+        return Math.round(num * 2) / 2;
+    }
+
+    function roundToTwoDecimals(num) {
+        return Math.round((num + Number.EPSILON) * 100) / 100;
+    }
+
     useEffect(() => {
         fetch(sleepEndpoint, GET)
             .then(response => response.json())
             .then(json => {
                 let newChartData = copy(initialChartData);
-                let histData = histInt(json.map(e=>e.y).map(e=>Math.floor(e)))
+                let newData = json.map(e=>e.y)
+                                    .map(e=>roundToNearestHalf(e))
+                                    .map(e=>roundToTwoDecimals(e));
+                let histData = createHistogram(newData);
                 newChartData.labels = histData.labels;
                 newChartData.datasets[0].data = histData.data;
                 setChartData(newChartData);
