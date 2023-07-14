@@ -25,8 +25,9 @@ const histOptions = {
                 offset: true
             },
             ticks: {
+                color: 'white',
                 font: {
-                    size: 30
+                    size: 18,
                 }
             }
         },
