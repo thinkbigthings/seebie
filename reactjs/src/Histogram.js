@@ -157,11 +157,11 @@ function Histogram(props) {
 
     const [collapsed, setCollapsed] = useState(true);
     const filterTitle = "Select Sleep Data";
-    const filterVisibility = collapsed ? "" : "fa-rotate-180";
+    const collapseIconRotation = collapsed ? "" : "fa-rotate-180";
 
     return (
         <Container>
-            <NavHeader title="Sleep Chart"/>
+            <NavHeader title="Sleep Hours Histogram"/>
 
             <Row className={"pb-3"}>
                 <Col className="col-2">
@@ -192,7 +192,7 @@ function Histogram(props) {
                         aria-expanded={!collapsed}
                     >
                         {filterTitle}
-                        <FontAwesomeIcon className={"me-2 mt-1 float-end " + filterVisibility} icon={faAngleDown} ></FontAwesomeIcon>
+                        <FontAwesomeIcon className={"me-2 mt-1 float-end " + collapseIconRotation} icon={faAngleDown} ></FontAwesomeIcon>
 
                     </Button>
                 </Col>
