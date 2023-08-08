@@ -42,12 +42,12 @@ function CollapsibleFilter(props) {
             <Row>
                 <Collapse in={!collapsed}>
 
-                    <label className="d-inline-block" htmlFor="dateStart">OPEN!</label>
+                    {/*<label className="d-inline-block" htmlFor="dateStart">OPEN!</label>*/}
 
-                    {/*<DateRangePicker selectStartDate={selectStartDate}*/}
-                    {/*                 onStartSelection={onStartSelection}*/}
-                    {/*                 selectEndDate={selectEndDate}*/}
-                    {/*                 onEndSelection={onEndSelection} />*/}
+                    <DateRangePicker selectStartDate={selectStartDate}
+                                     onStartSelection={onStartSelection}
+                                     selectEndDate={selectEndDate}
+                                     onEndSelection={onEndSelection} />
 
                 </Collapse>
             </Row>
