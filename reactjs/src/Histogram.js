@@ -143,7 +143,7 @@ function Histogram(props) {
                 newChartData.datasets[0].data = histData.data;
                 setChartData(newChartData);
             })
-    }, [sleepEndpoint, createdCount, binHrParts]);
+    }, [sleepEndpoint, createdCount, binHrParts, filterCollapsed]);
 
     const chartArea = chartData.datasets[0].data.length > 1
         ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={chartData} />
@@ -177,7 +177,7 @@ function Histogram(props) {
                         <Col className="col-12">
                             <CollapsibleFilter  title="Select Sleep Data"
                                                 collapsed={filterCollapsed}
-                                                setCollapsed={setFilterCollapsed}
+                                                setCollapsed={() => setFilterCollapsed(!filterCollapsed)}
                                                 selectStartDate={range.from}
                                                 onStartSelection={date => updateSearchRange({from: date})}
                                                 selectEndDate={range.to}
