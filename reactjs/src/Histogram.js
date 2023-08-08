@@ -5,7 +5,7 @@ import { Chart, registerables } from 'chart.js'
 
 
 import {Bar} from 'react-chartjs-2';
-import DatePicker from "react-datepicker";
+import DateRangePicker from "./component/DateRangePicker";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -200,32 +200,11 @@ function Histogram(props) {
             <Row className={"pb-3"}>
                 <Col className="col-12">
                     <Collapse in={!collapsed}>
-                        <Container>
-                            <Row className="pb-3">
-                                <Col className="col-2">
-                                    <label className="d-inline-block" htmlFor="dateStart">From</label>
-                                </Col>
-                                <Col className="col-md-4">
-                                    <DatePicker
-                                        className="form-control d-inline-block" id="dateStart" dateFormat="MMMM d, yyyy"
-                                        onChange={date => updateSearchRange({from: date})}
-                                        selected={range.from}
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className={"pb-3"}>
-                                <Col className="col-2">
-                                    <label htmlFor="dateEnd">To</label>
-                                </Col>
-                                <Col className="col-md-4">
-                                    <DatePicker
-                                        className="form-control" id="dateEnd" dateFormat="MMMM d, yyyy"
-                                        onChange={date => updateSearchRange({to: date})}
-                                        selected={range.to}
-                                    />
-                                </Col>
-                            </Row>
-                        </Container>
+
+                        <DateRangePicker selectStartDate={range.from}
+                                         onStartSelection={date => updateSearchRange({from: date})}
+                                         selectEndDate={range.to}
+                                         onEndSelection={date => updateSearchRange({to: date})} />
 
                     </Collapse>
                 </Col>
