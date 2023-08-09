@@ -8,7 +8,7 @@ import Col from "react-bootstrap/Col";
 
 function DateRangePicker(props) {
 
-    const {selectStartDate, onStartSelection, selectEndDate, onEndSelection} = props;
+    const {selectedStart, onChangeStart, selectedEnd, onChangeEnd} = props;
 
     return (
         <Container>
@@ -19,8 +19,8 @@ function DateRangePicker(props) {
                 <Col className="col-md-4">
                     <DatePicker
                         className="form-control d-inline-block" id="startDate" dateFormat="MMMM d, yyyy"
-                        onChange={onStartSelection}
-                        selected={selectStartDate}
+                        onChange={onChangeStart}
+                        selected={selectedStart}
                     />
                 </Col>
             </Row>
@@ -31,8 +31,8 @@ function DateRangePicker(props) {
                 <Col className="col-md-4">
                     <DatePicker
                         className="form-control" id="endDate" dateFormat="MMMM d, yyyy"
-                        onChange={onEndSelection}
-                        selected={selectEndDate}
+                        onChange={onChangeEnd}
+                        selected={selectedEnd}
                     />
                 </Col>
             </Row>

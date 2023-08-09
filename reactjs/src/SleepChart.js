@@ -123,10 +123,10 @@ function SleepChart(props) {
         <Container>
             <NavHeader title="Sleep Chart" />
 
-            <DateRangePicker selectStartDate={range.from}
-                             onStartSelection={date => updateSearchRange({from: date})}
-                             selectEndDate={range.to}
-                             onEndSelection={date => updateSearchRange({to: date})} />
+            <DateRangePicker selectedStart={range.from}
+                             onChangeStart={date => updateSearchRange({from: date})}
+                             selectedEnd={range.to}
+                             onChangeEnd={date => updateSearchRange({to: date})} />
 
             {chartArea}
 

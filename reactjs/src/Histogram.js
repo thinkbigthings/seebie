@@ -1,7 +1,11 @@
 
 import React, {useEffect, useState} from 'react';
+
 import { Chart, registerables } from 'chart.js'
+
+
 import {Bar} from 'react-chartjs-2';
+import DatePicker from "react-datepicker";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -11,7 +15,10 @@ import {GET} from "./BasicHeaders";
 import useCurrentUser from "./useCurrentUser";
 import copy from "./Copier";
 import {NavHeader} from "./App";
-import CollapsibleFilter from "./component/CollapsibleFilter";
+import {Collapse} from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faAngleDown} from "@fortawesome/free-solid-svg-icons";
 
 Chart.register(...registerables)
 
@@ -76,7 +83,6 @@ function Histogram(props) {
 
     let [range, setRange] = useState(createInitialRange());
     let [chartData, setChartData] = useState(initialChartData);
-    const [filterCollapsed, setFilterCollapsed] = useState(true);
 
     function updateSearchRange(updateValues) {
         let updatedRange = {...range, ...updateValues};
@@ -143,11 +149,15 @@ function Histogram(props) {
                 newChartData.datasets[0].data = histData.data;
                 setChartData(newChartData);
             })
-    }, [sleepEndpoint, createdCount, binHrParts, filterCollapsed]);
+    }, [sleepEndpoint, createdCount, binHrParts]);
 
     const chartArea = chartData.datasets[0].data.length > 1
         ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={chartData} />
         :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
+
+    const [collapsed, setCollapsed] = useState(true);
+    const filterTitle = "Select Sleep Data";
+    const collapseIconRotation = collapsed ? "" : "fa-rotate-180";
 
     return (
         <Container>
@@ -173,17 +183,51 @@ function Histogram(props) {
             </Row>
             <Row className={"pb-3"}>
                 <Col className="col-12">
-                    <Row className={"pb-3"}>
-                        <Col className="col-12">
-                            <CollapsibleFilter  title="Select Sleep Data"
-                                                collapsed={filterCollapsed}
-                                                setCollapsed={() => setFilterCollapsed(!filterCollapsed)}
-                                                selectStartDate={range.from}
-                                                onStartSelection={date => updateSearchRange({from: date})}
-                                                selectEndDate={range.to}
-                                                onEndSelection={date => updateSearchRange({to: date})} />
-                        </Col>
-                    </Row>
+
+                    <Button
+                        variant="dark"
+                        className={"w-100 text-start border border-light-subtle"}
+                        onClick={() => setCollapsed(!collapsed)}
+                        aria-controls="example-collapse-text"
+                        aria-expanded={!collapsed}
+                    >
+                        {filterTitle}
+                        <FontAwesomeIcon className={"me-2 mt-1 float-end " + collapseIconRotation} icon={faAngleDown} ></FontAwesomeIcon>
+
+                    </Button>
+                </Col>
+            </Row>
+            <Row className={"pb-3"}>
+                <Col className="col-12">
+                    <Collapse in={!collapsed}>
+                        <Container>
+                            <Row className="pb-3">
+                                <Col className="col-2">
+                                    <label className="d-inline-block" htmlFor="dateStart">From</label>
+                                </Col>
+                                <Col className="col-md-4">
+                                    <DatePicker
+                                        className="form-control d-inline-block" id="dateStart" dateFormat="MMMM d, yyyy"
+                                        onChange={date => updateSearchRange({from: date})}
+                                        selected={range.from}
+                                    />
+                                </Col>
+                            </Row>
+                            <Row className={"pb-3"}>
+                                <Col className="col-2">
+                                    <label htmlFor="dateEnd">To</label>
+                                </Col>
+                                <Col className="col-md-4">
+                                    <DatePicker
+                                        className="form-control" id="dateEnd" dateFormat="MMMM d, yyyy"
+                                        onChange={date => updateSearchRange({to: date})}
+                                        selected={range.to}
+                                    />
+                                </Col>
+                            </Row>
+                        </Container>
+
+                    </Collapse>
                 </Col>
             </Row>
 

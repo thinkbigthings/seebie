@@ -32,14 +32,15 @@ function CollapsibleFilter(props) {
                 </Col>
             </Row>
             <Row>
-                {!collapsed && (
+                {/*{!collapsed && (*/}
                     <Collapse>
-                        <DateRangePicker selectStartDate={selectStartDate}
-                       onStartSelection={onStartSelection}
-                       selectEndDate={selectEndDate}
-                       onEndSelection={onEndSelection} />
+
+                        <DateRangePicker   selectedStart={selectStartDate}
+                                           onChangeStart={onStartSelection}
+                                           selectedEnd={selectEndDate}
+                                           onChangeEnd={onEndSelection} />
                     </Collapse>
-                )}
+                {/*)}*/}
             </Row>
         </Container>
 
