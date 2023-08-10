@@ -19,6 +19,7 @@ import {Collapse} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDown} from "@fortawesome/free-solid-svg-icons";
+import DateRangePicker from "./component/DateRangePicker";
 
 Chart.register(...registerables)
 
@@ -159,13 +160,21 @@ function Histogram(props) {
     const filterTitle = "Select Sleep Data";
     const collapseIconRotation = collapsed ? "" : "fa-rotate-180";
 
+
+    let onChangeStart = date => updateSearchRange({from: date});
+    let onChangeEnd = date => updateSearchRange({to: date});
+    let selectedStart = range.from;
+    let selectedEnd = range.to;
+
+    let useDateRangePicker = false;
+
     return (
         <Container>
             <NavHeader title="Sleep Hours Histogram"/>
 
             <Row className={"pb-3"}>
                 <Col className="col-2">
-                    <label htmlFor="dateEnd">Bin Size</label>
+                    <label>Bin Size</label>
                 </Col>
                 <Col className="col-md-4">
                     <Form.Select value={binHrParts} onChange={handlePartChange}>
@@ -200,32 +209,42 @@ function Histogram(props) {
             <Row className={"pb-3"}>
                 <Col className="col-12">
                     <Collapse in={!collapsed}>
+
+                        {useDateRangePicker
+                            ?
+                            <DateRangePicker
+                                selectedStart={selectedStart}
+                                onChangeStart={onChangeStart}
+                                selectedEnd={selectedEnd}
+                                onChangeEnd={onChangeEnd} />
+                            :
                         <Container>
                             <Row className="pb-3">
                                 <Col className="col-2">
-                                    <label className="d-inline-block" htmlFor="dateStart">From</label>
+                                    <label className="d-inline-block" htmlFor="startDate">From</label>
                                 </Col>
                                 <Col className="col-md-4">
                                     <DatePicker
-                                        className="form-control d-inline-block" id="dateStart" dateFormat="MMMM d, yyyy"
-                                        onChange={date => updateSearchRange({from: date})}
-                                        selected={range.from}
+                                        className="form-control d-inline-block" id="startDate" dateFormat="MMMM d, yyyy"
+                                        onChange={onChangeStart}
+                                        selected={selectedStart}
                                     />
                                 </Col>
                             </Row>
                             <Row className={"pb-3"}>
                                 <Col className="col-2">
-                                    <label htmlFor="dateEnd">To</label>
+                                    <label htmlFor="endDate">To</label>
                                 </Col>
                                 <Col className="col-md-4">
                                     <DatePicker
-                                        className="form-control" id="dateEnd" dateFormat="MMMM d, yyyy"
-                                        onChange={date => updateSearchRange({to: date})}
-                                        selected={range.to}
+                                        className="form-control" id="endDate" dateFormat="MMMM d, yyyy"
+                                        onChange={onChangeEnd}
+                                        selected={selectedEnd}
                                     />
                                 </Col>
                             </Row>
                         </Container>
+                        }
 
                     </Collapse>
                 </Col>

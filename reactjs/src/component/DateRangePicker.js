@@ -14,7 +14,7 @@ function DateRangePicker(props) {
         <Container>
             <Row className="pb-3">
                 <Col className="col-2">
-                    <label className="d-inline-block" htmlFor="dateStart">From</label>
+                    <label className="d-inline-block" htmlFor="startDate">From</label>
                 </Col>
                 <Col className="col-md-4">
                     <DatePicker
@@ -26,7 +26,7 @@ function DateRangePicker(props) {
             </Row>
             <Row className={"pb-3"}>
                 <Col className="col-2">
-                    <label htmlFor="dateEnd">To</label>
+                    <label htmlFor="endDate">To</label>
                 </Col>
                 <Col className="col-md-4">
                     <DatePicker
