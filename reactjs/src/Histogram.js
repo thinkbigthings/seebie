@@ -15,6 +15,10 @@ import {GET} from "./BasicHeaders";
 import useCurrentUser from "./useCurrentUser";
 import copy from "./Copier";
 import {NavHeader} from "./App";
+import {Collapse} from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faAngleDown} from "@fortawesome/free-solid-svg-icons";
 
 Chart.register(...registerables)
 
@@ -151,57 +155,79 @@ function Histogram(props) {
         ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={chartData} />
         :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
 
+    const [collapsed, setCollapsed] = useState(true);
+    const filterTitle = "Select Sleep Data";
+    const collapseIconRotation = collapsed ? "" : "fa-rotate-180";
+
     return (
         <Container>
-            <NavHeader title="Sleep Chart" />
+            <NavHeader title="Sleep Hours Histogram"/>
 
-            <Row className="pb-3">
-                <Col className="col-2" >
-                    <label className="d-inline-block" htmlFor="dateStart">From</label>
-                </Col>
-                <Col className="col-md-4">
-                    <DatePicker
-                        className="form-control d-inline-block" id="dateStart" dateFormat="MMMM d, yyyy"
-                        onChange={ date => updateSearchRange({from : date })}
-                        selected={range.from}
-                    />
-                </Col>
-            </Row>
-            <Row className={"pb-3"}>
-                <Col className="col-2">
-                    <label htmlFor="dateEnd">To</label>
-                </Col>
-                <Col className="col-md-4">
-                    <DatePicker
-                        className="form-control" id="dateEnd" dateFormat="MMMM d, yyyy"
-                        onChange={ date => updateSearchRange({to : date })}
-                        selected={range.to}
-                    />
-                </Col>
-            </Row>
             <Row className={"pb-3"}>
                 <Col className="col-2">
                     <label htmlFor="dateEnd">Bin Size</label>
                 </Col>
                 <Col className="col-md-4">
-                    <Form.Select value={binHrParts} onChange={handlePartChange} >
-                            {
-                                binSizeOptions.map(option => {
-                                    return (
-                                        <option key={option.value} value={option.value}>
-                                            {option.text}
-                                        </option>
-                                    )
-                                })
-                            }
+                    <Form.Select value={binHrParts} onChange={handlePartChange}>
+                        {
+                            binSizeOptions.map(option => {
+                                return (
+                                    <option key={option.value} value={option.value}>
+                                        {option.text}
+                                    </option>
+                                )
+                            })
+                        }
                     </Form.Select>
-                    {/*<select value={binHrParts} onChange={handlePartChange}>*/}
-                    {/*    {binSizeOptions.map(option => (*/}
-                    {/*        <option key={option.value} value={option.value}>*/}
-                    {/*            {option.text}*/}
-                    {/*        </option>*/}
-                    {/*    ))}*/}
-                    {/*</select>*/}
+                </Col>
+            </Row>
+            <Row className={"pb-3"}>
+                <Col className="col-12">
+
+                    <Button
+                        variant="dark"
+                        className={"w-100 text-start border border-light-subtle"}
+                        onClick={() => setCollapsed(!collapsed)}
+                        aria-controls="example-collapse-text"
+                        aria-expanded={!collapsed}
+                    >
+                        {filterTitle}
+                        <FontAwesomeIcon className={"me-2 mt-1 float-end " + collapseIconRotation} icon={faAngleDown} ></FontAwesomeIcon>
+
+                    </Button>
+                </Col>
+            </Row>
+            <Row className={"pb-3"}>
+                <Col className="col-12">
+                    <Collapse in={!collapsed}>
+                        <Container>
+                            <Row className="pb-3">
+                                <Col className="col-2">
+                                    <label className="d-inline-block" htmlFor="dateStart">From</label>
+                                </Col>
+                                <Col className="col-md-4">
+                                    <DatePicker
+                                        className="form-control d-inline-block" id="dateStart" dateFormat="MMMM d, yyyy"
+                                        onChange={date => updateSearchRange({from: date})}
+                                        selected={range.from}
+                                    />
+                                </Col>
+                            </Row>
+                            <Row className={"pb-3"}>
+                                <Col className="col-2">
+                                    <label htmlFor="dateEnd">To</label>
+                                </Col>
+                                <Col className="col-md-4">
+                                    <DatePicker
+                                        className="form-control" id="dateEnd" dateFormat="MMMM d, yyyy"
+                                        onChange={date => updateSearchRange({to: date})}
+                                        selected={range.to}
+                                    />
+                                </Col>
+                            </Row>
+                        </Container>
+
+                    </Collapse>
                 </Col>
             </Row>
 
