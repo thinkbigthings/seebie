@@ -12,7 +12,7 @@ import DateRangePicker from "./DateRangePicker";
 
 function CollapsibleFilter(props) {
 
-    const {selectStartDate, onStartSelection, selectEndDate, onEndSelection, title, collapsed, setCollapsed} = props;
+    const {selectedStart, onChangeStart, selectedEnd, onChangeEnd, title, collapsed, onCollapseClick} = props;
 
     const collapseIconRotation = collapsed ? "" : "fa-rotate-180";
 
@@ -22,7 +22,7 @@ function CollapsibleFilter(props) {
                 <Col className="col-12">
                     <Button variant="dark"
                             className={"w-100 text-start border border-light-subtle"}
-                            onClick={setCollapsed}
+                            onClick={onCollapseClick}
                             aria-controls="example-collapse-text"
                             aria-expanded={!collapsed}>
 
@@ -32,15 +32,18 @@ function CollapsibleFilter(props) {
                 </Col>
             </Row>
             <Row>
-                {/*{!collapsed && (*/}
-                    <Collapse>
-
-                        <DateRangePicker   selectedStart={selectStartDate}
-                                           onChangeStart={onStartSelection}
-                                           selectedEnd={selectEndDate}
-                                           onChangeEnd={onEndSelection} />
-                    </Collapse>
-                {/*)}*/}
+                <Collapse in={!collapsed}>
+                    {/* Collapse has trouble with a functional component as the direct child,
+                        but it works great if you wrap a functional component with a non-functional component.
+                         This could probably also be fixed with forwardRef */}
+                    <div>
+                        <DateRangePicker
+                            selectedStart={selectedStart}
+                            onChangeStart={onChangeStart}
+                            selectedEnd={selectedEnd}
+                            onChangeEnd={onChangeEnd} />
+                    </div>
+                </Collapse>
             </Row>
         </Container>
 

@@ -14,11 +14,7 @@ import {GET} from "./BasicHeaders";
 import useCurrentUser from "./useCurrentUser";
 import copy from "./Copier";
 import {NavHeader} from "./App";
-import {Collapse} from "react-bootstrap";
-import Button from "react-bootstrap/Button";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAngleDown} from "@fortawesome/free-solid-svg-icons";
-import DateRangePicker from "./component/DateRangePicker";
+import CollapsibleFilter from "./component/CollapsibleFilter";
 
 Chart.register(...registerables)
 
@@ -157,8 +153,6 @@ function Histogram(props) {
 
     const [collapsed, setCollapsed] = useState(true);
     const filterTitle = "Select Sleep Data";
-    const collapseIconRotation = collapsed ? "" : "fa-rotate-180";
-
 
     let onChangeStart = date => updateSearchRange({from: date});
     let onChangeEnd = date => updateSearchRange({to: date});
@@ -190,33 +184,14 @@ function Histogram(props) {
             <Row className={"pb-3"}>
                 <Col className="col-12">
 
-                    <Button
-                        variant="dark"
-                        className={"w-100 text-start border border-light-subtle"}
-                        onClick={() => setCollapsed(!collapsed)}
-                        aria-controls="example-collapse-text"
-                        aria-expanded={!collapsed}
-                    >
-                        {filterTitle}
-                        <FontAwesomeIcon className={"me-2 mt-1 float-end " + collapseIconRotation} icon={faAngleDown} ></FontAwesomeIcon>
+                    <CollapsibleFilter selectedStart={selectedStart}
+                                       onChangeStart={onChangeStart}
+                                       selectedEnd={selectedEnd}
+                                       onChangeEnd={onChangeEnd}
+                                       title={filterTitle}
+                                       collapsed={collapsed}
+                                       onCollapseClick={() => setCollapsed(!collapsed)} />
 
-                    </Button>
-                </Col>
-            </Row>
-            <Row className={"pb-3"}>
-                <Col className="col-12">
-                    <Collapse in={!collapsed}>
-                        {/* Collapse has trouble with a functional component as the direct child,
-                        but it works great if you wrap a functional component with a non-functional component.
-                         This could probably also be fixed with forwardRef */}
-                            <div>
-                                <DateRangePicker
-                                    selectedStart={selectedStart}
-                                    onChangeStart={onChangeStart}
-                                    selectedEnd={selectedEnd}
-                                    onChangeEnd={onChangeEnd} />
-                            </div>
-                    </Collapse>
                 </Col>
             </Row>
 
