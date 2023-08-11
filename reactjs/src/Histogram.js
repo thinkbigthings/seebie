@@ -5,7 +5,6 @@ import { Chart, registerables } from 'chart.js'
 
 
 import {Bar} from 'react-chartjs-2';
-import DatePicker from "react-datepicker";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -166,8 +165,6 @@ function Histogram(props) {
     let selectedStart = range.from;
     let selectedEnd = range.to;
 
-    let useDateRangePicker = false;
-
     return (
         <Container>
             <NavHeader title="Sleep Hours Histogram"/>
@@ -209,43 +206,16 @@ function Histogram(props) {
             <Row className={"pb-3"}>
                 <Col className="col-12">
                     <Collapse in={!collapsed}>
-
-                        {useDateRangePicker
-                            ?
-                            <DateRangePicker
-                                selectedStart={selectedStart}
-                                onChangeStart={onChangeStart}
-                                selectedEnd={selectedEnd}
-                                onChangeEnd={onChangeEnd} />
-                            :
-                        <Container>
-                            <Row className="pb-3">
-                                <Col className="col-2">
-                                    <label className="d-inline-block" htmlFor="startDate">From</label>
-                                </Col>
-                                <Col className="col-md-4">
-                                    <DatePicker
-                                        className="form-control d-inline-block" id="startDate" dateFormat="MMMM d, yyyy"
-                                        onChange={onChangeStart}
-                                        selected={selectedStart}
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className={"pb-3"}>
-                                <Col className="col-2">
-                                    <label htmlFor="endDate">To</label>
-                                </Col>
-                                <Col className="col-md-4">
-                                    <DatePicker
-                                        className="form-control" id="endDate" dateFormat="MMMM d, yyyy"
-                                        onChange={onChangeEnd}
-                                        selected={selectedEnd}
-                                    />
-                                </Col>
-                            </Row>
-                        </Container>
-                        }
-
+                        {/* Collapse has trouble with a functional component as the direct child,
+                        but it works great if you wrap a functional component with a non-functional component.
+                         This could probably also be fixed with forwardRef */}
+                            <div>
+                                <DateRangePicker
+                                    selectedStart={selectedStart}
+                                    onChangeStart={onChangeStart}
+                                    selectedEnd={selectedEnd}
+                                    onChangeEnd={onChangeEnd} />
+                            </div>
                     </Collapse>
                 </Col>
             </Row>
