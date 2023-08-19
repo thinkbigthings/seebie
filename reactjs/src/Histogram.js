@@ -3,7 +3,6 @@ import React, {useEffect, useState} from 'react';
 
 import { Chart, registerables } from 'chart.js'
 
-
 import {Bar} from 'react-chartjs-2';
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
@@ -12,7 +11,6 @@ import Form from 'react-bootstrap/Form';
 import SleepDataManager from "./SleepDataManager";
 import {GET} from "./BasicHeaders";
 import useCurrentUser from "./useCurrentUser";
-import copy from "./Copier";
 import {NavHeader} from "./App";
 import CollapsibleFilter from "./component/CollapsibleFilter";
 
@@ -35,15 +33,17 @@ const histOptions = {
     }
 }
 
-const initialChartData = {
-    datasets: [{
-        fill: true,
-        data: [],
-        label: 'Hours Asleep',
-        borderColor: '#745085',
-        backgroundColor:'#595b7c'
-    }]
-};
+const createInitialChartData = (title, bgColor) => {
+    return {
+        datasets: [{
+            fill: true,
+            data: [],
+            label: title,
+            borderColor: '#745085',
+            backgroundColor: bgColor
+        }]
+    };
+}
 
 const isDateRangeValid = (d1, d2)  => {
     let j1 = d1.toJSON().slice(0, 10);
@@ -65,6 +65,7 @@ const createInitialRange = () => {
 
 function Histogram(props) {
 
+    // TODO createdCount should be named "sleepLoggedCountSinceAppLoad" or something
     const {createdCount} = props;
 
     const {currentUser} = useCurrentUser();
@@ -77,8 +78,13 @@ function Histogram(props) {
 
     const [binHrParts, setBinHrParts] = useState(binSizeOptions[0].value);
 
+    const chart1Constants = {
+        title: "Set 1",
+        bgColor: '#595b7c'
+    };
+
     let [range, setRange] = useState(createInitialRange());
-    let [chartData, setChartData] = useState(initialChartData);
+    let [chartData, setChartData] = useState(createInitialChartData(chart1Constants.title, chart1Constants.bgColor));
 
     function updateSearchRange(updateValues) {
         let updatedRange = {...range, ...updateValues};
@@ -133,10 +139,20 @@ function Histogram(props) {
                 'data': counts
             };
         }
+
+        const newChartData = {
+            datasets: [{
+                fill: true,
+                data: [],
+                label: chart1Constants.title,
+                borderColor: '#745085',
+                backgroundColor: '#595b7c'
+            }]
+        };
+
         fetch(sleepEndpoint, GET)
             .then(response => response.json())
             .then(json => {
-                let newChartData = copy(initialChartData);
                 let newData = json.map(e=>e.y)
                                     .map(e=>roundToNearestPart(e, binHrParts))
                                     .map(e=>roundToTwoDecimals(e));
@@ -145,14 +161,14 @@ function Histogram(props) {
                 newChartData.datasets[0].data = histData.data;
                 setChartData(newChartData);
             })
-    }, [sleepEndpoint, createdCount, binHrParts]);
+    }, [sleepEndpoint, createdCount, binHrParts, chart1Constants.title]);
 
     const chartArea = chartData.datasets[0].data.length > 1
         ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={chartData} />
         :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
 
     const [collapsed, setCollapsed] = useState(true);
-    const filterTitle = "Select Sleep Data";
+    const filterTitle = chart1Constants.title;
 
     let onChangeStart = date => updateSearchRange({from: date});
     let onChangeEnd = date => updateSearchRange({to: date});
