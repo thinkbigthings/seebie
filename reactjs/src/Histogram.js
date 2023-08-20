@@ -3,9 +3,7 @@ import React, {useEffect, useState} from 'react';
 
 import { Chart, registerables } from 'chart.js'
 
-
 import {Bar} from 'react-chartjs-2';
-import DatePicker from "react-datepicker";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -13,13 +11,8 @@ import Form from 'react-bootstrap/Form';
 import SleepDataManager from "./SleepDataManager";
 import {GET} from "./BasicHeaders";
 import useCurrentUser from "./useCurrentUser";
-import copy from "./Copier";
 import {NavHeader} from "./App";
-import {Collapse} from "react-bootstrap";
-import Button from "react-bootstrap/Button";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAngleDown} from "@fortawesome/free-solid-svg-icons";
-import DateRangePicker from "./component/DateRangePicker";
+import CollapsibleFilter from "./component/CollapsibleFilter";
 
 Chart.register(...registerables)
 
@@ -40,15 +33,17 @@ const histOptions = {
     }
 }
 
-const initialChartData = {
-    datasets: [{
-        fill: true,
-        data: [],
-        label: 'Hours Asleep',
-        borderColor: '#745085',
-        backgroundColor:'#595b7c'
-    }]
-};
+const createInitialChartData = (title, bgColor) => {
+    return {
+        datasets: [{
+            fill: true,
+            data: [],
+            label: title,
+            borderColor: '#745085',
+            backgroundColor: bgColor
+        }]
+    };
+}
 
 const isDateRangeValid = (d1, d2)  => {
     let j1 = d1.toJSON().slice(0, 10);
@@ -70,6 +65,7 @@ const createInitialRange = () => {
 
 function Histogram(props) {
 
+    // TODO createdCount should be named "sleepLoggedCountSinceAppLoad" or something
     const {createdCount} = props;
 
     const {currentUser} = useCurrentUser();
@@ -82,8 +78,13 @@ function Histogram(props) {
 
     const [binHrParts, setBinHrParts] = useState(binSizeOptions[0].value);
 
+    const chart1Constants = {
+        title: "Set 1",
+        bgColor: '#595b7c'
+    };
+
     let [range, setRange] = useState(createInitialRange());
-    let [chartData, setChartData] = useState(initialChartData);
+    let [chartData, setChartData] = useState(createInitialChartData(chart1Constants.title, chart1Constants.bgColor));
 
     function updateSearchRange(updateValues) {
         let updatedRange = {...range, ...updateValues};
@@ -138,10 +139,20 @@ function Histogram(props) {
                 'data': counts
             };
         }
+
+        const newChartData = {
+            datasets: [{
+                fill: true,
+                data: [],
+                label: chart1Constants.title,
+                borderColor: '#745085',
+                backgroundColor: '#595b7c'
+            }]
+        };
+
         fetch(sleepEndpoint, GET)
             .then(response => response.json())
             .then(json => {
-                let newChartData = copy(initialChartData);
                 let newData = json.map(e=>e.y)
                                     .map(e=>roundToNearestPart(e, binHrParts))
                                     .map(e=>roundToTwoDecimals(e));
@@ -150,23 +161,19 @@ function Histogram(props) {
                 newChartData.datasets[0].data = histData.data;
                 setChartData(newChartData);
             })
-    }, [sleepEndpoint, createdCount, binHrParts]);
+    }, [sleepEndpoint, createdCount, binHrParts, chart1Constants.title]);
 
     const chartArea = chartData.datasets[0].data.length > 1
         ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={chartData} />
         :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
 
     const [collapsed, setCollapsed] = useState(true);
-    const filterTitle = "Select Sleep Data";
-    const collapseIconRotation = collapsed ? "" : "fa-rotate-180";
-
+    const filterTitle = chart1Constants.title;
 
     let onChangeStart = date => updateSearchRange({from: date});
     let onChangeEnd = date => updateSearchRange({to: date});
     let selectedStart = range.from;
     let selectedEnd = range.to;
-
-    let useDateRangePicker = false;
 
     return (
         <Container>
@@ -193,60 +200,14 @@ function Histogram(props) {
             <Row className={"pb-3"}>
                 <Col className="col-12">
 
-                    <Button
-                        variant="dark"
-                        className={"w-100 text-start border border-light-subtle"}
-                        onClick={() => setCollapsed(!collapsed)}
-                        aria-controls="example-collapse-text"
-                        aria-expanded={!collapsed}
-                    >
-                        {filterTitle}
-                        <FontAwesomeIcon className={"me-2 mt-1 float-end " + collapseIconRotation} icon={faAngleDown} ></FontAwesomeIcon>
+                    <CollapsibleFilter selectedStart={selectedStart}
+                                       onChangeStart={onChangeStart}
+                                       selectedEnd={selectedEnd}
+                                       onChangeEnd={onChangeEnd}
+                                       title={filterTitle}
+                                       collapsed={collapsed}
+                                       onCollapseClick={() => setCollapsed(!collapsed)} />
 
-                    </Button>
-                </Col>
-            </Row>
-            <Row className={"pb-3"}>
-                <Col className="col-12">
-                    <Collapse in={!collapsed}>
-
-                        {useDateRangePicker
-                            ?
-                            <DateRangePicker
-                                selectedStart={selectedStart}
-                                onChangeStart={onChangeStart}
-                                selectedEnd={selectedEnd}
-                                onChangeEnd={onChangeEnd} />
-                            :
-                        <Container>
-                            <Row className="pb-3">
-                                <Col className="col-2">
-                                    <label className="d-inline-block" htmlFor="startDate">From</label>
-                                </Col>
-                                <Col className="col-md-4">
-                                    <DatePicker
-                                        className="form-control d-inline-block" id="startDate" dateFormat="MMMM d, yyyy"
-                                        onChange={onChangeStart}
-                                        selected={selectedStart}
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className={"pb-3"}>
-                                <Col className="col-2">
-                                    <label htmlFor="endDate">To</label>
-                                </Col>
-                                <Col className="col-md-4">
-                                    <DatePicker
-                                        className="form-control" id="endDate" dateFormat="MMMM d, yyyy"
-                                        onChange={onChangeEnd}
-                                        selected={selectedEnd}
-                                    />
-                                </Col>
-                            </Row>
-                        </Container>
-                        }
-
-                    </Collapse>
                 </Col>
             </Row>
 
