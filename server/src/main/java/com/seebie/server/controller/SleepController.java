@@ -1,9 +1,6 @@
 package com.seebie.server.controller;
 
-import com.seebie.server.dto.SleepData;
-import com.seebie.server.dto.SleepDataPoint;
-import com.seebie.server.dto.SleepDetails;
-import com.seebie.server.dto.UploadResponse;
+import com.seebie.server.dto.*;
 import com.seebie.server.service.SleepService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -22,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.StringReader;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.seebie.server.mapper.dtotoentity.CsvToSleepData.CSV_INPUT;
@@ -69,6 +67,23 @@ public class SleepController {
 
         return sleepService.listChartData(username, from, to);
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/user/{username}/sleep/histogram", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<SleepDataPoint> getHistogramData(@PathVariable String username, @Valid @RequestBody HistogramRequest request) {
+
+        LOG.info("Requesting histogram data with " + request);
+
+        // Normalize the histogram for comparison between multiple data sets of different sizes.
+        // The normalized count is the count in a class divided by the total number of observations.
+        // In this case the relative counts are normalized to sum to one (or 100 if a percentage scale is used).
+
+
+        return new ArrayList<>();
+    }
+
+
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/{sleepId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
