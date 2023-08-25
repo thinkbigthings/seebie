@@ -85,6 +85,9 @@ public class ControllerSecurityTest {
 	private static final String from = format(ZonedDateTime.now().minusDays(1));
 	private static final String to = format(ZonedDateTime.now());
 
+	private static final String[] chartParams = new String[]{"from", from, "to", to};
+	private static final HistogramRequest histogramRequest = new HistogramRequest(1, new FilterList(List.of()));
+
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	@Autowired
 	private MockMvc mockMvc;
@@ -138,7 +141,8 @@ public class ControllerSecurityTest {
 				test.put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData, 401),
 				test.delete("/user/" + ADMINNAME + "/sleep" + "/1", 401),
 
-				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 401),
+				test.get("/user/" + USERNAME + "/sleep/chart", chartParams, 401),
+				test.post("/user/" + USERNAME + "/sleep/histogram", histogramRequest, 401),
 				test.get("/user/" + USERNAME + "/sleep/download", 401),
 				test.post("/user/" + USERNAME + "/sleep/upload", file, 401)
 
@@ -175,10 +179,8 @@ public class ControllerSecurityTest {
 				test.put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData, 200),
 				test.delete("/user/" + ADMINNAME + "/sleep" + "/1", 200),
 
-				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 200),
-
-				test.post("/user/" + USERNAME + "/sleep/histogram", new HistogramRequest(1, List.of()), 200),
-
+				test.get("/user/" + USERNAME + "/sleep/chart", chartParams, 200),
+				test.post("/user/" + USERNAME + "/sleep/histogram", histogramRequest, 200),
 				test.get("/user/" + USERNAME + "/sleep/download", 200),
 				test.post("/user/" + USERNAME + "/sleep/upload", file, 200)
 		);

@@ -1,5 +1,6 @@
 package com.seebie.server;
 
+import com.seebie.server.dto.FilterList;
 import com.seebie.server.dto.HistogramRequest;
 import com.seebie.server.service.HistogramCalculator;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ public class HistogramCalculatorTest {
     @Test
     public void testStackedNormalizedHistograms() {
 
-        var req = new HistogramRequest(15, List.of());
+        var req = new HistogramRequest(15, new FilterList(List.of()));
 
         final int binSize = req.binSizeMinutes();
 

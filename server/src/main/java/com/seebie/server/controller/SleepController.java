@@ -14,13 +14,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.seebie.server.mapper.dtotoentity.CsvToSleepData.CSV_INPUT;
@@ -82,15 +82,16 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/histogram", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public HistogramNormalized getHistogramData(@RequestBody HistogramRequest request, @PathVariable String username) {
+    public HistogramNormalized getHistogramData(@Valid @RequestBody HistogramRequest request, @PathVariable String username) {
 
 
-        // TODO manual test, validation test, security test, integration test, unit test
+        // TODO integration test, unit test and coverage check
+        // TODO check memory usage on very large data sets
 
 
         LOG.info("Requesting histogram data with " + request);
 
-        var dataSets = sleepService.listSleepAmounts(username, request.dataFilters());
+        var dataSets = sleepService.listSleepAmounts(username, request.filters());
         var stackedHistogram = histogramCalculator.calculate(request.binSizeMinutes(), dataSets);
 
         return stackedHistogram;

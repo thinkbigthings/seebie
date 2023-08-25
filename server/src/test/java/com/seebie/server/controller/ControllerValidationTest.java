@@ -2,9 +2,7 @@ package com.seebie.server.controller;
 
 
 import com.seebie.server.AppProperties;
-import com.seebie.server.dto.PersonalInfo;
-import com.seebie.server.dto.RegistrationRequest;
-import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.*;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
@@ -30,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
 import javax.sql.DataSource;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Function;
 
@@ -80,6 +79,12 @@ public class ControllerValidationTest {
 
 	private static final String from = format(now().minusDays(1));
 	private static final String to = format(now());
+
+	private static final ZonedDateTime fromDate = now().minusDays(1);
+	private static final ZonedDateTime toDate = now();
+
+	private static final HistogramRequest validHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(fromDate, toDate))));
+	private static final HistogramRequest invalidHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(toDate, fromDate))));
 
 	private static final MockMultipartFile badFile = createMultipart("text");
 	private static final MockMultipartFile goodFile = createMultipart(createCsv(1));
@@ -132,6 +137,9 @@ public class ControllerValidationTest {
 				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to},   200),
 				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", "",   "to", ""},   400),
 				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", to,   "to", from}, 400),
+
+				test.post("/user/" + USERNAME + "/sleep/histogram", validHistReq,   200),
+				test.post("/user/" + USERNAME + "/sleep/histogram", invalidHistReq,   400),
 
 				test.post("/user/" + USERNAME + "/sleep/upload", badFile, 400),
 				test.post("/user/" + USERNAME + "/sleep/upload", goodFile, 200)

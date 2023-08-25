@@ -87,11 +87,11 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public List<List<Integer>> listSleepAmounts(String username, List<DateRange> dataFilters) {
+    public List<List<Integer>> listSleepAmounts(String username, FilterList filters) {
 
         // TODO look into database group by with Postgres / JPQL
 
-        return dataFilters.stream()
+        return filters.dataFilters().stream()
                 .map(dateRange -> sleepRepository.loadDurations(username, dateRange.from(), dateRange.to()))
                 .toList();
     }
