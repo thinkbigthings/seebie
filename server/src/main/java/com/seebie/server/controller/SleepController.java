@@ -1,6 +1,7 @@
 package com.seebie.server.controller;
 
 import com.seebie.server.dto.*;
+import com.seebie.server.service.HistogramCalculator;
 import com.seebie.server.service.SleepService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -23,13 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.seebie.server.mapper.dtotoentity.CsvToSleepData.CSV_INPUT;
-import static com.seebie.server.service.NotificationRetrievalService.toLocale;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @RestController
 public class SleepController {
 
     private static Logger LOG = LoggerFactory.getLogger(SleepController.class);
+
+    private final HistogramCalculator histogramCalculator = new HistogramCalculator();
 
     private final SleepService sleepService;
 
@@ -68,22 +70,31 @@ public class SleepController {
         return sleepService.listChartData(username, from, to);
     }
 
+    /**
+     * This does not make any changes to the server, but we're using POST instead of GET so that
+     * the request body can be used in a standard way. You shouldn't send a request body with a GET request
+     * or at the very least it's somewhat controversial.
+     *
+     * @param username
+     * @param request
+     * @return
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
-    @RequestMapping(value="/user/{username}/sleep/histogram", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value="/user/{username}/sleep/histogram", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<SleepDataPoint> getHistogramData(@PathVariable String username, @Valid @RequestBody HistogramRequest request) {
+    public HistogramNormalized getHistogramData(@RequestBody HistogramRequest request, @PathVariable String username) {
+
+
+        // TODO manual test, validation test, security test, integration test, unit test
+
 
         LOG.info("Requesting histogram data with " + request);
 
-        // Normalize the histogram for comparison between multiple data sets of different sizes.
-        // The normalized count is the count in a class divided by the total number of observations.
-        // In this case the relative counts are normalized to sum to one (or 100 if a percentage scale is used).
+        var dataSets = sleepService.listSleepAmounts(username, request.dataFilters());
+        var stackedHistogram = histogramCalculator.calculate(request.binSizeMinutes(), dataSets);
 
-
-        return new ArrayList<>();
+        return stackedHistogram;
     }
-
-
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/{sleepId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

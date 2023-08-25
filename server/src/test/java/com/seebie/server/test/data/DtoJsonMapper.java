@@ -2,6 +2,7 @@ package com.seebie.server.test.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seebie.server.dto.HistogramRequest;
 import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
@@ -9,7 +10,7 @@ import com.seebie.server.dto.SleepData;
 import java.util.function.Function;
 
 /**
- * The request object takes a string, so we need to format objects ahead of time
+ * The test request object takes a string, so we need to format objects ahead of time
  * to send a request body into the app.
  */
 public class DtoJsonMapper implements Function<Object, String> {
@@ -28,7 +29,8 @@ public class DtoJsonMapper implements Function<Object, String> {
                 case PersonalInfo p -> mapper.writerFor(p.getClass()).writeValueAsString(p);
                 case RegistrationRequest r -> mapper.writerFor(r.getClass()).writeValueAsString(r);
                 case SleepData d -> mapper.writerFor(d.getClass()).writeValueAsString(d);
-                default -> throw new IllegalArgumentException("Can't find object mapper for " + dto);
+                case HistogramRequest r -> mapper.writerFor(r.getClass()).writeValueAsString(r);
+                default -> throw new IllegalArgumentException("Can't find object mapper for " + dto + "you need to update DtoJsonMapper");
             };
         }
         catch (JsonProcessingException e) {

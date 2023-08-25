@@ -2,9 +2,7 @@ package com.seebie.server.controller;
 
 
 import com.seebie.server.AppProperties;
-import com.seebie.server.dto.PersonalInfo;
-import com.seebie.server.dto.RegistrationRequest;
-import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.*;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
@@ -31,6 +29,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 import javax.sql.DataSource;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -177,6 +176,9 @@ public class ControllerSecurityTest {
 				test.delete("/user/" + ADMINNAME + "/sleep" + "/1", 200),
 
 				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 200),
+
+				test.post("/user/" + USERNAME + "/sleep/histogram", new HistogramRequest(1, List.of()), 200),
+
 				test.get("/user/" + USERNAME + "/sleep/download", 200),
 				test.post("/user/" + USERNAME + "/sleep/upload", file, 200)
 		);

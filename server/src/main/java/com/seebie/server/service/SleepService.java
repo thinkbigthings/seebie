@@ -1,8 +1,6 @@
 package com.seebie.server.service;
 
-import com.seebie.server.dto.SleepData;
-import com.seebie.server.dto.SleepDataPoint;
-import com.seebie.server.dto.SleepDetails;
+import com.seebie.server.dto.*;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv;
 import com.seebie.server.mapper.dtotoentity.TagMapper;
@@ -86,6 +84,16 @@ public class SleepService {
     @Transactional(readOnly = true)
     public List<SleepDataPoint> listChartData(String username, ZonedDateTime from, ZonedDateTime to) {
          return sleepRepository.loadChartData(username, from, to);
+    }
+
+    @Transactional(readOnly = true)
+    public List<List<Integer>> listSleepAmounts(String username, List<DateRange> dataFilters) {
+
+        // TODO look into database group by with Postgres / JPQL
+
+        return dataFilters.stream()
+                .map(dateRange -> sleepRepository.loadDurations(username, dateRange.from(), dateRange.to()))
+                .toList();
     }
 
     @Transactional(readOnly = true)

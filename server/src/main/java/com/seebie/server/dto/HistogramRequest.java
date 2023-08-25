@@ -4,6 +4,7 @@ import java.util.List;
 
 public record HistogramRequest(int binSizeMinutes, List<DateRange> dataFilters) {
 
+
     public HistogramRequest {
         dataFilters.forEach(this::validateDateRange);
     }

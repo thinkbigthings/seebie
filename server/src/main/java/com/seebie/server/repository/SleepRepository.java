@@ -1,5 +1,6 @@
 package com.seebie.server.repository;
 
+import com.seebie.server.dto.DateRange;
 import com.seebie.server.dto.SleepDataPoint;
 import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.entity.SleepSession;
@@ -42,6 +43,16 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             ORDER BY s.stopTime ASC
             """)
     List<SleepDataPoint> loadChartData(String username, ZonedDateTime from, ZonedDateTime to);
+
+    @Query("""
+            SELECT s.minutesAsleep
+            FROM SleepSession s
+            WHERE s.user.username=:username
+            AND s.stopTime >= :from
+            AND s.stopTime <= :to
+            ORDER BY s.stopTime ASC
+            """)
+    List<Integer> loadDurations(String username, ZonedDateTime from, ZonedDateTime to);
 
     @Query("""
             SELECT new com.seebie.server.dto.SleepDetails(s.id, s.minutesAsleep, s.notes, s.minutesAwake, s.startTime, s.stopTime, s.zoneId)
