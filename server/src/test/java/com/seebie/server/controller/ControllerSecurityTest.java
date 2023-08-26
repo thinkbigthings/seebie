@@ -61,7 +61,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @EnableConfigurationProperties(value = {AppProperties.class})
 @Import(WebSecurityConfig.class)
-@DisplayName("Endpoint Security")
 public class ControllerSecurityTest {
 
 	@MockBean

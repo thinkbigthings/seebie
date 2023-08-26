@@ -41,7 +41,7 @@ public class HistogramCalculatorTest {
 
         var req = new HistogramRequest(15, new FilterList(List.of()));
 
-        final int binSize = req.binSizeMinutes();
+        final int binSize = req.binSize();
 
         List<Integer> dataSet1 = IntStream.range(4 * 60, 8 * 60).boxed().toList();
         List<Integer> dataSet2 = IntStream.range(5 * 60, 7 * 60).boxed().toList();
