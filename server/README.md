@@ -200,6 +200,9 @@ We can get code coverage metrics with Jacoco, and can do so for either unit test
 
 Then see output in build/reports/jacoco/html/index.html
 
+**Note:** the security and validation tests do run through the controllers
+so the controllers will appear as fully tested even if the only thing tested is the security and validation.
+don't forget to cover the controllers with actual unit or integration tests.
 
 ### Manual test
 

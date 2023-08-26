@@ -21,7 +21,7 @@ public class HistogramCalculator {
      * @param multiDataSets
      * @return
      */
-    public HistogramNormalized calculate(final int binSize, List<List<Integer>> multiDataSets) {
+    public HistogramNormalized buildNormalizedHistogram(final int binSize, List<List<Integer>> multiDataSets) {
 
         var multiHistograms = multiDataSets.stream()
                 .map(data -> buildHistogram(binSize, data))
@@ -77,11 +77,13 @@ public class HistogramCalculator {
     }
 
     /**
-     * Normalize the histogram to a percentage of the total observations.
+     * Normalize the histogram values to a percentage of the total observations.
+     * If there is a bin with no observations, it will be included in the result with a value of 0.
      *
-     * @param allBins
-     * @param histogram
-     * @return
+     * @param allBins a complete set of bins which may be larger than the set of bins in the given histogram.
+     * @param histogram the histogram to normalize
+     *
+     * @return a list of normalized values for each bin in the allBins parameter
      */
     private List<Integer> normalizeToBins(List<Integer> allBins, Map<Integer, Long> histogram) {
 

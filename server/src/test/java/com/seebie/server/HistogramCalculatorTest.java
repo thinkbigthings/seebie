@@ -17,7 +17,7 @@ public class HistogramCalculatorTest {
     @Test
     public void testNoData() {
 
-        var result = calculator.calculate(60, List.of());
+        var result = calculator.buildNormalizedHistogram(60, List.of());
 
         assertEquals(0, result.bins().size());
     }
@@ -28,7 +28,7 @@ public class HistogramCalculatorTest {
         List<Integer> dataSet1 = List.of(60, 120, 120);
         List<Integer> dataSet2 = List.of();
 
-        var result = calculator.calculate(60, List.of(dataSet1, dataSet2));
+        var result = calculator.buildNormalizedHistogram(60, List.of(dataSet1, dataSet2));
 
         assertEquals(2, result.bins().size());
         assertEquals(List.of(60, 120), result.bins());
@@ -46,7 +46,7 @@ public class HistogramCalculatorTest {
         List<Integer> dataSet1 = IntStream.range(4 * 60, 8 * 60).boxed().toList();
         List<Integer> dataSet2 = IntStream.range(5 * 60, 7 * 60).boxed().toList();
 
-        var result = calculator.calculate(binSize, List.of(dataSet1, dataSet2));
+        var result = calculator.buildNormalizedHistogram(binSize, List.of(dataSet1, dataSet2));
 
         assertEquals(16, result.bins().size());
         assertEquals(2, result.dataSets().size());

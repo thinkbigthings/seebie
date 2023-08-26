@@ -14,7 +14,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -84,15 +83,10 @@ public class SleepController {
     @ResponseBody
     public HistogramNormalized getHistogramData(@Valid @RequestBody HistogramRequest request, @PathVariable String username) {
 
-
-        // TODO integration test, unit test and coverage check
-        // TODO check memory usage on very large data sets
-
-
         LOG.info("Requesting histogram data with " + request);
 
         var dataSets = sleepService.listSleepAmounts(username, request.filters());
-        var stackedHistogram = histogramCalculator.calculate(request.binSizeMinutes(), dataSets);
+        var stackedHistogram = histogramCalculator.buildNormalizedHistogram(request.binSizeMinutes(), dataSets);
 
         return stackedHistogram;
     }
