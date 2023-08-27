@@ -9,10 +9,10 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Form from 'react-bootstrap/Form';
 import SleepDataManager from "./SleepDataManager";
-import {GET} from "./BasicHeaders";
 import useCurrentUser from "./useCurrentUser";
 import {NavHeader} from "./App";
 import CollapsibleFilter from "./component/CollapsibleFilter";
+import {basicHeader} from "./BasicHeaders";
 
 Chart.register(...registerables)
 
@@ -51,6 +51,21 @@ const isDateRangeValid = (d1, d2)  => {
     return j1 < j2;
 }
 
+const requestHeaders = basicHeader();
+
+const fetchPost = (url, body) => {
+
+    const bodyString = typeof body === 'string' ? body : JSON.stringify(body);
+
+    const requestMeta = {
+        headers: requestHeaders,
+        method: 'POST',
+        body: bodyString
+    };
+
+    return fetch(url, requestMeta);
+}
+
 const createInitialRange = () => {
 
     let today = new Date();
@@ -71,9 +86,9 @@ function Histogram(props) {
     const {currentUser} = useCurrentUser();
 
     const binSizeOptions = [
-        {value: 1, text: '60 minutes'},
-        {value: 2, text: '30 minutes'},
-        {value: 4, text: '15 minutes'},
+        {value: 60, text: '60 minutes'},
+        {value: 30, text: '30 minutes'},
+        {value: 15, text: '15 minutes'},
     ];
 
     const [binHrParts, setBinHrParts] = useState(binSizeOptions[0].value);
@@ -93,52 +108,13 @@ function Histogram(props) {
         }
     }
 
-    let requestParameters = '?'
-        + 'from='+encodeURIComponent(SleepDataManager.toIsoString(range.from)) + '&'
-        + 'to='+encodeURIComponent(SleepDataManager.toIsoString(range.to));
-
-    const sleepEndpoint = '/user/'+currentUser.username+'/sleep/chart' + requestParameters;
+    const sleepEndpoint = '/user/'+currentUser.username+'/sleep/histogram';
 
     const handlePartChange = event => {
         setBinHrParts(event.target.value);
     };
 
     useEffect(() => {
-
-        function roundToNearestPart(num, numParts) {
-            return Math.round(num * numParts) / numParts;
-        }
-
-        function roundToTwoDecimals(num) {
-            return Math.round((num + Number.EPSILON) * 100) / 100;
-        }
-        const createHistogram = (arr) => {
-            const histogram = arr.reduce((hist, value) => {
-                hist[value] = hist.hasOwnProperty(value) ? hist[value] + 1 : 1;
-                return hist;
-            }, {});
-
-            // Get the minimum and maximum value of the array
-            const minVal = Math.min(...arr);
-            const maxVal = Math.max(...arr);
-
-            // Include "empty" bins
-            for (let i = minVal; i <= maxVal; i += 1/binHrParts) {
-                if (!histogram.hasOwnProperty(i)) {
-                    histogram[i] = 0;
-                }
-            }
-
-            // Extract the keys (bins) and values (counts) from the histogram
-            const bins = Object.keys(histogram).map(Number).sort((a, b) => a - b);
-            const counts = bins.map(bin => histogram[bin]);
-
-            // Return the data in the desired format
-            return {
-                'labels': bins,
-                'data': counts
-            };
-        }
 
         const newChartData = {
             datasets: [{
@@ -150,18 +126,27 @@ function Histogram(props) {
             }]
         };
 
-        fetch(sleepEndpoint, GET)
+        const histogramRequest = {
+            binSize: binHrParts,
+            filters: {
+                dataFilters: [
+                    {
+                        from: SleepDataManager.toIsoString(range.from),
+                        to:   SleepDataManager.toIsoString(range.to)
+                    }
+                ]
+            }
+        }
+
+        fetchPost(sleepEndpoint, histogramRequest)
             .then(response => response.json())
-            .then(json => {
-                let newData = json.map(e=>e.y)
-                                    .map(e=>roundToNearestPart(e, binHrParts))
-                                    .map(e=>roundToTwoDecimals(e));
-                let histData = createHistogram(newData);
-                newChartData.labels = histData.labels;
-                newChartData.datasets[0].data = histData.data;
+            .then(histData => {
+                histData.bins = histData.bins.map(bin => bin/60);
+                newChartData.labels = histData.bins;
+                newChartData.datasets[0].data = histData.dataSets[0];
                 setChartData(newChartData);
             })
-    }, [sleepEndpoint, createdCount, binHrParts, chart1Constants.title]);
+    }, [sleepEndpoint, createdCount, binHrParts, chart1Constants.title, range]);
 
     const chartArea = chartData.datasets[0].data.length > 1
         ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={chartData} />

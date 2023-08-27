@@ -1,14 +1,13 @@
 package com.seebie.server.service;
 
 import com.seebie.server.controller.SleepController;
-import com.seebie.server.dto.RegistrationRequest;
-import com.seebie.server.dto.SleepData;
-import com.seebie.server.dto.SleepDetails;
+import com.seebie.server.dto.*;
 import com.seebie.server.entity.SleepSession;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.repository.SleepRepository;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
+import org.hibernate.Filter;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -24,6 +23,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
+import java.util.List;
 
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.test.data.TestData.*;
@@ -179,6 +179,44 @@ class SleepServiceIntegrationTest extends IntegrationTest {
 
         assertEquals(firstPage.getPageSize(), listing.getNumberOfElements());
         assertEquals(listCount, listing.getTotalElements());
+    }
+
+    @Test
+    public void testChartData() {
+
+        String username = "chartUser";
+        userService.saveNewUser(new RegistrationRequest(username, "password", "chartUser@sleepy.com"));
+
+        int listCount = 10;
+        var data = TestData.createRandomSleepData(listCount, AMERICA_NEW_YORK);
+        data.forEach(d -> sleepService.saveNew(username, d));
+
+        var to = data.get(0).stopTime().plusDays(20);
+        var from = data.get(0).stopTime().minusDays(20);
+
+        var points = sleepService.listChartData(username, from, to);
+        assertEquals(10, points.size());
+    }
+
+    @Test
+    public void testHistogram() {
+
+        String username = "histogramUser";
+        userService.saveNewUser(new RegistrationRequest(username, "password", "histoUser@sleepy.com"));
+
+        int listCount = 10;
+        var data = TestData.createRandomSleepData(listCount, AMERICA_NEW_YORK);
+        data.forEach(d -> sleepService.saveNew(username, d));
+
+        var to = data.get(0).stopTime().plusDays(20);
+        var from = data.get(0).stopTime().minusDays(20);
+
+        var range = new DateRange(from, to);
+        var histData = sleepService.listSleepAmounts(username, new FilterList(List.of(range, range, range)));
+
+        assertEquals(3, histData.size());
+        histData.forEach(d -> assertEquals(listCount, d.size()));
+
     }
 
     @Test

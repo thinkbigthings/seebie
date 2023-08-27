@@ -2,14 +2,11 @@ package com.seebie.server.controller;
 
 
 import com.seebie.server.AppProperties;
-import com.seebie.server.dto.PersonalInfo;
-import com.seebie.server.dto.RegistrationRequest;
-import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.*;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.AppRequest;
-import com.seebie.server.test.data.DtoJsonMapper;
 import com.seebie.server.test.data.MvcRequestMapper;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,9 +27,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
 import javax.sql.DataSource;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Function;
 
+import static com.seebie.server.Functional.uncheck;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
 import static java.time.ZonedDateTime.now;
@@ -53,7 +52,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		// this is a sensitive property and should not be included in the main application.properties
 		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
 })
-@DisplayName("Controller Validation")
 @EnableConfigurationProperties(value = {AppProperties.class})
 @Import(WebSecurityConfig.class)
 public class ControllerValidationTest {
@@ -81,6 +79,12 @@ public class ControllerValidationTest {
 	private static final String from = format(now().minusDays(1));
 	private static final String to = format(now());
 
+	private static final ZonedDateTime fromDate = now().minusDays(1);
+	private static final ZonedDateTime toDate = now();
+
+	private static final HistogramRequest validHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(fromDate, toDate))));
+	private static final HistogramRequest invalidHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(toDate, fromDate))));
+
 	private static final MockMultipartFile badFile = createMultipart("text");
 	private static final MockMultipartFile goodFile = createMultipart(createCsv(1));
 
@@ -99,11 +103,24 @@ public class ControllerValidationTest {
 		when(sleepService.retrieveCsv(anyString())).thenReturn("");
 	}
 
+	/**
+	 * If the test data is a string, presume it is already in the correct format and return directly.
+	 * If you pass a string "" to the object mapper, it doesn't return the string, it returns """".
+	 *
+	 * @param converter
+	 * @return
+	 */
+	public static Function<Object, String> testDataObj2Str(MappingJackson2HttpMessageConverter converter) {
+		return uncheck((Object obj) -> obj instanceof String
+				? obj.toString()
+				: 	converter.getObjectMapper().writerFor(obj.getClass()).writeValueAsString(obj));
+	}
+
 	@BeforeAll
 	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
 
 		// so we get the mapper as configured for the app
-		toRequest = new MvcRequestMapper(new DtoJsonMapper(converter.getObjectMapper()));
+		toRequest = new MvcRequestMapper(testDataObj2Str(converter));
 
 		test = new TestData.ArgumentBuilder();
 	}
@@ -132,6 +149,9 @@ public class ControllerValidationTest {
 				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to},   200),
 				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", "",   "to", ""},   400),
 				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", to,   "to", from}, 400),
+
+				test.post("/user/" + USERNAME + "/sleep/histogram", validHistReq,   200),
+				test.post("/user/" + USERNAME + "/sleep/histogram", invalidHistReq,   400),
 
 				test.post("/user/" + USERNAME + "/sleep/upload", badFile, 400),
 				test.post("/user/" + USERNAME + "/sleep/upload", goodFile, 200)

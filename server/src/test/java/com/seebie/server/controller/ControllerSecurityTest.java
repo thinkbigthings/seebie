@@ -2,14 +2,11 @@ package com.seebie.server.controller;
 
 
 import com.seebie.server.AppProperties;
-import com.seebie.server.dto.PersonalInfo;
-import com.seebie.server.dto.RegistrationRequest;
-import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.*;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.AppRequest;
-import com.seebie.server.test.data.DtoJsonMapper;
 import com.seebie.server.test.data.MvcRequestMapper;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
@@ -34,6 +31,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Function;
 
+import static com.seebie.server.controller.ControllerValidationTest.testDataObj2Str;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -62,7 +60,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @EnableConfigurationProperties(value = {AppProperties.class})
 @Import(WebSecurityConfig.class)
-@DisplayName("Endpoint Security")
 public class ControllerSecurityTest {
 
 	@MockBean
@@ -86,6 +83,9 @@ public class ControllerSecurityTest {
 	private static final String from = format(ZonedDateTime.now().minusDays(1));
 	private static final String to = format(ZonedDateTime.now());
 
+	private static final String[] chartParams = new String[]{"from", from, "to", to};
+	private static final HistogramRequest histogramRequest = new HistogramRequest(1, new FilterList(List.of()));
+
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	@Autowired
 	private MockMvc mockMvc;
@@ -105,7 +105,7 @@ public class ControllerSecurityTest {
 	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
 
 		// so we get the mapper as configured for the app
-		toRequest = new MvcRequestMapper(new DtoJsonMapper(converter.getObjectMapper()));
+		toRequest = new MvcRequestMapper(testDataObj2Str(converter));
 		
 		test = new TestData.ArgumentBuilder();
 	}
@@ -139,7 +139,8 @@ public class ControllerSecurityTest {
 				test.put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData, 401),
 				test.delete("/user/" + ADMINNAME + "/sleep" + "/1", 401),
 
-				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 401),
+				test.get("/user/" + USERNAME + "/sleep/chart", chartParams, 401),
+				test.post("/user/" + USERNAME + "/sleep/histogram", histogramRequest, 401),
 				test.get("/user/" + USERNAME + "/sleep/download", 401),
 				test.post("/user/" + USERNAME + "/sleep/upload", file, 401)
 
@@ -176,7 +177,8 @@ public class ControllerSecurityTest {
 				test.put("/user/" + ADMINNAME + "/sleep" + "/1", sleepData, 200),
 				test.delete("/user/" + ADMINNAME + "/sleep" + "/1", 200),
 
-				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 200),
+				test.get("/user/" + USERNAME + "/sleep/chart", chartParams, 200),
+				test.post("/user/" + USERNAME + "/sleep/histogram", histogramRequest, 200),
 				test.get("/user/" + USERNAME + "/sleep/download", 200),
 				test.post("/user/" + USERNAME + "/sleep/upload", file, 200)
 		);

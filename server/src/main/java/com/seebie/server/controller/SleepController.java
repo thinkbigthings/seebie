@@ -1,9 +1,7 @@
 package com.seebie.server.controller;
 
-import com.seebie.server.dto.SleepData;
-import com.seebie.server.dto.SleepDataPoint;
-import com.seebie.server.dto.SleepDetails;
-import com.seebie.server.dto.UploadResponse;
+import com.seebie.server.dto.*;
+import com.seebie.server.service.HistogramCalculator;
 import com.seebie.server.service.SleepService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -25,13 +23,14 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.seebie.server.mapper.dtotoentity.CsvToSleepData.CSV_INPUT;
-import static com.seebie.server.service.NotificationRetrievalService.toLocale;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @RestController
 public class SleepController {
 
     private static Logger LOG = LoggerFactory.getLogger(SleepController.class);
+
+    private final HistogramCalculator histogramCalculator = new HistogramCalculator();
 
     private final SleepService sleepService;
 
@@ -68,6 +67,28 @@ public class SleepController {
         LOG.info("Requesting chart data with range " + from + " " + to);
 
         return sleepService.listChartData(username, from, to);
+    }
+
+    /**
+     * This does not make any changes to the server, but we're using POST instead of GET so that
+     * the request body can be used in a standard way. You shouldn't send a request body with a GET request
+     * or at the very least it's somewhat controversial.
+     *
+     * @param username
+     * @param request
+     * @return
+     */
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/user/{username}/sleep/histogram", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public HistogramNormalized getHistogramData(@Valid @RequestBody HistogramRequest request, @PathVariable String username) {
+
+        LOG.info("Requesting histogram data with " + request);
+
+        var dataSets = sleepService.listSleepAmounts(username, request.filters());
+        var stackedHistogram = histogramCalculator.buildNormalizedHistogram(request.binSize(), dataSets);
+
+        return stackedHistogram;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")

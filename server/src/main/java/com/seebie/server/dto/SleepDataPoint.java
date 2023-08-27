@@ -9,6 +9,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+/**
+ *
+ * @param x date only
+ * @param y units of hours
+ */
 public record SleepDataPoint(@NotNull LocalDate x, @PositiveOrZero BigDecimal y) {
 
     public SleepDataPoint(ZonedDateTime stopTime, int minutes, String zoneId) {

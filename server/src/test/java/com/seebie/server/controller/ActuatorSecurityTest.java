@@ -4,7 +4,6 @@ import com.seebie.server.service.UserService;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.client.ApiClientStateful;
 import com.seebie.server.test.data.AppRequest;
-import com.seebie.server.test.data.DtoJsonMapper;
 import com.seebie.server.test.data.HttpRequestMapper;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,6 +19,7 @@ import java.net.http.HttpRequest;
 import java.util.List;
 import java.util.function.Function;
 
+import static com.seebie.server.controller.ControllerValidationTest.testDataObj2Str;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -47,7 +47,7 @@ public class ActuatorSecurityTest extends IntegrationTest {
                              @Autowired MappingJackson2HttpMessageConverter converter)
     {
         // so we get the mapper as configured for the app
-        toRequest = new HttpRequestMapper(new DtoJsonMapper(converter.getObjectMapper()));
+        toRequest = new HttpRequestMapper(testDataObj2Str(converter));
 
         baseUrl = "https://localhost:" + randomServerPort;
 
