@@ -7,7 +7,6 @@ import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.AppRequest;
-import com.seebie.server.test.data.DtoJsonMapper;
 import com.seebie.server.test.data.MvcRequestMapper;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,6 +31,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Function;
 
+import static com.seebie.server.Functional.uncheck;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
 import static java.time.ZonedDateTime.now;
@@ -103,11 +103,24 @@ public class ControllerValidationTest {
 		when(sleepService.retrieveCsv(anyString())).thenReturn("");
 	}
 
+	/**
+	 * If the test data is a string, presume it is already in the correct format and return directly.
+	 * If you pass a string "" to the object mapper, it doesn't return the string, it returns """".
+	 *
+	 * @param converter
+	 * @return
+	 */
+	public static Function<Object, String> testDataObj2Str(MappingJackson2HttpMessageConverter converter) {
+		return uncheck((Object obj) -> obj instanceof String
+				? obj.toString()
+				: 	converter.getObjectMapper().writerFor(obj.getClass()).writeValueAsString(obj));
+	}
+
 	@BeforeAll
 	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
 
 		// so we get the mapper as configured for the app
-		toRequest = new MvcRequestMapper(new DtoJsonMapper(converter.getObjectMapper()));
+		toRequest = new MvcRequestMapper(testDataObj2Str(converter));
 
 		test = new TestData.ArgumentBuilder();
 	}

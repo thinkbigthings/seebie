@@ -7,7 +7,6 @@ import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.AppRequest;
-import com.seebie.server.test.data.DtoJsonMapper;
 import com.seebie.server.test.data.MvcRequestMapper;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,10 +28,10 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 import javax.sql.DataSource;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import static com.seebie.server.controller.ControllerValidationTest.testDataObj2Str;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -106,7 +105,7 @@ public class ControllerSecurityTest {
 	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
 
 		// so we get the mapper as configured for the app
-		toRequest = new MvcRequestMapper(new DtoJsonMapper(converter.getObjectMapper()));
+		toRequest = new MvcRequestMapper(testDataObj2Str(converter));
 		
 		test = new TestData.ArgumentBuilder();
 	}
