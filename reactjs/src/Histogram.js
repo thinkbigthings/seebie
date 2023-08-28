@@ -19,6 +19,7 @@ Chart.register(...registerables)
 const histOptions = {
     scales: {
         x: {
+            stacked: true,
             offset: true,
             grid: {
                 offset: true
@@ -30,6 +31,9 @@ const histOptions = {
                 }
             }
         },
+        y: {
+            stacked: true
+        }
     }
 }
 
@@ -64,6 +68,17 @@ const fetchPost = (url, body) => {
     };
 
     return fetch(url, requestMeta);
+}
+
+// the resulting object goes into the chartData datasets array
+const createDataset = (title, bgColor, data) => {
+    return {
+            fill: true,
+            data: data,
+            label: title,
+            borderColor: bgColor,
+            backgroundColor: bgColor
+        };
 }
 
 const createInitialRange = () => {
@@ -114,17 +129,10 @@ function Histogram(props) {
         setBinHrParts(event.target.value);
     };
 
+
     useEffect(() => {
 
-        const newChartData = {
-            datasets: [{
-                fill: true,
-                data: [],
-                label: chart1Constants.title,
-                borderColor: '#745085',
-                backgroundColor: '#595b7c'
-            }]
-        };
+        const color = ['#595b7c', '#484a6b'];
 
         const histogramRequest = {
             binSize: binHrParts,
@@ -141,9 +149,15 @@ function Histogram(props) {
         fetchPost(sleepEndpoint, histogramRequest)
             .then(response => response.json())
             .then(histData => {
-                histData.bins = histData.bins.map(bin => bin/60);
-                newChartData.labels = histData.bins;
-                newChartData.datasets[0].data = histData.dataSets[0];
+
+                let labels = histData.bins.map(bin => bin/60);
+                let stacked = histData.dataSets.map((data, i) => createDataset("Set " + i, color[i], data));
+                // stacked[1] = createDataset("Set " + 1, color[1], stacked[0].data); // for testing
+                let newChartData = {
+                    labels: labels,
+                    datasets: stacked
+                };
+
                 setChartData(newChartData);
             })
     }, [sleepEndpoint, createdCount, binHrParts, chart1Constants.title, range]);
