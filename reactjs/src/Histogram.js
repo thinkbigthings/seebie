@@ -13,6 +13,10 @@ import useCurrentUser from "./useCurrentUser";
 import {NavHeader} from "./App";
 import CollapsibleFilter from "./component/CollapsibleFilter";
 import {basicHeader} from "./BasicHeaders";
+import Button from "react-bootstrap/Button";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import copy from "./Copier";
 
 Chart.register(...registerables)
 
@@ -37,18 +41,6 @@ const histOptions = {
     }
 }
 
-const createInitialChartData = (title, bgColor) => {
-    return {
-        datasets: [{
-            fill: true,
-            data: [],
-            label: title,
-            borderColor: '#745085',
-            backgroundColor: bgColor
-        }]
-    };
-}
-
 const isDateRangeValid = (d1, d2)  => {
     let j1 = d1.toJSON().slice(0, 10);
     let j2 = d2.toJSON().slice(0, 10);
@@ -69,6 +61,8 @@ const fetchPost = (url, body) => {
 
     return fetch(url, requestMeta);
 }
+
+const histogramColor = ['#595b7c', '#484a6b'];
 
 // the resulting object goes into the chartData datasets array
 const createDataset = (title, bgColor, data) => {
@@ -106,41 +100,80 @@ function Histogram(props) {
         {value: 15, text: '15 minutes'},
     ];
 
-    const [binHrParts, setBinHrParts] = useState(binSizeOptions[0].value);
-
     const chart1Constants = {
         title: "Set 1",
         bgColor: '#595b7c'
     };
 
-    let [range, setRange] = useState(createInitialRange());
-    let [chartData, setChartData] = useState(createInitialChartData(chart1Constants.title, chart1Constants.bgColor));
+    let [pageState, setPageState] = useState({
+        binSize: 60,
+        range: createInitialRange()
+    });
+
+    let [chartData, setChartData] = useState({
+                            datasets: [createDataset("Set 1", '#595b7c', [])]
+                        });
+
+    // TODO use a data structure to hold the filters, it can map to a histogram request and be updated on return
+
+    // let samplePageState = {
+    //     binSize: 30,
+    //     filter: [
+    //             {
+    //                 title: "Set 1", // can be derived
+    //                 collapsed: true,
+    //                 from: range.from,
+    //                 to:   range.to
+    //             }
+    //         ],
+    //     barData: {
+    //         labels: [], // set by returned data
+    //         datasets: [
+    //             {
+    //                 fill: true,
+    //                 data: [], // set by returned data
+    //                 label: "Set 1",
+    //                 borderColor: '#595b7c',
+    //                 backgroundColor: '#595b7c'
+    //             }
+    //         ]
+    //     }
+    // }
+
+    const onAddFilter = () => {
+
+    }
+
 
     function updateSearchRange(updateValues) {
-        let updatedRange = {...range, ...updateValues};
+        let newPageState = copy(pageState);
+        let updatedRange = {...pageState.range, ...updateValues};
         if( isDateRangeValid(updatedRange.from, updatedRange.to) ) {
-            setRange(updatedRange);
+            newPageState.range = updatedRange;
+            setPageState(newPageState);
+            // setRange(updatedRange);
         }
     }
 
     const sleepEndpoint = '/user/'+currentUser.username+'/sleep/histogram';
 
     const handlePartChange = event => {
-        setBinHrParts(event.target.value);
+        let newPageState = copy(pageState);
+        newPageState.binSize = event.target.value;
+        setPageState(newPageState);
+        // setBinHrParts(event.target.value);
     };
 
 
     useEffect(() => {
 
-        const color = ['#595b7c', '#484a6b'];
-
         const histogramRequest = {
-            binSize: binHrParts,
+            binSize: pageState.binSize,
             filters: {
                 dataFilters: [
                     {
-                        from: SleepDataManager.toIsoString(range.from),
-                        to:   SleepDataManager.toIsoString(range.to)
+                        from: SleepDataManager.toIsoString(pageState.range.from),
+                        to:   SleepDataManager.toIsoString(pageState.range.to)
                     }
                 ]
             }
@@ -151,8 +184,8 @@ function Histogram(props) {
             .then(histData => {
 
                 let labels = histData.bins.map(bin => bin/60);
-                let stacked = histData.dataSets.map((data, i) => createDataset("Set " + i, color[i], data));
-                // stacked[1] = createDataset("Set " + 1, color[1], stacked[0].data); // for testing
+                let stacked = histData.dataSets.map((data, i) => createDataset("Set " + i, histogramColor[i], data));
+                // stacked[1] = createDataset("Set " + 1, histogramColor[1], stacked[0].data); // for testing
                 let newChartData = {
                     labels: labels,
                     datasets: stacked
@@ -160,8 +193,9 @@ function Histogram(props) {
 
                 setChartData(newChartData);
             })
-    }, [sleepEndpoint, createdCount, binHrParts, chart1Constants.title, range]);
+    }, [sleepEndpoint, createdCount, chart1Constants.title, pageState]);
 
+    // TODO check all datasets
     const chartArea = chartData.datasets[0].data.length > 1
         ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={chartData} />
         :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
@@ -171,32 +205,29 @@ function Histogram(props) {
 
     let onChangeStart = date => updateSearchRange({from: date});
     let onChangeEnd = date => updateSearchRange({to: date});
-    let selectedStart = range.from;
-    let selectedEnd = range.to;
+    let selectedStart = pageState.range.from;
+    let selectedEnd =pageState.range.to;
+
 
     return (
         <Container>
-            <NavHeader title="Sleep Hours Histogram"/>
+            <NavHeader title="Sleep Histogram">
+                <Button variant="secondary" onClick={ onAddFilter } >
+                    <FontAwesomeIcon className="me-2" icon={faPlus} />
+                    Add
+                </Button>
 
-            <Row className={"pb-3"}>
-                <Col className="col-2">
-                    <label>Bin Size</label>
-                </Col>
-                <Col className="col-md-4">
-                    <Form.Select value={binHrParts} onChange={handlePartChange}>
-                        {
-                            binSizeOptions.map(option => {
-                                return (
-                                    <option key={option.value} value={option.value}>
-                                        {option.text}
-                                    </option>
-                                )
-                            })
-                        }
-                    </Form.Select>
-                </Col>
-            </Row>
-            <Row className={"pb-3"}>
+            </NavHeader>
+            {/*{data.content.map(user =>*/}
+            {/*    <tr key={user.username}>*/}
+            {/*        <td>*/}
+            {/*            <Link to={"/users/" + user.username + "/edit" } >*/}
+            {/*                {user.displayName}*/}
+            {/*            </Link>*/}
+            {/*        </td>*/}
+            {/*    </tr>*/}
+            {/*)}*/}
+            <Row>
                 <Col className="col-12">
 
                     <CollapsibleFilter selectedStart={selectedStart}
@@ -211,6 +242,25 @@ function Histogram(props) {
             </Row>
 
             {chartArea}
+
+            <Row className={"pt-3"}>
+                <Col className="col-4">
+                    <label>Bin Size</label>
+                </Col>
+                <Col className="col-md-4">
+                    <Form.Select value={pageState.binSize} onChange={handlePartChange}>
+                        {
+                            binSizeOptions.map(option => {
+                                return (
+                                    <option key={option.value} value={option.value}>
+                                        {option.text}
+                                    </option>
+                                )
+                            })
+                        }
+                    </Form.Select>
+                </Col>
+            </Row>
 
         </Container>
     );
