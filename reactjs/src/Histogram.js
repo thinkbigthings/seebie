@@ -93,6 +93,7 @@ function Histogram(props) {
     const {createdCount} = props;
 
     const {currentUser} = useCurrentUser();
+    const sleepEndpoint = '/user/'+currentUser.username+'/sleep/histogram';
 
     const binSizeOptions = [
         {value: 60, text: '60 minutes'},
@@ -100,21 +101,21 @@ function Histogram(props) {
         {value: 15, text: '15 minutes'},
     ];
 
-    const chart1Constants = {
-        title: "Set 1",
-        bgColor: '#595b7c'
-    };
-
     let [pageState, setPageState] = useState({
         binSize: 60,
-        range: createInitialRange()
+        range: createInitialRange(),
+        title: "Set 1",
+        bgColor: '#595b7c'
     });
+
+
+    // TODO next steps: put chartData into pageState. Then nest filter data in pageState into an array. Finally: multiple arrays
+    // data structure can map to a histogram request and be updated on return
 
     let [chartData, setChartData] = useState({
                             datasets: [createDataset("Set 1", '#595b7c', [])]
                         });
 
-    // TODO use a data structure to hold the filters, it can map to a histogram request and be updated on return
 
     // let samplePageState = {
     //     binSize: 30,
@@ -151,17 +152,22 @@ function Histogram(props) {
         if( isDateRangeValid(updatedRange.from, updatedRange.to) ) {
             newPageState.range = updatedRange;
             setPageState(newPageState);
-            // setRange(updatedRange);
         }
     }
 
-    const sleepEndpoint = '/user/'+currentUser.username+'/sleep/histogram';
 
-    const handlePartChange = event => {
-        let newPageState = copy(pageState);
+    const handleBinSizeChange = event => {
+
+        // copy method is not working, the date types are copied as strings?
+        // let newPageState = copy(pageState);
+
+        // this doesn't do a deep copy, be careful
+        let newPageState = Object.assign({}, pageState);
+
+        // this copies the number as a string but it seems to still work?
         newPageState.binSize = event.target.value;
+
         setPageState(newPageState);
-        // setBinHrParts(event.target.value);
     };
 
 
@@ -184,16 +190,14 @@ function Histogram(props) {
             .then(histData => {
 
                 let labels = histData.bins.map(bin => bin/60);
-                let stacked = histData.dataSets.map((data, i) => createDataset("Set " + i, histogramColor[i], data));
-                // stacked[1] = createDataset("Set " + 1, histogramColor[1], stacked[0].data); // for testing
-                let newChartData = {
+                let stacked = histData.dataSets.map((data, i) => createDataset(pageState.title, pageState.bgColor, data));
+
+                setChartData({
                     labels: labels,
                     datasets: stacked
-                };
-
-                setChartData(newChartData);
+                });
             })
-    }, [sleepEndpoint, createdCount, chart1Constants.title, pageState]);
+    }, [sleepEndpoint, createdCount, pageState]);
 
     // TODO check all datasets
     const chartArea = chartData.datasets[0].data.length > 1
@@ -201,7 +205,7 @@ function Histogram(props) {
         :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
 
     const [collapsed, setCollapsed] = useState(true);
-    const filterTitle = chart1Constants.title;
+    const filterTitle = pageState.title;
 
     let onChangeStart = date => updateSearchRange({from: date});
     let onChangeEnd = date => updateSearchRange({to: date});
@@ -248,7 +252,7 @@ function Histogram(props) {
                     <label>Bin Size</label>
                 </Col>
                 <Col className="col-md-4">
-                    <Form.Select value={pageState.binSize} onChange={handlePartChange}>
+                    <Form.Select value={pageState.binSize} onChange={handleBinSizeChange}>
                         {
                             binSizeOptions.map(option => {
                                 return (
