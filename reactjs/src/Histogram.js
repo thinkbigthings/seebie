@@ -64,6 +64,12 @@ const fetchPost = (url, body) => {
 
 const histogramColor = ['#595b7c', '#484a6b'];
 
+const binSizeOptions = [
+    {value: 60, text: '60 minutes'},
+    {value: 30, text: '30 minutes'},
+    {value: 15, text: '15 minutes'},
+];
+
 // the resulting object goes into the chartData datasets array
 const createDataset = (title, bgColor, data) => {
     return {
@@ -90,56 +96,66 @@ const createInitialRange = () => {
 function Histogram(props) {
 
     // TODO createdCount should be named "sleepLoggedCountSinceAppLoad" or something
+    // this is so the page is updated when the user logs sleep
     const {createdCount} = props;
 
     const {currentUser} = useCurrentUser();
-    const sleepEndpoint = '/user/'+currentUser.username+'/sleep/histogram';
+    const sleepEndpoint = '/user/' + currentUser.username + '/sleep/histogram';
 
-    const binSizeOptions = [
-        {value: 60, text: '60 minutes'},
-        {value: 30, text: '30 minutes'},
-        {value: 15, text: '15 minutes'},
-    ];
 
     let [pageState, setPageState] = useState({
         binSize: 60,
         range: createInitialRange(),
-        title: "Set 1",
-        bgColor: '#595b7c'
+        filterTitle: "Set 1",
+        bgColor: '#595b7c',
+        barData: {
+            labels: [],
+            datasets: []
+        }
     });
 
 
-    // TODO next steps: put chartData into pageState. Then nest filter data in pageState into an array. Finally: multiple arrays
-    // data structure can map to a histogram request and be updated on return
-
     let [chartData, setChartData] = useState({
-                            datasets: [createDataset("Set 1", '#595b7c', [])]
-                        });
+        datasets: [createDataset("Set 1", '#595b7c', [])]
+    });
 
 
-    // let samplePageState = {
-    //     binSize: 30,
-    //     filter: [
-    //             {
-    //                 title: "Set 1", // can be derived
-    //                 collapsed: true,
-    //                 from: range.from,
-    //                 to:   range.to
-    //             }
-    //         ],
-    //     barData: {
-    //         labels: [], // set by returned data
-    //         datasets: [
-    //             {
-    //                 fill: true,
-    //                 data: [], // set by returned data
-    //                 label: "Set 1",
-    //                 borderColor: '#595b7c',
-    //                 backgroundColor: '#595b7c'
-    //             }
-    //         ]
-    //     }
-    // }
+    // this is in the useEffect dependency array, so a user changing a setting will trigger a call to the server
+    // when that call returns, the pageDisplay state is updated, which triggers re-render,
+    // so pageDisplay should NOT be in the dependency array for useEffect, or it will cause an infinite loop
+    let samplePageSettings = {
+        binSize: 30,
+        filter: [
+                {
+                    from: "range.from", // date object
+                    to:   "range.to" // date object
+                }
+         ]
+     }
+
+    let samplePageDisplay = {
+        filter: [
+            {
+                title: "Set 1", // inferred by page settings
+                collapsed: true, // managed by the containing component so that it can re-render and its child components re-render
+                selectedStart: "range.from", // date object, set by page settings
+                selectedEnd: "range.to" // date object, set by page settings
+            }
+        ],
+        barData: { // this is assigned directly to the field like so <Bar data={pageDisplay.barData} />
+            labels: [], // set by returned data
+            datasets: [
+                {
+                    fill: true,
+                    data: [], // set by returned data
+                    label: "Set 1", // inferred by page settings
+                    borderColor: '#595b7c', // set by current index and known values
+                    backgroundColor: '#595b7c' // set by page settings and known values
+                }
+            ]
+        }
+    }
+
 
     const onAddFilter = () => {
 
@@ -161,10 +177,12 @@ function Histogram(props) {
         // copy method is not working, the date types are copied as strings?
         // let newPageState = copy(pageState);
 
-        // this doesn't do a deep copy, be careful
-        let newPageState = Object.assign({}, pageState);
+        let newPageState = structuredClone(pageState);
+        // console.log(newPageState);
+        // Object.assign doesn't do a deep copy, be careful
+        // let newPageState = Object.assign({}, pageState);
 
-        // this copies the number as a string but it seems to still work?
+        // this copies the number as a string, but it seems to still work?
         newPageState.binSize = event.target.value;
 
         setPageState(newPageState);
@@ -190,8 +208,12 @@ function Histogram(props) {
             .then(histData => {
 
                 let labels = histData.bins.map(bin => bin/60);
-                let stacked = histData.dataSets.map((data, i) => createDataset(pageState.title, pageState.bgColor, data));
+                let stacked = histData.dataSets.map((data, i) => createDataset(pageState.filterTitle, pageState.bgColor, data));
 
+                let newPageState = structuredClone(pageState);
+                newPageState.barData.labels = labels;
+                newPageState.barData.datasets = stacked;
+                // setPageState(newPageState);
                 setChartData({
                     labels: labels,
                     datasets: stacked
@@ -205,7 +227,6 @@ function Histogram(props) {
         :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
 
     const [collapsed, setCollapsed] = useState(true);
-    const filterTitle = pageState.title;
 
     let onChangeStart = date => updateSearchRange({from: date});
     let onChangeEnd = date => updateSearchRange({to: date});
@@ -238,7 +259,7 @@ function Histogram(props) {
                                        onChangeStart={onChangeStart}
                                        selectedEnd={selectedEnd}
                                        onChangeEnd={onChangeEnd}
-                                       title={filterTitle}
+                                       title={pageState.filterTitle}
                                        collapsed={collapsed}
                                        onCollapseClick={() => setCollapsed(!collapsed)} />
 
