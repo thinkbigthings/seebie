@@ -93,6 +93,8 @@ const createInitialRange = () => {
     return {from: lastMonth, to: today};
 }
 
+const initialRange = createInitialRange();
+
 function Histogram(props) {
 
     // TODO createdCount should be named "sleepLoggedCountSinceAppLoad" or something
@@ -103,101 +105,59 @@ function Histogram(props) {
     const sleepEndpoint = '/user/' + currentUser.username + '/sleep/histogram';
 
 
-    let [pageState, setPageState] = useState({
-        binSize: 60,
-        range: createInitialRange(),
-        filterTitle: "Set 1",
-        bgColor: '#595b7c',
-        barData: {
-            labels: [],
-            datasets: []
-        }
-    });
-
-
-    let [chartData, setChartData] = useState({
-        datasets: [createDataset("Set 1", '#595b7c', [])]
-    });
-
-
     // this is in the useEffect dependency array, so a user changing a setting will trigger a call to the server
-    // when that call returns, the pageDisplay state is updated, which triggers re-render,
-    // so pageDisplay should NOT be in the dependency array for useEffect, or it will cause an infinite loop
-    let samplePageSettings = {
-        binSize: 30,
-        filter: [
-                {
-                    from: "range.from", // date object
-                    to:   "range.to" // date object
-                }
-         ]
-     }
+    // when that call returns, the filterDisplay state is updated, which triggers re-render,
+    // so filterDisplay should NOT be in the dependency array for useEffect, or it will cause an infinite loop
+    let [pageSettings, setPageSettings] = useState({
+                                                                    binSize: 60,
+                                                                    range: initialRange
+                                                                });
 
-    let samplePageDisplay = {
-        filter: [
-            {
-                title: "Set 1", // inferred by page settings
-                collapsed: true, // managed by the containing component so that it can re-render and its child components re-render
-                selectedStart: "range.from", // date object, set by page settings
-                selectedEnd: "range.to" // date object, set by page settings
-            }
-        ],
-        barData: { // this is assigned directly to the field like so <Bar data={pageDisplay.barData} />
-            labels: [], // set by returned data
-            datasets: [
-                {
-                    fill: true,
-                    data: [], // set by returned data
-                    label: "Set 1", // inferred by page settings
-                    borderColor: '#595b7c', // set by current index and known values
-                    backgroundColor: '#595b7c' // set by page settings and known values
-                }
-            ]
-        }
-    }
+    let [filterDisplay, setFilterDisplay] = useState({
+                                                                    title: "Set 1",
+                                                                    collapsed: true
+                                                                });
 
+    let[barData, setBarData] = useState({
+                                                                    labels: [],
+                                                                    datasets: []
+                                                                });
 
     const onAddFilter = () => {
-
+        console.log("Add filter");
     }
 
+    function onToggleCollapse() {
+        let newPageDisplay = copy(filterDisplay);
+        newPageDisplay.collapsed = ! newPageDisplay.collapsed;
+        setFilterDisplay(newPageDisplay);
+    }
 
     function updateSearchRange(updateValues) {
-        let newPageState = copy(pageState);
-        let updatedRange = {...pageState.range, ...updateValues};
+        let newPageState = copy(pageSettings);
+        let updatedRange = {...pageSettings.range, ...updateValues};
         if( isDateRangeValid(updatedRange.from, updatedRange.to) ) {
             newPageState.range = updatedRange;
-            setPageState(newPageState);
+            setPageSettings(newPageState);
         }
     }
 
-
     const handleBinSizeChange = event => {
-
-        // copy method is not working, the date types are copied as strings?
-        // let newPageState = copy(pageState);
-
-        let newPageState = structuredClone(pageState);
-        // console.log(newPageState);
-        // Object.assign doesn't do a deep copy, be careful
-        // let newPageState = Object.assign({}, pageState);
-
-        // this copies the number as a string, but it seems to still work?
+        let newPageState = structuredClone(pageSettings);
         newPageState.binSize = event.target.value;
-
-        setPageState(newPageState);
+        setPageSettings(newPageState);
     };
 
 
     useEffect(() => {
 
         const histogramRequest = {
-            binSize: pageState.binSize,
+            binSize: pageSettings.binSize,
             filters: {
                 dataFilters: [
                     {
-                        from: SleepDataManager.toIsoString(pageState.range.from),
-                        to:   SleepDataManager.toIsoString(pageState.range.to)
+                        from: SleepDataManager.toIsoString(pageSettings.range.from),
+                        to:   SleepDataManager.toIsoString(pageSettings.range.to)
                     }
                 ]
             }
@@ -207,32 +167,27 @@ function Histogram(props) {
             .then(response => response.json())
             .then(histData => {
 
-                let labels = histData.bins.map(bin => bin/60);
-                let stacked = histData.dataSets.map((data, i) => createDataset(pageState.filterTitle, pageState.bgColor, data));
+                // TODO title is inferred from the dates or index of the dataset
 
-                let newPageState = structuredClone(pageState);
-                newPageState.barData.labels = labels;
-                newPageState.barData.datasets = stacked;
-                // setPageState(newPageState);
-                setChartData({
+                let labels = histData.bins.map(bin => bin/60);
+                let dataSets = histData.dataSets.map((data, i) => createDataset("Set " + (i+1), histogramColor[0], data));
+
+                setBarData({
                     labels: labels,
-                    datasets: stacked
+                    datasets: dataSets
                 });
             })
-    }, [sleepEndpoint, createdCount, pageState]);
+    }, [sleepEndpoint, createdCount, pageSettings]);
 
     // TODO check all datasets
-    const chartArea = chartData.datasets[0].data.length > 1
-        ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={chartData} />
-        :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
+    const chartArea = <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={barData} />
 
-    const [collapsed, setCollapsed] = useState(true);
+    // const chartArea = filterDisplay.barData.datasets[0].data.length > 1
+    //     ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={filterDisplay.barData} />
+    //     :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
 
     let onChangeStart = date => updateSearchRange({from: date});
     let onChangeEnd = date => updateSearchRange({to: date});
-    let selectedStart = pageState.range.from;
-    let selectedEnd =pageState.range.to;
-
 
     return (
         <Container>
@@ -255,13 +210,13 @@ function Histogram(props) {
             <Row>
                 <Col className="col-12">
 
-                    <CollapsibleFilter selectedStart={selectedStart}
+                    <CollapsibleFilter selectedStart={pageSettings.range.from}
                                        onChangeStart={onChangeStart}
-                                       selectedEnd={selectedEnd}
+                                       selectedEnd={pageSettings.range.to}
                                        onChangeEnd={onChangeEnd}
-                                       title={pageState.filterTitle}
-                                       collapsed={collapsed}
-                                       onCollapseClick={() => setCollapsed(!collapsed)} />
+                                       title={filterDisplay.title}
+                                       collapsed={filterDisplay.collapsed}
+                                       onCollapseClick={onToggleCollapse} />
 
                 </Col>
             </Row>
@@ -273,7 +228,7 @@ function Histogram(props) {
                     <label>Bin Size</label>
                 </Col>
                 <Col className="col-md-4">
-                    <Form.Select value={pageState.binSize} onChange={handleBinSizeChange}>
+                    <Form.Select value={pageSettings.binSize} onChange={handleBinSizeChange}>
                         {
                             binSizeOptions.map(option => {
                                 return (
