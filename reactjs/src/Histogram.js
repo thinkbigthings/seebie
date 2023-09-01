@@ -132,17 +132,17 @@ function Histogram(props) {
         console.log("Add filter");
     }
 
-    function onToggleCollapse() {
+    function onToggleCollapse(i) {
         let newFilterDisplay = structuredClone(filterDisplay);
-        newFilterDisplay[0].collapsed = ! newFilterDisplay[0].collapsed;
+        newFilterDisplay[i].collapsed = ! newFilterDisplay[i].collapsed;
         setFilterDisplay(newFilterDisplay);
     }
 
-    function updateSearchRange(updateValues) {
+    function updateSearchRange(updateValues, i) {
         let newPageSettings = structuredClone(pageSettings);
-        let updatedRange = {...pageSettings.filters[0], ...updateValues};
+        let updatedRange = {...pageSettings.filters[i], ...updateValues};
         if( isDateRangeValid(updatedRange.from, updatedRange.to) ) {
-            newPageSettings.filters[0] = updatedRange;
+            newPageSettings.filters[i] = updatedRange;
             setPageSettings(newPageSettings);
         }
     }
@@ -156,15 +156,16 @@ function Histogram(props) {
 
     useEffect(() => {
 
+        const newDataFilters = pageSettings.filters.map((filter) => {return {
+                from: SleepDataManager.toIsoString(filter.from),
+                to: SleepDataManager.toIsoString(filter.to)
+            }}
+        );
+
         const histogramRequest = {
             binSize: pageSettings.binSize,
             filters: {
-                dataFilters: [
-                    {
-                        from: SleepDataManager.toIsoString(pageSettings.filters[0].from),
-                        to:   SleepDataManager.toIsoString(pageSettings.filters[0].to)
-                    }
-                ]
+                dataFilters: newDataFilters
             }
         }
 
@@ -191,8 +192,6 @@ function Histogram(props) {
     //     ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={filterDisplay.barData} />
     //     :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
 
-    let onChangeStart = date => updateSearchRange({from: date});
-    let onChangeEnd = date => updateSearchRange({to: date});
 
     return (
         <Container>
@@ -203,28 +202,26 @@ function Histogram(props) {
                 </Button>
 
             </NavHeader>
-            {/*{data.content.map(user =>*/}
-            {/*    <tr key={user.username}>*/}
-            {/*        <td>*/}
-            {/*            <Link to={"/users/" + user.username + "/edit" } >*/}
-            {/*                {user.displayName}*/}
-            {/*            </Link>*/}
-            {/*        </td>*/}
-            {/*    </tr>*/}
-            {/*)}*/}
-            <Row>
-                <Col className="col-12">
 
-                    <CollapsibleFilter selectedStart={pageSettings.filters[0].from}
-                                       onChangeStart={onChangeStart}
-                                       selectedEnd={pageSettings.filters[0].to}
-                                       onChangeEnd={onChangeEnd}
-                                       title={filterDisplay[0].title}
-                                       collapsed={filterDisplay[0].collapsed}
-                                       onCollapseClick={onToggleCollapse} />
+            {
+                pageSettings.filters.map((filter, i) => {
+                    return (
+                        <Row key={i}>
+                            <Col className="col-12">
 
-                </Col>
-            </Row>
+                                <CollapsibleFilter selectedStart={filter.from}
+                                                   onChangeStart={(date) => updateSearchRange({from:date}, i)}
+                                                   selectedEnd={filter.to}
+                                                   onChangeEnd={(date) => updateSearchRange({to:date}, i)}
+                                                   title={filterDisplay[i].title}
+                                                   collapsed={filterDisplay[i].collapsed}
+                                                   onCollapseClick={() => onToggleCollapse(i)} />
+
+                            </Col>
+                        </Row>
+                    )
+                })
+            }
 
             {chartArea}
 
