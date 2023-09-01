@@ -16,7 +16,6 @@ import {basicHeader} from "./BasicHeaders";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import copy from "./Copier";
 
 Chart.register(...registerables)
 
@@ -110,13 +109,19 @@ function Histogram(props) {
     // so filterDisplay should NOT be in the dependency array for useEffect, or it will cause an infinite loop
     let [pageSettings, setPageSettings] = useState({
                                                                     binSize: 60,
-                                                                    range: initialRange
+                                                                    filters: [
+                                                                        {
+                                                                            from: initialRange.from,
+                                                                            to: initialRange.to
+                                                                        }
+                                                                    ]
                                                                 });
 
-    let [filterDisplay, setFilterDisplay] = useState({
-                                                                    title: "Set 1",
-                                                                    collapsed: true
-                                                                });
+    let [filterDisplay, setFilterDisplay] = useState([ {
+                                                                        title: "Set 1",
+                                                                        collapsed: true
+                                                                    }
+                                                                ]);
 
     let[barData, setBarData] = useState({
                                                                     labels: [],
@@ -128,17 +133,17 @@ function Histogram(props) {
     }
 
     function onToggleCollapse() {
-        let newPageDisplay = copy(filterDisplay);
-        newPageDisplay.collapsed = ! newPageDisplay.collapsed;
-        setFilterDisplay(newPageDisplay);
+        let newFilterDisplay = structuredClone(filterDisplay);
+        newFilterDisplay[0].collapsed = ! newFilterDisplay[0].collapsed;
+        setFilterDisplay(newFilterDisplay);
     }
 
     function updateSearchRange(updateValues) {
-        let newPageState = copy(pageSettings);
-        let updatedRange = {...pageSettings.range, ...updateValues};
+        let newPageSettings = structuredClone(pageSettings);
+        let updatedRange = {...pageSettings.filters[0], ...updateValues};
         if( isDateRangeValid(updatedRange.from, updatedRange.to) ) {
-            newPageState.range = updatedRange;
-            setPageSettings(newPageState);
+            newPageSettings.filters[0] = updatedRange;
+            setPageSettings(newPageSettings);
         }
     }
 
@@ -156,8 +161,8 @@ function Histogram(props) {
             filters: {
                 dataFilters: [
                     {
-                        from: SleepDataManager.toIsoString(pageSettings.range.from),
-                        to:   SleepDataManager.toIsoString(pageSettings.range.to)
+                        from: SleepDataManager.toIsoString(pageSettings.filters[0].from),
+                        to:   SleepDataManager.toIsoString(pageSettings.filters[0].to)
                     }
                 ]
             }
@@ -210,12 +215,12 @@ function Histogram(props) {
             <Row>
                 <Col className="col-12">
 
-                    <CollapsibleFilter selectedStart={pageSettings.range.from}
+                    <CollapsibleFilter selectedStart={pageSettings.filters[0].from}
                                        onChangeStart={onChangeStart}
-                                       selectedEnd={pageSettings.range.to}
+                                       selectedEnd={pageSettings.filters[0].to}
                                        onChangeEnd={onChangeEnd}
-                                       title={filterDisplay.title}
-                                       collapsed={filterDisplay.collapsed}
+                                       title={filterDisplay[0].title}
+                                       collapsed={filterDisplay[0].collapsed}
                                        onCollapseClick={onToggleCollapse} />
 
                 </Col>
