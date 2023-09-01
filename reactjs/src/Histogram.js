@@ -110,10 +110,7 @@ function Histogram(props) {
     let [pageSettings, setPageSettings] = useState({
                                                                     binSize: 60,
                                                                     filters: [
-                                                                        {
-                                                                            from: initialRange.from,
-                                                                            to: initialRange.to
-                                                                        }
+                                                                        initialRange
                                                                     ]
                                                                 });
 
@@ -129,7 +126,17 @@ function Histogram(props) {
                                                                 });
 
     const onAddFilter = () => {
-        console.log("Add filter");
+
+        let newPageSettings = structuredClone(pageSettings);
+        newPageSettings.filters.push(initialRange);
+        setPageSettings(newPageSettings);
+
+        let newFilterDisplay = structuredClone(filterDisplay);
+        newFilterDisplay.push({
+            title: "Set " + (newFilterDisplay.length + 1),
+            collapsed: false
+        });
+        setFilterDisplay(newFilterDisplay);
     }
 
     function onToggleCollapse(i) {
@@ -156,7 +163,7 @@ function Histogram(props) {
 
     useEffect(() => {
 
-        const newDataFilters = pageSettings.filters.map((filter) => {return {
+        const newDataFilters = pageSettings.filters.map((filter) => { return {
                 from: SleepDataManager.toIsoString(filter.from),
                 to: SleepDataManager.toIsoString(filter.to)
             }}
@@ -176,7 +183,7 @@ function Histogram(props) {
                 // TODO title is inferred from the dates or index of the dataset
 
                 let labels = histData.bins.map(bin => bin/60);
-                let dataSets = histData.dataSets.map((data, i) => createDataset("Set " + (i+1), histogramColor[0], data));
+                let dataSets = histData.dataSets.map((data, i) => createDataset("Set " + (i+1), histogramColor[i], data));
 
                 setBarData({
                     labels: labels,
