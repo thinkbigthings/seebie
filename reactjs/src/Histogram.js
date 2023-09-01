@@ -167,7 +167,7 @@ function Histogram(props) {
         }
     }
 
-    const handleBinSizeChange = event => {
+    const updateBinSize = event => {
         let newPageState = structuredClone(pageSettings);
         newPageState.binSize = event.target.value;
         setPageSettings(newPageState);
@@ -230,7 +230,7 @@ function Histogram(props) {
                     <label>Bin Size</label>
                 </Col>
                 <Col className="col-md-4">
-                    <Form.Select value={pageSettings.binSize} onChange={handleBinSizeChange}>
+                    <Form.Select value={pageSettings.binSize} onChange={updateBinSize}>
                         {
                             binSizeOptions.map(option => {
                                 return (
