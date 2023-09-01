@@ -15,7 +15,7 @@ import CollapsibleFilter from "./component/CollapsibleFilter";
 import {basicHeader} from "./BasicHeaders";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
 
 Chart.register(...registerables)
 
@@ -152,6 +152,17 @@ function Histogram(props) {
         setFilterDisplay(newFilterDisplay);
     }
 
+    function onRemoveFilter(i) {
+
+        let newPageSettings = structuredClone(pageSettings);
+        newPageSettings.filters = newPageSettings.filters.splice(i, 1);
+        setPageSettings(newPageSettings);
+
+        let newFilterDisplay = structuredClone(filterDisplay);
+        newFilterDisplay = newFilterDisplay.splice(i, 1);
+        setFilterDisplay(newFilterDisplay);
+    }
+
     function onToggleCollapse(i) {
         let newFilterDisplay = structuredClone(filterDisplay);
         newFilterDisplay[i].collapsed = ! newFilterDisplay[i].collapsed;
@@ -200,14 +211,13 @@ function Histogram(props) {
                     <FontAwesomeIcon className="me-2" icon={faPlus} />
                     Add
                 </Button>
-
             </NavHeader>
 
             {
                 pageSettings.filters.map((filter, i) => {
                     return (
                         <Row key={i}>
-                            <Col className="col-12 px-0">
+                            <Col className="col-10 px-0">
 
                                 <CollapsibleFilter selectedStart={filter.from}
                                                    onChangeStart={(date) => updateSearchRange({from:date}, i)}
@@ -217,6 +227,11 @@ function Histogram(props) {
                                                    collapsed={filterDisplay[i].collapsed}
                                                    onCollapseClick={() => onToggleCollapse(i)} />
 
+                            </Col>
+                            <Col className={"col-2 px-0"}>
+                                <Button variant="warning" onClick={ () => onRemoveFilter(i) } >
+                                    <FontAwesomeIcon icon={faRemove} />
+                                </Button>
                             </Col>
                         </Row>
                     )
