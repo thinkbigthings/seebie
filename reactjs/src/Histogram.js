@@ -80,6 +80,23 @@ const createDataset = (title, bgColor, data) => {
         };
 }
 
+const pageSettingsToRequest = (pageSettings) => {
+
+    const newDataFilters = pageSettings.filters.map((filter) => { return {
+            from: SleepDataManager.toIsoString(filter.from),
+            to: SleepDataManager.toIsoString(filter.to)
+        }}
+    );
+
+    return {
+        binSize: pageSettings.binSize,
+        filters: {
+            dataFilters: newDataFilters
+        }
+    }
+
+}
+
 const createInitialRange = () => {
 
     let today = new Date();
@@ -103,10 +120,6 @@ function Histogram(props) {
     const {currentUser} = useCurrentUser();
     const sleepEndpoint = '/user/' + currentUser.username + '/sleep/histogram';
 
-
-    // this is in the useEffect dependency array, so a user changing a setting will trigger a call to the server
-    // when that call returns, the filterDisplay state is updated, which triggers re-render,
-    // so filterDisplay should NOT be in the dependency array for useEffect, or it will cause an infinite loop
     let [pageSettings, setPageSettings] = useState({
                                                                     binSize: 60,
                                                                     filters: [
@@ -162,32 +175,12 @@ function Histogram(props) {
 
 
     useEffect(() => {
-
-        const newDataFilters = pageSettings.filters.map((filter) => { return {
-                from: SleepDataManager.toIsoString(filter.from),
-                to: SleepDataManager.toIsoString(filter.to)
-            }}
-        );
-
-        const histogramRequest = {
-            binSize: pageSettings.binSize,
-            filters: {
-                dataFilters: newDataFilters
-            }
-        }
-
-        fetchPost(sleepEndpoint, histogramRequest)
+        fetchPost(sleepEndpoint, pageSettingsToRequest(pageSettings))
             .then(response => response.json())
             .then(histData => {
-
-                // TODO title is inferred from the dates or index of the dataset
-
-                let labels = histData.bins.map(bin => bin/60);
-                let dataSets = histData.dataSets.map((data, i) => createDataset("Set " + (i+1), histogramColor[i], data));
-
                 setBarData({
-                    labels: labels,
-                    datasets: dataSets
+                    labels: histData.bins.map(bin => bin/60),
+                    datasets: histData.dataSets.map((data, i) => createDataset("Set " + (i+1), histogramColor[i], data))
                 });
             })
     }, [sleepEndpoint, createdCount, pageSettings]);
@@ -214,7 +207,7 @@ function Histogram(props) {
                 pageSettings.filters.map((filter, i) => {
                     return (
                         <Row key={i}>
-                            <Col className="col-12">
+                            <Col className="col-12 px-0">
 
                                 <CollapsibleFilter selectedStart={filter.from}
                                                    onChangeStart={(date) => updateSearchRange({from:date}, i)}
