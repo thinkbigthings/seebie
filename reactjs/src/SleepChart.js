@@ -134,4 +134,4 @@ function SleepChart(props) {
     );
 }
 
-export default SleepChart;
+export {SleepChart, createInitialRange};

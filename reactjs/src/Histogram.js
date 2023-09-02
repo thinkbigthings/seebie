@@ -13,12 +13,17 @@ import useCurrentUser from "./useCurrentUser";
 import {NavHeader} from "./App";
 import CollapsibleFilter from "./component/CollapsibleFilter";
 import {basicHeader} from "./BasicHeaders";
+import Button from "react-bootstrap/Button";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
+import {createInitialRange} from "./SleepChart";
 
 Chart.register(...registerables)
 
 const histOptions = {
     scales: {
         x: {
+            stacked: true,
             offset: true,
             grid: {
                 offset: true
@@ -30,19 +35,10 @@ const histOptions = {
                 }
             }
         },
+        y: {
+            stacked: true
+        }
     }
-}
-
-const createInitialChartData = (title, bgColor) => {
-    return {
-        datasets: [{
-            fill: true,
-            data: [],
-            label: title,
-            borderColor: '#745085',
-            backgroundColor: bgColor
-        }]
-    };
 }
 
 const isDateRangeValid = (d1, d2)  => {
@@ -66,110 +62,193 @@ const fetchPost = (url, body) => {
     return fetch(url, requestMeta);
 }
 
-const createInitialRange = () => {
+const histogramColor = ['#897b9c', '#596b7c', '#393b4c'];
 
-    let today = new Date();
-    today.setHours(23, 59, 59);
+const binSizeOptions = [
+    {value: 60, text: '60 minutes'},
+    {value: 30, text: '30 minutes'},
+    {value: 15, text: '15 minutes'},
+];
 
-    let lastMonth = new Date(today.getTime());
-    lastMonth.setDate(today.getDate() - 30);
-    lastMonth.setHours(0, 0, 0);
-
-    return {from: lastMonth, to: today};
+// the resulting object goes into the chartData datasets array
+const createDataset = (displayInfo, data) => {
+    return {
+            fill: true,
+            data: data,
+            label: displayInfo.title,
+            borderColor: displayInfo.color,
+            backgroundColor: displayInfo.color
+        };
 }
+
+const pageSettingsToRequest = (pageSettings) => {
+
+    const newDataFilters = pageSettings.filters.map((filter) => { return {
+            from: SleepDataManager.toIsoString(filter.from),
+            to: SleepDataManager.toIsoString(filter.to)
+        }}
+    );
+
+    return {
+        binSize: pageSettings.binSize,
+        filters: {
+            dataFilters: newDataFilters
+        }
+    }
+
+}
+
+const initialRange = createInitialRange();
 
 function Histogram(props) {
 
     // TODO createdCount should be named "sleepLoggedCountSinceAppLoad" or something
+    // this is so the page is updated when the user logs sleep
     const {createdCount} = props;
 
     const {currentUser} = useCurrentUser();
+    const sleepEndpoint = '/user/' + currentUser.username + '/sleep/histogram';
 
-    const binSizeOptions = [
-        {value: 60, text: '60 minutes'},
-        {value: 30, text: '30 minutes'},
-        {value: 15, text: '15 minutes'},
-    ];
+    let [numFiltersCreated, setNumFiltersCreated] = useState(1);
 
-    const [binHrParts, setBinHrParts] = useState(binSizeOptions[0].value);
+    let [pageSettings, setPageSettings] = useState({
+                                                                    binSize: 60,
+                                                                    filters: [
+                                                                        {
+                                                                            from: initialRange.from,
+                                                                            to: initialRange.to,
+                                                                            title: "Set " + numFiltersCreated,
+                                                                            color: histogramColor[0]
+                                                                        }
+                                                                    ]
+                                                                });
 
-    const chart1Constants = {
-        title: "Set 1",
-        bgColor: '#595b7c'
-    };
+    let [filterDisplay, setFilterDisplay] = useState([ {
+                                                                        collapsed: true
+                                                                    }
+                                                                ]);
 
-    let [range, setRange] = useState(createInitialRange());
-    let [chartData, setChartData] = useState(createInitialChartData(chart1Constants.title, chart1Constants.bgColor));
+    let[barData, setBarData] = useState({
+                                                                    labels: [],
+                                                                    datasets: []
+                                                                });
 
-    function updateSearchRange(updateValues) {
-        let updatedRange = {...range, ...updateValues};
+    const onAddFilter = () => {
+
+        let newNumFiltersCreated = numFiltersCreated + 1;
+
+        let usedColors = pageSettings.filters.map(filter => filter.color);
+        let availableColors = histogramColor.filter(color => ! usedColors.includes(color));
+
+        let newPageSettings = structuredClone(pageSettings);
+        newPageSettings.filters.push({
+            from: initialRange.from,
+            to: initialRange.to,
+            title: "Set " + newNumFiltersCreated,
+            color: availableColors[0]
+        });
+        setPageSettings(newPageSettings);
+
+        let newFilterDisplay = structuredClone(filterDisplay);
+        newFilterDisplay.push({
+            collapsed: false
+        });
+        setFilterDisplay(newFilterDisplay);
+
+        setNumFiltersCreated(newNumFiltersCreated);
+    }
+
+    function onRemoveFilter(i) {
+
+        let newPageSettings = structuredClone(pageSettings);
+        newPageSettings.filters.splice(i, 1);
+        setPageSettings(newPageSettings);
+
+        let newFilterDisplay = structuredClone(filterDisplay);
+        newFilterDisplay.splice(i, 1);
+        setFilterDisplay(newFilterDisplay);
+    }
+
+    function onToggleCollapse(i) {
+        let newFilterDisplay = structuredClone(filterDisplay);
+        newFilterDisplay[i].collapsed = ! newFilterDisplay[i].collapsed;
+        setFilterDisplay(newFilterDisplay);
+    }
+
+    function updateSearchRange(updateValues, i) {
+        let newPageSettings = structuredClone(pageSettings);
+        let updatedRange = {...pageSettings.filters[i], ...updateValues};
         if( isDateRangeValid(updatedRange.from, updatedRange.to) ) {
-            setRange(updatedRange);
+            newPageSettings.filters[i] = updatedRange;
+            setPageSettings(newPageSettings);
         }
     }
 
-    const sleepEndpoint = '/user/'+currentUser.username+'/sleep/histogram';
-
-    const handlePartChange = event => {
-        setBinHrParts(event.target.value);
+    const updateBinSize = event => {
+        let newPageState = structuredClone(pageSettings);
+        newPageState.binSize = event.target.value;
+        setPageSettings(newPageState);
     };
 
+
     useEffect(() => {
-
-        const newChartData = {
-            datasets: [{
-                fill: true,
-                data: [],
-                label: chart1Constants.title,
-                borderColor: '#745085',
-                backgroundColor: '#595b7c'
-            }]
-        };
-
-        const histogramRequest = {
-            binSize: binHrParts,
-            filters: {
-                dataFilters: [
-                    {
-                        from: SleepDataManager.toIsoString(range.from),
-                        to:   SleepDataManager.toIsoString(range.to)
-                    }
-                ]
-            }
-        }
-
-        fetchPost(sleepEndpoint, histogramRequest)
+        fetchPost(sleepEndpoint, pageSettingsToRequest(pageSettings))
             .then(response => response.json())
             .then(histData => {
-                histData.bins = histData.bins.map(bin => bin/60);
-                newChartData.labels = histData.bins;
-                newChartData.datasets[0].data = histData.dataSets[0];
-                setChartData(newChartData);
+                // reverse datasets so the bars are stacked in the same order as the filter dropdowns
+                setBarData({
+                    labels: histData.bins.map(bin => bin/60),
+                    datasets: histData.dataSets.map((data, i) => createDataset(pageSettings.filters[i], data)).reverse()
+                });
             })
-    }, [sleepEndpoint, createdCount, binHrParts, chart1Constants.title, range]);
+    }, [sleepEndpoint, createdCount, pageSettings]);
 
-    const chartArea = chartData.datasets[0].data.length > 1
-        ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={chartData} />
+    const chartArea = barData.datasets.filter(dataset => dataset.data.length > 0).length >= 1
+        ?    <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={barData} />
         :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
-
-    const [collapsed, setCollapsed] = useState(true);
-    const filterTitle = chart1Constants.title;
-
-    let onChangeStart = date => updateSearchRange({from: date});
-    let onChangeEnd = date => updateSearchRange({to: date});
-    let selectedStart = range.from;
-    let selectedEnd = range.to;
 
     return (
         <Container>
-            <NavHeader title="Sleep Hours Histogram"/>
+            <NavHeader title="Sleep Histogram">
+                <Button variant="secondary" disabled={pageSettings.filters.length === 3} onClick={ onAddFilter } >
+                    <FontAwesomeIcon icon={faPlus} />
+                </Button>
+            </NavHeader>
 
-            <Row className={"pb-3"}>
-                <Col className="col-2">
+            {
+                pageSettings.filters.map((filter, i) => {
+                    return (
+                        <Row key={i}>
+                            <Col className="col-10 px-1">
+
+                                <CollapsibleFilter selectedStart={filter.from}
+                                                   color={filter.color}
+                                                   onChangeStart={(date) => updateSearchRange({from:date}, i)}
+                                                   selectedEnd={filter.to}
+                                                   onChangeEnd={(date) => updateSearchRange({to:date}, i)}
+                                                   title={pageSettings.filters[i].title}
+                                                   collapsed={filterDisplay[i].collapsed}
+                                                   onCollapseClick={() => onToggleCollapse(i)} />
+
+                            </Col>
+                            <Col className={"px-0"}>
+                                <Button variant="secondary" className="mx-1" disabled={pageSettings.filters.length === 1} onClick={ () => onRemoveFilter(i) } >
+                                    <FontAwesomeIcon icon={faRemove} />
+                                </Button>
+                            </Col>
+                        </Row>
+                    )
+                })
+            }
+
+            {chartArea}
+
+            <Row className={"pt-3"}>
+                <Col className="col-4">
                     <label>Bin Size</label>
                 </Col>
                 <Col className="col-md-4">
-                    <Form.Select value={binHrParts} onChange={handlePartChange}>
+                    <Form.Select value={pageSettings.binSize} onChange={updateBinSize}>
                         {
                             binSizeOptions.map(option => {
                                 return (
@@ -182,21 +261,6 @@ function Histogram(props) {
                     </Form.Select>
                 </Col>
             </Row>
-            <Row className={"pb-3"}>
-                <Col className="col-12">
-
-                    <CollapsibleFilter selectedStart={selectedStart}
-                                       onChangeStart={onChangeStart}
-                                       selectedEnd={selectedEnd}
-                                       onChangeEnd={onChangeEnd}
-                                       title={filterTitle}
-                                       collapsed={collapsed}
-                                       onCollapseClick={() => setCollapsed(!collapsed)} />
-
-                </Col>
-            </Row>
-
-            {chartArea}
 
         </Container>
     );
