@@ -12,7 +12,7 @@ import DateRangePicker from "./DateRangePicker";
 
 function CollapsibleFilter(props) {
 
-    const {selectedStart, onChangeStart, selectedEnd, onChangeEnd, title, collapsed, onCollapseClick} = props;
+    const {selectedStart, onChangeStart, selectedEnd, onChangeEnd, title, color, collapsed, onCollapseClick} = props;
 
     const collapseIconRotation = collapsed ? "" : "fa-rotate-180";
 
@@ -21,7 +21,8 @@ function CollapsibleFilter(props) {
             <Row className={"pb-3"}>
                 <Col className="col-12">
                     <Button variant="dark"
-                            className={"w-100 text-start border border-light-subtle"}
+                            className={"w-100 text-start border border-light-subtle "}
+                            style={{backgroundColor: color}}
                             onClick={onCollapseClick}
                             aria-controls="example-collapse-text"
                             aria-expanded={!collapsed}>

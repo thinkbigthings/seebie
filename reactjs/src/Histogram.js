@@ -206,7 +206,7 @@ function Histogram(props) {
         fetchPost(sleepEndpoint, pageSettingsToRequest(pageSettings))
             .then(response => response.json())
             .then(histData => {
-                let newDatasets = histData.dataSets.reverse().map((data, i) => createDataset(pageSettings.filters[i], data));
+                let newDatasets = histData.dataSets.map((data, i) => createDataset(pageSettings.filters[i], data)).reverse();
                 // reverse so the bars are stacked in the same order as the filter dropdowns
                 setBarData({
                     labels: histData.bins.map(bin => bin/60),
@@ -239,6 +239,7 @@ function Histogram(props) {
                             <Col className="col-10 px-0">
 
                                 <CollapsibleFilter selectedStart={filter.from}
+                                                   color={filter.color}
                                                    onChangeStart={(date) => updateSearchRange({from:date}, i)}
                                                    selectedEnd={filter.to}
                                                    onChangeEnd={(date) => updateSearchRange({to:date}, i)}
