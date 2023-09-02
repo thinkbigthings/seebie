@@ -16,6 +16,7 @@ import {basicHeader} from "./BasicHeaders";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
+import {createInitialRange} from "./SleepChart";
 
 Chart.register(...registerables)
 
