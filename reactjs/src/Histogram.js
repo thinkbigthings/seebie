@@ -206,11 +206,10 @@ function Histogram(props) {
         fetchPost(sleepEndpoint, pageSettingsToRequest(pageSettings))
             .then(response => response.json())
             .then(histData => {
-                let newDatasets = histData.dataSets.map((data, i) => createDataset(pageSettings.filters[i], data)).reverse();
-                // reverse so the bars are stacked in the same order as the filter dropdowns
+                // reverse datasets so the bars are stacked in the same order as the filter dropdowns
                 setBarData({
                     labels: histData.bins.map(bin => bin/60),
-                    datasets: newDatasets
+                    datasets: histData.dataSets.map((data, i) => createDataset(pageSettings.filters[i], data)).reverse()
                 });
             })
     }, [sleepEndpoint, createdCount, pageSettings]);
@@ -227,8 +226,7 @@ function Histogram(props) {
         <Container>
             <NavHeader title="Sleep Histogram">
                 <Button variant="secondary" disabled={pageSettings.filters.length === 3} onClick={ onAddFilter } >
-                    <FontAwesomeIcon className="me-2" icon={faPlus} />
-                    Add
+                    <FontAwesomeIcon icon={faPlus} />
                 </Button>
             </NavHeader>
 
@@ -236,7 +234,7 @@ function Histogram(props) {
                 pageSettings.filters.map((filter, i) => {
                     return (
                         <Row key={i}>
-                            <Col className="col-10 px-0">
+                            <Col className="col-10 px-1">
 
                                 <CollapsibleFilter selectedStart={filter.from}
                                                    color={filter.color}
@@ -248,8 +246,8 @@ function Histogram(props) {
                                                    onCollapseClick={() => onToggleCollapse(i)} />
 
                             </Col>
-                            <Col className={"col-2 px-0"}>
-                                <Button variant="warning" disabled={pageSettings.filters.length === 1} onClick={ () => onRemoveFilter(i) } >
+                            <Col className={"px-0"}>
+                                <Button variant="secondary" className="mx-1" disabled={pageSettings.filters.length === 1} onClick={ () => onRemoveFilter(i) } >
                                     <FontAwesomeIcon icon={faRemove} />
                                 </Button>
                             </Col>
