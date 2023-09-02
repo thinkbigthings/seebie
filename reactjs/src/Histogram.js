@@ -97,18 +97,6 @@ const pageSettingsToRequest = (pageSettings) => {
 
 }
 
-const createInitialRange = () => {
-
-    let today = new Date();
-    today.setHours(23, 59, 59);
-
-    let lastMonth = new Date(today.getTime());
-    lastMonth.setDate(today.getDate() - 30);
-    lastMonth.setHours(0, 0, 0);
-
-    return {from: lastMonth, to: today};
-}
-
 const initialRange = createInitialRange();
 
 function Histogram(props) {
