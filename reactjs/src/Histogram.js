@@ -61,7 +61,7 @@ const fetchPost = (url, body) => {
     return fetch(url, requestMeta);
 }
 
-const histogramColor = ['#595b7c', '#484a6b'];
+const histogramColor = ['#897b9c', '#596b7c', '#393b4c'];
 
 const binSizeOptions = [
     {value: 60, text: '60 minutes'},
@@ -70,13 +70,13 @@ const binSizeOptions = [
 ];
 
 // the resulting object goes into the chartData datasets array
-const createDataset = (title, bgColor, data) => {
+const createDataset = (displayInfo, data) => {
     return {
             fill: true,
             data: data,
-            label: title,
-            borderColor: bgColor,
-            backgroundColor: bgColor
+            label: displayInfo.title,
+            borderColor: displayInfo.color,
+            backgroundColor: displayInfo.color
         };
 }
 
@@ -120,15 +120,21 @@ function Histogram(props) {
     const {currentUser} = useCurrentUser();
     const sleepEndpoint = '/user/' + currentUser.username + '/sleep/histogram';
 
+    let [numFiltersCreated, setNumFiltersCreated] = useState(1);
+
     let [pageSettings, setPageSettings] = useState({
                                                                     binSize: 60,
                                                                     filters: [
-                                                                        initialRange
+                                                                        {
+                                                                            from: initialRange.from,
+                                                                            to: initialRange.to,
+                                                                            title: "Set " + numFiltersCreated,
+                                                                            color: histogramColor[0]
+                                                                        }
                                                                     ]
                                                                 });
 
     let [filterDisplay, setFilterDisplay] = useState([ {
-                                                                        title: "Set 1",
                                                                         collapsed: true
                                                                     }
                                                                 ]);
@@ -140,26 +146,37 @@ function Histogram(props) {
 
     const onAddFilter = () => {
 
+        let newNumFiltersCreated = numFiltersCreated + 1;
+
+        let usedColors = pageSettings.filters.map(filter => filter.color);
+        let availableColors = histogramColor.filter(color => ! usedColors.includes(color));
+
         let newPageSettings = structuredClone(pageSettings);
-        newPageSettings.filters.push(initialRange);
+        newPageSettings.filters.push({
+            from: initialRange.from,
+            to: initialRange.to,
+            title: "Set " + newNumFiltersCreated,
+            color: availableColors[0]
+        });
         setPageSettings(newPageSettings);
 
         let newFilterDisplay = structuredClone(filterDisplay);
         newFilterDisplay.push({
-            title: "Set " + (newFilterDisplay.length + 1),
             collapsed: false
         });
         setFilterDisplay(newFilterDisplay);
+
+        setNumFiltersCreated(newNumFiltersCreated);
     }
 
     function onRemoveFilter(i) {
 
         let newPageSettings = structuredClone(pageSettings);
-        newPageSettings.filters = newPageSettings.filters.splice(i, 1);
+        newPageSettings.filters.splice(i, 1);
         setPageSettings(newPageSettings);
 
         let newFilterDisplay = structuredClone(filterDisplay);
-        newFilterDisplay = newFilterDisplay.splice(i, 1);
+        newFilterDisplay.splice(i, 1);
         setFilterDisplay(newFilterDisplay);
     }
 
@@ -189,9 +206,11 @@ function Histogram(props) {
         fetchPost(sleepEndpoint, pageSettingsToRequest(pageSettings))
             .then(response => response.json())
             .then(histData => {
+                let newDatasets = histData.dataSets.reverse().map((data, i) => createDataset(pageSettings.filters[i], data));
+                // reverse so the bars are stacked in the same order as the filter dropdowns
                 setBarData({
                     labels: histData.bins.map(bin => bin/60),
-                    datasets: histData.dataSets.map((data, i) => createDataset("Set " + (i+1), histogramColor[i], data))
+                    datasets: newDatasets
                 });
             })
     }, [sleepEndpoint, createdCount, pageSettings]);
@@ -207,7 +226,7 @@ function Histogram(props) {
     return (
         <Container>
             <NavHeader title="Sleep Histogram">
-                <Button variant="secondary" onClick={ onAddFilter } >
+                <Button variant="secondary" disabled={pageSettings.filters.length === 3} onClick={ onAddFilter } >
                     <FontAwesomeIcon className="me-2" icon={faPlus} />
                     Add
                 </Button>
@@ -223,13 +242,13 @@ function Histogram(props) {
                                                    onChangeStart={(date) => updateSearchRange({from:date}, i)}
                                                    selectedEnd={filter.to}
                                                    onChangeEnd={(date) => updateSearchRange({to:date}, i)}
-                                                   title={filterDisplay[i].title}
+                                                   title={pageSettings.filters[i].title}
                                                    collapsed={filterDisplay[i].collapsed}
                                                    onCollapseClick={() => onToggleCollapse(i)} />
 
                             </Col>
                             <Col className={"col-2 px-0"}>
-                                <Button variant="warning" onClick={ () => onRemoveFilter(i) } >
+                                <Button variant="warning" disabled={pageSettings.filters.length === 1} onClick={ () => onRemoveFilter(i) } >
                                     <FontAwesomeIcon icon={faRemove} />
                                 </Button>
                             </Col>
