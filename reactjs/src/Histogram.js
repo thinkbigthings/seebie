@@ -214,13 +214,9 @@ function Histogram(props) {
             })
     }, [sleepEndpoint, createdCount, pageSettings]);
 
-    // TODO check all datasets
-    const chartArea = <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={barData} />
-
-    // const chartArea = filterDisplay.barData.datasets[0].data.length > 1
-    //     ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={filterDisplay.barData} />
-    //     :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
-
+    const chartArea = barData.datasets.filter(dataset => dataset.data.length > 0).length >= 1
+        ?    <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={barData} />
+        :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
 
     return (
         <Container>
