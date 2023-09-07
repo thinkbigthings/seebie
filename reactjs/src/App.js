@@ -123,7 +123,7 @@ function AuthenticatedApp() {
                 <SideNav hasAdmin={hasAdmin()} username={currentUser.username}/>
 
                 <Route exact path="/" render={()  => <SleepList createdCount = {createdCount} />}/>
-                <Route exact path="/list/:username" render={(routeProps) =>
+                <Route exact path="/users/:username/sleep/list" render={(routeProps) =>
                     <SleepList createdCount={createdCount} username={routeProps.match.params.username} />}
                 />
                 <Route exact path="/chart" render={() => <SleepChart createdCount = {createdCount} />}/>
@@ -149,7 +149,7 @@ function SideNav(props) {
 
     return (
         <Nav defaultActiveKey="/home" className="flex-column col-sm-2">
-            <NavItem name="List" icon={faList} href={"#/list/" + username } />
+            <NavItem name="List" icon={faList} href={"#/users/"+username+"/sleep/list" } />
             <NavItem name="Chart" icon={faChartLine} href="#/chart" />
             <NavItem name="Analysis" icon={faChartSimple} href="#/histogram" />
             <NavItem name="Diary" icon={faBook} href="#/diary" />

@@ -42,12 +42,12 @@ function UserList() {
                     {data.content.map(user =>
                         <tr key={user.username}>
                             <td>
-                                <Link to={"/users/" + user.username + "/edit" } >
+                                <Link to={ "/users/" + user.username + "/edit" } >
                                     {user.displayName}
                                 </Link>
                             </td>
                             <td>
-                                <Link to={"/list/" + user.username } >
+                                <Link to={ "/users/" + user.username + "/sleep/list" } >
                                     <FontAwesomeIcon className="me-2" icon={faList} />
 
                                 </Link>
