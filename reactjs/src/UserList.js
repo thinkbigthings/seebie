@@ -10,7 +10,7 @@ import {useApiGet, toPagingLabel} from './useApiGet.js';
 import CreateUser from "./CreateUser";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCaretLeft, faCaretRight} from "@fortawesome/free-solid-svg-icons";
+import {faCaretLeft, faCaretRight, faList} from "@fortawesome/free-solid-svg-icons";
 import Table from "react-bootstrap/Table";
 import {NavHeader} from "./App";
 
@@ -35,6 +35,7 @@ function UserList() {
                     <thead>
                     <tr>
                         <th>User</th>
+                        <th>Sleep</th>
                     </tr>
                     </thead>
                     <tbody className="clickable-table">
@@ -43,6 +44,12 @@ function UserList() {
                             <td>
                                 <Link to={"/users/" + user.username + "/edit" } >
                                     {user.displayName}
+                                </Link>
+                            </td>
+                            <td>
+                                <Link to={"/list/" + user.username } >
+                                    <FontAwesomeIcon className="me-2" icon={faList} />
+
                                 </Link>
                             </td>
                         </tr>

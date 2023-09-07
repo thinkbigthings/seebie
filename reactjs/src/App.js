@@ -120,10 +120,12 @@ function AuthenticatedApp() {
             </Navbar>
             <Container className="d-flex">
 
-                <SideNav hasAdmin={hasAdmin()} />
+                <SideNav hasAdmin={hasAdmin()} username={currentUser.username}/>
 
                 <Route exact path="/" render={()  => <SleepList createdCount = {createdCount} />}/>
-                <Route exact path="/list" render={()  => <SleepList createdCount = {createdCount} />}/>
+                <Route exact path="/list/:username" render={(routeProps) =>
+                    <SleepList createdCount={createdCount} username={routeProps.match.params.username} />}
+                />
                 <Route exact path="/chart" render={() => <SleepChart createdCount = {createdCount} />}/>
                 <Route exact path="/histogram" render={() => <Histogram createdCount = {createdCount} />}/>
                 <Route exact path="/users" render={() => <UserList/>}/>
@@ -141,13 +143,13 @@ function AuthenticatedApp() {
 
 function SideNav(props) {
 
-    const {hasAdmin} = props;
+    const {hasAdmin, username} = props;
     let usersNav = hasAdmin ? <NavItem name="Users" icon={faUsers} href="#/users" /> : "";
     let systemNav = hasAdmin ? <NavItem name="System" icon={faServer} href="#/system" /> : "";
 
     return (
         <Nav defaultActiveKey="/home" className="flex-column col-sm-2">
-            <NavItem name="List" icon={faList} href="#/list" />
+            <NavItem name="List" icon={faList} href={"#/list/" + username } />
             <NavItem name="Chart" icon={faChartLine} href="#/chart" />
             <NavItem name="Analysis" icon={faChartSimple} href="#/histogram" />
             <NavItem name="Diary" icon={faBook} href="#/diary" />
