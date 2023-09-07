@@ -126,14 +126,15 @@ function AuthenticatedApp() {
                 <Route exact path="/users/:username/sleep/list" render={(routeProps) =>
                     <SleepList createdCount={createdCount} username={routeProps.match.params.username} />}
                 />
-                <Route exact path="/chart" render={() => <SleepChart createdCount = {createdCount} />}/>
+                <Route exact path="/users/:username/sleep/chart" render={(routeProps) =>
+                    <SleepChart createdCount={createdCount} username={routeProps.match.params.username} />}
+                />
                 <Route exact path="/histogram" render={() => <Histogram createdCount = {createdCount} />}/>
                 <Route exact path="/users" render={() => <UserList/>}/>
                 <Route exact path="/users/:username/edit" component={EditUser}/>
                 <Route exact path="/users/:username/sleep/:sleepId/edit" component={EditSleep}/>
-                <Route exact path="/system" component={System}/>
                 <Route exact path="/tools" component={Tools}/>
-
+                <Route exact path="/system" component={System}/>
             </Container>
 
 
@@ -150,7 +151,7 @@ function SideNav(props) {
     return (
         <Nav defaultActiveKey="/home" className="flex-column col-sm-2">
             <NavItem name="List" icon={faList} href={"#/users/"+username+"/sleep/list" } />
-            <NavItem name="Chart" icon={faChartLine} href="#/chart" />
+            <NavItem name="Chart" icon={faChartLine} href={"#/users/"+username+"/sleep/chart" } />
             <NavItem name="Analysis" icon={faChartSimple} href="#/histogram" />
             <NavItem name="Diary" icon={faBook} href="#/diary" />
             <NavItem name="Tags" icon={faTag} href="#/tags" />
