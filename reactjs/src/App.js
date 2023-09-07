@@ -102,7 +102,7 @@ function AuthenticatedApp() {
         {currentUser.personalInfo.displayName}
     </span> ;
 
-    // TODO histogram, tools
+    // TODO put tools and histogram in user listing
 
     return (
         <HashRouter>
@@ -124,7 +124,6 @@ function AuthenticatedApp() {
 
                 <SideNav hasAdmin={hasAdmin()} username={currentUser.username}/>
 
-
                 <Route exact path="/" render={()  => <SleepList createdCount = {createdCount} />}/>
                 <Route exact path="/users/:username/sleep/list" render={(routeProps) =>
                     <SleepList createdCount={createdCount} username={routeProps.match.params.username} />}
@@ -132,12 +131,16 @@ function AuthenticatedApp() {
                 <Route exact path="/users/:username/sleep/chart" render={(routeProps) =>
                     <SleepChart createdCount={createdCount} username={routeProps.match.params.username} />}
                 />
-                <Route exact path="/histogram" render={() => <Histogram createdCount = {createdCount} />}/>
+                <Route exact path="/users/:username/histogram" render={(routeProps) =>
+                    <Histogram createdCount = {createdCount} username={routeProps.match.params.username}/>}
+                />
 
                 <Route exact path="/users" render={() => <UserList/>}/>
                 <Route exact path="/users/:username/edit" component={EditUser}/>
                 <Route exact path="/users/:username/sleep/:sleepId/edit" component={EditSleep}/>
-                <Route exact path="/tools" component={Tools}/>
+                <Route exact path="/users/:username/tools" render={(routeProps) =>
+                    <Tools username={routeProps.match.params.username}/>}
+                />
                 <Route exact path="/system" component={System}/>
             </Container>
 
@@ -156,10 +159,10 @@ function SideNav(props) {
         <Nav defaultActiveKey="/home" className="flex-column col-sm-2">
             <NavItem name="List" icon={faList} href={"#/users/"+username+"/sleep/list" } />
             <NavItem name="Chart" icon={faChartLine} href={"#/users/"+username+"/sleep/chart" } />
-            <NavItem name="Analysis" icon={faChartSimple} href="#/histogram" />
+            <NavItem name="Analysis" icon={faChartSimple} href={"#/users/"+username+"/histogram"} />
             <NavItem name="Diary" icon={faBook} href="#/diary" />
             <NavItem name="Tags" icon={faTag} href="#/tags" />
-            <NavItem name="Tools" icon={faTools} href="#/tools" />
+            <NavItem name="Tools" icon={faTools} href={"#/users/"+username+"/tools"} />
             {usersNav}
             {systemNav}
         </Nav>

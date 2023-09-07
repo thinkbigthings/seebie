@@ -11,7 +11,6 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 function CreateSleepSession(props) {
 
     const {onSave, username} = props;
-console.log(username)
 
     const sleepUrl = '/user/' + username + '/sleep';
 
