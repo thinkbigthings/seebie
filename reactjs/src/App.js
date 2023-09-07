@@ -102,13 +102,15 @@ function AuthenticatedApp() {
         {currentUser.personalInfo.displayName}
     </span> ;
 
+    // TODO histogram, tools
+
     return (
         <HashRouter>
             <Navbar className="border-bottom mb-3">
                 <Container>
                     <Navbar.Brand href="/">Seebie<img className="mb-1 px-1" src="favicon.ico" alt="Seebie icon" width="30" height="20"/></Navbar.Brand>
 
-                    <CreateSleepSession onSave={() => setCreatedCount(createdCount + 1)} />
+                    <CreateSleepSession username={currentUser.username} onSave={() => setCreatedCount(createdCount + 1)} />
 
                     <NavDropdown title={loggedIn } align="end" flip="true" id="userDropdown">
                         <NavDropdown.Item href={userUrl}>{<FontAwesomeIcon className="me-2" icon={faCog} />}Profile</NavDropdown.Item>
@@ -122,6 +124,7 @@ function AuthenticatedApp() {
 
                 <SideNav hasAdmin={hasAdmin()} username={currentUser.username}/>
 
+
                 <Route exact path="/" render={()  => <SleepList createdCount = {createdCount} />}/>
                 <Route exact path="/users/:username/sleep/list" render={(routeProps) =>
                     <SleepList createdCount={createdCount} username={routeProps.match.params.username} />}
@@ -130,6 +133,7 @@ function AuthenticatedApp() {
                     <SleepChart createdCount={createdCount} username={routeProps.match.params.username} />}
                 />
                 <Route exact path="/histogram" render={() => <Histogram createdCount = {createdCount} />}/>
+
                 <Route exact path="/users" render={() => <UserList/>}/>
                 <Route exact path="/users/:username/edit" component={EditUser}/>
                 <Route exact path="/users/:username/sleep/:sleepId/edit" component={EditSleep}/>
