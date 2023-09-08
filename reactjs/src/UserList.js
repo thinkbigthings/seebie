@@ -10,7 +10,14 @@ import {useApiGet, toPagingLabel} from './useApiGet.js';
 import CreateUser from "./CreateUser";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCaretLeft, faCaretRight} from "@fortawesome/free-solid-svg-icons";
+import {
+    faCaretLeft,
+    faCaretRight,
+    faChartLine,
+    faChartSimple,
+    faList,
+    faTools
+} from "@fortawesome/free-solid-svg-icons";
 import Table from "react-bootstrap/Table";
 import {NavHeader} from "./App";
 
@@ -34,16 +41,44 @@ function UserList() {
                 <Table striped bordered hover>
                     <thead>
                     <tr>
-                        <th>User</th>
+                        <th>Name</th>
+                        <th>Pages</th>
                     </tr>
                     </thead>
                     <tbody className="clickable-table">
                     {data.content.map(user =>
                         <tr key={user.username}>
                             <td>
-                                <Link to={"/users/" + user.username + "/edit" } >
+
+                                <Link to={ "/users/" + user.username + "/edit" } >
                                     {user.displayName}
                                 </Link>
+                            </td>
+                            <td>
+                                <ButtonGroup>
+                                    <Button className="p-0 me-1" >
+                                        <Link className="p-0 ps-1 " to={ "/users/" + user.username + "/sleep/list" } >
+                                            <FontAwesomeIcon className="me-2" icon={faList} />
+                                        </Link>
+                                    </Button>
+                                    <Button className="p-0 me-1">
+                                        <Link className="p-0 ps-1 " to={ "/users/" + user.username + "/sleep/chart" } >
+                                            <FontAwesomeIcon className="me-2" icon={faChartLine} />
+                                        </Link>
+                                    </Button>
+                                    <Button className="p-0 me-1">
+                                        <Link className="p-0 ps-1 " to={ "/users/" + user.username + "/histogram" } >
+                                            <FontAwesomeIcon className="me-2" icon={faChartSimple} />
+                                        </Link>
+                                    </Button>
+                                    <Button className="p-0 ">
+                                        <Link className="p-0 ps-1 " to={ "/users/" + user.username + "/tools" } >
+                                            <FontAwesomeIcon className="me-2" icon={faTools} />
+                                        </Link>
+                                    </Button>
+                                </ButtonGroup>
+
+
                             </td>
                         </tr>
                     )}

@@ -108,7 +108,7 @@ function AuthenticatedApp() {
                 <Container>
                     <Navbar.Brand href="/">Seebie<img className="mb-1 px-1" src="favicon.ico" alt="Seebie icon" width="30" height="20"/></Navbar.Brand>
 
-                    <CreateSleepSession onSave={() => setCreatedCount(createdCount + 1)} />
+                    <CreateSleepSession username={currentUser.username} onSave={() => setCreatedCount(createdCount + 1)} />
 
                     <NavDropdown title={loggedIn } align="end" flip="true" id="userDropdown">
                         <NavDropdown.Item href={userUrl}>{<FontAwesomeIcon className="me-2" icon={faCog} />}Profile</NavDropdown.Item>
@@ -120,18 +120,26 @@ function AuthenticatedApp() {
             </Navbar>
             <Container className="d-flex">
 
-                <SideNav hasAdmin={hasAdmin()} />
+                <SideNav hasAdmin={hasAdmin()} username={currentUser.username}/>
 
                 <Route exact path="/" render={()  => <SleepList createdCount = {createdCount} />}/>
-                <Route exact path="/list" render={()  => <SleepList createdCount = {createdCount} />}/>
-                <Route exact path="/chart" render={() => <SleepChart createdCount = {createdCount} />}/>
-                <Route exact path="/histogram" render={() => <Histogram createdCount = {createdCount} />}/>
+                <Route exact path="/users/:username/sleep/list" render={(routeProps) =>
+                    <SleepList createdCount={createdCount} username={routeProps.match.params.username} />}
+                />
+                <Route exact path="/users/:username/sleep/chart" render={(routeProps) =>
+                    <SleepChart createdCount={createdCount} username={routeProps.match.params.username} />}
+                />
+                <Route exact path="/users/:username/histogram" render={(routeProps) =>
+                    <Histogram createdCount = {createdCount} username={routeProps.match.params.username}/>}
+                />
+
                 <Route exact path="/users" render={() => <UserList/>}/>
                 <Route exact path="/users/:username/edit" component={EditUser}/>
                 <Route exact path="/users/:username/sleep/:sleepId/edit" component={EditSleep}/>
+                <Route exact path="/users/:username/tools" render={(routeProps) =>
+                    <Tools username={routeProps.match.params.username}/>}
+                />
                 <Route exact path="/system" component={System}/>
-                <Route exact path="/tools" component={Tools}/>
-
             </Container>
 
 
@@ -141,18 +149,18 @@ function AuthenticatedApp() {
 
 function SideNav(props) {
 
-    const {hasAdmin} = props;
+    const {hasAdmin, username} = props;
     let usersNav = hasAdmin ? <NavItem name="Users" icon={faUsers} href="#/users" /> : "";
     let systemNav = hasAdmin ? <NavItem name="System" icon={faServer} href="#/system" /> : "";
 
     return (
         <Nav defaultActiveKey="/home" className="flex-column col-sm-2">
-            <NavItem name="List" icon={faList} href="#/list" />
-            <NavItem name="Chart" icon={faChartLine} href="#/chart" />
-            <NavItem name="Analysis" icon={faChartSimple} href="#/histogram" />
+            <NavItem name="List" icon={faList} href={"#/users/"+username+"/sleep/list" } />
+            <NavItem name="Chart" icon={faChartLine} href={"#/users/"+username+"/sleep/chart" } />
+            <NavItem name="Analysis" icon={faChartSimple} href={"#/users/"+username+"/histogram"} />
             <NavItem name="Diary" icon={faBook} href="#/diary" />
             <NavItem name="Tags" icon={faTag} href="#/tags" />
-            <NavItem name="Tools" icon={faTools} href="#/tools" />
+            <NavItem name="Tools" icon={faTools} href={"#/users/"+username+"/tools"} />
             {usersNav}
             {systemNav}
         </Nav>

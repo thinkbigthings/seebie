@@ -5,7 +5,6 @@ import Container from "react-bootstrap/Container";
 import Table from "react-bootstrap/Table";
 import {Link} from "react-router-dom";
 import {toPagingLabel, useApiGet} from './useApiGet.js';
-import useCurrentUser from "./useCurrentUser";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import SleepDataManager from "./SleepDataManager";
@@ -13,11 +12,9 @@ import {NavHeader} from "./App";
 
 function SleepList(props) {
 
-    const {createdCount} = props;
+    const {createdCount, username} = props;
 
-    const {currentUser} = useCurrentUser();
-
-    const sleepUrl = '/user/' + currentUser.username + '/sleep';
+    const sleepUrl = '/user/' + username + '/sleep';
 
     const [data, pagingControls] = useApiGet(sleepUrl, 7, createdCount);
 
@@ -42,7 +39,7 @@ function SleepList(props) {
                         .map(sleep =>
                             <tr key={sleep.id}>
                                 <td>
-                                    <Link to={"/users/" + currentUser.username + "/sleep/" + sleep.id + "/edit" } >
+                                    <Link to={"/users/" + username + "/sleep/" + sleep.id + "/edit" } >
                                         {new Date(sleep.sleepData.stopTime).toLocaleDateString()}
                                     </Link>
                                 </td>

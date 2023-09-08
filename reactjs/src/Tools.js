@@ -4,7 +4,6 @@ import {NavHeader} from "./App";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload, faUpload} from "@fortawesome/free-solid-svg-icons";
-import useCurrentUser from "./useCurrentUser";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import Form from 'react-bootstrap/Form';
@@ -12,10 +11,9 @@ import Row from "react-bootstrap/Row";
 import useHttpError from "./useHttpError";
 import {useApiGet} from "./useApiGet";
 
-function Tools() {
+function Tools(props) {
 
-    const {currentUser} = useCurrentUser();
-    const username = currentUser.username;
+    const {username} = props;
 
     const {throwOnHttpError} = useHttpError();
 

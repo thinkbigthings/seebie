@@ -9,7 +9,6 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Form from 'react-bootstrap/Form';
 import SleepDataManager from "./SleepDataManager";
-import useCurrentUser from "./useCurrentUser";
 import {NavHeader} from "./App";
 import CollapsibleFilter from "./component/CollapsibleFilter";
 import {basicHeader} from "./BasicHeaders";
@@ -104,10 +103,9 @@ function Histogram(props) {
 
     // TODO createdCount should be named "sleepLoggedCountSinceAppLoad" or something
     // this is so the page is updated when the user logs sleep
-    const {createdCount} = props;
+    const {createdCount, username} = props;
 
-    const {currentUser} = useCurrentUser();
-    const sleepEndpoint = '/user/' + currentUser.username + '/sleep/histogram';
+    const sleepEndpoint = '/user/' + username + '/sleep/histogram';
 
     let [numFiltersCreated, setNumFiltersCreated] = useState(1);
 

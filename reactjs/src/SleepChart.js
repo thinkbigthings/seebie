@@ -15,7 +15,6 @@ import {Line} from 'react-chartjs-2';
 import Container from "react-bootstrap/Container";
 import SleepDataManager from "./SleepDataManager";
 import {GET} from "./BasicHeaders";
-import useCurrentUser from "./useCurrentUser";
 import copy from "./Copier";
 import {NavHeader} from "./App";
 import DateRangePicker from "./component/DateRangePicker";
@@ -85,9 +84,7 @@ const createInitialRange = () => {
 
 function SleepChart(props) {
 
-    const {createdCount} = props;
-
-    const {currentUser} = useCurrentUser();
+    const {createdCount, username} = props;
 
     let [range, setRange] = useState(createInitialRange());
     let [chartData, setChartData] = useState(initialChartData);
@@ -103,7 +100,7 @@ function SleepChart(props) {
         + 'from='+encodeURIComponent(SleepDataManager.toIsoString(range.from)) + '&'
         + 'to='+encodeURIComponent(SleepDataManager.toIsoString(range.to));
 
-    const sleepEndpoint = '/user/'+currentUser.username+'/sleep/chart' + requestParameters;
+    const sleepEndpoint = '/user/'+username+'/sleep/chart' + requestParameters;
 
     useEffect(() => {
         fetch(sleepEndpoint, GET)
