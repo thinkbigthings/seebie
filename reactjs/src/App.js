@@ -102,8 +102,6 @@ function AuthenticatedApp() {
         {currentUser.personalInfo.displayName}
     </span> ;
 
-    // TODO put tools and histogram in user listing
-
     return (
         <HashRouter>
             <Navbar className="border-bottom mb-3">
