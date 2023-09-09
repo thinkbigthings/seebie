@@ -6,7 +6,7 @@ This is a project to record and analyze your sleep.
 
 Software that needs to be installed and available from the command line:
 
-* Node 16.14.0
+* Node 20.6.1
 
 
 ## Intro
@@ -71,12 +71,28 @@ To upgrade React:
 
     npm install react@17.0.0 react-dom@17.0.0
 
-Note: if bootstrap is upgraded, react-bootstrap needs to be upgraded to a compatible version
+To upgrade Bootstrap:
 
-Note: that fontawesome and bootstrap can be served by CDN
-but this project includes them via npm
+> Bootstrap and fontawesome can be served by CDN
+but this project includes them via npm.
 So they can be upgraded by the npm mechanism like other libs
-and can be detected by security scans
+and can be detected by security scans.
+**NOTE** If bootstrap is upgraded, react-bootstrap needs to be upgraded to a compatible version.
+
+To upgrade Node:
+
+    npm install -g n
+    n latest
+
+Alternatively if you manage node versions by downloading a .tar.gz 
+and managing the path yourself, you can do that too 
+but need to update the security exceptions for Mac.
+See [how to do that here](https://support.apple.com/guide/mac-help/apple-cant-check-app-for-malicious-software-mchleab3a043/mac)
+
+Don't forget to update 
+- The README with the new version numbers
+- The github actions yaml files
+- The build.gradle and the node gradle plugin
 
 
 ## Available Scripts
