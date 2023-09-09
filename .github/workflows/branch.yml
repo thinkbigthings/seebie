@@ -6,7 +6,7 @@ name: Push to Branch
 
 on:
   push:
-    branches: [ "upgrade-to-node-20" ]
+    branches: [ "--------" ]
 
 permissions:
   contents: read
