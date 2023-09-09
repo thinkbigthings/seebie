@@ -122,7 +122,7 @@ function AuthenticatedApp() {
 
                 <SideNav hasAdmin={hasAdmin()} username={currentUser.username}/>
 
-                <Route exact path="/" render={()  => <SleepList createdCount = {createdCount} />}/>
+                <Route exact path="/" render={()  => <SleepList createdCount = {createdCount} username={currentUser.username} />}/>
                 <Route exact path="/users/:username/sleep/list" render={(routeProps) =>
                     <SleepList createdCount={createdCount} username={routeProps.match.params.username} />}
                 />
