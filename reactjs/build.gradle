@@ -1,6 +1,6 @@
 
 plugins {
-    id "com.github.node-gradle.node" version "3.5.1"
+    id "com.github.node-gradle.node" version "7.0.0"
 }
 
 apply plugin: 'base'
@@ -10,7 +10,7 @@ apply plugin: 'base'
 node {
 
     // match the version of node specified in the README
-    version = "16.14.0"
+    version = "20.6.1"
 
     // not sure this needs to be true to work, but we should understand what it is doing
     download = false
