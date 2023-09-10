@@ -296,8 +296,6 @@ To discover what dependencies are out of date.
 
 To upgrade versions of Java in general:
 
-- Note that Gradle's java toolchain feature allows us to run Gradle with one version and build with another version
-  (useful if the current version of Gradle doesn't support the latest version of Java)
 - Set the project base build.gradle's sourceCompatibility
 - Update the server README that references Java version
 - The heroku plugin also references the jdkVersion
