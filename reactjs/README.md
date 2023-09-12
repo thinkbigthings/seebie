@@ -39,7 +39,12 @@ The bootstrap dark theme is applied like so
 
 Further customization is done in App.css
 
-This is about Bootstrap Javascript, not bootstrap in general: Make a note about it in README: While the Bootstrap CSS can be used with any framework, the Bootstrap JavaScript is not fully compatible with JavaScript frameworks like React, Vue, and Angular which assume full knowledge of the DOM. Both Bootstrap and the framework may attempt to mutate the same DOM element, resulting in bugs like dropdowns that are stuck in the “open” position.
+NOTE: This is about Bootstrap Javascript, not Bootstrap in general:
+While the Bootstrap CSS can be used with any framework, 
+the Bootstrap JavaScript is not fully compatible with JavaScript frameworks like 
+React, Vue, and Angular which assume full knowledge of the DOM. Both Bootstrap 
+and the framework may attempt to mutate the same DOM element, 
+resulting in bugs like dropdowns that are stuck in the "open" position.
 
 
 
@@ -69,7 +74,7 @@ To upgrade NPM dependencies:
 
 To upgrade React: 
 
-    npm install react@17.0.0 react-dom@17.0.0
+    npm install react@18.2.0 react-dom@18.2.0
 
 To upgrade Bootstrap:
 
