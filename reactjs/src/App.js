@@ -77,7 +77,7 @@ function UnauthenticatedApp() {
                 </Container>
             </Navbar>
             <Routes>
-                <Route path="/" element={<Home />}/>
+                <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
             </Routes>
         </HashRouter>
@@ -124,8 +124,9 @@ function AuthenticatedApp() {
 
                 <SideNav hasAdmin={hasAdmin()} username={currentUser.username}/>
                 <Routes>
-                    <Route path="/" element={ <SleepList createdCount = {createdCount} />}/>
+                    <Route path="/" element={<Home />} />
                     <Route path="/users/:username/sleep/list" element={<SleepList createdCount={createdCount} />} />
+                    <Route path="/login" element={<div />} />
                     <Route path="/users/:username/sleep/chart" element={<SleepChart createdCount={createdCount} />} />
                     <Route path="/users/:username/histogram" element={<Histogram createdCount = {createdCount} />} />
                     <Route path="/users" element={<UserList/>} />
@@ -135,7 +136,6 @@ function AuthenticatedApp() {
                     <Route path="/system" element={<System />} />
                 </Routes>
             </Container>
-
 
         </HashRouter>
     );
@@ -152,8 +152,8 @@ function SideNav(props) {
             <NavItem name="List" icon={faList} href={"#/users/"+username+"/sleep/list" } />
             <NavItem name="Chart" icon={faChartLine} href={"#/users/"+username+"/sleep/chart" } />
             <NavItem name="Analysis" icon={faChartSimple} href={"#/users/"+username+"/histogram"} />
-            <NavItem name="Diary" icon={faBook} href="#/diary" />
-            <NavItem name="Tags" icon={faTag} href="#/tags" />
+            {/*<NavItem name="Diary" icon={faBook} href="#/diary" />*/}
+            {/*<NavItem name="Tags" icon={faTag} href="#/tags" />*/}
             <NavItem name="Tools" icon={faTools} href={"#/users/"+username+"/tools"} />
             {usersNav}
             {systemNav}

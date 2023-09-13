@@ -11,7 +11,7 @@ import SleepDataManager from "./SleepDataManager";
 import {NavHeader} from "./App";
 
 function SleepList(props) {
-
+console.log("SleepList props", props);
     const {username} = useParams();
 
     const {createdCount} = props;
