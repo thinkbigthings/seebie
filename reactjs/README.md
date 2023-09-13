@@ -19,10 +19,10 @@ This project uses [Font Awesome](https://fontawesome.com) for icons.
 
 To [set it up for React](https://fontawesome.com/docs/web/use-with/react/)
 
-    npm i --save @fortawesome/fontawesome-svg-core
-    npm i --save @fortawesome/free-solid-svg-icons
-    npm i --save @fortawesome/free-regular-svg-icons
-    npm i --save @fortawesome/react-fontawesome
+    npm install @fortawesome/fontawesome-svg-core
+    npm install @fortawesome/free-solid-svg-icons
+    npm install @fortawesome/free-regular-svg-icons
+    npm install @fortawesome/react-fontawesome
 
 There are a few ways to use it, but to start out we can [use icons individually](https://fontawesome.com/docs/web/use-with/react/add-icons#add-individual-icons-explicitly)
 
