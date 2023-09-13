@@ -14,11 +14,14 @@ import {faKey} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./BasicHeaders";
 import {blankUser} from "./CurrentUserContext";
 import {NavHeader} from "./App";
+import {useNavigate, useParams} from "react-router-dom";
 
 
-function EditUser({history, match}) {
+function EditUser() {
 
-    const { params: { username } } = match;
+    const navigate = useNavigate();
+
+    const {username} = useParams();
 
     const userEndpoint = '/user/' + username;
     const userInfoEndpoint = userEndpoint + '/personalInfo';
@@ -40,7 +43,7 @@ function EditUser({history, match}) {
 
     const put = useApiPut();
     const onSave = (personalInfo) => {
-        put(userInfoEndpoint, personalInfo).then(history.goBack);
+        put(userInfoEndpoint, personalInfo).then(() => navigate(-1));
     }
 
 
@@ -73,7 +76,7 @@ function EditUser({history, match}) {
             <ResetPasswordModal show={showResetPassword} onConfirm={onResetPassword} onHide={() => setShowResetPassword(false)} />
 
             <Container id="userFormWrapper" className="px-0">
-                {loaded ? <UserForm onCancel={history.goBack} onSave={onSave} initData={data}/> : <div />}
+                {loaded ? <UserForm onCancel={() => navigate(-1)} onSave={onSave} initData={data}/> : <div />}
             </Container>
         </Container>
     );

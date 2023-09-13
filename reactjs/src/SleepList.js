@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCaretLeft, faCaretRight,} from "@fortawesome/free-solid-svg-icons";
 import Container from "react-bootstrap/Container";
 import Table from "react-bootstrap/Table";
-import {Link} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {toPagingLabel, useApiGet} from './useApiGet.js';
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
@@ -12,7 +12,9 @@ import {NavHeader} from "./App";
 
 function SleepList(props) {
 
-    const {createdCount, username} = props;
+    const {username} = useParams();
+
+    const {createdCount} = props;
 
     const sleepUrl = '/user/' + username + '/sleep';
 

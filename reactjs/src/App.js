@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 
-import {HashRouter, Route} from 'react-router-dom';
+import {HashRouter, Route, Routes} from 'react-router-dom';
 
 import UserList from './UserList.js';
 import EditUser from './EditUser.js';
@@ -76,8 +76,10 @@ function UnauthenticatedApp() {
                     </Form>
                 </Container>
             </Navbar>
-            <Route exact path="/" render={() => <Home />}/>
-            <Route exact path="/login" component={Login} />
+            <Routes>
+                <Route path="/" element={<Home />}/>
+                <Route path="/login" element={<Login />} />
+            </Routes>
         </HashRouter>
     );
 }
@@ -121,25 +123,17 @@ function AuthenticatedApp() {
             <Container className="d-flex">
 
                 <SideNav hasAdmin={hasAdmin()} username={currentUser.username}/>
-
-                <Route exact path="/" render={()  => <SleepList createdCount = {createdCount} username={currentUser.username} />}/>
-                <Route exact path="/users/:username/sleep/list" render={(routeProps) =>
-                    <SleepList createdCount={createdCount} username={routeProps.match.params.username} />}
-                />
-                <Route exact path="/users/:username/sleep/chart" render={(routeProps) =>
-                    <SleepChart createdCount={createdCount} username={routeProps.match.params.username} />}
-                />
-                <Route exact path="/users/:username/histogram" render={(routeProps) =>
-                    <Histogram createdCount = {createdCount} username={routeProps.match.params.username}/>}
-                />
-
-                <Route exact path="/users" render={() => <UserList/>}/>
-                <Route exact path="/users/:username/edit" component={EditUser}/>
-                <Route exact path="/users/:username/sleep/:sleepId/edit" component={EditSleep}/>
-                <Route exact path="/users/:username/tools" render={(routeProps) =>
-                    <Tools username={routeProps.match.params.username}/>}
-                />
-                <Route exact path="/system" component={System}/>
+                <Routes>
+                    <Route path="/" element={ <SleepList createdCount = {createdCount} />}/>
+                    <Route path="/users/:username/sleep/list" element={<SleepList createdCount={createdCount} />} />
+                    <Route path="/users/:username/sleep/chart" element={<SleepChart createdCount={createdCount} />} />
+                    <Route path="/users/:username/histogram" element={<Histogram createdCount = {createdCount} />} />
+                    <Route path="/users" element={<UserList/>} />
+                    <Route path="/users/:username/edit" element={<EditUser />} />
+                    <Route path="/users/:username/sleep/:sleepId/edit" element={<EditSleep />} />
+                    <Route path="/users/:username/tools" element={<Tools />} />
+                    <Route path="/system" element={<System />} />
+                </Routes>
             </Container>
 
 

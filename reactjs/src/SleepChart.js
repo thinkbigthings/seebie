@@ -18,6 +18,7 @@ import {GET} from "./BasicHeaders";
 import copy from "./Copier";
 import {NavHeader} from "./App";
 import DateRangePicker from "./component/DateRangePicker";
+import {useParams} from "react-router-dom";
 
 
 ChartJS.register(
@@ -84,7 +85,9 @@ const createInitialRange = () => {
 
 function SleepChart(props) {
 
-    const {createdCount, username} = props;
+    const {username} = useParams();
+
+    const {createdCount} = props;
 
     let [range, setRange] = useState(createInitialRange());
     let [chartData, setChartData] = useState(initialChartData);

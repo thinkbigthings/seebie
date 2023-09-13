@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import {REACT_APP_API_VERSION, VERSION_HEADER} from "./Constants";
 import useCurrentUser from "./useCurrentUser";
 import useHttpError from "./useHttpError";
+import {useNavigate} from 'react-router-dom';
 import {GET} from "./BasicHeaders";
 import copy from "./Copier";
 import Container from "react-bootstrap/Container";
@@ -20,8 +21,9 @@ function getWithCreds(url, credentials) {
     return fetch(url, authGet);
 }
 
-// login needs to be a component in the router for history to be passed here
-function Login({history}) {
+function Login() {
+
+    const navigate = useNavigate();
 
     // local form state
     const [username, setUsername] = useState('');
@@ -54,7 +56,7 @@ function Login({history}) {
             .then(response => {
 
                 onLogin(response.user);
-                history.push("/");
+                navigate("/");
 
                 // Check current client version and if out of date do a hard refresh.
                 // If someone logs out and attempts to log in later, this gives us a good boundary to update the client.
