@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 
-import ReactJson from 'react-json-view'
+// import ReactJson from 'react-json-view'
 import {GET} from "./BasicHeaders";
 import {Accordion} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
@@ -52,13 +52,13 @@ function Home() {
 
 function Section(props) {
 
-    const {eventKey, header, name, json} = props;
-
+    // const {eventKey, header, name, json} = props;
+    const {eventKey, header} = props;
     return (
         <Accordion.Item eventKey={eventKey}>
             <Accordion.Header>{header}</Accordion.Header>
             <Accordion.Body>
-                <ReactJson name={name} src={json} displayDataTypes={false} displayObjectSize={false} theme={"twilight"} collapsed={1}/>
+                {/*<ReactJson name={name} src={json} displayDataTypes={false} displayObjectSize={false} theme={"twilight"} collapsed={1}/>*/}
             </Accordion.Body>
         </Accordion.Item>
     );
