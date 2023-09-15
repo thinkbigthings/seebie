@@ -17,6 +17,17 @@ function Home() {
     useEffect(() => {
         fetch('/actuator/info', GET)
             .then(response => response.json())
+            .then(json => [
+                    'BRANCH',
+                    json.git.branch,
+                    'COMMIT',
+                    json.git.commit.time,
+                    json.git.commit.message.short,
+                    json.git.commit.id.abbrev,
+                    'APP',
+                    'Users : ' + json.app.count.user,
+                    'API : ' + json.app.version.apiVersion
+                ])
             .then(setInfo)
     }, [setInfo]);
 
@@ -24,6 +35,7 @@ function Home() {
         fetch('/actuator/flyway', GET)
             .then(response => response.json())
             .then(flywayRoot => flywayRoot.contexts.application.flywayBeans.flyway.migrations)
+            .then(migrations => migrations.map(migration => migration.script + (migration.state === 'SUCCESS' ? ' ✓' : 'X') ))
             .then(setMigrations)
     }, [setMigrations]);
 
@@ -55,7 +67,10 @@ function Section(props) {
         <Accordion.Item eventKey={eventKey}>
             <Accordion.Header>{header}</Accordion.Header>
             <Accordion.Body>
-                <Container className={"overflow-x-auto"}><pre>{JSON.stringify(json, null, 2) }</pre></Container>
+                <Container className={"overflow-x-auto"}>
+                    <pre>
+                        {JSON.stringify(json, null, 2) }
+                    </pre></Container>
             </Accordion.Body>
         </Accordion.Item>
     );
