@@ -152,8 +152,6 @@ function SideNav(props) {
             <NavItem name="List" icon={faList} href={"#/users/"+username+"/sleep/list" } />
             <NavItem name="Chart" icon={faChartLine} href={"#/users/"+username+"/sleep/chart" } />
             <NavItem name="Analysis" icon={faChartSimple} href={"#/users/"+username+"/histogram"} />
-            {/*<NavItem name="Diary" icon={faBook} href="#/diary" />*/}
-            {/*<NavItem name="Tags" icon={faTag} href="#/tags" />*/}
             <NavItem name="Tools" icon={faTools} href={"#/users/"+username+"/tools"} />
             {usersNav}
             {systemNav}
