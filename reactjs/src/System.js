@@ -29,7 +29,7 @@ function Home() {
                     'API : ' + json.app.version.apiVersion
                 ])
             .then(setInfo)
-    }, [setInfo]);
+    }, []);
 
     useEffect(() => {
         fetch('/actuator/flyway', GET)
@@ -37,13 +37,13 @@ function Home() {
             .then(flywayRoot => flywayRoot.contexts.application.flywayBeans.flyway.migrations)
             .then(migrations => migrations.map(migration => migration.script + (migration.state === 'SUCCESS' ? ' ✓' : 'X') ))
             .then(setMigrations)
-    }, [setMigrations]);
+    }, []);
 
     useEffect(() => {
         fetch('/actuator/health', GET)
             .then(response => response.json())
             .then(setHealth)
-    }, [setHealth]);
+    }, []);
 
     return (
         <Container>
