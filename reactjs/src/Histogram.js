@@ -16,6 +16,7 @@ import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {createInitialRange} from "./SleepChart";
+import {useParams} from "react-router-dom";
 
 Chart.register(...registerables)
 
@@ -101,9 +102,11 @@ const initialRange = createInitialRange();
 
 function Histogram(props) {
 
+    const {username} = useParams();
+
     // TODO createdCount should be named "sleepLoggedCountSinceAppLoad" or something
     // this is so the page is updated when the user logs sleep
-    const {createdCount, username} = props;
+    const {createdCount} = props;
 
     const sleepEndpoint = '/user/' + username + '/sleep/histogram';
 

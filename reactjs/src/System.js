@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 
-import ReactJson from 'react-json-view'
 import {GET} from "./BasicHeaders";
 import {Accordion} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
@@ -18,23 +17,33 @@ function Home() {
     useEffect(() => {
         fetch('/actuator/info', GET)
             .then(response => response.json())
+            .then(json => [
+                    'BRANCH',
+                    json.git.branch,
+                    'COMMIT',
+                    json.git.commit.time,
+                    json.git.commit.message.short,
+                    json.git.commit.id.abbrev,
+                    'APP',
+                    'Users : ' + json.app.count.user,
+                    'API : ' + json.app.version.apiVersion
+                ])
             .then(setInfo)
-    }, [setInfo]);
+    }, []);
 
     useEffect(() => {
         fetch('/actuator/flyway', GET)
             .then(response => response.json())
             .then(flywayRoot => flywayRoot.contexts.application.flywayBeans.flyway.migrations)
+            .then(migrations => migrations.map(migration => migration.script + (migration.state === 'SUCCESS' ? ' ✓' : 'X') ))
             .then(setMigrations)
-    }, [setMigrations]);
+    }, []);
 
     useEffect(() => {
         fetch('/actuator/health', GET)
             .then(response => response.json())
             .then(setHealth)
-    }, [setHealth]);
-
-    // https://www.npmjs.com/package/react-json-view
+    }, []);
 
     return (
         <Container>
@@ -42,9 +51,9 @@ function Home() {
             <NavHeader title="System" />
 
             <Accordion defaultActiveKey="0">
-                <Section  eventKey="0" header="Info" json={info} name={"info"} />
-                <Section  eventKey="1" header="Flyway" json={migrations} name={"flyway"} />
-                <Section  eventKey="2" header="Health" json={health} name={"health"} />
+                <Section  eventKey="0" header="Info" json={info} />
+                <Section  eventKey="1" header="Flyway" json={migrations} />
+                <Section  eventKey="2" header="Health" json={health} />
             </Accordion>
         </Container>
     );
@@ -52,13 +61,16 @@ function Home() {
 
 function Section(props) {
 
-    const {eventKey, header, name, json} = props;
+    const {eventKey, header, json} = props;
 
     return (
         <Accordion.Item eventKey={eventKey}>
             <Accordion.Header>{header}</Accordion.Header>
             <Accordion.Body>
-                <ReactJson name={name} src={json} displayDataTypes={false} displayObjectSize={false} theme={"twilight"} collapsed={1}/>
+                <Container className={"overflow-x-auto"}>
+                    <pre>
+                        {JSON.stringify(json, null, 2) }
+                    </pre></Container>
             </Accordion.Body>
         </Accordion.Item>
     );

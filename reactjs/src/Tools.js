@@ -10,10 +10,11 @@ import Form from 'react-bootstrap/Form';
 import Row from "react-bootstrap/Row";
 import useHttpError from "./useHttpError";
 import {useApiGet} from "./useApiGet";
+import {useParams} from "react-router-dom";
 
-function Tools(props) {
+function Tools() {
 
-    const {username} = props;
+    const {username} = useParams();
 
     const {throwOnHttpError} = useHttpError();
 

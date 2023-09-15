@@ -12,12 +12,14 @@ import useApiDelete from "./useApiDelete";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import {NavHeader} from "./App";
+import {useNavigate, useParams} from "react-router-dom";
 
 
-function EditSleep({history, match}) {
+function EditSleep() {
 
-    const username = match.params.username;
-    const sleepId = match.params.sleepId;
+    const navigate = useNavigate();
+
+    const {username, sleepId} = useParams();
 
     const sleepEndpoint = '/user/' + username + '/sleep/' + sleepId;
 
@@ -36,12 +38,12 @@ function EditSleep({history, match}) {
     }, [setSleepData, sleepEndpoint]);
 
     const onSave = () => {
-        put(sleepEndpoint, sleepData).then(history.goBack);
+        put(sleepEndpoint, sleepData).then(() => navigate(-1));
     }
 
     const deleteById = () => {
         callDelete(sleepEndpoint)
-            .then(history.goBack);
+            .then(() => navigate(-1));
     }
 
     return (
@@ -60,7 +62,7 @@ function EditSleep({history, match}) {
 
             <div className="d-flex flex-row">
                 <Button className="me-3" variant="primary" onClick={onSave} >Save</Button>
-                <Button  variant="secondary" onClick={history.goBack}>Cancel</Button>
+                <Button  variant="secondary" onClick={() => navigate(-1)}>Cancel</Button>
             </div>
 
             <Modal show={showDeleteWarning} onHide={() => setShowDeleteWarning(false)} >
