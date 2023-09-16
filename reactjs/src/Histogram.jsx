@@ -11,7 +11,7 @@ import Form from 'react-bootstrap/Form';
 import SleepDataManager from "./SleepDataManager";
 import {NavHeader} from "./App";
 import CollapsibleFilter from "./component/CollapsibleFilter";
-import {basicHeader} from "./BasicHeaders";
+import {basicHeader} from "./utility/BasicHeaders";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";

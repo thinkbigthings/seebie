@@ -1,5 +1,5 @@
 
-import {REACT_APP_API_VERSION, VERSION_HEADER} from "./Constants";
+import {VITE_API_VERSION, VERSION_HEADER} from "./Constants";
 
 
 const GET = {
@@ -21,7 +21,7 @@ function basicHeader(hasRequestBody=true) {
         headers["Content-Type"]="application/json";
     }
 
-    headers[VERSION_HEADER] = REACT_APP_API_VERSION;
+    headers[VERSION_HEADER] = VITE_API_VERSION;
 
     return headers;
 }

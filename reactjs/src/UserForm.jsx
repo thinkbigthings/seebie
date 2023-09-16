@@ -2,7 +2,7 @@ import React, {useReducer} from 'react';
 
 import Button from "react-bootstrap/Button";
 
-import copy from './Copier.js';
+import copy from './utility/Copier.js';
 import Container from "react-bootstrap/Container";
 import useCurrentUser from "./useCurrentUser";
 
