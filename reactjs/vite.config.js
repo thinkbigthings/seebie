@@ -8,13 +8,14 @@ export default defineConfig(() => {
             outDir: 'build',
         },
         plugins: [react(), basicSsl()],
-        proxy: {
-            '/': {
-                target: 'https://localhost:9000',
-                changeOrigin: true,
-                secure: false, // This allows requests to be proxied to servers with self-signed certificates
-            },
-
-        },
+        server: {
+            proxy: {
+                '/': {
+                    target: 'https://localhost:9000',
+                    changeOrigin: true,
+                    secure: false
+                }
+            }
+        }
     }
 });
