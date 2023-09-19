@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 
-import {GET} from "./BasicHeaders";
+import {GET} from "./utility/BasicHeaders";
 import {Accordion} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";

@@ -4,7 +4,7 @@ import Container from "react-bootstrap/Container";
 import {SleepForm} from "./SleepForm";
 import useApiPut from "./useApiPut";
 import SleepDataManager from "./SleepDataManager";
-import {GET} from "./BasicHeaders";
+import {GET} from "./utility/BasicHeaders";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";

@@ -2,12 +2,12 @@ import React, {useState} from 'react';
 
 import Button from "react-bootstrap/Button";
 
-import {REACT_APP_API_VERSION, VERSION_HEADER} from "./Constants";
+import {VITE_API_VERSION, VERSION_HEADER} from "./utility/Constants";
 import useCurrentUser from "./useCurrentUser";
 import useHttpError from "./useHttpError";
 import {useNavigate} from 'react-router-dom';
-import {GET} from "./BasicHeaders";
-import copy from "./Copier";
+import {GET} from "./utility/BasicHeaders";
+import copy from "./utility/Copier";
 import Container from "react-bootstrap/Container";
 
 
@@ -60,7 +60,7 @@ function Login() {
 
                 // Check current client version and if out of date do a hard refresh.
                 // If someone logs out and attempts to log in later, this gives us a good boundary to update the client.
-                const clientApiVersion = REACT_APP_API_VERSION;
+                const clientApiVersion = VITE_API_VERSION;
                 const serverApiVersion = response.headers.get(VERSION_HEADER);
                 if(clientApiVersion !== serverApiVersion) {
                     window.location.reload(true);

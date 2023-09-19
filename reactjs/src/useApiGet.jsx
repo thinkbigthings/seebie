@@ -1,7 +1,7 @@
-import {GET} from "./BasicHeaders";
+import {GET} from "./utility/BasicHeaders";
 // import useHttpError from "./useHttpError";
 import {useCallback, useEffect, useState} from "react";
-import copy from "./Copier";
+import copy from "./utility/Copier";
 
 const initialPage = {
     content: [],

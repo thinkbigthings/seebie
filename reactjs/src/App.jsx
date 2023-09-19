@@ -6,16 +6,16 @@ import Nav from 'react-bootstrap/Nav';
 
 import {HashRouter, Route, Routes} from 'react-router-dom';
 
-import UserList from './UserList.js';
-import EditUser from './EditUser.js';
-import Login from './Login.js';
-import ErrorBoundary from './ErrorBoundary.js';
+import UserList from './UserList.jsx';
+import EditUser from './EditUser.jsx';
+import Login from './Login.jsx';
+import ErrorBoundary from './ErrorBoundary.jsx';
 
-import {ErrorProvider} from './ErrorContext.js';
+import {ErrorProvider} from './ErrorContext.jsx';
 import ErrorModal from "./ErrorModal";
 import useCurrentUser from "./useCurrentUser";
 import {CurrentUserContext, CurrentUserProvider} from "./CurrentUserContext";
-import {GET} from "./BasicHeaders";
+import {GET} from "./utility/BasicHeaders";
 
 // This only has to be imported on one page, and it works for the whole site
 // import custom css after bootstrap so that customizations takes precedence

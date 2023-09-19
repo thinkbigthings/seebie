@@ -6,7 +6,7 @@ import ButtonGroup  from 'react-bootstrap/ButtonGroup';
 import Button       from "react-bootstrap/Button";
 import Container    from 'react-bootstrap/Container';
 
-import {useApiGet, toPagingLabel} from './useApiGet.js';
+import {useApiGet, toPagingLabel} from './useApiGet.jsx';
 import CreateUser from "./CreateUser";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

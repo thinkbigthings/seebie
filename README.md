@@ -51,7 +51,7 @@ use the command `gradlew build` from the base project folder.
 
 To run the fully built application,
 cd to the server folder (so you can access properties)
-and run e.g. `java --enable-preview -jar build/libs/server-1.0-SNAPSHOT.jar`
+and run e.g. `java --enable-preview -Dapp.security.rememberMe.key="none" -Dapp.notification.output="LOG" -jar build/libs/server-1.0-SNAPSHOT.jar`
 Then in the browser go to `https://localhost:9000`
 
 

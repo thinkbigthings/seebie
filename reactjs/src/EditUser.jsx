@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 
-import {UserForm} from './UserForm.js';
-import ResetPasswordModal from "./ResetPasswordModal.js";
+import {UserForm} from './UserForm.jsx';
+import ResetPasswordModal from "./ResetPasswordModal.jsx";
 
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -11,7 +11,7 @@ import useApiPut from "./useApiPut";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey} from "@fortawesome/free-solid-svg-icons";
-import {GET} from "./BasicHeaders";
+import {GET} from "./utility/BasicHeaders";
 import {blankUser} from "./CurrentUserContext";
 import {NavHeader} from "./App";
 import {useNavigate, useParams} from "react-router-dom";

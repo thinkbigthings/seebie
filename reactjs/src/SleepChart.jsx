@@ -14,8 +14,8 @@ import {
 import {Line} from 'react-chartjs-2';
 import Container from "react-bootstrap/Container";
 import SleepDataManager from "./SleepDataManager";
-import {GET} from "./BasicHeaders";
-import copy from "./Copier";
+import {GET} from "./utility/BasicHeaders";
+import copy from "./utility/Copier";
 import {NavHeader} from "./App";
 import DateRangePicker from "./component/DateRangePicker";
 import {useParams} from "react-router-dom";

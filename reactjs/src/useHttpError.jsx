@@ -1,5 +1,5 @@
 import {recoveryActions} from "./ErrorContext";
-import {REACT_APP_API_VERSION, VERSION_HEADER} from "./Constants";
+import {VITE_API_VERSION, VERSION_HEADER} from "./utility/Constants";
 import useError from "./useError";
 
 const useHttpError = () => {
@@ -30,7 +30,7 @@ const useHttpError = () => {
 
         // this should come back as a 406, but let's check the versions
         const serverApiVersion = httpResponse.headers.get(VERSION_HEADER);
-        if (serverApiVersion !== null && serverApiVersion !== REACT_APP_API_VERSION) {
+        if (serverApiVersion !== null && serverApiVersion !== VITE_API_VERSION) {
             addError('Your app is out of date. Try reloading the page.', recoveryActions.RELOAD);
         }
         throw Error('Received bad response ' + httpResponse.status);
