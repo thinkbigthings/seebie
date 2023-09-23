@@ -1,9 +1,9 @@
 
-buildscript {
-    dependencies {
-        classpath 'org.postgresql:postgresql:42.5.0'
-    }
-}
+//buildscript {
+//    dependencies {
+//        classpath 'org.postgresql:postgresql:42.5.0'
+//    }
+//}
 
 plugins {
     id 'org.springframework.boot' version '3.0.0'
@@ -45,7 +45,7 @@ tasks.withType(JavaExec) {
 
 dependencies {
 
-    implementation 'org.postgresql:postgresql:42.5.0'
+    implementation 'org.postgresql:postgresql:42.6.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-web:3.0.0'
@@ -57,12 +57,15 @@ dependencies {
 
     implementation 'org.apache.commons:commons-csv:1.10.0'
 
-    compileOnly 'org.hibernate:hibernate-jpamodelgen:6.1.5.Final'
-    annotationProcessor 'org.hibernate:hibernate-jpamodelgen:6.1.5.Final'
+    compileOnly 'org.hibernate:hibernate-jpamodelgen:6.3.1.Final'
+    annotationProcessor 'org.hibernate:hibernate-jpamodelgen:6.3.1.Final'
 
     // JAXB was removed in Java 11 so needs to be included here
-    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+//    implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
+    // Pick up here
+
+    //     implementation 'org.flywaydb:flyway-core:9.22.2'
     implementation 'org.flywaydb:flyway-core:9.8.3'
 
 
