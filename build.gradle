@@ -15,6 +15,6 @@ heroku {
 
     processTypes(
         // The \$ is to escape $ for build.gradle, don't need the slash when running the command locally
-        web: "java --enable-preview -Dspring.datasource.url='\${JDBC_DATABASE_URL}&autosave=conservative' -Dserver.port='\${PORT}' -jar server/build/libs/server-1.0-SNAPSHOT.jar"
+        web: "java --enable-preview -Dspring.datasource.url='\${HEROKU_POSTGRESQL_CRIMSON_JDBC_URL}&autosave=conservative' -Dserver.port='\${PORT}' -jar server/build/libs/server-1.0-SNAPSHOT.jar"
     )
 }
