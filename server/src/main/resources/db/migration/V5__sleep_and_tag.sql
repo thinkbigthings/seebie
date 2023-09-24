@@ -8,8 +8,8 @@ CREATE TABLE sleep_session (
     user_id         INT8        NOT NULL REFERENCES app_user (id),
     start_time      TIMESTAMPTZ NOT NULL DEFAULT now(),
     stop_time       TIMESTAMPTZ NOT NULL DEFAULT now(),
-    minutes_awake   INT4        NOT NULL DEFAULT 0,
-    minutes_asleep  INT4        NOT NULL DEFAULT 0,
+    minutes_awake   INTEGER     NOT NULL DEFAULT 0,
+    minutes_asleep  INTEGER     NOT NULL DEFAULT 0,
     notes           VARCHAR     NOT NULL DEFAULT '',
     CONSTRAINT stop_after_start CHECK (stop_time >= start_time),
     CONSTRAINT correct_calculation CHECK ( ABS((EXTRACT(EPOCH FROM (stop_time - start_time)) / 60) - minutes_awake) = minutes_asleep)
