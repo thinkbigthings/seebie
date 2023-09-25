@@ -80,15 +80,14 @@ public class WebSecurityConfig {
                     })
                     .maximumSessions(1)
                     .maxSessionsPreventsLogin(true))
-            .csrf()
-                .disable()
-            .logout()
-                .addLogoutHandler((req, resp, auth) -> LOG.info("Logged out auth: " + auth))
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .deleteCookies(SESSION_COOKIE, REMEMBER_ME_COOKIE)
-                .and()
-            .rememberMe(rememberMe -> rememberMe
+            .csrf((csrf) -> csrf.disable())
+            .logout(config -> config
+                    .addLogoutHandler((req, resp, auth) -> LOG.info("Logged out auth: " + auth))
+                    .invalidateHttpSession(true)
+                    .clearAuthentication(true)
+                    .deleteCookies(SESSION_COOKIE, REMEMBER_ME_COOKIE)
+            )
+            .rememberMe(config -> config
                     .rememberMeServices(rememberMeServices)
                     .key(rememberMeConfig.key())
                     .tokenValiditySeconds(rememberMeConfig.tokenValiditySeconds()));
