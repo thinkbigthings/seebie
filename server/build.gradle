@@ -1,10 +1,4 @@
 
-//buildscript {
-//    dependencies {
-//        classpath 'org.postgresql:postgresql:42.5.0'
-//    }
-//}
-
 plugins {
     id 'org.springframework.boot' version '3.0.0'
     id 'jacoco' // core plugin provided by gradle
@@ -60,22 +54,18 @@ dependencies {
     compileOnly 'org.hibernate:hibernate-jpamodelgen:6.3.1.Final'
     annotationProcessor 'org.hibernate:hibernate-jpamodelgen:6.3.1.Final'
 
-    // JAXB was removed in Java 11 so needs to be included here
-//    implementation 'javax.xml.bind:jaxb-api:2.3.1'
-
     implementation 'org.flywaydb:flyway-core:9.22.2'
 
-    // Pick up here
-    testImplementation 'org.springframework.security:spring-security-test:6.0.1'
+    testImplementation 'org.springframework.security:spring-security-test:6.1.4'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.1.4'
-    testImplementation 'net.datafaker:datafaker:1.6.0'
+    testImplementation 'net.datafaker:datafaker:2.0.1'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
-    testImplementation 'org.mockito:mockito-junit-jupiter:4.3.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
 
-    testImplementation "org.testcontainers:testcontainers:1.16.3"
-    testImplementation "org.testcontainers:junit-jupiter:1.16.3"
-    testImplementation "org.testcontainers:postgresql:1.16.3"
+    testImplementation "org.testcontainers:testcontainers:1.19.0"
+    testImplementation "org.testcontainers:junit-jupiter:1.19.0"
+    testImplementation "org.testcontainers:postgresql:1.19.0"
 }
 
 
@@ -95,7 +85,7 @@ jar {
 
 // https://docs.gradle.org/current/userguide/jacoco_plugin.html
 jacoco {
-    toolVersion = "0.8.7"
+    toolVersion = "0.8.10"
 }
 
 jacocoTestReport {
