@@ -2,7 +2,7 @@
 set search_path TO public;
 
 CREATE TABLE operator (
-    id   INT4           NOT NULL PRIMARY KEY,
+    id   SMALLINT           NOT NULL PRIMARY KEY,
     name VARCHAR(255)   NOT NULL
 );
 
