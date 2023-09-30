@@ -12,7 +12,9 @@ apply plugin: 'java' // core plugin provided by gradle
 group = 'com.seebie'
 version = '1.0-SNAPSHOT'
 
-sourceCompatibility = JavaVersion.VERSION_17
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+}
 
 repositories {
     mavenCentral()
@@ -91,9 +93,10 @@ jacoco {
 jacocoTestReport {
 
     reports {
-        xml.enabled false
-        csv.enabled false
-        html.destination file("${buildDir}/reports/jacoco/html")
+        xml.required = false
+        csv.required = false
+        html.required = true
+        html.outputLocation = file("${buildDir}/reports/jacoco/html")
     }
 
     // so we can get test data from both tests and integration tests
