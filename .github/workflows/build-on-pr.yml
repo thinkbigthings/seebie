@@ -1,5 +1,5 @@
 
-name: Build PR
+name: Build Pull Request
 
 on:
   pull_request:
