@@ -1,5 +1,5 @@
 
-name: Push to Master
+name: Build PR
 
 on:
   pull_request:
