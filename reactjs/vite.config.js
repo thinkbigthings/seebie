@@ -13,6 +13,7 @@ export default defineConfig(() => {
             basicSsl()
         ],
         server: {
+            open: true, // auto open the browser when vite server starts
             proxy: {
                 // if you proxy '/' then it will proxy ws requests intended for the vite server which breaks HMR
                 // note you might have to refresh the browser to see HMR changes
