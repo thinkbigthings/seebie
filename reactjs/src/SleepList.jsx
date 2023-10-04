@@ -16,7 +16,7 @@ function SleepList(props) {
 
     const {createdCount} = props;
 
-    const sleepUrl = '/user/' + username + '/sleep';
+    const sleepUrl = '/api/user/' + username + '/sleep';
 
     const [data, pagingControls] = useApiGet(sleepUrl, 7, createdCount);
 

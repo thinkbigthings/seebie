@@ -23,9 +23,9 @@ function EditUser() {
 
     const {username} = useParams();
 
-    const userEndpoint = '/user/' + username;
-    const userInfoEndpoint = userEndpoint + '/personalInfo';
-    const updatePasswordEndpoint = userEndpoint + '/password/update'
+    const userEndpoint = '/api/user/' + username;
+    const userInfoEndpoint = userEndpoint + '/api/personalInfo';
+    const updatePasswordEndpoint = userEndpoint + '/api/password/update'
 
     const [data, setData] = useState(blankUser);
 

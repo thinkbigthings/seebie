@@ -12,10 +12,10 @@ function Home() {
     let [health, setHealth] = useState({})
 
 
-    // Links could also be retrieved from a call to "/actuator"
+    // Links could also be retrieved from a call to "/api/actuator"
 
     useEffect(() => {
-        fetch('/actuator/info', GET)
+        fetch('/api/actuator/info', GET)
             .then(response => response.json())
             .then(json => [
                     'BRANCH',
@@ -32,7 +32,7 @@ function Home() {
     }, []);
 
     useEffect(() => {
-        fetch('/actuator/flyway', GET)
+        fetch('/api/actuator/flyway', GET)
             .then(response => response.json())
             .then(flywayRoot => flywayRoot.contexts.application.flywayBeans.flyway.migrations)
             .then(migrations => migrations.map(migration => migration.script + (migration.state === 'SUCCESS' ? ' ✓' : 'X') ))
@@ -40,7 +40,7 @@ function Home() {
     }, []);
 
     useEffect(() => {
-        fetch('/actuator/health', GET)
+        fetch('/api/actuator/health', GET)
             .then(response => response.json())
             .then(setHealth)
     }, []);

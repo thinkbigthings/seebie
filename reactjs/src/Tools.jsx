@@ -23,10 +23,10 @@ function Tools() {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [uploadSuccessInfo, setUploadSuccessInfo] = useState({numImported: 0, username: username});
 
-    const downloadUrl = "/user/" + username + "/sleep/download";
-    const uploadUrl = "/user/" + username + "/sleep/upload";
+    const downloadUrl = '/api/user/' + username + '/sleep/download';
+    const uploadUrl = '/api/user/' + username + '/sleep/upload';
 
-    const sleepUrl = '/user/' + username + '/sleep';
+    const sleepUrl = '/api/user/' + username + '/sleep';
 
     // so we can retrieve the total number of records for the user
     const [data] = useApiGet(sleepUrl, 1, 0);

@@ -103,7 +103,7 @@ function SleepChart(props) {
         + 'from='+encodeURIComponent(SleepDataManager.toIsoString(range.from)) + '&'
         + 'to='+encodeURIComponent(SleepDataManager.toIsoString(range.to));
 
-    const sleepEndpoint = '/user/'+username+'/sleep/chart' + requestParameters;
+    const sleepEndpoint = '/api/user/'+username+'/sleep/chart' + requestParameters;
 
     useEffect(() => {
         fetch(sleepEndpoint, GET)
