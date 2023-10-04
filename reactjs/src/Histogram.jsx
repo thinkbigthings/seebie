@@ -108,7 +108,7 @@ function Histogram(props) {
     // this is so the page is updated when the user logs sleep
     const {createdCount} = props;
 
-    const sleepEndpoint = '/user/' + username + '/sleep/histogram';
+    const sleepEndpoint = '/api/user/' + username + '/sleep/histogram';
 
     let [numFiltersCreated, setNumFiltersCreated] = useState(1);
 

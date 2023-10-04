@@ -12,7 +12,7 @@ function CreateSleepSession(props) {
 
     const {onSave, username} = props;
 
-    const sleepUrl = '/user/' + username + '/sleep';
+    const sleepUrl = '/api/user/' + username + '/sleep';
 
     const [sleepData, setSleepData] = useState(SleepDataManager.createInitSleepData());
     const [showModal, setShowModal] = useState(false);

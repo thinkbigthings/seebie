@@ -21,7 +21,7 @@ function EditSleep() {
 
     const {username, sleepId} = useParams();
 
-    const sleepEndpoint = '/user/' + username + '/sleep/' + sleepId;
+    const sleepEndpoint = '/api/user/' + username + '/sleep/' + sleepId;
 
     const [loaded, setLoaded] = useState(false);
     const [showDeleteWarning, setShowDeleteWarning] = useState(false);

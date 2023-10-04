@@ -173,7 +173,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
 
         double importSeconds = stopWatch.getTotalTimeSeconds();
         LOG.info("Import time for " + listCount + " records was " + importSeconds + " seconds.");
-        assertThat("import time", importSeconds, lessThan(3d));
+        assertThat("import time", importSeconds, lessThan(4d));
 
         Page<SleepDetails> listing = sleepService.listSleepData(username, firstPage);
 

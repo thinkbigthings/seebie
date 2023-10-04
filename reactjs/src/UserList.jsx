@@ -25,7 +25,7 @@ import {NavHeader} from "./App";
 function UserList() {
 
     const [reloadCount, setReloadCount] = useState(0);
-    const [data, pagingControls] = useApiGet('/user', 10, reloadCount);
+    const [data, pagingControls] = useApiGet('/api/user', 10, reloadCount);
 
     const visibility = data.totalElements > 0 ? "visible" : "invisible";
 

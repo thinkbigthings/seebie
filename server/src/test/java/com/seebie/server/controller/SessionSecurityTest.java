@@ -64,7 +64,7 @@ public class SessionSecurityTest extends IntegrationTest {
     @BeforeAll
     public static void setup(@Autowired Environment env, @LocalServerPort int randomServerPort) {
 
-        baseUrl = "https://localhost:" + randomServerPort;
+        baseUrl = "https://localhost:" + randomServerPort + "/api";
 
         loginUri = URI.create(baseUrl + "/login?remember-me=false");
         rememberMeUri = URI.create(baseUrl + "/login?remember-me=true");

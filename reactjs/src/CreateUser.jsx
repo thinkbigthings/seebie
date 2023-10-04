@@ -30,7 +30,7 @@ function CreateUser(props) {
 
         const requestBody = typeof registrationRequest === 'string' ? registrationRequest : JSON.stringify(registrationRequest);
 
-        post('/registration', requestBody)
+        post('/api/registration', requestBody)
             .then(result => setShowCreateUser(false))
             .then(props.onSave);
     }
