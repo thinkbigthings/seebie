@@ -7,10 +7,13 @@ export default defineConfig(() => {
         build: {
             outDir: 'build',
         },
-        plugins: [react(), basicSsl()],
+        plugins: [
+            react({ include: "**/*.jsx" }),
+            basicSsl()
+        ],
         server: {
             proxy: {
-                '/': {
+                '/login': {
                     target: 'https://localhost:9000',
                     changeOrigin: true,
                     secure: false
