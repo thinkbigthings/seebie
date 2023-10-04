@@ -65,31 +65,31 @@ public class ActuatorSecurityTest extends IntegrationTest {
     private static List<Arguments> provideUnauthenticatedTestParameters() {
 
         return List.of(
-				test.get("/actuator", 401),
-				test.get("/actuator/flyway", 401),
-				test.get("/actuator/health", 401),
-				test.get("/actuator/info", 401),
-				test.get("/actuator/sessions", new String[] {"username", "admin"}, 401)
+				test.get("/api/actuator", 401),
+				test.get("/api/actuator/flyway", 401),
+				test.get("/api/actuator/health", 401),
+				test.get("/api/actuator/info", 401),
+				test.get("/api/actuator/sessions", new String[] {"username", "admin"}, 401)
             );
     }
 
     private static List<Arguments> provideAdminTestParameters() {
         return List.of(
-				test.get("/actuator", 200),
-				test.get("/actuator/flyway", 200),
-				test.get("/actuator/health", 200),
-				test.get("/actuator/info", 200),
-				test.get("/actuator/sessions", new String[]{"username", "admin"}, 200)
+				test.get("/api/actuator", 200),
+				test.get("/api/actuator/flyway", 200),
+				test.get("/api/actuator/health", 200),
+				test.get("/api/actuator/info", 200),
+				test.get("/api/actuator/sessions", new String[]{"username", "admin"}, 200)
         );
     }
 
     private static List<Arguments> provideUserTestParameters() {
         return List.of(
-                test.get("/actuator", 403),
-				test.get("/actuator/flyway", 403),
-				test.get("/actuator/health", 403),
-				test.get("/actuator/info", 403),
-				test.get("/actuator/sessions",new String[]{"username", "admin"}, 403)
+                test.get("/api/actuator", 403),
+				test.get("/api/actuator/flyway", 403),
+				test.get("/api/actuator/health", 403),
+				test.get("/api/actuator/info", 403),
+				test.get("/api/actuator/sessions",new String[]{"username", "admin"}, 403)
         );
     }
 

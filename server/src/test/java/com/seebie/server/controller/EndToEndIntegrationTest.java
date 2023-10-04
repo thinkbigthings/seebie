@@ -63,7 +63,7 @@ public class EndToEndIntegrationTest extends IntegrationTest {
         LOG.info("Creating test data");
         LOG.info("");
 
-        baseUrl = "https://localhost:" + randomServerPort + "/";
+        baseUrl = "https://localhost:" + randomServerPort + "/api/";
         users = URI.create(baseUrl + "user");
 
         adminClient = new ApiClientStateful(baseUrl, "admin", "admin");
