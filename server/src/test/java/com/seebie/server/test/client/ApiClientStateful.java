@@ -51,8 +51,8 @@ public class ApiClientStateful {
 
     public ApiClientStateful(URI base, String username, String password) {
 
-        login = base.resolve("/login");
-        logout = base.resolve("/logout");
+        login = base.resolve("/api/login");
+        logout = base.resolve("/api/logout");
 
         // HttpClient does not send Basic credentials until challenged for them with a WWW-Authenticate header from the server.
         // Further, the only type of challenge it understands is for Basic authentication.

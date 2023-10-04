@@ -95,7 +95,7 @@ function AuthenticatedApp() {
     let [createdCount, setCreatedCount] = useState(0);
 
     function onClickLogout() {
-        fetch("/logout", GET)
+        fetch("/api/logout", GET)
             .then(response => onLogout());
     }
 

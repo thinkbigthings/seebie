@@ -40,7 +40,7 @@ function Login() {
         }
     }
 
-    const loginUrl = '/login?remember-me=' + (rememberMe ? 'true' : 'false');
+    const loginUrl = '/api/login?remember-me=' + (rememberMe ? 'true' : 'false');
 
     const onClickLogin = () => {
 

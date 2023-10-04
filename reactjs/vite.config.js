@@ -8,12 +8,15 @@ export default defineConfig(() => {
             outDir: 'build',
         },
         plugins: [
+            // js and css are included by default in the react plugin
             react({ include: "**/*.jsx" }),
             basicSsl()
         ],
         server: {
             proxy: {
-                '/login': {
+                // if you proxy '/' then it will proxy ws requests intended for the vite server which breaks HMR
+                // note you might have to refresh the browser to see HMR changes
+                '/api': {
                     target: 'https://localhost:9000',
                     changeOrigin: true,
                     secure: false
