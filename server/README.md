@@ -296,9 +296,10 @@ To discover what dependencies are out of date.
 
 To upgrade versions of Java in general:
 
-- Set the project base build.gradle's sourceCompatibility
-- Update the server README that references Java version
+- Set the server's build.gradle sourceCompatibility
 - The heroku plugin also references the jdkVersion
+- Github Actions also references the Java version
+- Update the server README that references Java version
 
 
 To upgrade versions of Java in IntelliJ:

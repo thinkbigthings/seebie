@@ -9,7 +9,7 @@ plugins {
 heroku {
 
     appName = project.hasProperty('app') ? project.property('app') : ''
-    jdkVersion = 17
+    jdkVersion = 21
     includes = ["server/build/libs/server-1.0-SNAPSHOT.jar"]
     includeBuildDir = false
 
