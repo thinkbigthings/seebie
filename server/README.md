@@ -306,7 +306,7 @@ To upgrade versions of Java in IntelliJ:
 
 - I think you need to add the SDK in Module Settings -> Platform Settings -> SDK
   But see if updating Build Tools below works first
-- Click "IntelliJ IDEA" -> Preferences -> Build, Execution, Deployment -> Build Tools -> Gradle
+- Click "IntelliJ IDEA" -> Settings -> Build, Execution, Deployment -> Build Tools -> Gradle
   and set Gradle JVM to the new version
-- Might need to right click the project and go to module settings to set it there too?
 - You'll also need to edit the version in any Run Configurations
+- Might need to right click the project and go to module settings to set it there too?
