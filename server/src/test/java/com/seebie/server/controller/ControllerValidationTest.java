@@ -128,8 +128,8 @@ public class ControllerValidationTest {
 	private static List<Arguments> provideAdminTestParameters() {
 		return List.of(
 
-				test.post("/registration", registration, 200),
-				test.post("/registration", invalidRegistration, 400)
+				test.post("/api/registration", registration, 200),
+				test.post("/api/registration", invalidRegistration, 400)
 		);
 	}
 
@@ -137,24 +137,24 @@ public class ControllerValidationTest {
 
 		return List.of(
 
-				test.put("/user/" + USERNAME + "/personalInfo", info, 200),
-				test.put("/user/" + USERNAME + "/personalInfo", invalidInfo, 400),
+				test.put("/api/user/" + USERNAME + "/personalInfo", info, 200),
+				test.put("/api/user/" + USERNAME + "/personalInfo", invalidInfo, 400),
 
-				test.post("/user/" + USERNAME + "/sleep", sleepData, 200),
-				test.post("/user/" + USERNAME + "/sleep", invalidSleepData, 400),
+				test.post("/api/user/" + USERNAME + "/sleep", sleepData, 200),
+				test.post("/api/user/" + USERNAME + "/sleep", invalidSleepData, 400),
 
-				test.put("/user/" + USERNAME + "/sleep" + "/1", sleepData, 200),
-				test.put("/user/" + USERNAME + "/sleep" + "/1", invalidSleepData, 400),
+				test.put("/api/user/" + USERNAME + "/sleep" + "/1", sleepData, 200),
+				test.put("/api/user/" + USERNAME + "/sleep" + "/1", invalidSleepData, 400),
 
-				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to},   200),
-				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", "",   "to", ""},   400),
-				test.get("/user/" + USERNAME + "/sleep/chart", new String[]{"from", to,   "to", from}, 400),
+				test.get("/api/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to},   200),
+				test.get("/api/user/" + USERNAME + "/sleep/chart", new String[]{"from", "",   "to", ""},   400),
+				test.get("/api/user/" + USERNAME + "/sleep/chart", new String[]{"from", to,   "to", from}, 400),
 
-				test.post("/user/" + USERNAME + "/sleep/histogram", validHistReq,   200),
-				test.post("/user/" + USERNAME + "/sleep/histogram", invalidHistReq,   400),
+				test.post("/api/user/" + USERNAME + "/sleep/histogram", validHistReq,   200),
+				test.post("/api/user/" + USERNAME + "/sleep/histogram", invalidHistReq,   400),
 
-				test.post("/user/" + USERNAME + "/sleep/upload", badFile, 400),
-				test.post("/user/" + USERNAME + "/sleep/upload", goodFile, 200)
+				test.post("/api/user/" + USERNAME + "/sleep/upload", badFile, 400),
+				test.post("/api/user/" + USERNAME + "/sleep/upload", goodFile, 200)
 		);
 	}
 

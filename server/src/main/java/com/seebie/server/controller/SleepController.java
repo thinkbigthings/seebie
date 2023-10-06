@@ -25,7 +25,10 @@ import java.util.List;
 import static com.seebie.server.mapper.dtotoentity.CsvToSleepData.CSV_INPUT;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+// if we use server.servlet.context-path=/api, static content and API all come from the same base
+// so we can use that for api-only requests only if the UI is served separately
 @RestController
+@RequestMapping("/api")
 public class SleepController {
 
     private static Logger LOG = LoggerFactory.getLogger(SleepController.class);

@@ -21,6 +21,11 @@ export default defineConfig(() => {
                     target: 'https://localhost:9000',
                     changeOrigin: true,
                     secure: false
+                },
+                '/actuator': {
+                    target: 'https://localhost:9000',
+                    changeOrigin: true,
+                    secure: false
                 }
             }
         }

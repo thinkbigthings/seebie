@@ -21,7 +21,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
+// if we use server.servlet.context-path=/api, static content and API all come from the same base
+// so we can use that for api-only requests only if the UI is served separately
 @RestController
+@RequestMapping("/api")
 public class UserController {
 
     private static Logger LOG = LoggerFactory.getLogger(UserController.class);
