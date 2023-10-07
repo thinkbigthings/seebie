@@ -2,3 +2,15 @@
 rootProject.name = 'seebie'
 
 include 'reactjs', 'server'
+
+
+//toolchainManagement {
+//
+//    jvm {
+//        javaRepositories {
+//            repository('foojay') {
+//                resolverClass = org.gradle.toolchains.foojay.FoojayToolchainResolver
+//            }
+//        }
+//    }
+//}

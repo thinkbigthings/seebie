@@ -31,7 +31,21 @@ jobs:
 #          java-version: '21'
 #          distribution: 'temurin'
 
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build
+      - name : Download Java 21
+          - uses: sdkman/sdkman-action@v1
+            with:
+              candidate: java
+              version: 21-open
+
+#          - uses: actions/setup-java@v3
+#              id: setup-java
+#              with:
+#                distribution: 'jdkfile'
+#                java-version: 21
+#                jdkFile: ${{ steps.sdkman.outputs.file }}
+#          - run: java -version
+\
+        - name: Build with Gradle
+          uses: gradle/gradle-build-action@v2
+          with:
+            arguments: build
