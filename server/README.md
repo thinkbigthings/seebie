@@ -6,7 +6,7 @@ This is a project to record and analyze your sleep.
 
 Software that needs to be installed and available from the command line:
 
-* Java 17
+* Java 21
 * Docker
 
 
@@ -297,7 +297,7 @@ To discover what dependencies are out of date.
 To upgrade versions of Java in general:
 
 - Set the server's build.gradle sourceCompatibility
-- The heroku plugin also references the jdkVersion
+- The heroku plugin also references the Java version
 - Github Actions also references the Java version
 - Update the server README that references Java version
 

@@ -24,26 +24,11 @@ jobs:
           cache: 'npm'
           cache-dependency-path: reactjs/package-lock.json
 
-      # adopt openjdk was moved to Eclipse Temurin
       - name: Set up Java 21
         uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'zulu'
-
-#      - name : Download Java 21
-#          - uses: sdkman/sdkman-action@v1
-#            with:
-#              candidate: java
-#              version: 21-open
-
-#          - uses: actions/setup-java@v3
-#              id: setup-java
-#              with:
-#                distribution: 'jdkfile'
-#                java-version: 21
-#                jdkFile: ${{ steps.sdkman.outputs.file }}
-#          - run: java -version
 
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
