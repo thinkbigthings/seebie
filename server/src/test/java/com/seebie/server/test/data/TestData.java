@@ -136,18 +136,6 @@ public class TestData {
                 data.stopTime().plus(amountToAdd), data.zoneId());
     }
 
-    public static SleepData decrement(SleepData data, Duration amountToSubtract) {
-        return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
-                data.startTime().minus(amountToSubtract),
-                data.stopTime().minus(amountToSubtract), data.zoneId());
-    }
-
-    public static SleepData randomDuration(SleepData data) {
-        return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
-                data.startTime().plusMinutes(random.nextInt(60)),
-                data.stopTime().minusMinutes(random.nextInt(60)), data.zoneId());
-    }
-
     public static class ArgumentBuilder {
 
         private String host;
