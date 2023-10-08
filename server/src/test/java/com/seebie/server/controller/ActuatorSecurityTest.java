@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static com.seebie.server.controller.ControllerValidationTest.testDataObj2Str;
+import static java.lang.StringTemplate.STR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -49,7 +50,7 @@ public class ActuatorSecurityTest extends IntegrationTest {
         // so we get the mapper as configured for the app
         toRequest = new HttpRequestMapper(testDataObj2Str(converter));
 
-        baseUrl = "https://localhost:" + randomServerPort;
+        baseUrl = STR."https://localhost:\{randomServerPort}";
 
         test = new TestData.ArgumentBuilder(baseUrl);
 

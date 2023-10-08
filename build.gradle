@@ -3,13 +3,12 @@ plugins {
     id "com.heroku.sdk.heroku-gradle" version "3.0.0"
 }
 
-
 // use heroku gradle plugin so info is stored here instead of in a Procfile
 // https://github.com/heroku/heroku-gradle
 heroku {
 
     appName = project.hasProperty('app') ? project.property('app') : ''
-    jdkVersion = 17
+    jdkVersion = 21
     includes = ["server/build/libs/server-1.0-SNAPSHOT.jar"]
     includeBuildDir = false
 

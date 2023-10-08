@@ -6,7 +6,7 @@ This is a project to record and analyze your sleep.
 
 Software that needs to be installed and available from the command line:
 
-* Java 17
+* Java 21
 * Docker
 
 
@@ -296,16 +296,17 @@ To discover what dependencies are out of date.
 
 To upgrade versions of Java in general:
 
-- Set the project base build.gradle's sourceCompatibility
+- Set the server's build.gradle sourceCompatibility
+- The heroku plugin also references the Java version
+- Github Actions also references the Java version
 - Update the server README that references Java version
-- The heroku plugin also references the jdkVersion
 
 
 To upgrade versions of Java in IntelliJ:
 
 - I think you need to add the SDK in Module Settings -> Platform Settings -> SDK
   But see if updating Build Tools below works first
-- Click "IntelliJ IDEA" -> Preferences -> Build, Execution, Deployment -> Build Tools -> Gradle
+- Click "IntelliJ IDEA" -> Settings -> Build, Execution, Deployment -> Build Tools -> Gradle
   and set Gradle JVM to the new version
-- Might need to right click the project and go to module settings to set it there too?
 - You'll also need to edit the version in any Run Configurations
+- Might need to right click the project and go to module settings to set it there too?
