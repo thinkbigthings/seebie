@@ -190,8 +190,8 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         var data = TestData.createRandomSleepData(listCount, AMERICA_NEW_YORK);
         data.forEach(d -> sleepService.saveNew(username, d));
 
-        var to = data.get(0).stopTime().plusDays(20);
-        var from = data.get(0).stopTime().minusDays(20);
+        var to = data.getFirst().stopTime().plusDays(20);
+        var from = data.getFirst().stopTime().minusDays(20);
 
         var points = sleepService.listChartData(username, from, to);
         assertEquals(10, points.size());
@@ -207,8 +207,8 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         var data = TestData.createRandomSleepData(listCount, AMERICA_NEW_YORK);
         data.forEach(d -> sleepService.saveNew(username, d));
 
-        var to = data.get(0).stopTime().plusDays(20);
-        var from = data.get(0).stopTime().minusDays(20);
+        var to = data.getFirst().stopTime().plusDays(20);
+        var from = data.getFirst().stopTime().minusDays(20);
 
         var range = new DateRange(from, to);
         var histData = sleepService.listSleepAmounts(username, new FilterList(List.of(range, range, range)));

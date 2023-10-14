@@ -38,11 +38,13 @@ public class NotificationRetrievalService {
     public List<NotificationRequired> getUsersToNotify(Instant lastNotifiedBefore, Instant lastLoggedBefore, Instant scanDate) {
 
         LOG.info("Retrieving Notification records for users.");
-        LOG.info("Notifications will be sent to users " +
-                "who have not been notified since " + toLocale(lastNotifiedBefore) + " " +
-                "and have not logged sleep since " + toLocale(lastLoggedBefore) + ". " +
-                "Last scan date for notified users will be set to " + toLocale(scanDate) + "."
-            );
+
+        LOG.info(STR."""
+                Notifications will be sent to users who have not been notified since \{toLocale(lastNotifiedBefore)}
+                and have not logged their sleep since \{toLocale(lastLoggedBefore)}.
+                Last scan date for notified users will be set to " + \{toLocale(scanDate)}.
+                """
+        );
 
         return notificationRepo.findNotificationsBy(lastNotifiedBefore, lastLoggedBefore).stream()
                 .peek(notification -> LOG.info(createLogMessage(notification, scanDate)))
@@ -53,9 +55,9 @@ public class NotificationRetrievalService {
     }
 
     private String createLogMessage(Notification notification, Instant scanDate) {
-        return "Updating notification record for " + notification.getUser().getUsername()
-                + " from " + toLocale(notification.getLastSent())
-                + " to " + scanDate;
+        var user = notification.getUser().getUsername();
+        var lastSentDate = toLocale(notification.getLastSent());
+        return STR."Updating notification record for \{user} from \{lastSentDate} to \{scanDate}";
     }
 
     public static String toLocale(Instant instant) {

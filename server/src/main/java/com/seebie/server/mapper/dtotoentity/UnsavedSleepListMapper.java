@@ -33,7 +33,7 @@ public class UnsavedSleepListMapper implements BiFunction<String, List<SleepData
     }
 
     public SleepSession toUnsavedEntity(String username, SleepData dto) {
-        return apply(username, List.of(dto)).stream().findFirst().get();
+        return apply(username, List.of(dto)).getFirst();
     }
 
     public SleepSession toUnsavedEntity(User user, SleepData dto) {
