@@ -56,7 +56,7 @@ public class SessionSecurityTest extends IntegrationTest {
         testUserPassword = userRegistration.plainTextPassword();
 
         userInfoRequest = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + "/user/" + userRegistration.username()))
+                .uri(URI.create(STR."\{baseUrl}/user/\{userRegistration.username()}"))
                 .GET()
                 .build();
     }
@@ -64,7 +64,7 @@ public class SessionSecurityTest extends IntegrationTest {
     @BeforeAll
     public static void setup(@Autowired Environment env, @LocalServerPort int randomServerPort) {
 
-        baseUrl = "https://localhost:" + randomServerPort + "/api";
+        baseUrl = STR."https://localhost:\{randomServerPort}/api";
 
         loginUri = URI.create(baseUrl + "/login?remember-me=false");
         rememberMeUri = URI.create(baseUrl + "/login?remember-me=true");

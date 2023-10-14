@@ -52,7 +52,7 @@ public class NotificationMessageService {
 
         emailTemplate.setFrom(env.getProperty("spring.mail.username"));
         emailTemplate.setSubject("Missing Sleep Log");
-        emailTemplate.setText("Hi %s you missed recording your last sleep session. You can turn off notifications in your user settings.");
+        emailTemplate.setText("");
 
         LOG.info("Instantiated Notification Service.");
         LOG.info("Scan schedule enabled is " + scanEnabled);
@@ -129,7 +129,12 @@ public class NotificationMessageService {
         var message = new SimpleMailMessage(emailTemplate);
 
         message.setTo(send.email());
-        message.setText(String.format(emailTemplate.getText(), send.username()));
+        String text = STR."""
+        Hi \{send.username()},
+        You missed recording your last sleep session. If you record it right away you won't lose your momentum!
+        FYI you can control these notifications in your user settings.
+        """;
+        message.setText(text);
 
         return message;
     }

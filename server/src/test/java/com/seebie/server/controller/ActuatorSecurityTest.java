@@ -48,7 +48,7 @@ public class ActuatorSecurityTest extends IntegrationTest {
                              @Autowired MappingJackson2HttpMessageConverter converter)
     {
         // so we get the mapper as configured for the app
-        toRequest = new HttpRequestMapper(testDataObj2Str(converter));
+        toRequest = new HttpRequestMapper(testDataObj2Str(converter.getObjectMapper()));
 
         baseUrl = STR."https://localhost:\{randomServerPort}";
 

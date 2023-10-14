@@ -144,7 +144,7 @@ public class ApiClientStateful {
 
     public HttpResponse<String> trySend(HttpRequest request) throws IOException, InterruptedException {
         if( ! request.uri().getScheme().equals("https")) {
-            throw new RuntimeException("This client should use https because we are passing around auth info");
+            throw new IllegalArgumentException("This client should use https because it could send auth info");
         }
         // more on body handlers here https://openjdk.java.net/groups/net/httpclient/recipes.html
         // might be fun to have direct-to-json-object body handler
@@ -189,8 +189,8 @@ public class ApiClientStateful {
 
         try {
 
-            String json = object instanceof String
-                    ? object.toString()
+            String json = object instanceof String body
+                    ? body
                     : mapper.writeValueAsString(object);
 
             return HttpRequest.BodyPublishers.ofString(json);
