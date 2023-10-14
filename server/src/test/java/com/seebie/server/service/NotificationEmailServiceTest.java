@@ -1,9 +1,6 @@
 package com.seebie.server.service;
 
 import com.seebie.server.dto.RegistrationRequest;
-import com.seebie.server.service.NotificationMessageService;
-import com.seebie.server.service.NotificationRequired;
-import com.seebie.server.service.NotificationRetrievalService;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.Arrays;
 
+import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -41,7 +39,7 @@ public class NotificationEmailServiceTest {
     @Test
     public void testMailTemplate() {
 
-        RegistrationRequest user = TestData.createRandomUserRegistration();
+        RegistrationRequest user = createRandomUserRegistration();
 
         var message = service.createMessage(new NotificationRequired(user.email(), user.username()));
 
