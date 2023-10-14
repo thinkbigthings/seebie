@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.net.http.HttpRequest.BodyPublishers.ofString;
+
 public class HttpRequestMapper  implements Function<AppRequest, HttpRequest> {
 
     private Function<Object, String> mapper;
@@ -26,8 +28,8 @@ public class HttpRequestMapper  implements Function<AppRequest, HttpRequest> {
 
             switch(httpMethod) {
                 case "GET" -> builder.GET();
-                case "POST" -> builder.POST(HttpRequest.BodyPublishers.ofString(mapper.apply(request.reqBody())));
-                case "PUT" -> builder.PUT(HttpRequest.BodyPublishers.ofString(mapper.apply(request.reqBody())));
+                case "POST" -> builder.POST(ofString(mapper.apply(request.reqBody())));
+                case "PUT" -> builder.PUT(ofString(mapper.apply(request.reqBody())));
                 case "DELETE" -> builder.DELETE();
                 default -> throw new IllegalArgumentException("Can't create request for method " + httpMethod);
             }

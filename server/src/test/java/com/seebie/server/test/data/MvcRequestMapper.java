@@ -20,17 +20,14 @@ public class MvcRequestMapper implements Function<AppRequest, RequestBuilder> {
     @Override
     public RequestBuilder apply(AppRequest request) {
 
-            return switch (request.reqBody()) {
-
-                case MockMultipartFile multipartFile -> multipart(request.url())
+            return request.reqBody() instanceof MockMultipartFile multipartFile
+                    ? multipart(request.url())
                         .file(multipartFile)
-                        .secure(true);
-
-                default -> request(request.httpMethod(), request.url())
+                        .secure(true)
+                    : request(request.httpMethod(), request.url())
                         .content(mapper.apply(request.reqBody()))
                         .params(request.reqParams())
                         .contentType(APPLICATION_JSON)
                         .secure(true);
-            };
     }
 }

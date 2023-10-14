@@ -105,7 +105,7 @@ public class ControllerSecurityTest {
 	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
 
 		// so we get the mapper as configured for the app
-		toRequest = new MvcRequestMapper(testDataObj2Str(converter));
+		toRequest = new MvcRequestMapper(testDataObj2Str(converter.getObjectMapper()));
 		
 		test = new TestData.ArgumentBuilder();
 	}
@@ -118,31 +118,31 @@ public class ControllerSecurityTest {
 				test.get("/api/login", 401),
 				test.get("/api/user", 401),
 
-				test.put("/api/user/" + USERNAME + "/personalInfo", registration, 401),
-				test.post("/api/user/" + USERNAME + "/password/update", password, 401),
-				test.get("/api/user/" + USERNAME, 401),
+				test.put(STR."/api/user/\{USERNAME}/personalInfo", registration, 401),
+				test.post(STR."/api/user/\{USERNAME}/password/update", password, 401),
+				test.get(STR."/api/user/\{USERNAME}", 401),
 
-				test.put("/api/user/" + ADMINNAME + "/personalInfo", info, 401),
-				test.post("/api/user/" + ADMINNAME + "/password/update", password, 401),
-				test.get("/api/user/" + ADMINNAME, 401),
+				test.put(STR."/api/user/\{ADMINNAME}/personalInfo", info, 401),
+				test.post(STR."/api/user/\{ADMINNAME}/password/update", password, 401),
+				test.get(STR."/api/user/\{ADMINNAME}", 401),
 
 				// sleep controller
-				test.post("/api/user/" + USERNAME + "/sleep", sleepData, 401),
-				test.get("/api/user/" + USERNAME + "/sleep", 401),
-				test.get("/api/user/" + USERNAME + "/sleep" + "/1", 401),
-				test.put("/api/user/" + USERNAME + "/sleep" + "/1", sleepData, 401),
-				test.delete("/api/user/" + USERNAME + "/sleep" + "/1", 401),
+				test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 401),
+				test.get(STR."/api/user/\{USERNAME}/sleep", 401),
+				test.get(STR."/api/user/\{USERNAME}/sleep" + "/1", 401),
+				test.put(STR."/api/user/\{USERNAME}/sleep" + "/1", sleepData, 401),
+				test.delete(STR."/api/user/\{USERNAME}/sleep" + "/1", 401),
 
-				test.post("/api/user/" + ADMINNAME + "/sleep", sleepData, 401),
-				test.get("/api/user/" + ADMINNAME + "/sleep", 401),
-				test.get("/api/user/" + ADMINNAME + "/sleep" + "/1", 401),
-				test.put("/api/user/" + ADMINNAME + "/sleep" + "/1", sleepData, 401),
-				test.delete("/api/user/" + ADMINNAME + "/sleep" + "/1", 401),
+				test.post(STR."/api/user/\{ADMINNAME}/sleep", sleepData, 401),
+				test.get(STR."/api/user/\{ADMINNAME}/sleep", 401),
+				test.get(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 401),
+				test.put(STR."/api/user/\{ADMINNAME}/sleep" + "/1", sleepData, 401),
+				test.delete(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 401),
 
-				test.get("/api/user/" + USERNAME + "/sleep/chart", chartParams, 401),
-				test.post("/api/user/" + USERNAME + "/sleep/histogram", histogramRequest, 401),
-				test.get("/api/user/" + USERNAME + "/sleep/download", 401),
-				test.post("/api/user/" + USERNAME + "/sleep/upload", file, 401)
+				test.get(STR."/api/user/\{USERNAME}/sleep/chart", chartParams, 401),
+				test.post(STR."/api/user/\{USERNAME}/sleep/histogram", histogramRequest, 401),
+				test.get(STR."/api/user/\{USERNAME}/sleep/download", 401),
+				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 401)
 
 
 		);
@@ -156,31 +156,31 @@ public class ControllerSecurityTest {
 				test.get("/api/login", 200),
 				test.get("/api/user", 200),
 
-				test.put("/api/user/" + USERNAME + "/personalInfo", info, 200),
-				test.post("/api/user/" + USERNAME + "/password/update", password, 200),
+				test.put(STR."/api/user/\{USERNAME}/personalInfo", info, 200),
+				test.post(STR."/api/user/\{USERNAME}/password/update", password, 200),
 				test.get("/api/user/" + USERNAME, 200),
 
-				test.put("/api/user/" + ADMINNAME + "/personalInfo", info, 200),
-				test.post("/api/user/" + ADMINNAME + "/password/update", password, 200),
+				test.put(STR."/api/user/\{ADMINNAME}/personalInfo", info, 200),
+				test.post(STR."/api/user/\{ADMINNAME}/password/update", password, 200),
 				test.get("/api/user/" + ADMINNAME, 200),
 
 				// sleep controller
-				test.post("/api/user/" + USERNAME + "/sleep", sleepData, 200),
-				test.get("/api/user/" + USERNAME + "/sleep", 200),
-				test.get("/api/user/" + USERNAME + "/sleep" + "/1", 200),
-				test.put("/api/user/" + USERNAME + "/sleep" + "/1", sleepData, 200),
-				test.delete("/api/user/" + USERNAME + "/sleep" + "/1", 200),
+				test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
+				test.get(STR."/api/user/\{USERNAME}/sleep", 200),
+				test.get(STR."/api/user/\{USERNAME}/sleep" + "/1", 200),
+				test.put(STR."/api/user/\{USERNAME}/sleep" + "/1", sleepData, 200),
+				test.delete(STR."/api/user/\{USERNAME}/sleep" + "/1", 200),
 
-				test.post("/api/user/" + ADMINNAME + "/sleep", sleepData, 200),
-				test.get("/api/user/" + ADMINNAME + "/sleep", 200),
-				test.get("/api/user/" + ADMINNAME + "/sleep" + "/1", 200),
-				test.put("/api/user/" + ADMINNAME + "/sleep" + "/1", sleepData, 200),
-				test.delete("/api/user/" + ADMINNAME + "/sleep" + "/1", 200),
+				test.post(STR."/api/user/\{ADMINNAME}/sleep", sleepData, 200),
+				test.get(STR."/api/user/\{ADMINNAME}/sleep", 200),
+				test.get(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 200),
+				test.put(STR."/api/user/\{ADMINNAME}/sleep" + "/1", sleepData, 200),
+				test.delete(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 200),
 
-				test.get("/api/user/" + USERNAME + "/sleep/chart", chartParams, 200),
-				test.post("/api/user/" + USERNAME + "/sleep/histogram", histogramRequest, 200),
-				test.get("/api/user/" + USERNAME + "/sleep/download", 200),
-				test.post("/api/user/" + USERNAME + "/sleep/upload", file, 200)
+				test.get(STR."/api/user/\{USERNAME}/sleep/chart", chartParams, 200),
+				test.post(STR."/api/user/\{USERNAME}/sleep/histogram", histogramRequest, 200),
+				test.get(STR."/api/user/\{USERNAME}/sleep/download", 200),
+				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 200)
 		);
 	}
 
@@ -192,37 +192,37 @@ public class ControllerSecurityTest {
 				test.get("/api/login", 200),
 				test.get("/api/user", 403),
 
-				test.put("/api/user/" + USERNAME + "/personalInfo", info, 200),
-				test.post("/api/user/" + USERNAME + "/password/update", password, 200),
+				test.put(STR."/api/user/\{USERNAME}/personalInfo", info, 200),
+				test.post(STR."/api/user/\{USERNAME}/password/update", password, 200),
 				test.get("/api/user/" + USERNAME, 200),
 
 				// user controller - should not access other user endpoints
-				test.put("/api/user/" + ADMINNAME + "/personalInfo", info, 403),
-				test.post("/api/user/" + ADMINNAME + "/password/update", password, 403),
+				test.put(STR."/api/user/\{ADMINNAME}/personalInfo", info, 403),
+				test.post(STR."/api/user/\{ADMINNAME}/password/update", password, 403),
 				test.get("/api/user/" + ADMINNAME, 403),
 
 				// sleep controller
-				test.post("/api/user/" + USERNAME + "/sleep", sleepData, 200),
-				test.get("/api/user/" + USERNAME + "/sleep", 200),
-				test.get("/api/user/" + USERNAME + "/sleep" + "/1", 200),
-				test.put("/api/user/" + USERNAME + "/sleep" + "/1", sleepData, 200),
-				test.delete("/api/user/" + USERNAME + "/sleep" + "/1", 200),
+				test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
+				test.get(STR."/api/user/\{USERNAME}/sleep", 200),
+				test.get(STR."/api/user/\{USERNAME}/sleep" + "/1", 200),
+				test.put(STR."/api/user/\{USERNAME}/sleep" + "/1", sleepData, 200),
+				test.delete(STR."/api/user/\{USERNAME}/sleep" + "/1", 200),
 
-				test.get("/api/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 200),
-				test.get("/api/user/" + USERNAME + "/sleep/download", 200),
-				test.post("/api/user/" + USERNAME + "/sleep/upload", file, 200),
+				test.get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", from, "to", to}, 200),
+				test.get(STR."/api/user/\{USERNAME}/sleep/download", 200),
+				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 200),
 
 				// sleep controller - should not access other user endpoints
 
-				test.post("/api/user/" + ADMINNAME + "/sleep", sleepData, 403),
-				test.get("/api/user/" + ADMINNAME + "/sleep", 403),
-				test.get("/api/user/" + ADMINNAME + "/sleep" + "/1", 403),
-				test.put("/api/user/" + ADMINNAME + "/sleep" + "/1", sleepData, 403),
-				test.delete("/api/user/" + ADMINNAME + "/sleep" + "/1", 403),
+				test.post(STR."/api/user/\{ADMINNAME}/sleep", sleepData, 403),
+				test.get(STR."/api/user/\{ADMINNAME}/sleep", 403),
+				test.get(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 403),
+				test.put(STR."/api/user/\{ADMINNAME}/sleep" + "/1", sleepData, 403),
+				test.delete(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 403),
 
-				test.get("/api/user/" + ADMINNAME + "/sleep/chart", new String[]{"from", from, "to", to}, 403),
-				test.get("/api/user/" + ADMINNAME + "/sleep/download", 403),
-				test.post("/api/user/" + ADMINNAME + "/sleep/upload", file, 403)
+				test.get(STR."/api/user/\{ADMINNAME}/sleep/chart", new String[]{"from", from, "to", to}, 403),
+				test.get(STR."/api/user/\{ADMINNAME}/sleep/download", 403),
+				test.post(STR."/api/user/\{ADMINNAME}/sleep/upload", file, 403)
 		);
 	}
 

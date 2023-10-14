@@ -1,6 +1,7 @@
 package com.seebie.server.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
 import com.seebie.server.security.WebSecurityConfig;
@@ -107,20 +108,22 @@ public class ControllerValidationTest {
 	 * If the test data is a string, presume it is already in the correct format and return directly.
 	 * If you pass a string "" to the object mapper, it doesn't return the string, it returns """".
 	 *
-	 * @param converter
+	 * @param mapper
 	 * @return
 	 */
-	public static Function<Object, String> testDataObj2Str(MappingJackson2HttpMessageConverter converter) {
-		return uncheck((Object obj) -> obj instanceof String
-				? obj.toString()
-				: 	converter.getObjectMapper().writerFor(obj.getClass()).writeValueAsString(obj));
+	public static Function<Object, String> testDataObj2Str(ObjectMapper mapper) {
+		return uncheck(
+				(Object obj) -> obj instanceof String testData
+					? testData
+					: mapper.writerFor(obj.getClass()).writeValueAsString(obj)
+		);
 	}
 
 	@BeforeAll
 	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
 
 		// so we get the mapper as configured for the app
-		toRequest = new MvcRequestMapper(testDataObj2Str(converter));
+		toRequest = new MvcRequestMapper(testDataObj2Str(converter.getObjectMapper()));
 
 		test = new TestData.ArgumentBuilder();
 	}
@@ -137,24 +140,24 @@ public class ControllerValidationTest {
 
 		return List.of(
 
-				test.put("/api/user/" + USERNAME + "/personalInfo", info, 200),
-				test.put("/api/user/" + USERNAME + "/personalInfo", invalidInfo, 400),
+				test.put(STR."/api/user/\{USERNAME}/personalInfo", info, 200),
+				test.put(STR."/api/user/\{USERNAME}/personalInfo", invalidInfo, 400),
 
-				test.post("/api/user/" + USERNAME + "/sleep", sleepData, 200),
-				test.post("/api/user/" + USERNAME + "/sleep", invalidSleepData, 400),
+				test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
+				test.post(STR."/api/user/\{USERNAME}/sleep", invalidSleepData, 400),
 
-				test.put("/api/user/" + USERNAME + "/sleep" + "/1", sleepData, 200),
-				test.put("/api/user/" + USERNAME + "/sleep" + "/1", invalidSleepData, 400),
+				test.put(STR."/api/user/\{USERNAME}/sleep" + "/1", sleepData, 200),
+				test.put(STR."/api/user/\{USERNAME}/sleep" + "/1", invalidSleepData, 400),
 
-				test.get("/api/user/" + USERNAME + "/sleep/chart", new String[]{"from", from, "to", to},   200),
-				test.get("/api/user/" + USERNAME + "/sleep/chart", new String[]{"from", "",   "to", ""},   400),
-				test.get("/api/user/" + USERNAME + "/sleep/chart", new String[]{"from", to,   "to", from}, 400),
+				test.get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", from, "to", to},   200),
+				test.get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", "",   "to", ""},   400),
+				test.get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", to,   "to", from}, 400),
 
-				test.post("/api/user/" + USERNAME + "/sleep/histogram", validHistReq,   200),
-				test.post("/api/user/" + USERNAME + "/sleep/histogram", invalidHistReq,   400),
+				test.post(STR."/api/user/\{USERNAME}/sleep/histogram", validHistReq,   200),
+				test.post(STR."/api/user/\{USERNAME}/sleep/histogram", invalidHistReq,   400),
 
-				test.post("/api/user/" + USERNAME + "/sleep/upload", badFile, 400),
-				test.post("/api/user/" + USERNAME + "/sleep/upload", goodFile, 200)
+				test.post(STR."/api/user/\{USERNAME}/sleep/upload", badFile, 400),
+				test.post(STR."/api/user/\{USERNAME}/sleep/upload", goodFile, 200)
 		);
 	}
 
