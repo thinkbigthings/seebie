@@ -14,7 +14,7 @@ import static com.seebie.server.test.data.TestData.toSleepDetails;
 import static java.time.ZonedDateTime.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SleepDataToCsvMapperTest {
+public class SleepDetailsToCsvTest {
 
     private SleepDetailsToCsvRow detailsToCsv = new SleepDetailsToCsvRow();
 
