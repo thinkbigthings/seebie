@@ -5,9 +5,9 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.io.StringReader;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -17,7 +17,7 @@ import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.HEADER;
 @Component
 public class CsvToSleepData implements Function<String, List<SleepData>> {
 
-    // need to skip header when reading
+    // allowMissingColumnNames is only used when parsing
     public static final CSVFormat CSV_INPUT = CSVFormat.RFC4180.builder()
                                                                 .setAllowMissingColumnNames(false)
                                                                 .setSkipHeaderRecord(true)
@@ -28,17 +28,12 @@ public class CsvToSleepData implements Function<String, List<SleepData>> {
     public List<SleepData> apply(String rawCsv) {
 
         try {
-            var records = CSV_INPUT.parse(new StringReader(rawCsv)).getRecords();
-
-            if(records.isEmpty()) {
-                throw new IllegalArgumentException("No records were present.");
-            }
-
-            return records.stream()
+            return CSV_INPUT.parse(new StringReader(rawCsv))
+                    .stream()
                     .map(this::fromCsvRow)
                     .toList();
         }
-        catch (Exception e) {
+        catch (IOException | IllegalStateException e) {
             throw new IllegalArgumentException("Could not parse CSV input", e);
         }
     }

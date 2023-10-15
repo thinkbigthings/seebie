@@ -164,7 +164,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         var newData = createCsv(listCount, AMERICA_NEW_YORK);
 
         // batching means statements are sent to the DB in a batch, not that there is a single insert statement.
-        // so it's ok that we see a ton of insert statements.
+        // so it's expected that we see a ton of insert statements.
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         sleepService.saveCsv(username, newData);

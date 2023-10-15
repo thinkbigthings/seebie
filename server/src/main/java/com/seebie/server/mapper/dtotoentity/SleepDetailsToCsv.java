@@ -16,6 +16,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.seebie.server.Functional.uncheck;
+import static java.util.stream.Collectors.joining;
 
 @Component
 public class SleepDetailsToCsv implements Function<List<SleepDetails>, String> {
@@ -31,7 +32,7 @@ public class SleepDetailsToCsv implements Function<List<SleepDetails>, String> {
                                                                 .build();
 
     public static String headerRow() {
-        return Arrays.asList(CSV_OUTPUT.getHeader()).stream().collect(Collectors.joining(","));
+        return Arrays.asList(CSV_OUTPUT.getHeader()).stream().collect(joining(","));
     }
 
     private SleepDetailsToCsvRow toCsvRow;
@@ -51,7 +52,7 @@ public class SleepDetailsToCsv implements Function<List<SleepDetails>, String> {
                         .forEach(uncheck((List<String> s) -> printer.printRecord(s)));
         }
         catch (IOException e) {
-            // I think the IOException is just part of the API that in theory could be triggered by the Appendable
+            // The IOException is just part of the API that in theory could be triggered by the Appendable
             // (which could be to an Appendable File stream) but which in practice would never happen with a StringWriter.
             LOG.error("This should never happen.");
             throw new RuntimeException(e);
