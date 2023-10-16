@@ -7,7 +7,6 @@ import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.repository.SleepRepository;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
-import org.hibernate.Filter;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -21,7 +20,6 @@ import org.springframework.util.StopWatch;
 import java.lang.reflect.Field;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
 
@@ -51,7 +49,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     private UnsavedSleepListMapper sleepListMapper;
 
 
-    private PageRequest firstPage = PageRequest.of(0, 10);
+    private final PageRequest firstPage = PageRequest.of(0, 10);
 
     @Test
     public void testDbCalculationConstraint() throws NoSuchFieldException, IllegalAccessException {
