@@ -158,7 +158,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         String username = "heavyUser";
         userService.saveNewUser(new RegistrationRequest(username, "password", "heavyUser@sleepy.com"));
 
-        int listCount = 2000;
+        int listCount = 3000;
         var newData = createCsv(listCount, AMERICA_NEW_YORK);
 
         // batching means statements are sent to the DB in a batch, not that there is a single insert statement.

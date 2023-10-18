@@ -1,7 +1,7 @@
 
 set search_path TO public;
 
-CREATE SEQUENCE sleep_session_sequence AS INT8 START 101;
+CREATE SEQUENCE sleep_session_sequence AS INT8 INCREMENT BY 50 START 101;
 
 CREATE TABLE sleep_session (
     id              INT8        DEFAULT nextval('sleep_session_sequence') PRIMARY KEY,

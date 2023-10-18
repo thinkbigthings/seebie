@@ -20,7 +20,7 @@ public class SleepSession implements Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sleep_session_generator")
-    @SequenceGenerator(name="sleep_session_generator", sequenceName = "sleep_session_sequence", allocationSize = 1)
+    @SequenceGenerator(name="sleep_session_generator", sequenceName = "sleep_session_sequence", allocationSize = 50)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
