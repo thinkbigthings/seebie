@@ -52,7 +52,7 @@ public class UserService {
     public com.seebie.server.dto.User updateUser(String username, PersonalInfo userData) {
 
         var notification = notificationRepo.findBy(username)
-                .orElseThrow(() -> new RuntimeException("Server Error: No notification exists for " + username));
+                .orElseThrow(() -> new EntityNotFoundException("Server Error: No notification exists for " + username));
 
         // If user turns notifications on, set last notification time to current time,
         // so they are notified at the next appropriate time.
