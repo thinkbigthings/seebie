@@ -95,6 +95,7 @@ public class SleepService {
                 .toList();
     }
 
+
     @Transactional(readOnly = true)
     public String retrieveCsv(String username) {
         return toCsv.apply(sleepRepository.findAllByUsername(username));
@@ -105,9 +106,9 @@ public class SleepService {
 
         LOG.info("Parsing data...");
         List<SleepData> parsedData = fromCsv.apply(csvData);
+        var entityList = entityMapper.apply(username, parsedData);
 
         LOG.info("Saving data... ");
-        var entityList = entityMapper.apply(username, parsedData);
         int count = sleepRepository.saveAll(entityList).size();
 
         return count;

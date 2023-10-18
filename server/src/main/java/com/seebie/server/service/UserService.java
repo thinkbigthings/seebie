@@ -26,7 +26,6 @@ public class UserService {
 
     private static Logger LOG = LoggerFactory.getLogger(UserService.class);
 
-
     private UserMapper toUserRecord = new UserMapper();
 
     private UserRepository userRepo;
@@ -42,27 +41,29 @@ public class UserService {
     @Transactional
     public void updatePassword(String username, String newPassword) {
 
-        var user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("no user found for " + username));
-
-        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepo.findByUsername(username)
+                .ifPresentOrElse(
+                    user -> user.setPassword(passwordEncoder.encode(newPassword)),
+                    () -> { throw new EntityNotFoundException("No user found: " + username); }
+                );
     }
 
     @Transactional
     public com.seebie.server.dto.User updateUser(String username, PersonalInfo userData) {
 
-        var user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("no user found for " + username));
+        var notification = notificationRepo.findBy(username)
+                .orElseThrow(() -> new EntityNotFoundException("No notification exists for " + username));
 
+        // If user turns notifications on, set last notification time to current time,
+        // so they are notified at the next appropriate time.
+        if(userData.notificationsEnabled()) {
+            notification.withLastSent(Instant.now());
+        }
+
+        var user = notification.getUser();
         user.setEmail(userData.email());
         user.setDisplayName(userData.displayName());
         user.setNotificationsEnabled(userData.notificationsEnabled());
-
-        // If user turns it on, set last notification time to current time,
-        // so they are notified at the next appropriate time.
-        var notification = notificationRepo.findBy(username)
-                .orElseThrow(() -> new RuntimeException("Server Error: No notification exists for " + username));
-        notification.withLastSent(Instant.now());
 
         return toUserRecord.apply(user);
     }
@@ -75,11 +76,9 @@ public class UserService {
         if(userRepo.existsByUsername(username)) {
             throw new IllegalArgumentException("Username already exists " + registration.username());
         }
-        var entity = userRepo.save(fromRegistration(registration));
 
-        LOG.info("Saved new user with id " + entity.getId());
-
-        notificationRepo.save(new Notification(entity));
+        var unsavedUser = fromRegistration(registration);
+        notificationRepo.save(new Notification(unsavedUser));
     }
 
     @Transactional(readOnly = true)

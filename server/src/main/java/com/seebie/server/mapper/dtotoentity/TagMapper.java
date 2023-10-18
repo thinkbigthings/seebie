@@ -22,7 +22,7 @@ public class TagMapper implements Function<Set<String>, Set<Tag>> {
     public Set<Tag> apply(Set<String> tagText) {
 
         return tagText.stream()
-                .map(text -> tagRepository.findByText(text))
+                .map(tagRepository::findByText)
                 .collect(toSet());
     }
 }
