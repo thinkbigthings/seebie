@@ -51,6 +51,7 @@ public class IntegrationTest {
                 .withReuse(leaveRunningAfterTests)
                 .withUsername("test")
                 .withPassword("test")
+//                .withUrlParam("reWriteBatchedInserts", "true")
                 .withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(hostConfig));
 
         // call start ourselves so we can reuse

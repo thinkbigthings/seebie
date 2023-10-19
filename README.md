@@ -94,20 +94,6 @@ To run the server and perf from IntelliJ IDEA:
 - Without creating a Debug Configuration, can also debug a Run Config.
 
 
-
-### Monitoring
-
-[VisualVM](https://visualvm.github.io/) is a handy monitoring tool.
-JConsole is included with Java but it doesn't have profiling built in.
-
-To show that a server is under load, open the running application in VisualVM
-and click on the threads tab. Note the threads named something like
-`https-jsee-nio-9000-exec-1` and `https-jsee-nio-9000-exec-2`. These are 
-the request handling threads, if they are green they are running. 
-If they are both solid orange, the thread is parked and the server is not
-actively handling any requests.
-
-
 ## Update Dependencies
 
 Both the web and server project README files have an "Update Dependencies" section.

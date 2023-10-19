@@ -17,6 +17,17 @@ public class SleepSession implements Serializable {
 
     /**
      * We should prefer SEQUENCE over IDENTITY. Hibernate silently disables batch inserts for IDENTITY generators.
+     *
+     * The SequenceGenerator allocationSize MUST match the increment of the sequence
+     * A good explanation of how it works is here https://vladmihalcea.com/jpa-entity-identifier-sequence/
+     * but in a nutshell JPA will get one sequence value and allocate more values itself internally
+     * while the database sequence will increment by that amount to get the next database value.
+     *
+     * Also note the batch size property spring.jpa.properties.hibernate.jdbc.batch_size=50
+     *
+     *  Note that there's another optimization for using hilo,
+     *  see https://vladmihalcea.com/the-hilo-algorithm/
+     *
      */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sleep_session_generator")

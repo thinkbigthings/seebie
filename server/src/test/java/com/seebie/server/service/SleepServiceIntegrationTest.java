@@ -158,7 +158,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         String username = "heavyUser";
         userService.saveNewUser(new RegistrationRequest(username, "password", "heavyUser@sleepy.com"));
 
-        int listCount = 3000;
+        int listCount = 2000;
         var newData = createCsv(listCount, AMERICA_NEW_YORK);
 
         // batching means statements are sent to the DB in a batch, not that there is a single insert statement.
@@ -170,7 +170,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
 
         double importSeconds = stopWatch.getTotalTimeSeconds();
         LOG.info("Import time for " + listCount + " records was " + importSeconds + " seconds.");
-        assertThat("import time", importSeconds, lessThan(4d));
+        assertThat("import time", importSeconds, lessThan(1d));
 
         Page<SleepDetails> listing = sleepService.listSleepData(username, firstPage);
 
