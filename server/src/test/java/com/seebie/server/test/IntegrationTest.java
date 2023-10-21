@@ -59,7 +59,7 @@ public class IntegrationTest {
     }
 
     @BeforeEach
-    public void startup(TestInfo testInfo) throws SQLException {
+    public void startup(TestInfo testInfo) {
 
         LOG.info("");
         LOG.info("=======================================================================================");
