@@ -9,8 +9,13 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.containers.PostgreSQLContainer;
+
+import javax.sql.DataSource;
+
+import java.sql.SQLException;
 
 import static com.github.dockerjava.api.model.Ports.Binding.bindPort;
 
@@ -38,19 +43,17 @@ public class IntegrationTest {
 
     protected static PostgreSQLContainer<?> postgres;
 
+    @Autowired
+    DataSource dataSource;
+
     @BeforeAll
     static void setupDatabase() {
 
-        // need "autosave conservative" config, otherwise pg driver has caching issues with blue-green deployment
-        // (org.postgresql.util.PSQLException: ERROR: cached plan must not change result type)
-
         var hostConfig = new HostConfig().withPortBindings(new PortBinding(bindPort(PG_PORT), new ExposedPort(PG_PORT)));
         postgres = new PostgreSQLContainer<>(POSTGRES_IMAGE)
-                .withUrlParam("autosave", "conservative")
                 .withReuse(leaveRunningAfterTests)
                 .withUsername("test")
                 .withPassword("test")
-                .withUrlParam("reWriteBatchedInserts", "true")
                 .withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(hostConfig));
 
         // call start ourselves so we can reuse
@@ -59,14 +62,16 @@ public class IntegrationTest {
     }
 
     @BeforeEach
-    public void startup(TestInfo testInfo) {
+    public void startup(TestInfo testInfo) throws SQLException {
 
         LOG.info("");
         LOG.info("=======================================================================================");
         LOG.info("Executing test " + testInfo.getDisplayName());
-        LOG.info("TestContainer jdbc url: " + postgres.getJdbcUrl());
         LOG.info("TestContainer username: " + postgres.getUsername());
         LOG.info("TestContainer password: " + postgres.getPassword());
+        LOG.info("TestContainer jdbc url: " + postgres.getJdbcUrl());
+        LOG.info("DataSource url: " + dataSource.getConnection().getMetaData().getURL());
+        LOG.info("DataSource class: " + dataSource.getClass());
         LOG.info("");
     }
 
