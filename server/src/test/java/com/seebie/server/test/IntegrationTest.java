@@ -41,13 +41,8 @@ public class IntegrationTest {
     @BeforeAll
     static void setupDatabase() {
 
-
-        // need "autosave conservative" config, otherwise pg driver has caching issues with blue-green deployment
-        // (org.postgresql.util.PSQLException: ERROR: cached plan must not change result type)
-
         var hostConfig = new HostConfig().withPortBindings(new PortBinding(bindPort(PG_PORT), new ExposedPort(PG_PORT)));
         postgres = new PostgreSQLContainer<>(POSTGRES_IMAGE)
-                .withUrlParam("autosave", "conservative")
                 .withReuse(leaveRunningAfterTests)
                 .withUsername("test")
                 .withPassword("test")
@@ -64,9 +59,9 @@ public class IntegrationTest {
         LOG.info("");
         LOG.info("=======================================================================================");
         LOG.info("Executing test " + testInfo.getDisplayName());
-        LOG.info("TestContainer jdbc url: " + postgres.getJdbcUrl());
         LOG.info("TestContainer username: " + postgres.getUsername());
         LOG.info("TestContainer password: " + postgres.getPassword());
+        LOG.info("TestContainer jdbc url: " + postgres.getJdbcUrl());
         LOG.info("");
     }
 
