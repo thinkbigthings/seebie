@@ -43,9 +43,6 @@ public class IntegrationTest {
 
     protected static PostgreSQLContainer<?> postgres;
 
-    @Autowired
-    DataSource dataSource;
-
     @BeforeAll
     static void setupDatabase() {
 
@@ -70,8 +67,6 @@ public class IntegrationTest {
         LOG.info("TestContainer username: " + postgres.getUsername());
         LOG.info("TestContainer password: " + postgres.getPassword());
         LOG.info("TestContainer jdbc url: " + postgres.getJdbcUrl());
-        LOG.info("DataSource url: " + dataSource.getConnection().getMetaData().getURL());
-        LOG.info("DataSource class: " + dataSource.getClass());
         LOG.info("");
     }
 
