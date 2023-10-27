@@ -15,17 +15,13 @@ function CollapsibleFaq(props) {
 
     const collapseIconRotation = expanded ? "fa-rotate-180" : ""
 
-    function onToggle() {
-        setExpanded(!expanded);
-    }
-
     return (
 
         <Container className={"pt-3 p-0 m-0"}>
 
             <Button variant="dark"
                     className={"w-100 text-start border border-light-subtle app-faq-button d-flex align-items-center"}
-                    onClick={onToggle}
+                    onClick={()=> setExpanded(!expanded)}
                     aria-controls="example-collapse-text"
                     aria-expanded={expanded}>
 
