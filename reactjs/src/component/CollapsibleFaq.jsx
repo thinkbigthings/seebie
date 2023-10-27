@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -11,19 +11,25 @@ import {faAngleDown} from "@fortawesome/free-solid-svg-icons";
 
 function CollapsibleFaq(props) {
 
-    const {collapsed, onCollapseClick, title, content} = props;
+    const {title, content} = props;
 
-    const collapseIconRotation = collapsed ? "" : "fa-rotate-180";
+    const [expanded, setExpanded] = useState(false);
+
+    const collapseIconRotation = expanded ? "fa-rotate-180" : ""
+
+    function onToggle() {
+        setExpanded(!expanded);
+    }
 
     return (
         <Container>
-            <Row className={"pt-3"}>
+            <Row className={"pt-3 "}>
                 <Col className="col-12 px-0">
                     <Button variant="dark"
                             className={"w-100 text-start border border-light-subtle "}
-                            onClick={onCollapseClick}
+                            onClick={onToggle}
                             aria-controls="example-collapse-text"
-                            aria-expanded={!collapsed}>
+                            aria-expanded={expanded}>
 
                         {title}
 
@@ -32,9 +38,12 @@ function CollapsibleFaq(props) {
                 </Col>
             </Row>
             <Row>
-                <Collapse in={!collapsed}>
-                    <div className={"card card-body "}>
-                        {content}
+                {/* with a Card as the content, the collapse animation does not work */}
+                <Collapse in={expanded}>
+                    <div className="border border-light-subtle rounded py-2">
+                            {content}
+
+
                     </div>
                 </Collapse>
             </Row>

@@ -2,43 +2,42 @@ import React, {useState} from 'react';
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import CollapsibleFaq from "./component/CollapsibleFaq";
+import Container from "react-bootstrap/Container";
 
 function Home() {
 
 
-
-    let [faqData, setFaqData] = useState([
+    const [faqData, setFaqData] = useState([
         {
             title: "What is Seebie?",
             content: "Seebie is a sleep diary app that helps you get better sleep, no device necessary.",
-            collapsed: true
         },
         {
             title: "Why should I track my sleep?",
             content: "Keeping track of your sleep yourself can increase your self awareness and encourage healthy sleep behavior.",
-            collapsed: true
         },
         {
             title: "How does this improve my sleep?",
             content: "You can track your sleep baseline, try a new evening routine, then" +
                 "compare the two time periods to see how the new routine affected your sleep. " +
                 "If you can see the improvement, it will help motivate you to keep that routine!",
-            collapsed: true
         },
         {
-            title: "How long does this take to improve my sleep?",
+            title: "How long does it take to improve sleep?",
             content: "You should spend at least two weeks establishing your baseline sleep," +
             "and at least two weeks per experiment to compare the effectiveness of different sleep habits.",
-            collapsed: true
         },
         {
-            title: "What is Seebie?",
-            content: "Seebie is a sleep diary app that helps you get better sleep, no device necessary.",
-            collapsed: true
+            title: "How long should I use this app?",
+            content: "Old habits die hard, it’s still good to track your sleep to maintain your acquired habits " +
+                "and keep you on track. Maintaining your sleep habits is just as important as establishing them.",
         }
     ]);
 
-    // TODO allow HTML for bullets inside the content?
+
+
+
+    // TODO allow HTML for bullets inside the content
 
     {/*<h5>*/}
     {/*    What are some routines I can try?*/}
@@ -52,19 +51,14 @@ function Home() {
     {/*    </ul>*/}
     {/*</div>*/}
 
-    // TODO button should be distinguishable from the text
+    // TODO button should have a consistent background color
+    // whether just clicked or not, and different from the content background color
 
-    // TODO the collapse animation is not smooth, is it copying too much data? It's otherwise the same as the histogram
+    // TODO simplify the collapse state handling for histogram?
 
-
-    function onToggleCollapse(i) {
-        let newfaqData = structuredClone(faqData);
-        newfaqData[i].collapsed = ! faqData[i].collapsed;
-        setFaqData(newfaqData);
-    }
 
     return (
-        <div className="container mt-3 overflow-y-scroll h-90vh">
+        <Container className="overflow-y-scroll h-90vh ">
 
             {
                 faqData.map((faq, i) => {
@@ -74,8 +68,6 @@ function Home() {
                                 <CollapsibleFaq
                                     title={faq.title}
                                     content={faq.content}
-                                    collapsed={faq.collapsed}
-                                    onCollapseClick={() => onToggleCollapse(i)}
                                 />
                             </Col>
                         </Row>
@@ -84,7 +76,7 @@ function Home() {
             }
 
 
-        </div>
+        </Container>
     );
 
 }
