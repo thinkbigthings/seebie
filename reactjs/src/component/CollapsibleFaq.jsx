@@ -24,14 +24,14 @@ function CollapsibleFaq(props) {
         <Container className={"pt-3 p-0 m-0"}>
 
             <Button variant="dark"
-                    className={"w-100 text-start border border-light-subtle app-faq-button"}
+                    className={"w-100 text-start border border-light-subtle app-faq-button d-flex align-items-center"}
                     onClick={onToggle}
                     aria-controls="example-collapse-text"
                     aria-expanded={expanded}>
 
                 {title}
 
-                <FontAwesomeIcon className={"me-2 mt-1 float-end " + collapseIconRotation} icon={faAngleDown} ></FontAwesomeIcon>
+                <FontAwesomeIcon className={"me-2 mt-1 ms-auto " + collapseIconRotation} icon={faAngleDown} />
 
             </Button>
 
