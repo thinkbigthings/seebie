@@ -11,7 +11,7 @@ import {faAngleDown} from "@fortawesome/free-solid-svg-icons";
 
 function CollapsibleFaq(props) {
 
-    const {title, content} = props;
+    const {title} = props;
 
     const [expanded, setExpanded] = useState(false);
 
@@ -26,7 +26,7 @@ function CollapsibleFaq(props) {
             <Row className={"pt-3 "}>
                 <Col className="col-12 px-0">
                     <Button variant="dark"
-                            className={"w-100 text-start border border-light-subtle "}
+                            className={"w-100 text-start border border-light-subtle sb-faq-button"}
                             onClick={onToggle}
                             aria-controls="example-collapse-text"
                             aria-expanded={expanded}>
@@ -41,9 +41,7 @@ function CollapsibleFaq(props) {
                 {/* with a Card as the content, the collapse animation does not work */}
                 <Collapse in={expanded}>
                     <div className="border border-light-subtle rounded py-2">
-                            {content}
-
-
+                        {props.children}
                     </div>
                 </Collapse>
             </Row>
