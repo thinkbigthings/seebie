@@ -24,7 +24,7 @@ function CollapsibleFaq(props) {
         <Container className={"pt-3 p-0 m-0"}>
 
             <Button variant="dark"
-                    className={"w-100 text-start border border-light-subtle sb-faq-button"}
+                    className={"w-100 text-start border border-light-subtle app-faq-button"}
                     onClick={onToggle}
                     aria-controls="example-collapse-text"
                     aria-expanded={expanded}>

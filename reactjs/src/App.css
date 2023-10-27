@@ -24,15 +24,15 @@
     color: #ffffff;
 }
 
-.sb-faq-button {
+.app-faq-button {
     background-color: #4f4f5d;
 }
 
-.sb-faq-button:focus {
+.app-faq-button:focus {
     background-color: #4f4f5d;
 }
 
-.sb-faq-button:active:focus {
+.app-faq-button:active:focus {
     background-color: #4f4f5d;
 }
 
