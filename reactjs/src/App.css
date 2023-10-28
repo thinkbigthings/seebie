@@ -24,6 +24,23 @@
     color: #ffffff;
 }
 
+.app-faq-button {
+    background-color: #4f4f5d;
+}
+
+.app-faq-button:focus {
+    background-color: #4f4f5d;
+}
+
+.app-faq-button:active:focus {
+    background-color: #4f4f5d;
+}
+
+/* as of Bootstrap 5.3, there isn't a direct utility class for setting height in viewport units (vh) */
+.h-90vh {
+    height: 90vh;
+}
+
 /* ------------------------------ */
 /* Override Bootstrap styles      */
 /* ------------------------------ */
