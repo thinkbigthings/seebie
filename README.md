@@ -84,31 +84,12 @@ but .env file is not monitored, so updating that file won't trigger a refresh wh
 Run configuration may need to be set to the appropriate version of Java.
 Also: IntelliJ > Preferences > Build > Build Tools > Gradle > Gradle JVM may need to be set to the appropriate version.
 
-To run the server and perf from IntelliJ IDEA:
-
-- Create a Run Configuration, using the Application class as main, and
-  just set the working folder to the `server` folder
-- Create a Run Configuration, using the Application class as main, and
-  just set the working folder to the `perf` folder
-- Run either Configuration from the Run menu
-- Without creating a Debug Configuration, can also debug a Run Config.
-
-
-## Update Dependencies
-
-Both the web and server project README files have an "Update Dependencies" section.
-
 
 ## Dev Procedures
 
 Trunk based development is helpful to implement continuous delivery and continuous deployment.
 Find out more at https://trunkbaseddevelopment.com/
 
-Working on a branch is useful for testing the build 
-since we might have to push a lot of changes to see our experiments.
-
-For small changes (e.g. docs, single file fix) we might merge directly to master
-to save time for this one-person team.
 Generally there will be multiple commits to a feature branch
 which when ready is merged directly to master.
 
@@ -167,38 +148,16 @@ an admin user is automatically created when the database is first initialized wi
 The credentials are `admin:admin` and the password should be changed before the 
 environment is exposed to the public. With the admin in place more regular users can be created.
 
-### Cloud Providers
+### Deployment to Production
 
-This app is known to work well with Heroku. 
-We use the gradle heroku plugin instead of the Procfile.
-See the github workflow files for the actual command and parameters.
+This app set up to deploy to Heroku.
+We use the gradle heroku plugin to deploy from CI
+instead of using the Procfile or other Heroku integrations.
+See the GitHub workflow files for the actual command and parameters.
 
-## Troubleshooting
+### Rolling Back
 
-### Stack trace about a postgres deadlock
-This has so far only been on the very last step. Have not done a lot of investigation into this.
-MIGHT be able to swap environments again? Or just shutdown and restart server?
-Or just stop and restart the client? Do we need to restart postgres?
-
-### Client and server are running but client isn't making requests
-At one point a software update for iterm2 on my laptop was messing things up
-Can just restart client and it'll work
-
-### Migration hangs
-A connection can block another connection for the migration, make sure the IntelliJ DB Browser,
-any psql clients, VisualVM JDBC profilers, or previous servers, are disconnected.
-
-If something goes terribly wrong, you may need to even drop the docker instance and rebuild everything.
-
-### Logs (known issues)
-
-Keep an eye on log warnings and errors. But these are known issues:
-- localVariableTableParameterNameDiscoverer : Using deprecated '-debug' fallback for parameter name resolution. 
-Compile the affected code with '-parameters' instead or avoid its introspection: org.springframework.session.config.annotation.web.http.SpringHttpSessionConfiguration
-> Known [bug fixed in Spring Framework 6.0.3](https://github.com/spring-projects/spring-framework/issues/29612)
-> but it's [not a big deal](https://stackoverflow.com/questions/74845574/using-deprecated-debug-fallback-for-parameter-name-resolution-compile-the-af/74863631#74863631).
-- org.hibernate.orm.deprecation        	: HHH90000021: Encountered deprecated setting [javax.persistence.sharedCache.mode], use [jakarta.persistence.sharedCache.mode] instead
-Known bug fixed in Hibernate 6.1.7
-> Known [bug fixed in Hibernate 6.1.7](https://hibernate.atlassian.net/browse/HHH-15768)
-- WARN 65430 --- [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=6m9s146ms).
-> This happens when the machine goes to sleep and comes back, it's generally not an issue
+To redeploy a specific older version,
+use the [rollback feature from Heroku](https://blog.heroku.com/releases-and-rollbacks).
+This is on the command line only and can not be done from the UI.
+As mentioned in the article: note that this doesn't handle database migrations.
