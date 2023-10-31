@@ -27,7 +27,8 @@ function CollapsibleFaq(props) {
 
                 {title}
 
-                <FontAwesomeIcon className={"me-2 mt-1 ms-auto " + collapseIconRotation} icon={faAngleDown} />
+                <FontAwesomeIcon className={"app-icon me-2 mt-1 ms-auto " + collapseIconRotation} icon={faAngleDown} />
+
 
             </Button>
 

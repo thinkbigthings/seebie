@@ -4,6 +4,15 @@
 /* App custom styles              */
 /* ------------------------------ */
 
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    background-image: linear-gradient(#001F3F, #333680);
+}
+
 .login {
     max-width: 540px;
 }
@@ -41,36 +50,39 @@
     height: 90vh;
 }
 
+.app-icon {
+    color: #FFC107;
+}
+
 /* ------------------------------ */
 /* Override Bootstrap styles      */
 /* ------------------------------ */
 
 .btn-success {
-    background-color: #671a88;
+    background-color: #FF7043;
 }
 .btn-success:hover {
-    background-color: #8e25bb;
+    background-color: #FF8A65;
 }
 .btn-success:disabled {
-    background-color: #745085;
+    background-color: #FF9988;
 }
-/* on mouse press */
 .btn-success:active:focus {
-    background-color: #c333ff;
+    background-color: #FF5722;
 }
 
 /* ------------------------------ */
 .btn-warning {
-    background-color: #cc9a2a;
+    background-color: #FFD700;
 }
 .btn-warning:hover {
-    background-color: #ffb630;
+    background-color: #FFEB3B;
 }
 .btn-warning:disabled {
-    background-color: #dec968;
+    background-color: #FFECB3;
 }
 .btn-warning:active:focus {
-    background-color: #f8b005;
+    background-color: #FFC107;
 }
 
 /* ------------------------------ */
