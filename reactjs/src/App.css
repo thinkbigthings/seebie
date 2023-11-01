@@ -25,6 +25,10 @@ body {
     padding: 8px;
 }
 
+.nav-link-colored {
+    color: #8f94f8;
+}
+
 .nav-link {
     color: #8f94f8;
 }

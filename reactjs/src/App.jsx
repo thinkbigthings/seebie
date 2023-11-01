@@ -118,10 +118,10 @@ function AuthenticatedApp() {
 
                     <CreateSleepSession username={currentUser.username} onSave={() => setCreatedCount(createdCount + 1)} />
 
-                    <NavDropdown title={loggedIn } align="end" flip="true" id="userDropdown">
-                        <NavDropdown.Item href={userUrl}>{<FontAwesomeIcon className="app-icon-highlight me-2" icon={faCog} />}Profile</NavDropdown.Item>
+                    <NavDropdown className={"nav-link-colored"} title={loggedIn } align="end" flip="true" id="userDropdown">
+                        <NavDropdown.Item className={"nav-link-colored"} href={userUrl}>{<FontAwesomeIcon className="me-2" icon={faCog} />}Profile</NavDropdown.Item>
                         <NavDropdown.Divider />
-                        <NavDropdown.Item onClick={onClickLogout}>{<FontAwesomeIcon className="app-icon-highlight me-2" icon={faSignOut} />}Logout</NavDropdown.Item>
+                        <NavDropdown.Item className={"nav-link-colored"} onClick={onClickLogout}>{<FontAwesomeIcon className="me-2" icon={faSignOut} />}Logout</NavDropdown.Item>
                     </NavDropdown>
 
                 </Container>
