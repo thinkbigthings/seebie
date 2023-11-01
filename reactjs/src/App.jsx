@@ -71,7 +71,7 @@ function UnauthenticatedApp() {
                 <Container>
                     <Navbar.Brand href="/">
                         Seebie
-                        <FontAwesomeIcon className="app-icon ms-2" icon={faMoon} />
+                        <FontAwesomeIcon className="app-icon-highlight ms-2" icon={faMoon} />
                     </Navbar.Brand>
                     <Nav className="mr-auto" />
                     <Form inline="true">
@@ -113,15 +113,15 @@ function AuthenticatedApp() {
                 <Container>
                     <Navbar.Brand href="/">
                         Seebie
-                        <FontAwesomeIcon className="app-icon ms-2" icon={faMoon} />
+                        <FontAwesomeIcon className="app-icon-highlight ms-2" icon={faMoon} />
                     </Navbar.Brand>
 
                     <CreateSleepSession username={currentUser.username} onSave={() => setCreatedCount(createdCount + 1)} />
 
                     <NavDropdown title={loggedIn } align="end" flip="true" id="userDropdown">
-                        <NavDropdown.Item href={userUrl}>{<FontAwesomeIcon className="me-2" icon={faCog} />}Profile</NavDropdown.Item>
+                        <NavDropdown.Item href={userUrl}>{<FontAwesomeIcon className="app-icon-highlight me-2" icon={faCog} />}Profile</NavDropdown.Item>
                         <NavDropdown.Divider />
-                        <NavDropdown.Item onClick={onClickLogout}>{<FontAwesomeIcon className="me-2" icon={faSignOut} />}Logout</NavDropdown.Item>
+                        <NavDropdown.Item onClick={onClickLogout}>{<FontAwesomeIcon className="app-icon-highlight me-2" icon={faSignOut} />}Logout</NavDropdown.Item>
                     </NavDropdown>
 
                 </Container>
