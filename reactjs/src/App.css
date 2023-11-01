@@ -4,13 +4,21 @@
 /* App custom styles              */
 /* ------------------------------ */
 
+
+:root {
+    --peri-blue: #8f94f8;
+    --navy-blue: #001F3F;
+    --midnight-blue: #333680;
+    --soft-peach: #FFD1B1;
+}
+
 html, body {
     height: 100%;
     margin: 0;
 }
 
 body {
-    background-image: linear-gradient(#001F3F, #333680);
+    background-image: linear-gradient(var(--navy-blue), var(--midnight-blue));
 }
 
 .login {
@@ -26,15 +34,15 @@ body {
 }
 
 .nav-link-colored {
-    color: #8f94f8;
+    color: var(--peri-blue);
 }
 
 .nav-link {
-    color: #8f94f8;
+    color: var(--peri-blue);
 }
 
 .nav-link.active {
-    color: #ffffff;
+    color: var(--soft-peach);
 }
 
 .app-faq-button {
@@ -55,7 +63,7 @@ body {
 }
 
 .app-icon-highlight {
-    color: #FFD1B1;
+    color: var(--soft-peach);
 }
 
 /* ------------------------------ */
@@ -91,7 +99,7 @@ body {
 
 /* ------------------------------ */
 .btn-primary {
-    background-color: #333680;
+    background-color: var(--midnight-blue);
 }
 
 .btn-primary:hover {
