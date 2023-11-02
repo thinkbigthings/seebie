@@ -28,7 +28,7 @@ function CollapsibleFilter(props) {
                             aria-expanded={!collapsed}>
 
                         {title}
-                        <FontAwesomeIcon className={"app-icon-highlight me-2 mt-1 float-end " + collapseIconRotation} icon={faAngleDown} ></FontAwesomeIcon>
+                        <FontAwesomeIcon className={"app-highlight me-2 mt-1 float-end " + collapseIconRotation} icon={faAngleDown} ></FontAwesomeIcon>
                     </Button>
                 </Col>
             </Row>

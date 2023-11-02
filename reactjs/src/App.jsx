@@ -30,8 +30,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     // faBook,
     faChartLine, faChartSimple,
-    faCog, faDownload,
-    faList, faMoon,
+    faCog,
+    faList,
+    faMoon,
     faServer,
     faSignOut,
     // faTag,
@@ -71,7 +72,7 @@ function UnauthenticatedApp() {
                 <Container>
                     <Navbar.Brand href="/">
                         Seebie
-                        <FontAwesomeIcon className="app-icon-highlight ms-2" icon={faMoon} />
+                        <FontAwesomeIcon className="app-highlight ms-2" icon={faMoon} />
                     </Navbar.Brand>
                     <Nav className="mr-auto" />
                     <Form inline="true">
@@ -113,7 +114,7 @@ function AuthenticatedApp() {
                 <Container>
                     <Navbar.Brand href="/">
                         Seebie
-                        <FontAwesomeIcon className="app-icon-highlight ms-2" icon={faMoon} />
+                        <FontAwesomeIcon className="app-highlight ms-2" icon={faMoon} />
                     </Navbar.Brand>
 
                     <CreateSleepSession username={currentUser.username} onSave={() => setCreatedCount(createdCount + 1)} />

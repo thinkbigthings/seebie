@@ -92,7 +92,7 @@ function Tools() {
                 <label className="d-block mb-3">You have {numUserRecords} sleep records that you can download to CSV</label>
                 <a href={downloadUrl}>
                     <Button variant="secondary" >
-                        <FontAwesomeIcon className="app-icon-highlight me-2" icon={faDownload} />
+                        <FontAwesomeIcon className="app-highlight me-2" icon={faDownload} />
                         Download
                     </Button>
                 </a>
@@ -125,7 +125,7 @@ function Tools() {
                 </Form.Group>
 
                 <Button variant="secondary" onClick={handleSubmission} disabled={ (!isFilePicked) || (!isCsv) } >
-                    <FontAwesomeIcon className="app-icon-highlight me-2" icon={faUpload} />
+                    <FontAwesomeIcon className="app-highlight me-2" icon={faUpload} />
                     Upload
                 </Button>
 
