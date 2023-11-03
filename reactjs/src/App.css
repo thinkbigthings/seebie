@@ -4,36 +4,65 @@
 /* App custom styles              */
 /* ------------------------------ */
 
+:root {
+    --peri-blue: #8f94f8;
+    --navy-blue: #001F3F;
+    --midnight-blue: #333680;
+    --soft-peach: #FFD1B1;
+    --steel-gray: #595b7c;
+    --royal-blue: #484eb2;
+    --light-gold: #FFD700;
+    --bright-gold: #FFEB3B;
+    --soft-gold: #FFECB3;
+    --orange-gold: #FFC107;
+    --lilac-gray: #4f4f5d;
+    --slate: #6f6f9b;
+    --peri-lilac: #7070c2;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    background-image: linear-gradient(var(--navy-blue), var(--midnight-blue));
+}
+
 .login {
     max-width: 540px;
 }
 
 .clickable-table tr:hover {
-    background-color: #595b7c;
+    background-color: var(--steel-gray);
 }
 .clickable-table td a {
     display: block;
     padding: 8px;
 }
 
+.nav-link-colored {
+    color: var(--peri-blue);
+}
+
 .nav-link {
-    color: #8f94f8;
+    color: var(--peri-blue);
 }
 
 .nav-link.active {
-    color: #ffffff;
+    color: var(--soft-peach);
 }
 
 .app-faq-button {
-    background-color: #4f4f5d;
+    background-color: var(--lilac-gray);
 }
 
 .app-faq-button:focus {
-    background-color: #4f4f5d;
+    background-color: var(--lilac-gray);
 }
 
 .app-faq-button:active:focus {
-    background-color: #4f4f5d;
+    background-color: var(--lilac-gray);
 }
 
 /* as of Bootstrap 5.3, there isn't a direct utility class for setting height in viewport units (vh) */
@@ -41,67 +70,51 @@
     height: 90vh;
 }
 
+.app-highlight {
+    color: var(--soft-peach);
+}
+
 /* ------------------------------ */
 /* Override Bootstrap styles      */
 /* ------------------------------ */
 
-.btn-success {
-    background-color: #671a88;
-}
-.btn-success:hover {
-    background-color: #8e25bb;
-}
-.btn-success:disabled {
-    background-color: #745085;
-}
-/* on mouse press */
-.btn-success:active:focus {
-    background-color: #c333ff;
-}
-
-/* ------------------------------ */
 .btn-warning {
-    background-color: #cc9a2a;
+    background-color: var(--light-gold);
 }
 .btn-warning:hover {
-    background-color: #ffb630;
+    background-color: var(--bright-gold);
 }
 .btn-warning:disabled {
-    background-color: #dec968;
+    background-color: var(--soft-gold);
 }
 .btn-warning:active:focus {
-    background-color: #f8b005;
+    background-color: var(--orange-gold);
 }
 
 /* ------------------------------ */
 .btn-primary {
-    background-color: #333680;
+    background-color: var(--midnight-blue);
 }
-
 .btn-primary:hover {
-    background-color: #484eb2;
+    background-color: var(--royal-blue);
 }
 .btn-primary:disabled {
-    background-color: #595b7c;
+    background-color: var(--steel-gray);
 }
 .btn-primary:active:focus {
-    background-color: #484eb2;
+    background-color: var(--royal-blue);
 }
-
 
 /* ------------------------------ */
 .btn-secondary {
-    background-color: #6f6f9b;
+    background-color: var(--slate);
 }
-
 .btn-secondary:hover {
-    background-color: #7070c2;
+    background-color: var(--peri-lilac);
 }
-
 .btn-secondary:disabled {
-    background-color: #595b7c;
+    background-color: var(--steel-gray);
 }
-
 .btn-secondary:active:focus {
-    background-color: #7070c2;
+    background-color: var(--peri-lilac);
 }

@@ -32,6 +32,7 @@ import {
     faChartLine, faChartSimple,
     faCog,
     faList,
+    faMoon,
     faServer,
     faSignOut,
     // faTag,
@@ -69,7 +70,10 @@ function UnauthenticatedApp() {
         <HashRouter>
             <Navbar className="border-bottom mb-3">
                 <Container>
-                    <Navbar.Brand href="/">Seebie<img className="mb-1 px-1" src="favicon.ico" alt="Seebie icon" width="30" height="20"/></Navbar.Brand>
+                    <Navbar.Brand href="/">
+                        Seebie
+                        <FontAwesomeIcon className="app-highlight ms-2" icon={faMoon} />
+                    </Navbar.Brand>
                     <Nav className="mr-auto" />
                     <Form inline="true">
                         <Nav.Link href="#login">Login</Nav.Link>
@@ -108,14 +112,17 @@ function AuthenticatedApp() {
         <HashRouter>
             <Navbar className="border-bottom mb-3">
                 <Container>
-                    <Navbar.Brand href="/">Seebie<img className="mb-1 px-1" src="favicon.ico" alt="Seebie icon" width="30" height="20"/></Navbar.Brand>
+                    <Navbar.Brand href="/">
+                        Seebie
+                        <FontAwesomeIcon className="app-highlight ms-2" icon={faMoon} />
+                    </Navbar.Brand>
 
                     <CreateSleepSession username={currentUser.username} onSave={() => setCreatedCount(createdCount + 1)} />
 
-                    <NavDropdown title={loggedIn } align="end" flip="true" id="userDropdown">
-                        <NavDropdown.Item href={userUrl}>{<FontAwesomeIcon className="me-2" icon={faCog} />}Profile</NavDropdown.Item>
+                    <NavDropdown className={"nav-link-colored"} title={loggedIn } align="end" flip="true" id="userDropdown">
+                        <NavDropdown.Item className={"nav-link-colored"} href={userUrl}>{<FontAwesomeIcon className="me-2" icon={faCog} />}Profile</NavDropdown.Item>
                         <NavDropdown.Divider />
-                        <NavDropdown.Item onClick={onClickLogout}>{<FontAwesomeIcon className="me-2" icon={faSignOut} />}Logout</NavDropdown.Item>
+                        <NavDropdown.Item className={"nav-link-colored"} onClick={onClickLogout}>{<FontAwesomeIcon className="me-2" icon={faSignOut} />}Logout</NavDropdown.Item>
                     </NavDropdown>
 
                 </Container>
