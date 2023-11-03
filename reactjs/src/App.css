@@ -70,19 +70,6 @@ body {
 /* Override Bootstrap styles      */
 /* ------------------------------ */
 
-.btn-success {
-    background-color: #FF7043;
-}
-.btn-success:hover {
-    background-color: #FF8A65;
-}
-.btn-success:disabled {
-    background-color: #FF9988;
-}
-.btn-success:active:focus {
-    background-color: #FF5722;
-}
-
 /* ------------------------------ */
 .btn-warning {
     background-color: #FFD700;
