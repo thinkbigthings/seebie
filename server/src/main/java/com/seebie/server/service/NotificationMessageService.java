@@ -1,16 +1,16 @@
 package com.seebie.server.service;
 
+import com.seebie.server.AppProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -23,40 +23,22 @@ public class NotificationMessageService {
 
     private final JavaMailSender emailSender;
     private final NotificationRetrievalService notificationRetrievalService;
-    private boolean scanEnabled;
-    private NotificationOutput notificationOutput;
-    private Duration triggerAfterLastNotified;
-    private Duration triggerAfterSleepLog;
+
+    private AppProperties.Notification notification;
 
     private final SimpleMailMessage emailTemplate = new SimpleMailMessage();
 
-    /**
-     * This takes an Environment object instead of a Java Record for the properties because it wouldn't work with the
-     * Spring properties (here, spring.mail.username could not be injected as a custom nested record into AppProperties).
-     * So since an Environment has to be used here anyway, we might as well use it for all the properties.
-     *
-     * @param notificationRetrievalService
-     * @param emailSender
-     * @param env
-     */
-    public NotificationMessageService(NotificationRetrievalService notificationRetrievalService, JavaMailSender emailSender, Environment env) {
+    public NotificationMessageService(NotificationRetrievalService notificationRetrievalService, JavaMailSenderImpl emailSender, AppProperties appProperties) {
 
         this.notificationRetrievalService = notificationRetrievalService;
         this.emailSender = emailSender;
+        this.notification = appProperties.notification();
 
-        scanEnabled = env.getRequiredProperty("app.notification.scan.enabled", Boolean.class);
-        notificationOutput = env.getRequiredProperty("app.notification.output", NotificationOutput.class);
-
-        triggerAfterLastNotified = env.getRequiredProperty("app.notification.triggerAfter.lastNotified", Duration.class);
-        triggerAfterSleepLog = env.getRequiredProperty("app.notification.triggerAfter.sleepLog", Duration.class);
-
-        emailTemplate.setFrom(env.getProperty("spring.mail.username"));
+        emailTemplate.setFrom(emailSender.getUsername());
         emailTemplate.setSubject("Missing Sleep Log");
-        emailTemplate.setText("");
 
         LOG.info("Instantiated Notification Service.");
-        LOG.info("Scan schedule enabled is " + scanEnabled);
-        LOG.info("Notification message target is " + notificationOutput);
+        LOG.info("Notification configuration is " + notification.toString());
     }
 
 
@@ -76,10 +58,10 @@ public class NotificationMessageService {
      *
      * Keep the scan turned off for integration tests, so it doesn't interfere with the notification integration tests.
      */
-    @Scheduled(fixedDelayString="${app.notification.scan.schedule.fixedDelayMinutes}", timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedDelayString="${app.notification.scanFrequencyMinutes}", timeUnit = TimeUnit.MINUTES)
     public void runOnSchedule() {
 
-        if( ! scanEnabled) {
+        if( ! notification.enabled()) {
             LOG.info("Email notifications schedule was triggered but scan was disabled.");
             return;
         }
@@ -96,8 +78,8 @@ public class NotificationMessageService {
     }
 
     public List<NotificationRequired> findUsersToNotify(Instant now) {
-        var ifNotNotifiedSince = now.minus(triggerAfterLastNotified);
-        var ifNotLoggedSince = now.minus(triggerAfterSleepLog);
+        var ifNotNotifiedSince = now.minus(notification.triggerAfter().lastNotified());
+        var ifNotLoggedSince = now.minus(notification.triggerAfter().sleepLog());
         return notificationRetrievalService.getUsersToNotify(ifNotNotifiedSince, ifNotLoggedSince, now);
     }
 
@@ -109,7 +91,7 @@ public class NotificationMessageService {
 
             var message = createMessage(send);
 
-            switch(notificationOutput) {
+            switch(notification.output()) {
                case EMAIL -> emailSender.send(message);
                case LOG -> LOG.info(message.toString());
             }
@@ -126,14 +108,15 @@ public class NotificationMessageService {
 
     public SimpleMailMessage createMessage(NotificationRequired send) {
 
-        var message = new SimpleMailMessage(emailTemplate);
-
-        message.setTo(send.email());
         String text = STR."""
         Hi \{send.username()},
         You missed recording your last sleep session. If you record it right away you won't lose your momentum!
         FYI you can control these notifications in your user settings.
         """;
+
+        var message = new SimpleMailMessage(emailTemplate);
+
+        message.setTo(send.email());
         message.setText(text);
 
         return message;

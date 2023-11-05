@@ -1,26 +1,23 @@
 package com.seebie.server.service;
 
 import com.seebie.server.dto.RegistrationRequest;
-import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.core.env.Environment;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Arrays;
 
+import static com.seebie.server.AppProperties.newAppProperties;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public class NotificationEmailServiceTest {
 
-    private JavaMailSender mailSender = Mockito.mock(JavaMailSender.class);
+    private JavaMailSenderImpl mailSender = Mockito.mock(JavaMailSenderImpl.class);
     private NotificationRetrievalService retrievalService = Mockito.mock(NotificationRetrievalService.class);
-    private Environment env = Mockito.mock(Environment.class);
 
     private final String sender = "user@email.com";
 
@@ -29,11 +26,9 @@ public class NotificationEmailServiceTest {
     @BeforeEach
     public void setup() {
 
-        when(env.getProperty(eq("spring.mail.username"))).thenReturn(sender);
-        when(env.getRequiredProperty(eq("app.notification.scan.enabled"), eq(Boolean.class))).thenReturn(false);
-        when(env.getRequiredProperty(eq("app.notification.output"), eq(NotificationOutput.class))).thenReturn(NotificationOutput.LOG);
+        when(mailSender.getUsername()).thenReturn(sender);
 
-        service = new NotificationMessageService(retrievalService, mailSender, env);
+        service = new NotificationMessageService(retrievalService, mailSender, newAppProperties(30));
     }
 
     @Test

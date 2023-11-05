@@ -149,9 +149,8 @@ Also we can set these locally on the command line:
 
 We will also need to set these as environment variables in the production environment.
 
-Since we don't need to send emails at build time, we don't need to set these in Github Actions
-although in principle we could set these as secrets assigned to environment variables.
-See https://docs.github.com/en/actions/security-guides/encrypted-secrets
+Since we don't need to send emails at build time, we don't need to set these as secrets in Github Actions.
+
 
 
 ## Running
