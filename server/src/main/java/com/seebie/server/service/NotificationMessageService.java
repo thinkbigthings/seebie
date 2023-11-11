@@ -3,10 +3,10 @@ package com.seebie.server.service;
 import com.seebie.server.AppProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
+import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -21,23 +21,27 @@ public class NotificationMessageService {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationMessageService.class);
 
-    private final JavaMailSender emailSender;
+    private final MailSender emailSender;
     private final NotificationRetrievalService notificationRetrievalService;
 
     private AppProperties.Notification notification;
 
-    private final SimpleMailMessage emailTemplate = new SimpleMailMessage();
+    private final SimpleMailMessage emailTemplate;
 
-    public NotificationMessageService(NotificationRetrievalService notificationRetrievalService, JavaMailSenderImpl emailSender, AppProperties appProperties) {
+    // set the value to the string "undefined" if the property is not set anywhere
+    @Value("${spring.mail.username:undefined}")
+    private String fromEmail;
+
+    public NotificationMessageService(NotificationRetrievalService notificationRetrievalService, MailSender emailSender, AppProperties appProperties) {
 
         this.notificationRetrievalService = notificationRetrievalService;
         this.emailSender = emailSender;
         this.notification = appProperties.notification();
 
-        emailTemplate.setFrom(emailSender.getUsername());
+        emailTemplate = new SimpleMailMessage();
+        emailTemplate.setFrom(fromEmail);
         emailTemplate.setSubject("Missing Sleep Log");
 
-        LOG.info("Instantiated Notification Service.");
         LOG.info("Notification configuration is " + notification.toString());
     }
 
@@ -57,6 +61,8 @@ public class NotificationMessageService {
      * That way we avoid overlapping executions.
      *
      * Keep the scan turned off for integration tests, so it doesn't interfere with the notification integration tests.
+     * Don't swap out the entire message service implementation for testing, just disable the scan,
+     * so that we can use bootTestRun to manually investigate the email sending logic if necessary.
      */
     @Scheduled(fixedDelayString="${app.notification.scanFrequencyMinutes}", timeUnit = TimeUnit.MINUTES)
     public void runOnSchedule() {
@@ -86,21 +92,11 @@ public class NotificationMessageService {
     private void sendEmail(NotificationRequired send) {
 
         try {
-
             LOG.info("Email notification going out to " + send.email());
-
-            var message = createMessage(send);
-
-            switch(notification.output()) {
-               case EMAIL -> emailSender.send(message);
-               case LOG -> LOG.info(message.toString());
-            }
+            emailSender.send(createMessage(send));
         }
-
         catch(MailException me) {
-
             LOG.info("Email notification failed to send for " + send.email());
-
             me.printStackTrace();
         }
 

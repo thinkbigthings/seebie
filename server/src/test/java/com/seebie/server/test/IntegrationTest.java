@@ -10,7 +10,14 @@ import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.mail.MailException;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.testcontainers.containers.PostgreSQLContainer;
+
+import java.util.Arrays;
 
 import static com.github.dockerjava.api.model.Ports.Binding.bindPort;
 
@@ -28,8 +35,15 @@ import static com.github.dockerjava.api.model.Ports.Binding.bindPort;
         })
 public class IntegrationTest {
 
-    private static Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
+    @TestConfiguration
+    public static class EmailTestConfig {
+        @Bean
+        public MailSender createMailSenderToLogs() {
+            return new MailSenderToLogs();
+        }
+    }
 
+    private static final Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
     private static final String POSTGRES_IMAGE = "postgres:15.4";
     private static final int PG_PORT = 5432;
 
@@ -65,4 +79,18 @@ public class IntegrationTest {
         LOG.info("");
     }
 
+    public static class MailSenderToLogs implements MailSender {
+
+        private static Logger LOG = LoggerFactory.getLogger(MailSenderToLogs.class);
+
+        @Override
+        public void send(SimpleMailMessage message) throws MailException {
+            LOG.info("Sending email: " + message);
+        }
+
+        @Override
+        public void send(SimpleMailMessage... messages) throws MailException {
+            Arrays.stream(messages).forEach(this::send);
+        }
+    }
 }

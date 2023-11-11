@@ -1,6 +1,5 @@
 package com.seebie.server;
 
-import com.seebie.server.service.NotificationOutput;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -17,7 +16,7 @@ import static java.util.UUID.randomUUID;
 @ConfigurationProperties(prefix="app")
 public record AppProperties(@Positive Integer apiVersion, @NotNull Security security, @NotNull Notification notification) {
 
-    public record Notification(boolean enabled, @NotNull NotificationOutput output, @NotNull TriggerAfter triggerAfter) {
+    public record Notification(boolean enabled, @NotNull TriggerAfter triggerAfter) {
         public record TriggerAfter(@NotNull Duration lastNotified, @NotNull Duration sleepLog) {}
     }
 
@@ -41,10 +40,8 @@ public record AppProperties(@Positive Integer apiVersion, @NotNull Security secu
     public static AppProperties newAppProperties(int rememberMeTokenValidityDays) {
         return new AppProperties(1,
                     new Security(new Security.RememberMe(ofDays(rememberMeTokenValidityDays), randomUUID().toString())),
-                    new Notification(true, NotificationOutput.LOG,
-                            new Notification.TriggerAfter(ofMinutes(1), ofMinutes(1)))
+                    new Notification(true, new Notification.TriggerAfter(ofMinutes(1), ofMinutes(1)))
         );
     }
-
 
 }
