@@ -7,8 +7,8 @@ public class ApplicationTest {
 
     public static void main(String[] args) {
         SpringApplication.from(Application::main)
-                .with(IntegrationTest.EmailTestConfig.class).
-                run(args);
+                .with(IntegrationTest.EmailTestConfig.class)
+                .run(args);
     }
 
 }
