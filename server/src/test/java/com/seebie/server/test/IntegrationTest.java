@@ -4,6 +4,9 @@ import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.PortBinding;
 import com.seebie.server.PropertyLogger;
+import com.seebie.server.service.SleepService;
+import com.seebie.server.service.UserService;
+import com.seebie.server.test.data.TestDataPopulator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -61,6 +64,11 @@ public class IntegrationTest {
             };
         }
 
+        @Bean
+        public TestDataPopulator createTestDataPopulator(UserService userService, SleepService sleepService) {
+            LOG.info("Populating test data for integration tests.");
+            return new TestDataPopulator(userService, sleepService);
+        }
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);

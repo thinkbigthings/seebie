@@ -22,7 +22,6 @@ import static java.util.function.Predicate.not;
  * provides a reliable and predictable point in the application lifecycle, after context
  * loading but before the main loop begins, to perform such tasks.
  */
-
 public class PropertyLogger implements CommandLineRunner {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertyLogger.class);
