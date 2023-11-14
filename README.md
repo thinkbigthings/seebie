@@ -20,9 +20,9 @@ Do a full build with `gradlew clean build`
 which will create a postgres docker container, and leave it up and running.
 
 From the server folder, start the server with the gradle bootRun task
-`../gradlew bootRun --args='--app.security.remember-me.key=1234 --spring.mail.username=thinkbigthings@gmail.com'`
+`../gradlew bootRun --args='--app.security.rememberMe.key=1234 --spring.mail.username=thinkbigthings@gmail.com'`
 Or with the bootTestRun task
-`../gradlew bootTestRun --args='--app.security.remember-me.key=1234 --spring.mail.username=thinkbigthings@gmail.com'`
+`../gradlew bootTestRun --args='--app.security.rememberMe.key=1234 --spring.mail.username=thinkbigthings@gmail.com'`
 
 From the reactjs folder, run `npm start`
 which will serve the front end files and open a browser for you.

@@ -191,3 +191,13 @@ task genKey(type:Exec) {
 genKey.dependsOn('compileJava')
 bootJar.dependsOn('genKey')
 bootRun.dependsOn('genKey')
+
+tasks.named('bootTestRun', org.springframework.boot.gradle.tasks.run.BootRun) {
+    args = [
+            '--app.notification.scanFrequencyMinutes=1',
+            '--app.notification.triggerAfter.lastNotified=1m',
+            '--app.notification.triggerAfter.sleepLog=1m',
+            '--app.security.rememberMe.key=dev-only',
+            '--spring.mail.username=unused-for-dev'
+    ]
+}

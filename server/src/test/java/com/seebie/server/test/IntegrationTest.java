@@ -3,15 +3,18 @@ package com.seebie.server.test;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.PortBinding;
+import com.seebie.server.PropertyLogger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -31,16 +34,33 @@ import static com.github.dockerjava.api.model.Ports.Binding.bindPort;
         "app.notification.scan.enabled=false",
         "app.security.rememberMe.tokenValidity=6s",
         "spring.session.timeout=4s",
-        "app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
+        "app.security.rememberMe.key=test-only",
+        "spring.mail.username=test-only"
         })
 public class IntegrationTest {
 
     @TestConfiguration
-    public static class EmailTestConfig {
-        @Bean
-        public MailSender createMailSenderToLogs() {
+    public static class TestConfig {
+
+        @Bean public MailSender createMailSenderToLogs() {
+            LOG.info("Using a mail sender that logs to the console instead of sending emails.");
             return new MailSenderToLogs();
         }
+
+        @Bean public PropertyLogger createPropertyLogger(ConfigurableEnvironment env) {
+            LOG.info("Log all properties for debugging, including sensitive values, so don't use in production");
+            return new PropertyLogger(env);
+        }
+
+        @Bean
+        public FlywayMigrationStrategy clean() {
+            LOG.info("Cleaning database for integration tests so we don't have state from any previous run.");
+            return flyway -> {
+                flyway.clean();
+                flyway.migrate();
+            };
+        }
+
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);

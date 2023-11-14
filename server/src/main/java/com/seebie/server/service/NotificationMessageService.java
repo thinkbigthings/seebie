@@ -28,8 +28,7 @@ public class NotificationMessageService {
 
     private final SimpleMailMessage emailTemplate;
 
-    // set the value to the string "undefined" if the property is not set anywhere
-    @Value("${spring.mail.username:undefined}")
+    @Value("${spring.mail.username}")
     private String fromEmail;
 
     public NotificationMessageService(NotificationRetrievalService notificationRetrievalService, MailSender emailSender, AppProperties appProperties) {
