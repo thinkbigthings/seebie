@@ -57,7 +57,7 @@ public class IntegrationTest {
 
         @Bean
         public FlywayMigrationStrategy clean() {
-            LOG.info("Cleaning database for integration tests so we don't have state from any previous run.");
+            LOG.info("Cleaning database for integration tests so we don't have state from previous runs");
             return flyway -> {
                 flyway.clean();
                 flyway.migrate();
