@@ -26,7 +26,7 @@ public class NotificationRetrievalService {
     }
 
     /**
-     * Separate out the finding of people to send notifications from the email sending logic.
+     * Separate out the finding of people to send notifications, from the email sending logic.
      * Transactional must be called from a separate class from the Scheduled method anyway.
      *
      * This sets the last sent time of the Notification record,
@@ -42,7 +42,7 @@ public class NotificationRetrievalService {
         LOG.info(STR."""
                 Notifications will be sent to users who have not been notified since \{toLocale(lastNotifiedBefore)}
                 and have not logged their sleep since \{toLocale(lastLoggedBefore)}.
-                Last scan date for notified users will be set to " + \{toLocale(scanDate)}.
+                Last scan date for notified users is set to \{toLocale(scanDate)}.
                 """
         );
 
