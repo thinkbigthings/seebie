@@ -24,9 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  *
  * To debug notifications manually:
- * - Set override values in the run configuration: two "trigger after" values, set notification output to LOG
- *   instead of EMAIL, and can increase the scan schedule to every minute.
- *   Can only log sleep through UI at 15m intervals, will need to have thresholds longer than that for manual tests.
+ * - Remember we can only log sleep through UI at 15m intervals, so need have thresholds longer than that for manual tests
  * - Remember to enable notifications for the test user
  * - This is a useful notification debugging query to see the critical values, just set the username to inspect:
  *      select u.username, s.stop_time, n.last_sent from notification n, sleep_session s, app_user u

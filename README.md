@@ -16,13 +16,7 @@ Before anything else: set up the prerequisite software for each of the subprojec
 
 You'll need to have prerequisite software installed and on the path as described in the Setup section.
 
-Do a full build with `gradlew clean build`
-which will create a postgres docker container, and leave it up and running.
-
-From the server folder, start the server with the gradle bootRun task
-`../gradlew bootRun --args='--app.security.rememberMe.key=1234 --spring.mail.username=thinkbigthings@gmail.com'`
-Or with the bootTestRun task
-`../gradlew bootTestRun --args='--app.security.rememberMe.key=1234 --spring.mail.username=thinkbigthings@gmail.com'`
+From the server folder, start the server with `../gradlew bootTestRun`
 
 From the reactjs folder, run `npm start`
 which will serve the front end files and open a browser for you.
@@ -37,13 +31,18 @@ From that folder we can run all `npm` commands like normal.
 
 The IDE can set up a run configuration to run npm as well.
 
-Note that the React app has a proxy set in `package.json` so that we can run
-the front end and back end independently.
+Note that we use vite to server front end resources and proxy to the back end.
 
 ### Server
 
 The backend project is in `server`, it is a web server for a normal web application.
+
+from the base project folder, we can run `gradlew` commands like normal.
+
 `gradlew :server:bootRun` is equivalent to `gradlew -p server bootRun`
+
+Alternatively, from the server folder, start the server with
+`../gradlew bootRun` or `../gradlew bootTestRun`
 
 
 ### Do a full build

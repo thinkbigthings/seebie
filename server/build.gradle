@@ -191,6 +191,14 @@ task genKey(type:Exec) {
 genKey.dependsOn('compileJava')
 bootJar.dependsOn('genKey')
 bootRun.dependsOn('genKey')
+bootTestRun.dependsOn('genKey')
+
+tasks.named('bootRun', org.springframework.boot.gradle.tasks.run.BootRun) {
+    args = [
+            '--app.security.rememberMe.key=dev-only',
+            '--spring.mail.username=undefined@seebie.com'
+    ]
+}
 
 tasks.named('bootTestRun', org.springframework.boot.gradle.tasks.run.BootRun) {
     args = [

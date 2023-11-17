@@ -164,8 +164,6 @@ Right click the main class and "Debug Application (main)"
 
 ## Testing
 
-
-
 ### Unit test
  
     gradlew test
