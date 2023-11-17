@@ -7,14 +7,12 @@ This is a project to record and analyze your sleep.
 
 Before anything else: set up the prerequisite software for each of the subprojects
 
-[Setup for server project](server/README.md)
+[Setup for server project](server/README.md#prerequisites)
 
-[Setup for web project](reactjs/README.md)
+[Setup for web project](reactjs/README.md#prerequisites)
 
 
 ## Quickstart Commands
-
-You'll need to have prerequisite software installed and on the path as described in the Setup section.
 
 From the server folder, start the server with `../gradlew bootTestRun`
 
@@ -35,7 +33,7 @@ Note that we use vite to server front end resources and proxy to the back end.
 
 ### Server
 
-The backend project is in `server`, it is a web server for a normal web application.
+The backend project is in `server`, it is a web server for a typical web application.
 
 from the base project folder, we can run `gradlew` commands like normal.
 
@@ -54,30 +52,6 @@ To run the fully built application,
 cd to the server folder (so you can access properties)
 and run e.g. `java --enable-preview -Dapp.security.rememberMe.key="none" -jar build/libs/server-1.0-SNAPSHOT.jar`
 Then in the browser go to `https://localhost:9000`
-
-
-### Updating the API Version
-
-#### How API Version Works
-We assign an API Version to the software at build time, the version should not be a runtime property.
-The API version we're talking about is not the `software` version, it is a `compatibility` version 
-meaning it indicates whether two pieces of software should expect to be able to interact successfully via API.
-
-If a client makes a request, and the compatibility version does not match what's on the server,
-the server will return an error code and the client is expected to refresh itself and try again with the correct version.
-
-#### Server
-We assign an API Version from application.properties in the server's source main resources, which we could consider
-to be part of the source code. However, the value can be overridden per Spring's property config mechanisms.
-To prevent the ability to override it on the command line, we'd have to hard-code the api version in code.
-Having a property seems appropriate though because it is a property.
-
-#### Client
-To get the client version into the UI, put the value in the project's .env file, then it's accessible from React.
-The variable is available in React app from doing a build and also when running from `npm start`
-but .env file is not monitored, so updating that file won't trigger a refresh when running from `npm start`.
-
-
 
 
 ### Running from IDE
@@ -144,10 +118,10 @@ Eventually would want to verify in a cloud environment before merging to master.
 ### Bootstrapping
 
 When installing the software into a new environment with a new database, 
-an admin user is automatically created when the database is first initialized with a schema.
+an admin user is automatically created when the database is first initialized with a schema
+**and the password should be changed before the environment is exposed to the public**. 
 
-The credentials are `admin:admin` and the password should be changed before the 
-environment is exposed to the public. With the admin in place more regular users can be created.
+With the admin in place more regular users can be created.
 
 ### Deployment to Production
 
@@ -160,5 +134,28 @@ See the GitHub workflow files for the actual command and parameters.
 
 To redeploy a specific older version,
 use the [rollback feature from Heroku](https://blog.heroku.com/releases-and-rollbacks).
-This is on the command line only and can not be done from the UI.
+This is on the command line only and can not be done from the Heroku UI.
 As mentioned in the article: note that this doesn't handle database migrations.
+
+
+### Updating the API Version
+
+#### How API Version Works
+We assign an API Version to the software at build time, the version should not be a runtime property.
+The API version we're talking about is not the `software` version, it is a `compatibility` version
+meaning it indicates whether two pieces of software should expect to be able to interact successfully via API.
+
+If a client makes a request, and the compatibility version does not match what's on the server,
+the server will return an error code and the client is expected to refresh itself and try again with the correct version.
+
+#### Server
+We assign an API Version from application.properties in the server's source main resources, which we could consider
+to be part of the source code. However, the value can be overridden per Spring's property config mechanisms.
+To prevent the ability to override it on the command line, we'd have to hard-code the api version in code.
+Having a property seems appropriate though because it is a property.
+
+#### Client
+To get the client version into the UI, put the value in the project's .env file, then it's accessible from React.
+The variable is available in React app from doing a build and also when running from `npm start`
+but .env file is not monitored, so updating that file won't trigger a refresh when running from `npm start`.
+
