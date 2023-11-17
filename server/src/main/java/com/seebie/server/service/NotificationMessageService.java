@@ -40,8 +40,6 @@ public class NotificationMessageService {
         emailTemplate = new SimpleMailMessage();
         emailTemplate.setFrom(fromEmail);
         emailTemplate.setSubject("Missing Sleep Log");
-
-        LOG.info("Notification configuration is " + notification.toString());
     }
 
 
