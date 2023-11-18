@@ -7,8 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.HashMap;
 
 /**
- * Some properties (in this case flyway.postgresql.transactional.lock, which we need to run
- * non-transactional migrations like CREATE INDEX CONCURRENTLY) are not available through spring directly,
+ * Some properties are not available through spring directly,
  * and spring can't reference any flyway.conf, so I can't bundle the config.
  *
  * Using a FlywayConfigurationCustomizer is the recommended approach to get full control over all flyway properties.
@@ -33,7 +32,12 @@ public class FlywayConfig implements FlywayConfigurationCustomizer {
     public void customize(FluentConfiguration configuration) {
 
         var flywayReplacementProps = new HashMap<String,String>();
+
+
         flywayReplacementProps.put("flyway.cleanDisabled", "false");
+
+        // flyway.postgresql.transactional.lock is something we need to run
+        // non-transactional migrations like CREATE INDEX CONCURRENTLY
         flywayReplacementProps.put("flyway.postgresql.transactional.lock", "false");
 
         configuration.configuration(flywayReplacementProps);

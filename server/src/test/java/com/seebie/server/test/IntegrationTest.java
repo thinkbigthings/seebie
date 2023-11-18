@@ -43,10 +43,6 @@ public class IntegrationTest {
     @ImportTestcontainers(IntegrationTest.class) // import class containing @Container to work with bootTestRun
     public static class TestConfig {
 
-        @Bean public MailSender createMailSenderToLogs() {
-            return new MailSenderToLogs();
-        }
-
         @Bean public PropertyLogger createPropertyLogger(ConfigurableEnvironment env) {
             return new PropertyLogger(env);
         }
@@ -55,25 +51,26 @@ public class IntegrationTest {
         public TestDataPopulator createTestDataPopulator(UserService userService, SleepService sleepService) {
             return new TestDataPopulator(userService, sleepService);
         }
+
+        @Bean public MailSender createMailSenderToLogs() {
+            return new MailSenderToLogs();
+        }
+
+        public static class MailSenderToLogs implements MailSender {
+            private static Logger LOG = LoggerFactory.getLogger(MailSenderToLogs.class);
+
+            @Override public void send(SimpleMailMessage message) throws MailException {
+                LOG.info("Sending email: " + message);
+            }
+
+            @Override public void send(SimpleMailMessage... messages) throws MailException {
+                Arrays.stream(messages).forEach(this::send);
+            }
+        }
     }
 
     @Container
     @ServiceConnection
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15.4");
 
-
-    public static class MailSenderToLogs implements MailSender {
-
-        private static Logger LOG = LoggerFactory.getLogger(MailSenderToLogs.class);
-
-        @Override
-        public void send(SimpleMailMessage message) throws MailException {
-            LOG.info("Sending email: " + message);
-        }
-
-        @Override
-        public void send(SimpleMailMessage... messages) throws MailException {
-            Arrays.stream(messages).forEach(this::send);
-        }
-    }
 }
