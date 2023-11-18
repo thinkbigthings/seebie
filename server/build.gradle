@@ -1,6 +1,6 @@
 
 plugins {
-    id 'org.springframework.boot' version '3.1.4'
+    id 'org.springframework.boot' version '3.1.5'
     id 'jacoco' // core plugin provided by gradle
     id 'org.flywaydb.flyway' version '9.8.3'
     id "com.gorylenko.gradle-git-properties" version "2.4.1"
@@ -47,13 +47,13 @@ dependencies {
 
     implementation 'org.postgresql:postgresql:42.6.0'
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.1.5'
-    implementation 'org.springframework.boot:spring-boot-starter-web:3.1.5'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.1.5'
-    implementation 'org.springframework.boot:spring-boot-starter-security:3.1.5'
-    implementation 'org.springframework.boot:spring-boot-starter-validation:3.1.5'
-    implementation 'org.springframework.boot:spring-boot-starter-mail:3.1.5'
-    implementation 'org.springframework.boot:spring-boot-testcontainers:3.1.5'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.2.0-RC2'
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.2.0-RC2'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.2.0-RC2'
+    implementation 'org.springframework.boot:spring-boot-starter-security:3.2.0-RC2'
+    implementation 'org.springframework.boot:spring-boot-starter-validation:3.2.0-RC2'
+    implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.0-RC2'
+    implementation 'org.springframework.boot:spring-boot-testcontainers:3.2.0-RC2'
     implementation 'org.springframework.session:spring-session-jdbc:3.1.2'
 
     implementation 'org.apache.commons:commons-csv:1.10.0'
@@ -64,7 +64,7 @@ dependencies {
     implementation 'org.flywaydb:flyway-core:9.22.2'
 
     testImplementation 'org.springframework.security:spring-security-test:6.1.4'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.1.5'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.2.0-RC2'
     testImplementation 'net.datafaker:datafaker:2.0.1'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
@@ -139,7 +139,7 @@ def integrationTest = tasks.register("integrationTest", Test) {
     }
 
     // To show standard out and error streams
-    testLogging.showStandardStreams = true
+//    testLogging.showStandardStreams = true
 
     // To log the events of tests being started, passed, failed, or skipped
     testLogging {
