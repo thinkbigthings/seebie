@@ -7,9 +7,9 @@ import com.seebie.server.test.data.TestDataPopulator;
 import org.junit.jupiter.api.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.testcontainers.context.ImportTestcontainers;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -39,9 +39,8 @@ import java.util.Arrays;
         })
 public class IntegrationTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
-
     @TestConfiguration(proxyBeanMethods = false)
+    @ImportTestcontainers(IntegrationTest.class) // import class containing @Container to work with bootTestRun
     public static class TestConfig {
 
         @Bean public MailSender createMailSenderToLogs() {
@@ -53,28 +52,14 @@ public class IntegrationTest {
         }
 
         @Bean
-        public FlywayMigrationStrategy clean() {
-            return flyway -> {
-                flyway.clean();
-                flyway.migrate();
-            };
-        }
-
-        @Bean
         public TestDataPopulator createTestDataPopulator(UserService userService, SleepService sleepService) {
             return new TestDataPopulator(userService, sleepService);
-        }
-
-        @Bean
-        @ServiceConnection
-        public PostgreSQLContainer<?> postgresForBootTestRun() {
-            return new PostgreSQLContainer<>("postgres:15.4").withDatabaseName("testconfig");
         }
     }
 
     @Container
     @ServiceConnection
-    static PostgreSQLContainer<?> postgresForTests = new PostgreSQLContainer<>("postgres:15.4").withDatabaseName("inttest");
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15.4");
 
 
     public static class MailSenderToLogs implements MailSender {
