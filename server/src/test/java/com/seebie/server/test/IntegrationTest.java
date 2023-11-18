@@ -1,13 +1,9 @@
 package com.seebie.server.test;
 
-import com.github.dockerjava.api.model.ExposedPort;
-import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.PortBinding;
 import com.seebie.server.PropertyLogger;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.TestDataPopulator;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
@@ -16,19 +12,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Arrays;
 
-import static com.github.dockerjava.api.model.Ports.Binding.bindPort;
-
-
 @Tag("integration")
+@DirtiesContext
+@Testcontainers
 @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
         "logging.level.org.hibernate.SQL=DEBUG",
         "logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE",
@@ -42,7 +41,9 @@ import static com.github.dockerjava.api.model.Ports.Binding.bindPort;
         })
 public class IntegrationTest {
 
-    @TestConfiguration
+    private static final Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
+
+    @TestConfiguration(proxyBeanMethods = false)
     public static class TestConfig {
 
         @Bean public MailSender createMailSenderToLogs() {
@@ -69,31 +70,20 @@ public class IntegrationTest {
             LOG.info("Populating test data for integration tests.");
             return new TestDataPopulator(userService, sleepService);
         }
+
+//        @Bean
+//        @ServiceConnection
+//        public PostgreSQLContainer<?> postgres() {
+//            LOG.info("Creating a PostgreSQL container for integration tests.");
+//            return new PostgreSQLContainer<>("postgres:15.4");
+//        }
+
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
-    private static final String POSTGRES_IMAGE = "postgres:15.4";
-    private static final int PG_PORT = 5432;
+    @Container
+    @ServiceConnection
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15.4");
 
-    // can only set to false if other instances are shut down first
-    private static final boolean leaveRunningAfterTests = true;
-
-    protected static PostgreSQLContainer<?> postgres;
-
-    @BeforeAll
-    static void setupDatabase() {
-
-        var hostConfig = new HostConfig().withPortBindings(new PortBinding(bindPort(PG_PORT), new ExposedPort(PG_PORT)));
-        postgres = new PostgreSQLContainer<>(POSTGRES_IMAGE)
-                .withReuse(leaveRunningAfterTests)
-                .withUsername("test")
-                .withPassword("test")
-                .withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(hostConfig));
-
-        // call start ourselves so we can reuse
-        // instead of letting library manage it with @TestContainers and @Container
-        postgres.start();
-    }
 
     @BeforeEach
     public void startup(TestInfo testInfo) {

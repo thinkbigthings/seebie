@@ -47,12 +47,13 @@ dependencies {
 
     implementation 'org.postgresql:postgresql:42.6.0'
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.2.0-M3'
-    implementation 'org.springframework.boot:spring-boot-starter-web:3.2.0-M3'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.2.0-M3'
-    implementation 'org.springframework.boot:spring-boot-starter-security:3.2.0-M3'
-    implementation 'org.springframework.boot:spring-boot-starter-validation:3.2.0-M3'
-    implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.0-M3'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.1.5'
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.1.5'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.1.5'
+    implementation 'org.springframework.boot:spring-boot-starter-security:3.1.5'
+    implementation 'org.springframework.boot:spring-boot-starter-validation:3.1.5'
+    implementation 'org.springframework.boot:spring-boot-starter-mail:3.1.5'
+    implementation 'org.springframework.boot:spring-boot-testcontainers:3.1.5'
     implementation 'org.springframework.session:spring-session-jdbc:3.1.2'
 
     implementation 'org.apache.commons:commons-csv:1.10.0'
@@ -63,7 +64,7 @@ dependencies {
     implementation 'org.flywaydb:flyway-core:9.22.2'
 
     testImplementation 'org.springframework.security:spring-security-test:6.1.4'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.2.0-M3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.1.5'
     testImplementation 'net.datafaker:datafaker:2.0.1'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
@@ -133,20 +134,17 @@ test {
 
 def integrationTest = tasks.register("integrationTest", Test) {
 
-    // this lets the container stay up so you can run standalone later with the same container if you want
-    // the flag here merely allows you to use the setting, to actually leave a container up (or not), call
-    // the container's .withReuse() method
-    environment "TESTCONTAINERS_REUSE_ENABLE", "true"
-
-    // It takes a couple of seconds, but if you want to speed up your tests,
-    // you can disable the checks once you have everything configured
-    // TODO I think this overwrites the above? Maybe you can only make one environment call here
-    // environment "TESTCONTAINERS_CHECKS_DISABLE", "true"
-
     useJUnitPlatform {
         includeTags "integration"
     }
 
+    // To show standard out and error streams
+    testLogging.showStandardStreams = true
+
+    // To log the events of tests being started, passed, failed, or skipped
+    testLogging {
+        events 'started', 'passed', 'skipped', 'failed'
+    }
     jacoco {
         destinationFile = file("$buildDir/jacoco/integrationTest/jacocoTest.exec")
         classDumpDir = file("$buildDir/jacoco/integrationTest/classpathdumps")

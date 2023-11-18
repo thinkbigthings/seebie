@@ -19,8 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserRepositoryTest extends IntegrationTest {
 
-    private static Logger LOG = LoggerFactory.getLogger(UserRepositoryTest.class);
-
     @Autowired
     private UserRepository userRepository;
 
