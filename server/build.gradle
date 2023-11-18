@@ -139,11 +139,11 @@ def integrationTest = tasks.register("integrationTest", Test) {
     }
 
     // To show standard out and error streams
-//    testLogging.showStandardStreams = true
+    testLogging.showStandardStreams = true
 
     // To log the events of tests being started, passed, failed, or skipped
     testLogging {
-        events 'started', 'passed', 'skipped', 'failed'
+        events 'passed', 'skipped', 'failed' // , 'started' // if you want to see which test is hanging
     }
     jacoco {
         destinationFile = file("$buildDir/jacoco/integrationTest/jacocoTest.exec")
