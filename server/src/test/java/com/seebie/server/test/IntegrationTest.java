@@ -5,27 +5,17 @@ import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.TestDataPopulator;
 import org.junit.jupiter.api.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.context.ImportTestcontainers;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.Arrays;
 
 @Tag("integration")
-@DirtiesContext
-@Testcontainers
 @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
         "logging.level.org.hibernate.SQL=DEBUG",
         "logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE",
@@ -56,21 +46,18 @@ public class IntegrationTest {
             return new MailSenderToLogs();
         }
 
-        public static class MailSenderToLogs implements MailSender {
-            private static Logger LOG = LoggerFactory.getLogger(MailSenderToLogs.class);
-
-            @Override public void send(SimpleMailMessage message) throws MailException {
-                LOG.info("Sending email: " + message);
-            }
-
-            @Override public void send(SimpleMailMessage... messages) throws MailException {
-                Arrays.stream(messages).forEach(this::send);
-            }
-        }
     }
 
-    @Container
+    // Don't use @Testcontainers, so we manage lifecycle instead of testcontainers managing it.
+    // That way we can reuse for all tests. This has around a 20% performance savings for integration tests.
+    // Note that if we let Testcontainers manage it, we need @DirtiesContext too.
+    // Use @Container here, so it can be detected by @ImportTestcontainers
     @ServiceConnection
+    @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15.4");
+
+    static {
+        postgres.start();
+    }
 
 }
