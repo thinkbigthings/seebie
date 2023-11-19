@@ -57,6 +57,7 @@ public class IntegrationTest {
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15.4");
 
     static {
+        postgres.withUrlParam("autosave", "conservative");
         postgres.start();
     }
 
