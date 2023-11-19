@@ -29,10 +29,9 @@ import java.util.HashMap;
 public class FlywayConfig implements FlywayConfigurationCustomizer {
 
     @Override
-    public void customize(FluentConfiguration configuration) {
+    public void customize(FluentConfiguration fluent) {
 
         var flywayReplacementProps = new HashMap<String,String>();
-
 
         flywayReplacementProps.put("flyway.cleanDisabled", "false");
 
@@ -40,6 +39,6 @@ public class FlywayConfig implements FlywayConfigurationCustomizer {
         // non-transactional migrations like CREATE INDEX CONCURRENTLY
         flywayReplacementProps.put("flyway.postgresql.transactional.lock", "false");
 
-        configuration.configuration(flywayReplacementProps);
+        fluent.configuration(flywayReplacementProps);
     }
 }
