@@ -19,11 +19,19 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ssl.SslBundle;
+import org.springframework.boot.ssl.SslBundles;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.web.client.ClientHttpRequestFactories;
+import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.data.domain.Page;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestClient;
 
 import java.net.URI;
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,6 +56,25 @@ public class EndToEndIntegrationTest extends IntegrationTest {
 
     private static ApiClientStateful adminClient;
     private static ApiClientStateful userClient;
+
+    @BeforeAll
+    public static void setupClient(@Autowired RestClient.Builder restClientBuilder, @Autowired SslBundles sslBundles) {
+
+        LOG.info("SSL Bundle: ");
+        LOG.info(sslBundles.getBundle("mybundle").toString());
+
+//        ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.DEFAULTS
+//                .withReadTimeout(Duration.ofMinutes(2))
+//                .withSslBundle(sslBundles.getBundle("mybundle"));
+//
+//        ClientHttpRequestFactory requestFactory = ClientHttpRequestFactories.get(settings);
+//
+//        var restClient = restClientBuilder.baseUrl("https://example.org")
+//                .
+//                                            .requestFactory(requestFactory)
+//                                            .build();
+
+    }
 
     @BeforeEach
     public void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
