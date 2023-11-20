@@ -72,7 +72,7 @@ public class SessionSecurityTest extends IntegrationTest {
         loginRequest = HttpRequest.newBuilder().GET().uri(loginUri).build();
         loginRememberMe = HttpRequest.newBuilder().GET().uri(rememberMeUri).build();
 
-        // See timeout values set in IntegrationTest
+        // See timeout values set in IntegrationTest, they configure the server so we can time out here
         sessionTimeout = env.getProperty("spring.session.timeout", Duration.class);
         rememberMeTimeout = env.getProperty("app.security.rememberMe.tokenValidity", Duration.class);
     }
@@ -94,7 +94,7 @@ public class SessionSecurityTest extends IntegrationTest {
     public void testUnauthenticatedLoginCreatesNoSessions() throws Exception {
 
         // We don't return session tokens for unauthenticated calls, it is unnecessary.
-        // Also we don't want people to farm it for statistics on the cryptography of session tokens.
+        // Also, we don't want people to farm it for statistics on the cryptography of session tokens.
 
         // Attempt to access secured endpoint while unauthenticated
         var withoutAuth = ApiClientStateful.unAuthClient();
@@ -107,7 +107,7 @@ public class SessionSecurityTest extends IntegrationTest {
     public void testUnauthenticatedLoginCreatesNoRememberMe() throws Exception {
 
         // We don't return session tokens for unauthenticated calls, it is unnecessary.
-        // Also we don't want people to farm it for statistics on the cryptography of session tokens.
+        // Also, we don't want people to farm it for statistics on the cryptography of session tokens.
 
         // Attempt to access secured endpoint while unauthenticated
         var withoutAuth = ApiClientStateful.unAuthClient();
