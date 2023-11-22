@@ -25,7 +25,9 @@ public class RestClientFactory {
         // but couldn't find out to wire it
 
         var baseUrl = STR."https://localhost:\{randomPort}";
-        this.restClientBuilder = restClientBuilder.clone().baseUrl(baseUrl);
+        this.restClientBuilder = restClientBuilder.clone()
+                .defaultStatusHandler(status -> status.is4xxClientError(), (request,resp) -> {}) // don't throw exceptions on 4XX errors
+                .baseUrl(baseUrl);
     }
 
     public RestClient createUnAuthClient() {

@@ -2,10 +2,7 @@ package com.seebie.server.controller;
 
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.IntegrationTest;
-import com.seebie.server.test.client.ApiClientStateful;
 import com.seebie.server.test.client.RestClientFactory;
-import com.seebie.server.test.data.AppRequest;
-import com.seebie.server.test.data.HttpRequestMapper;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -21,13 +18,10 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilderFactory;
 
 import java.net.URI;
-import java.net.http.HttpRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
-import static com.seebie.server.controller.ControllerValidationTest.testDataObj2Str;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -40,15 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ActuatorSecurityTest extends IntegrationTest {
 
     private static RestClientFactory clientFactory;
-    private static ApiClientStateful unAuthClient;
 
+    private static RestClient unAuthClient;
     private static RestClient adminClient;
     private static RestClient userClient;
 
-    private static Function<AppRequest, HttpRequest> toRequest;
-
     private static ArgumentBuilder restTest;
-    private static TestData.ArgumentBuilder test;
 
     private static DefaultUriBuilderFactory uriBuilderFactory;
 
@@ -57,38 +48,30 @@ public class ActuatorSecurityTest extends IntegrationTest {
                              @Autowired UserService userService,
                              @Autowired MappingJackson2HttpMessageConverter converter)
     {
-
-
-        // so we get the mapper as configured for the app
-        toRequest = new HttpRequestMapper(testDataObj2Str(converter.getObjectMapper()));
-
         String baseUrl = STR."https://localhost:\{randomServerPort}";
         uriBuilderFactory = new DefaultUriBuilderFactory(baseUrl);
 
-        // so we get the rest client builder as configured for the app, including mappers
+        // we get the rest client builder as configured for the app, including mappers
         clientFactory = new RestClientFactory(builder, randomServerPort);
 
         adminClient = clientFactory.createLoggedInClient("admin", "admin");
         restTest = new ArgumentBuilder(uriBuilderFactory);
 
-        test = new TestData.ArgumentBuilder(baseUrl);
-
-
         var userRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(userRegistration);
         userClient = clientFactory.createLoggedInClient(userRegistration.username(), userRegistration.plainTextPassword());
 
-        unAuthClient = new ApiClientStateful();
+        unAuthClient = clientFactory.createUnAuthClient();
     }
 
     private static List<Arguments> provideUnauthenticatedTestParameters() {
 
         return List.of(
-				test.get("/actuator", 401),
-				test.get("/actuator/flyway", 401),
-				test.get("/actuator/health", 401),
-				test.get("/actuator/info", 401),
-				test.get("/actuator/sessions", new String[] {"username", "admin"}, 401)
+                restTest.get("/actuator", 401),
+                restTest.get("/actuator/flyway", 401),
+                restTest.get("/actuator/health", 401),
+                restTest.get("/actuator/info", 401),
+                restTest.get("/actuator/sessions", Map.of("username", "admin"), 401)
             );
     }
 
@@ -115,17 +98,16 @@ public class ActuatorSecurityTest extends IntegrationTest {
     @ParameterizedTest
     @MethodSource("provideUnauthenticatedTestParameters")
     @DisplayName("Unauthenticated Access")
-    void testUnauthenticatedSecurity(AppRequest testData, int expectedStatus) throws Exception {
-        assertEquals(expectedStatus, unAuthClient.trySend(toRequest.apply(testData)).statusCode());
+    void testUnauthenticatedSecurity(HttpMethod method, URI uri, int expectedStatus) {
+        var req = unAuthClient.mutate().build().method(method).uri(uri);
+        assertEquals(expectedStatus, req.retrieve().toBodilessEntity().getStatusCode().value());
     }
 
     @ParameterizedTest
     @MethodSource("provideAdminTestParameters")
     @DisplayName("Admin Access")
     void testAdminSecurity(HttpMethod method, URI uri, int expectedStatus) {
-        var req = adminClient.mutate()
-                .defaultStatusHandler(status -> status.is4xxClientError(), (request,resp) -> {})
-                .build().method(method).uri(uri);
+        var req = adminClient.mutate().build().method(method).uri(uri);
         assertEquals(expectedStatus, req.retrieve().toBodilessEntity().getStatusCode().value());
     }
 
@@ -133,9 +115,7 @@ public class ActuatorSecurityTest extends IntegrationTest {
     @MethodSource("provideUserTestParameters")
     @DisplayName("User Access")
     void testUserSecurity(HttpMethod method, URI uri, int expectedStatus) {
-        var req = userClient.mutate()
-                .defaultStatusHandler(status -> status.is4xxClientError(), (request,resp) -> {})
-                .build().method(method).uri(uri);
+        var req = userClient.mutate().build().method(method).uri(uri);
         assertEquals(expectedStatus, req.retrieve().toBodilessEntity().getStatusCode().value());
     }
 
