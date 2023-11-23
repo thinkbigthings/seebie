@@ -47,7 +47,7 @@ public class SessionSecurityTest extends IntegrationTest {
     @BeforeEach
     public void setupTestUser(@Autowired UserService userService) {
 
-        // each test should have its own test user so these could be run in parallel
+        // TODO each test should have its own test user so these could be run in parallel
 
         var userRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(userRegistration);

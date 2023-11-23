@@ -42,7 +42,7 @@ public class RestClientFactory {
             // but whether I use it to create an SslContext or use RestClient.Builder.apply(ssl.fromBundle("appbundle"))
             // it fails with "unable to find valid certification path to requested target"
             // so need to use an insecure truststore to work with self-signed certs
-            var basicAuth = basicAuth(username, plainTextPassword);
+            var basicAuth = basicAuthClient(username, plainTextPassword);
             var basicRestClient = restClientBuilder.clone()
                     .requestFactory(new JdkClientHttpRequestFactory(basicAuth))
                     .build();
@@ -59,20 +59,18 @@ public class RestClientFactory {
     }
 
     private static HttpClient unAuthClient() {
-        return HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(300))
-                .cookieHandler(new CookieManager())
-                .sslContext(insecureContext)
-                .build();
+        return baseBuilder().build();
     }
 
-    private static HttpClient basicAuth(String username, String password) {
+    private static HttpClient basicAuthClient(String username, String password) {
+        return baseBuilder().authenticator(new BasicAuthenticator(username, password)).build();
+    }
+
+    private static HttpClient.Builder baseBuilder() {
         return HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(300))
                 .cookieHandler(new CookieManager())
-                .authenticator(new BasicAuthenticator(username, password))
-                .sslContext(insecureContext)
-                .build();
+                .sslContext(insecureContext);
     }
 
     private static HttpClient removeBasicAuth(HttpClient client) {
