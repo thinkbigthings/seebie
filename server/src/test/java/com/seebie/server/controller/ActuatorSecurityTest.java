@@ -13,16 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import org.springframework.web.util.UriBuilderFactory;
 
-import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.of;
+import static org.springframework.http.HttpMethod.GET;
 
 
 /**
@@ -39,8 +40,6 @@ public class ActuatorSecurityTest extends IntegrationTest {
     private static RestClient adminClient;
     private static RestClient userClient;
 
-    private static ArgumentBuilder restTest;
-
     private static DefaultUriBuilderFactory uriBuilderFactory;
 
     @BeforeAll
@@ -48,14 +47,12 @@ public class ActuatorSecurityTest extends IntegrationTest {
                              @Autowired UserService userService,
                              @Autowired MappingJackson2HttpMessageConverter converter)
     {
-        String baseUrl = STR."https://localhost:\{randomServerPort}";
-        uriBuilderFactory = new DefaultUriBuilderFactory(baseUrl);
+        uriBuilderFactory = new DefaultUriBuilderFactory(STR."https://localhost:\{randomServerPort}");
 
         // we get the rest client builder as configured for the app, including mappers
         clientFactory = new RestClientFactory(builder, randomServerPort);
 
         adminClient = clientFactory.createLoggedInClient("admin", "admin");
-        restTest = new ArgumentBuilder(uriBuilderFactory);
 
         var userRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(userRegistration);
@@ -64,80 +61,65 @@ public class ActuatorSecurityTest extends IntegrationTest {
         unAuthClient = clientFactory.createUnAuthClient();
     }
 
+    private static final MultiValueMap<String,String> NO_PARAM = new LinkedMultiValueMap<>();
+    private static final MultiValueMap<String, String> USER_PARAM = new LinkedMultiValueMap<>(Map.of("username", List.of("admin")));
     private static List<Arguments> provideUnauthenticatedTestParameters() {
 
         return List.of(
-                restTest.get("/actuator", 401),
-                restTest.get("/actuator/flyway", 401),
-                restTest.get("/actuator/health", 401),
-                restTest.get("/actuator/info", 401),
-                restTest.get("/actuator/sessions", Map.of("username", "admin"), 401)
+                of(GET, "/actuator", NO_PARAM, 401),
+                of(GET, "/actuator/flyway", NO_PARAM, 401),
+                of(GET, "/actuator/health", NO_PARAM, 401),
+                of(GET, "/actuator/info", NO_PARAM, 401),
+                of(GET, "/actuator/sessions", USER_PARAM, 401)
             );
     }
 
     private static List<Arguments> provideAdminTestParameters() {
         return List.of(
-				restTest.get("/actuator", 200),
-                restTest.get("/actuator/flyway", 200),
-                restTest.get("/actuator/health", 200),
-                restTest.get("/actuator/info", 200),
-                restTest.get("/actuator/sessions", Map.of("username", "admin"), 200)
+                of(GET, "/actuator", NO_PARAM, 200),
+                of(GET, "/actuator/flyway", NO_PARAM, 200),
+                of(GET, "/actuator/health", NO_PARAM, 200),
+                of(GET, "/actuator/info", NO_PARAM, 200),
+                of(GET, "/actuator/sessions", USER_PARAM, 200)
         );
     }
 
     private static List<Arguments> provideUserTestParameters() {
         return List.of(
-                restTest.get("/actuator", 403),
-                restTest.get("/actuator/flyway", 403),
-                restTest.get("/actuator/health", 403),
-                restTest.get("/actuator/info", 403),
-                restTest.get("/actuator/sessions", Map.of("username", "admin"), 403)
+                of(GET, "/actuator", NO_PARAM, 403),
+                of(GET, "/actuator/flyway", NO_PARAM, 403),
+                of(GET, "/actuator/health", NO_PARAM, 403),
+                of(GET, "/actuator/info", NO_PARAM, 403),
+                of(GET, "/actuator/sessions", USER_PARAM, 403)
         );
     }
 
     @ParameterizedTest
     @MethodSource("provideUnauthenticatedTestParameters")
     @DisplayName("Unauthenticated Access")
-    void testUnauthenticatedSecurity(HttpMethod method, URI uri, int expectedStatus) {
-        var req = unAuthClient.mutate().build().method(method).uri(uri);
-        assertEquals(expectedStatus, req.retrieve().toBodilessEntity().getStatusCode().value());
+    void testUnauthenticatedSecurity(HttpMethod method, String urlPath, MultiValueMap<String,String> urlParams, int expectedStatus) {
+        testSecurity(unAuthClient, method, urlPath, urlParams, expectedStatus);
     }
 
     @ParameterizedTest
     @MethodSource("provideAdminTestParameters")
     @DisplayName("Admin Access")
-    void testAdminSecurity(HttpMethod method, URI uri, int expectedStatus) {
-        var req = adminClient.mutate().build().method(method).uri(uri);
-        assertEquals(expectedStatus, req.retrieve().toBodilessEntity().getStatusCode().value());
+    void testAdminSecurity(HttpMethod method, String urlPath, MultiValueMap<String,String> urlParams, int expectedStatus) {
+        testSecurity(adminClient, method, urlPath, urlParams, expectedStatus);
     }
 
     @ParameterizedTest
     @MethodSource("provideUserTestParameters")
     @DisplayName("User Access")
-    void testUserSecurity(HttpMethod method, URI uri, int expectedStatus) {
-        var req = userClient.mutate().build().method(method).uri(uri);
-        assertEquals(expectedStatus, req.retrieve().toBodilessEntity().getStatusCode().value());
+    void testUserSecurity(HttpMethod method, String urlPath, MultiValueMap<String,String> urlParams, int expectedStatus) {
+        testSecurity(userClient, method, urlPath, urlParams, expectedStatus);
     }
 
-    public static class ArgumentBuilder {
+    private void testSecurity(RestClient client, HttpMethod method, String urlPath, MultiValueMap<String,String> urlParams, int expectedStatus) {
 
-        private UriBuilderFactory uriBuilderFactory;
+        var uri = uriBuilderFactory.builder().path(urlPath).queryParams(urlParams).build();
+        var req = client.mutate().build().method(method).uri(uri);
 
-        public ArgumentBuilder(UriBuilderFactory uriBuilderFactory) {
-            this.uriBuilderFactory = uriBuilderFactory;
-        }
-
-        public Arguments get(String urlPath, Map<String,String> requestParams, int expected) {
-
-            var uriBuilder = uriBuilderFactory.builder().path(urlPath);
-            requestParams.forEach((key, value) -> uriBuilder.queryParam(key, value));
-
-            return Arguments.of(HttpMethod.GET, uriBuilder.build(), expected);
-        }
-
-        public Arguments get(String urlPath, int expected) {
-            return get(urlPath, new HashMap<>(), expected);
-        }
-
+        assertEquals(expectedStatus, req.retrieve().toBodilessEntity().getStatusCode().value());
     }
 }
