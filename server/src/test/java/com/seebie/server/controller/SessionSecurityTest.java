@@ -35,9 +35,6 @@ public class SessionSecurityTest extends IntegrationTest {
     protected static URI loginWithoutRememberMeUri;
     protected static URI loginWithRememberMeUri;
 
-    protected static HttpRequest loginRequest;
-    protected static HttpRequest loginRememberMe;
-
     private static Duration sessionTimeout;
     private static Duration rememberMeTimeout;
 
@@ -77,7 +74,6 @@ public class SessionSecurityTest extends IntegrationTest {
         // TODO use uri builder throughout
         baseUrl = STR."https://localhost:\{randomServerPort}/api";
 
-
         // TODO look into templates for URI across this class
 
         uriBuilderFactory = new DefaultUriBuilderFactory(STR."https://localhost:\{randomServerPort}");
@@ -100,11 +96,6 @@ public class SessionSecurityTest extends IntegrationTest {
         // See timeout values set in IntegrationTest, they configure the server so we can time out here
         sessionTimeout = env.getProperty("spring.session.timeout", Duration.class);
         rememberMeTimeout = env.getProperty("app.security.rememberMe.tokenValidity", Duration.class);
-
-        // TODO REMOVE OLD STUFF
-        loginRequest = HttpRequest.newBuilder().GET().uri(loginWithoutRememberMeUri).build();
-        loginRememberMe = HttpRequest.newBuilder().GET().uri(loginWithRememberMeUri).build();
-
     }
 
     @Test
@@ -171,16 +162,13 @@ public class SessionSecurityTest extends IntegrationTest {
         // Result is a 200, Session cookie is set and remember-me cookie is set
         var basicAuth = clientFactory.basicAuthClient(testUserName, testUserPassword);
         var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginWithRememberMeUri).retrieve().toEntity(String.class);
-        assertResponse(response, 200, true, false);
         var originalSessionCookie = getCookie(response, SESSION_COOKIE);
         var originalRememberMeCookie = getCookie(response, REMEMBER_ME_COOKIE);
-
         assertResponse(response, 200, true, true);
 
         // subsequent requests should NOT have session cookie set, cookie is sent in subsequent requests
         var sessionAuth = clientFactory.removeBasicAuth(basicAuth);
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
-
         assertResponse(response, 200, false, false);
 
         // Wait for session timeout but don't let remember-me timeout
@@ -197,35 +185,32 @@ public class SessionSecurityTest extends IntegrationTest {
         assertNotEquals(originalRememberMeCookie.getValue(), newRememberMeCookie.getValue());
     }
 
-
-    // TODO pick up here
-
     @Test
     public void testRememberMeCookieTimeout() throws Exception {
 
-//        // Login with remember-me and access secured endpoint
-//        // Result is a 200, Session cookie is set and remember-me cookie is set
-//        var basicAuth = ApiClientStateful.basicAuthClient(testUserName, testUserPassword);
-//        var response = basicAuth.send(loginRememberMe, ofString());
-//        assertResponse(response, 200, true, true);
-//
-//        // subsequent requests should NOT have session cookie set, cookie is sent from client in subsequent requests
-//        var sessionAuth = ApiClientStateful.removeBasicAuth(basicAuth);
-//        response = sessionAuth.send(userInfoRequest, ofString());
-//        assertResponse(response, 200, false, false);
-//
-//        // Wait for remember-me timeout, then attempt to access secured endpoint again
-//        // Result is a 401, Session is invalid, no session cookie is returned, remember-me cookie is cleared
-//
-//        waitForExpiration(rememberMeTimeout);
-//
-//        response = sessionAuth.send(userInfoRequest, ofString());
-//        assertResponse(response, 401, false, true);
-//        assertEquals("", getCookie(response, REMEMBER_ME_COOKIE).getValue());
-//
-//        // once remember me cookie is cleared, any subsequent response will not try to set either cookie
-//        response = sessionAuth.send(userInfoRequest, ofString());
-//        assertResponse(response, 401, false, false);
+        // Login with remember-me and access secured endpoint
+        // Result is a 200, Session cookie is set and remember-me cookie is set
+        var basicAuth = clientFactory.basicAuthClient(testUserName, testUserPassword);
+        var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginWithRememberMeUri).retrieve().toEntity(String.class);
+        assertResponse(response, 200, true, true);
+
+        // subsequent requests should NOT have session cookie set, cookie is sent in subsequent requests
+        var sessionAuth = clientFactory.removeBasicAuth(basicAuth);
+        response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
+        assertResponse(response, 200, false, false);
+
+        // Wait for remember-me timeout
+        waitForExpiration(rememberMeTimeout);
+
+        // then attempt to access secured endpoint again
+        // Result is a 401, Session is invalid, no session cookie is returned, remember-me cookie is cleared
+        response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
+        assertResponse(response, 401, false, true);
+        assertEquals("", getCookie(response, REMEMBER_ME_COOKIE).getValue());
+
+        // once remember me cookie is cleared, any subsequent response will not try to set either cookie
+        response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
+        assertResponse(response, 401, false, false);
     }
 
     private void waitForExpiration(Duration timeout) {
@@ -255,5 +240,4 @@ public class SessionSecurityTest extends IntegrationTest {
                 .filter(c -> c.getName().equals(cookieName))
                 .findFirst();
     }
-
 }

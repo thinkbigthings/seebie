@@ -50,6 +50,8 @@ public class RestClientFactory {
                     .retrieve()
                     .body(String.class);
 
+            // subsequent calls should use session and/or remember me token
+            // remove the authorizor, otherwise it still adds the basic auth headers
             return fromHttpClient(removeBasicAuth(basicAuth));
     }
 
