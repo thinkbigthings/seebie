@@ -1,27 +1,24 @@
 package com.seebie.server.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.User;
 import com.seebie.server.dto.UserSummary;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.IntegrationTest;
-import com.seebie.server.test.client.ApiClientStateful;
 import com.seebie.server.test.client.ParsablePage;
+import com.seebie.server.test.client.RestClientFactory;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestClient;
 
 import java.net.URI;
 
@@ -35,8 +32,6 @@ public class EndToEndIntegrationTest extends IntegrationTest {
 
     protected static Logger LOG = LoggerFactory.getLogger(EndToEndIntegrationTest.class);
 
-    private static String baseUrl;
-
     private static URI users;
 
     private static String testUserName;
@@ -44,30 +39,21 @@ public class EndToEndIntegrationTest extends IntegrationTest {
     private static URI testUserUrl;
     private static URI testUserUpdatePasswordUrl;
 
-    private ObjectMapper mapper;
-
-    private static ApiClientStateful adminClient;
-    private static ApiClientStateful userClient;
-
-    @BeforeEach
-    public void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
-        // use the actual mapper configured in the application
-        mapper = converter.getObjectMapper();
-    }
+    private static RestClientFactory clientFactory;
 
     @BeforeAll
-    public static void createTestData(@Autowired UserService userService, @LocalServerPort int randomServerPort) {
-
+    public static void createTestData(@Autowired RestClient.Builder builder,
+                                      @Autowired UserService userService,
+                                      @LocalServerPort int randomServerPort)
+    {
         LOG.info("");
         LOG.info("=======================================================================================");
         LOG.info("Creating test data");
         LOG.info("");
 
-        baseUrl = STR."https://localhost:\{randomServerPort}/api/";
+        var baseUrl = STR."https://localhost:\{randomServerPort}/api/";
+        clientFactory = new RestClientFactory(builder, baseUrl);
         users = URI.create(baseUrl + "user");
-
-        adminClient = new ApiClientStateful(baseUrl, "admin", "admin");
-
 
         RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(testUserRegistration);
@@ -76,16 +62,16 @@ public class EndToEndIntegrationTest extends IntegrationTest {
         testUserPassword = testUserRegistration.plainTextPassword();
         testUserUrl = URI.create(users + "/" + testUserName);
         testUserUpdatePasswordUrl = URI.create(testUserUrl + "/password/update");
-
-        userClient = new ApiClientStateful(baseUrl, testUserName, testUserPassword);
     }
 
     @Test()
     @DisplayName("Admin list users")
-    public void adminListUsers() throws JsonProcessingException {
+    public void adminListUsers() {
 
-        String results = adminClient.get(users);
-        Page<UserSummary> page = mapper.readValue(results, new TypeReference<ParsablePage<UserSummary>>() {});
+        RestClient admin = clientFactory.login("admin", "admin");
+
+        var userPage = new ParameterizedTypeReference<ParsablePage<UserSummary>>() {};
+        Page<UserSummary> page = admin.get().uri(users).retrieve().body(userPage);
 
         assertTrue(page.isFirst());
         assertTrue(page.getTotalElements() >= 1);
@@ -95,12 +81,15 @@ public class EndToEndIntegrationTest extends IntegrationTest {
     @DisplayName("Update user password")
     public void testUpdatePassword() {
 
-        PersonalInfo info = userClient.get(testUserUrl, User.class).personalInfo();
-        String newPassword = "password";
-        userClient.post(testUserUpdatePasswordUrl, newPassword);
-        userClient = new ApiClientStateful(baseUrl, testUserName, newPassword);
+        RestClient user = clientFactory.login(testUserName, testUserPassword);
+        PersonalInfo info = user.get().uri(testUserUrl).retrieve().body(User.class).personalInfo();
 
-        PersonalInfo info2 = userClient.get(testUserUrl, User.class).personalInfo();
+        String newPassword = testUserPassword + "1";
+        user.post().uri(testUserUpdatePasswordUrl).body(newPassword).retrieve();
+
+        user = clientFactory.login(testUserName, newPassword);
+        PersonalInfo info2 = user.get().uri(testUserUrl).retrieve().body(User.class).personalInfo();
+
         assertEquals(info, info2);
     }
 }

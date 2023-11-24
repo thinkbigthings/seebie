@@ -3,15 +3,20 @@ package com.seebie.server.test;
 import com.seebie.server.PropertyLogger;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
+import com.seebie.server.test.client.RestClientFactory;
 import com.seebie.server.test.data.TestDataPopulator;
 import org.junit.jupiter.api.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.context.ImportTestcontainers;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mail.MailSender;
+import org.springframework.web.client.RestClient;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
@@ -22,8 +27,8 @@ import org.testcontainers.junit.jupiter.Container;
         "spring.main.lazy-initialization=true",
         "spring.flyway.enabled=true",
         "app.notification.scan.enabled=false",
-        "app.security.rememberMe.tokenValidity=6s",
-        "spring.session.timeout=4s",
+        "app.security.rememberMe.tokenValidity=6s", // small values for SessionSecurityTest
+        "spring.session.timeout=4s", // small values for SessionSecurityTest
         "app.security.rememberMe.key=test-only",
         "spring.mail.username=test-only"
         })
@@ -45,7 +50,6 @@ public class IntegrationTest {
         @Bean public MailSender createMailSenderToLogs() {
             return new MailSenderToLogs();
         }
-
     }
 
     // Don't use @Testcontainers, so we manage lifecycle instead of testcontainers managing it.

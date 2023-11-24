@@ -143,9 +143,6 @@ public class TestData {
         public ArgumentBuilder() {
             this.host = "";
         }
-        public ArgumentBuilder(String host) {
-            this.host = host;
-        }
 
         public Arguments post(String urlPath, Object reqBody, int expected) {
             return Arguments.of(new AppRequest().method(POST).url(host + urlPath).body(reqBody), expected);
