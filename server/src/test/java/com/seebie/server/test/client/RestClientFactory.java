@@ -31,28 +31,18 @@ public class RestClientFactory {
     }
 
     public RestClient createUnAuthClient() {
-        return restClientBuilder.clone()
-                .requestFactory(new JdkClientHttpRequestFactory(unAuthClient()))
-                .build();
+        return fromHttpClient(unAuth());
     }
 
-    public RestClient createLoggedInClient(String username, String plainTextPassword) {
+    public RestClient login(String username, String plainTextPassword) {
 
-            // I thought the existing ssl bundle would work to configure ssl here,
-            // but whether I use it to create an SslContext or use RestClient.Builder.apply(ssl.fromBundle("appbundle"))
-            // it fails with "unable to find valid certification path to requested target"
-            // so need to use an insecure truststore to work with self-signed certs
-            var basicAuth = basicAuthClient(username, plainTextPassword);
-            var basicRestClient = fromHttpClient(basicAuth);
+            var basicAuth = basicAuth(username, plainTextPassword);
 
-            basicRestClient.get()
-                    .uri("/api/login")
-                    .retrieve()
-                    .body(String.class);
+            fromHttpClient(basicAuth).get().uri("/api/login").retrieve().body(String.class);
 
             // subsequent calls should use session and/or remember me token
             // remove the authorizor, otherwise it still adds the basic auth headers
-            return fromHttpClient(removeBasicAuth(basicAuth));
+            return fromHttpClient(withoutBasicAuth(basicAuth));
     }
 
     public RestClient fromHttpClient(HttpClient httpClient) {
@@ -61,22 +51,27 @@ public class RestClientFactory {
                 .build();
     }
 
-    private static HttpClient unAuthClient() {
+    private static HttpClient unAuth() {
         return baseBuilder().build();
     }
 
-    public HttpClient basicAuthClient(String username, String password) {
+    public HttpClient basicAuth(String username, String password) {
         return baseBuilder().authenticator(new BasicAuthenticator(username, password)).build();
     }
 
     private static HttpClient.Builder baseBuilder() {
+
+        // I thought the existing ssl bundle would work to configure ssl here,
+        // but whether I use it to create an SslContext or use RestClient.Builder.apply(ssl.fromBundle("appbundle"))
+        // it fails with "unable to find valid certification path to requested target"
+        // so need to use an insecure truststore to work with self-signed certs
         return HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(300))
                 .cookieHandler(new CookieManager())
                 .sslContext(insecureContext);
     }
 
-    public HttpClient removeBasicAuth(HttpClient client) {
+    public HttpClient withoutBasicAuth(HttpClient client) {
         return HttpClient.newBuilder()
                 .connectTimeout(client.connectTimeout().get())
                 .cookieHandler(client.cookieHandler().get())

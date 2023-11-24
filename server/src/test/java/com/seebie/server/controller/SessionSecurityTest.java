@@ -41,7 +41,6 @@ public class SessionSecurityTest extends IntegrationTest {
     private String testUserName;
     private String testUserPassword;
     private URI testUserInfoUri;
-    private HttpRequest userInfoRequest;
 
     @BeforeEach
     public void setupTestUser(@Autowired UserService userService) {
@@ -54,7 +53,6 @@ public class SessionSecurityTest extends IntegrationTest {
         testUserName = userRegistration.username();
         testUserPassword = userRegistration.plainTextPassword();
         testUserInfoUri = URI.create(STR."\{baseUrl}/user/\{userRegistration.username()}");
-        userInfoRequest = HttpRequest.newBuilder().uri(testUserInfoUri).GET().build();
     }
 
 
@@ -72,11 +70,11 @@ public class SessionSecurityTest extends IntegrationTest {
     {
 
         // TODO use uri builder throughout
+        // TODO look into templates for URI across this class, like for username per test, or here for remember-me
+
         baseUrl = STR."https://localhost:\{randomServerPort}/api";
 
-        // TODO look into templates for URI across this class
-
-        uriBuilderFactory = new DefaultUriBuilderFactory(STR."https://localhost:\{randomServerPort}");
+        uriBuilderFactory = new DefaultUriBuilderFactory(baseUrl);
 
         // we get the rest client builder as configured for the app, including mappers
         clientFactory = new RestClientFactory(builder, randomServerPort);
@@ -105,7 +103,7 @@ public class SessionSecurityTest extends IntegrationTest {
         // Also, we don't want people to farm it for statistics on the cryptography of session tokens.
 
         // Attempt to access secured endpoint while unauthenticated
-        var response = unAuthClient.get().uri(userInfoRequest.uri()).retrieve().toEntity(String.class);
+        var response = unAuthClient.get().uri(testUserInfoUri).retrieve().toEntity(String.class);
 
         assertResponse(response, 401, false, false);
     }
@@ -138,12 +136,12 @@ public class SessionSecurityTest extends IntegrationTest {
     public void testSessionCookieTimeoutWithoutRememberMe() {
 
         // Login without remember-me, and access secured endpoint
-        var basicAuth = clientFactory.basicAuthClient(testUserName, testUserPassword);
+        var basicAuth = clientFactory.basicAuth(testUserName, testUserPassword);
         var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginWithoutRememberMeUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, true, false);
 
         // Session cookie is set in first response, no cookie in second response
-        var sessionAuth = clientFactory.removeBasicAuth(basicAuth);
+        var sessionAuth = clientFactory.withoutBasicAuth(basicAuth);
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, false, false);
 
@@ -160,14 +158,14 @@ public class SessionSecurityTest extends IntegrationTest {
 
         // Login with remember-me and access secured endpoint
         // Result is a 200, Session cookie is set and remember-me cookie is set
-        var basicAuth = clientFactory.basicAuthClient(testUserName, testUserPassword);
+        var basicAuth = clientFactory.basicAuth(testUserName, testUserPassword);
         var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginWithRememberMeUri).retrieve().toEntity(String.class);
         var originalSessionCookie = getCookie(response, SESSION_COOKIE);
         var originalRememberMeCookie = getCookie(response, REMEMBER_ME_COOKIE);
         assertResponse(response, 200, true, true);
 
         // subsequent requests should NOT have session cookie set, cookie is sent in subsequent requests
-        var sessionAuth = clientFactory.removeBasicAuth(basicAuth);
+        var sessionAuth = clientFactory.withoutBasicAuth(basicAuth);
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, false, false);
 
@@ -190,12 +188,12 @@ public class SessionSecurityTest extends IntegrationTest {
 
         // Login with remember-me and access secured endpoint
         // Result is a 200, Session cookie is set and remember-me cookie is set
-        var basicAuth = clientFactory.basicAuthClient(testUserName, testUserPassword);
+        var basicAuth = clientFactory.basicAuth(testUserName, testUserPassword);
         var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginWithRememberMeUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, true, true);
 
         // subsequent requests should NOT have session cookie set, cookie is sent in subsequent requests
-        var sessionAuth = clientFactory.removeBasicAuth(basicAuth);
+        var sessionAuth = clientFactory.withoutBasicAuth(basicAuth);
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, false, false);
 

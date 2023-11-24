@@ -72,7 +72,7 @@ public class EndToEndIntegrationTest extends IntegrationTest {
     @DisplayName("Admin list users")
     public void adminListUsers() {
 
-        RestClient admin = clientFactory.createLoggedInClient("admin", "admin");
+        RestClient admin = clientFactory.login("admin", "admin");
 
         Page<UserSummary> page = admin.get()
                 .uri(users)
@@ -87,13 +87,13 @@ public class EndToEndIntegrationTest extends IntegrationTest {
     @DisplayName("Update user password")
     public void testUpdatePassword() {
 
-        RestClient user = clientFactory.createLoggedInClient(testUserName, testUserPassword);
+        RestClient user = clientFactory.login(testUserName, testUserPassword);
         PersonalInfo info = user.get().uri(testUserUrl).retrieve().body(User.class).personalInfo();
 
         String newPassword = testUserPassword + "1";
         user.post().uri(testUserUpdatePasswordUrl).body(newPassword).retrieve();
 
-        user = clientFactory.createLoggedInClient(testUserName, newPassword);
+        user = clientFactory.login(testUserName, newPassword);
         PersonalInfo info2 = user.get().uri(testUserUrl).retrieve().body(User.class).personalInfo();
 
         assertEquals(info, info2);

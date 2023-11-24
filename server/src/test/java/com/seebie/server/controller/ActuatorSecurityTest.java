@@ -52,11 +52,11 @@ public class ActuatorSecurityTest extends IntegrationTest {
         // we get the rest client builder as configured for the app, including mappers
         clientFactory = new RestClientFactory(builder, randomServerPort);
 
-        adminClient = clientFactory.createLoggedInClient("admin", "admin");
+        adminClient = clientFactory.login("admin", "admin");
 
         var userRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(userRegistration);
-        userClient = clientFactory.createLoggedInClient(userRegistration.username(), userRegistration.plainTextPassword());
+        userClient = clientFactory.login(userRegistration.username(), userRegistration.plainTextPassword());
 
         unAuthClient = clientFactory.createUnAuthClient();
     }
