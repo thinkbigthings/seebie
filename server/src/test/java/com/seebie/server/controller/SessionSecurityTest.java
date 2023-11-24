@@ -16,7 +16,6 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import java.net.HttpCookie;
 import java.net.URI;
-import java.net.http.HttpRequest;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
