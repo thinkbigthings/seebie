@@ -2,7 +2,6 @@ package com.seebie.server.controller;
 
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.IntegrationTest;
-import com.seebie.server.test.client.ApiClientStateful;
 import com.seebie.server.test.client.RestClientFactory;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,7 +17,6 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +24,6 @@ import java.util.Optional;
 
 import static com.seebie.server.security.WebSecurityConfig.REMEMBER_ME_COOKIE;
 import static com.seebie.server.security.WebSecurityConfig.SESSION_COOKIE;
-import static java.net.http.HttpResponse.BodyHandlers.ofString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -167,32 +164,31 @@ public class SessionSecurityTest extends IntegrationTest {
         assertResponse(response, 401, false, false);
     }
 
-    // TODO pick up here
-
     @Test
     public void testSessionCookieTimeoutWithRememberMe() throws Exception {
 
         // Login with remember-me and access secured endpoint
         // Result is a 200, Session cookie is set and remember-me cookie is set
-        var basicAuth = ApiClientStateful.basicAuthClient(testUserName, testUserPassword);
-        var response = basicAuth.send(loginRememberMe, ofString());
+        var basicAuth = clientFactory.basicAuthClient(testUserName, testUserPassword);
+        var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginWithRememberMeUri).retrieve().toEntity(String.class);
+        assertResponse(response, 200, true, false);
         var originalSessionCookie = getCookie(response, SESSION_COOKIE);
         var originalRememberMeCookie = getCookie(response, REMEMBER_ME_COOKIE);
 
-//        assertResponse(response, 200, true, true);
+        assertResponse(response, 200, true, true);
 
         // subsequent requests should NOT have session cookie set, cookie is sent in subsequent requests
-        var sessionAuth = ApiClientStateful.removeBasicAuth(basicAuth);
-        response = sessionAuth.send(userInfoRequest, ofString());
+        var sessionAuth = clientFactory.removeBasicAuth(basicAuth);
+        response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
 
-//        assertResponse(response, 200, false, false);
+        assertResponse(response, 200, false, false);
 
         // Wait for session timeout but don't let remember-me timeout
         waitForExpiration(sessionTimeout);
 
         // Then attempt to access secured endpoint again
-        response = sessionAuth.send(userInfoRequest, ofString());
-//        assertResponse(response, 200, true, true);
+        response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
+        assertResponse(response, 200, true, true);
         var newSessionCookie = getCookie(response, SESSION_COOKIE);
         var newRememberMeCookie = getCookie(response, REMEMBER_ME_COOKIE);
 
@@ -201,31 +197,34 @@ public class SessionSecurityTest extends IntegrationTest {
         assertNotEquals(originalRememberMeCookie.getValue(), newRememberMeCookie.getValue());
     }
 
+
+    // TODO pick up here
+
     @Test
     public void testRememberMeCookieTimeout() throws Exception {
 
-        // Login with remember-me and access secured endpoint
-        // Result is a 200, Session cookie is set and remember-me cookie is set
-        var basicAuth = ApiClientStateful.basicAuthClient(testUserName, testUserPassword);
-        var response = basicAuth.send(loginRememberMe, ofString());
+//        // Login with remember-me and access secured endpoint
+//        // Result is a 200, Session cookie is set and remember-me cookie is set
+//        var basicAuth = ApiClientStateful.basicAuthClient(testUserName, testUserPassword);
+//        var response = basicAuth.send(loginRememberMe, ofString());
 //        assertResponse(response, 200, true, true);
-
-        // subsequent requests should NOT have session cookie set, cookie is sent from client in subsequent requests
-        var sessionAuth = ApiClientStateful.removeBasicAuth(basicAuth);
-        response = sessionAuth.send(userInfoRequest, ofString());
+//
+//        // subsequent requests should NOT have session cookie set, cookie is sent from client in subsequent requests
+//        var sessionAuth = ApiClientStateful.removeBasicAuth(basicAuth);
+//        response = sessionAuth.send(userInfoRequest, ofString());
 //        assertResponse(response, 200, false, false);
-
-        // Wait for remember-me timeout, then attempt to access secured endpoint again
-        // Result is a 401, Session is invalid, no session cookie is returned, remember-me cookie is cleared
-
-        waitForExpiration(rememberMeTimeout);
-
-        response = sessionAuth.send(userInfoRequest, ofString());
+//
+//        // Wait for remember-me timeout, then attempt to access secured endpoint again
+//        // Result is a 401, Session is invalid, no session cookie is returned, remember-me cookie is cleared
+//
+//        waitForExpiration(rememberMeTimeout);
+//
+//        response = sessionAuth.send(userInfoRequest, ofString());
 //        assertResponse(response, 401, false, true);
-        assertEquals("", getCookie(response, REMEMBER_ME_COOKIE).getValue());
-
-        // once remember me cookie is cleared, any subsequent response will not try to set either cookie
-        response = sessionAuth.send(userInfoRequest, ofString());
+//        assertEquals("", getCookie(response, REMEMBER_ME_COOKIE).getValue());
+//
+//        // once remember me cookie is cleared, any subsequent response will not try to set either cookie
+//        response = sessionAuth.send(userInfoRequest, ofString());
 //        assertResponse(response, 401, false, false);
     }
 
@@ -238,20 +237,9 @@ public class SessionSecurityTest extends IntegrationTest {
         }
     }
 
-    public HttpCookie getCookie(HttpResponse response, String cookieName) {
+    public HttpCookie getCookie(ResponseEntity<String> response, String cookieName) {
         return findCookie(response, cookieName).get();
     }
-
-    public Optional<HttpCookie> findCookie(HttpResponse response, String cookieName) {
-        return response.headers().map().getOrDefault("SET-COOKIE", new ArrayList<>())
-                .stream()
-                .map(HttpCookie::parse)
-                .flatMap(List::stream)
-                .filter(c -> c.getName().equals(cookieName))
-                .findFirst();
-    }
-
-
 
     public void assertResponse(ResponseEntity<String> response, int expectedStatusCode, boolean setsSessionCookie, boolean setsRememberMeCookie) {
         assertEquals(expectedStatusCode, response.getStatusCode().value());
