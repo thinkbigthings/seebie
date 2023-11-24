@@ -43,26 +43,27 @@ public class RestClientFactory {
             // it fails with "unable to find valid certification path to requested target"
             // so need to use an insecure truststore to work with self-signed certs
             var basicAuth = basicAuthClient(username, plainTextPassword);
-            var basicRestClient = restClientBuilder.clone()
-                    .requestFactory(new JdkClientHttpRequestFactory(basicAuth))
-                    .build();
+            var basicRestClient = fromHttpClient(basicAuth);
 
             basicRestClient.get()
                     .uri("/api/login")
                     .retrieve()
                     .body(String.class);
 
-            var sessionAuth = removeBasicAuth(basicAuth);
-            return restClientBuilder.clone()
-                    .requestFactory(new JdkClientHttpRequestFactory(sessionAuth))
-                    .build();
+            return fromHttpClient(removeBasicAuth(basicAuth));
+    }
+
+    public RestClient fromHttpClient(HttpClient httpClient) {
+        return restClientBuilder.clone()
+                .requestFactory(new JdkClientHttpRequestFactory(httpClient))
+                .build();
     }
 
     private static HttpClient unAuthClient() {
         return baseBuilder().build();
     }
 
-    private static HttpClient basicAuthClient(String username, String password) {
+    public HttpClient basicAuthClient(String username, String password) {
         return baseBuilder().authenticator(new BasicAuthenticator(username, password)).build();
     }
 
@@ -73,7 +74,7 @@ public class RestClientFactory {
                 .sslContext(insecureContext);
     }
 
-    private static HttpClient removeBasicAuth(HttpClient client) {
+    public HttpClient removeBasicAuth(HttpClient client) {
         return HttpClient.newBuilder()
                 .connectTimeout(client.connectTimeout().get())
                 .cookieHandler(client.cookieHandler().get())
