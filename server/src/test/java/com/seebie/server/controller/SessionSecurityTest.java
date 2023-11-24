@@ -120,7 +120,7 @@ public class SessionSecurityTest extends IntegrationTest {
         assertResponse(response, 200, true, false);
 
         // Session cookie is set in first response, no cookie in second response
-        var sessionAuth = clientFactory.withoutBasicAuth(basicAuth);
+        var sessionAuth = clientFactory.removeBasicAuth(basicAuth);
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, false, false);
 
@@ -144,7 +144,7 @@ public class SessionSecurityTest extends IntegrationTest {
         assertResponse(response, 200, true, true);
 
         // subsequent requests should NOT have session cookie set, cookie is sent in subsequent requests
-        var sessionAuth = clientFactory.withoutBasicAuth(basicAuth);
+        var sessionAuth = clientFactory.removeBasicAuth(basicAuth);
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, false, false);
 
@@ -172,7 +172,7 @@ public class SessionSecurityTest extends IntegrationTest {
         assertResponse(response, 200, true, true);
 
         // subsequent requests should NOT have session cookie set, cookie is sent in subsequent requests
-        var sessionAuth = clientFactory.withoutBasicAuth(basicAuth);
+        var sessionAuth = clientFactory.removeBasicAuth(basicAuth);
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, false, false);
 

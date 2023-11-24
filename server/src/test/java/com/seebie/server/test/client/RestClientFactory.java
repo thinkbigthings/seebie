@@ -31,7 +31,7 @@ public class RestClientFactory {
     }
 
     public RestClient noLogin() {
-        return fromHttpClient(unAuth());
+        return fromHttpClient(noAuth());
     }
 
     public RestClient login(String username, String plainTextPassword) {
@@ -42,7 +42,7 @@ public class RestClientFactory {
 
             // subsequent calls should use session and/or remember me token
             // remove the authorizor, otherwise it still adds the basic auth headers
-            return fromHttpClient(withoutBasicAuth(basicAuth));
+            return fromHttpClient(removeBasicAuth(basicAuth));
     }
 
     public RestClient fromHttpClient(HttpClient httpClient) {
@@ -51,7 +51,7 @@ public class RestClientFactory {
                 .build();
     }
 
-    private static HttpClient unAuth() {
+    private static HttpClient noAuth() {
         return baseBuilder().build();
     }
 
@@ -71,7 +71,7 @@ public class RestClientFactory {
                 .sslContext(insecureContext);
     }
 
-    public HttpClient withoutBasicAuth(HttpClient client) {
+    public HttpClient removeBasicAuth(HttpClient client) {
         return HttpClient.newBuilder()
                 .connectTimeout(client.connectTimeout().get())
                 .cookieHandler(client.cookieHandler().get())
