@@ -82,12 +82,12 @@ public class SessionSecurityTest extends IntegrationTest {
         unAuthClient = clientFactory.createUnAuthClient();
 
         loginWithoutRememberMeUri = uriBuilderFactory.builder()
-                .path("/api/login")
+                .path("/login")
                 .queryParam("remember-me", "false")
                 .build();
 
         loginWithRememberMeUri = uriBuilderFactory.builder()
-                .path("/api/login")
+                .path("/login")
                 .queryParam("remember-me", "true")
                 .build();
 
