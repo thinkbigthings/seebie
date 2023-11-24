@@ -32,8 +32,6 @@ public class EndToEndIntegrationTest extends IntegrationTest {
 
     protected static Logger LOG = LoggerFactory.getLogger(EndToEndIntegrationTest.class);
 
-    private static String baseUrl;
-
     private static URI users;
 
     private static String testUserName;
@@ -44,19 +42,17 @@ public class EndToEndIntegrationTest extends IntegrationTest {
     private static RestClientFactory clientFactory;
 
     @BeforeAll
-    public static void testClient(@Autowired RestClient.Builder builder, @LocalServerPort int randomPort) {
-        clientFactory = new RestClientFactory(builder, randomPort);
-    }
-
-    @BeforeAll
-    public static void createTestData(@Autowired UserService userService, @LocalServerPort int randomServerPort) {
-
+    public static void createTestData(@Autowired RestClient.Builder builder,
+                                      @Autowired UserService userService,
+                                      @LocalServerPort int randomServerPort)
+    {
         LOG.info("");
         LOG.info("=======================================================================================");
         LOG.info("Creating test data");
         LOG.info("");
 
-        baseUrl = STR."https://localhost:\{randomServerPort}/api/";
+        var baseUrl = STR."https://localhost:\{randomServerPort}/api/";
+        clientFactory = new RestClientFactory(builder, baseUrl);
         users = URI.create(baseUrl + "user");
 
         RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();

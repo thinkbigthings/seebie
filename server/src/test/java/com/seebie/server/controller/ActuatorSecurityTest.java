@@ -9,6 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpMethod;
@@ -34,6 +36,8 @@ import static org.springframework.http.HttpMethod.GET;
  */
 public class ActuatorSecurityTest extends IntegrationTest {
 
+    protected static Logger LOG = LoggerFactory.getLogger(ActuatorSecurityTest.class);
+
     private static RestClientFactory clientFactory;
 
     private static RestClient unAuthClient;
@@ -47,10 +51,12 @@ public class ActuatorSecurityTest extends IntegrationTest {
                              @Autowired UserService userService,
                              @Autowired MappingJackson2HttpMessageConverter converter)
     {
-        uriBuilderFactory = new DefaultUriBuilderFactory(STR."https://localhost:\{randomServerPort}");
+        // no /api prefix for actuator endpoints
+        var baseUrl = STR."https://localhost:\{randomServerPort}";
+        uriBuilderFactory = new DefaultUriBuilderFactory(baseUrl);
 
         // we get the rest client builder as configured for the app, including mappers
-        clientFactory = new RestClientFactory(builder, randomServerPort);
+        clientFactory = new RestClientFactory(builder, baseUrl);
 
         adminClient = clientFactory.login("admin", "admin");
 
@@ -119,6 +125,7 @@ public class ActuatorSecurityTest extends IntegrationTest {
 
         var uri = uriBuilderFactory.builder().path(urlPath).queryParams(urlParams).build();
         var req = client.mutate().build().method(method).uri(uri);
+        LOG.info("Testing {} {}", method, uri);
 
         assertEquals(expectedStatus, req.retrieve().toBodilessEntity().getStatusCode().value());
     }

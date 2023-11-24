@@ -18,13 +18,12 @@ public class RestClientFactory {
 
     private static final SSLContext insecureContext = createInsecureSsl();
 
-    public RestClientFactory(RestClient.Builder restClientBuilder, int randomPort) {
+    public RestClientFactory(RestClient.Builder restClientBuilder, String baseUrl) {
 
         // would like to customize the builder at system startup time
         // with a RestClientCustomizer or ObjectProvider<RestClientCustomizer>
         // but couldn't find out to wire it
 
-        var baseUrl = STR."https://localhost:\{randomPort}";
         this.restClientBuilder = restClientBuilder.clone()
                 .defaultStatusHandler(status -> status.is4xxClientError(), (request,resp) -> {}) // don't throw exceptions on 4XX errors
                 .baseUrl(baseUrl);

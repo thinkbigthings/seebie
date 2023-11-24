@@ -61,10 +61,11 @@ public class SessionSecurityTest extends IntegrationTest {
                              @Autowired RestClient.Builder builder,
                              @LocalServerPort int randomServerPort)
     {
-        uriBuilderFactory = new DefaultUriBuilderFactory(STR."https://localhost:\{randomServerPort}/api");
+        var baseUrl = STR."https://localhost:\{randomServerPort}/api";
+        uriBuilderFactory = new DefaultUriBuilderFactory(baseUrl);
 
         // we get the rest client builder as configured for the app, including mappers
-        clientFactory = new RestClientFactory(builder, randomServerPort);
+        clientFactory = new RestClientFactory(builder, baseUrl);
 
         var loginBuilder = uriBuilderFactory.builder().path("/login");
         loginWithoutRememberMeUri = loginBuilder.replaceQueryParam("remember-me", "false").build();
