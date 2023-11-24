@@ -74,10 +74,8 @@ public class EndToEndIntegrationTest extends IntegrationTest {
 
         RestClient admin = clientFactory.login("admin", "admin");
 
-        Page<UserSummary> page = admin.get()
-                .uri(users)
-                .retrieve()
-                .body(new ParameterizedTypeReference<ParsablePage<UserSummary>>(){});
+        var userPage = new ParameterizedTypeReference<ParsablePage<UserSummary>>() {};
+        Page<UserSummary> page = admin.get().uri(users).retrieve().body(userPage);
 
         assertTrue(page.isFirst());
         assertTrue(page.getTotalElements() >= 1);
