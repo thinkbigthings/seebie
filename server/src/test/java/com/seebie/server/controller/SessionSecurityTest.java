@@ -29,13 +29,14 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class SessionSecurityTest extends IntegrationTest {
 
-    protected static String baseUrl;
-
     protected static URI loginWithoutRememberMeUri;
     protected static URI loginWithRememberMeUri;
 
     private static Duration sessionTimeout;
     private static Duration rememberMeTimeout;
+
+    private static RestClientFactory clientFactory;
+    private static DefaultUriBuilderFactory uriBuilderFactory;
 
     private String testUserName;
     private String testUserPassword;
@@ -51,46 +52,25 @@ public class SessionSecurityTest extends IntegrationTest {
 
         testUserName = userRegistration.username();
         testUserPassword = userRegistration.plainTextPassword();
-        testUserInfoUri = URI.create(STR."\{baseUrl}/user/\{userRegistration.username()}");
+
+        testUserInfoUri = uriBuilderFactory.builder().path("/user/").path(userRegistration.username()).build();
     }
-
-
-    private static RestClientFactory clientFactory;
-
-    private static RestClient unAuthClient;
-
-    private static DefaultUriBuilderFactory uriBuilderFactory;
-
 
     @BeforeAll
     public static void setup(@Autowired Environment env,
                              @Autowired RestClient.Builder builder,
                              @LocalServerPort int randomServerPort)
     {
-
-        // TODO use uri builder throughout
-        // TODO look into templates for URI across this class, like for username per test, or here for remember-me
-
-        baseUrl = STR."https://localhost:\{randomServerPort}/api";
-
-        uriBuilderFactory = new DefaultUriBuilderFactory(baseUrl);
+        uriBuilderFactory = new DefaultUriBuilderFactory(STR."https://localhost:\{randomServerPort}/api");
 
         // we get the rest client builder as configured for the app, including mappers
         clientFactory = new RestClientFactory(builder, randomServerPort);
 
-        unAuthClient = clientFactory.createUnAuthClient();
+        var loginBuilder = uriBuilderFactory.builder().path("/login");
+        loginWithoutRememberMeUri = loginBuilder.replaceQueryParam("remember-me", "false").build();
+        loginWithRememberMeUri =  loginBuilder.replaceQueryParam("remember-me", "true").build();
 
-        loginWithoutRememberMeUri = uriBuilderFactory.builder()
-                .path("/login")
-                .queryParam("remember-me", "false")
-                .build();
-
-        loginWithRememberMeUri = uriBuilderFactory.builder()
-                .path("/login")
-                .queryParam("remember-me", "true")
-                .build();
-
-        // See timeout values set in IntegrationTest, they configure the server so we can time out here
+        // See timeout values set in IntegrationTest, they configure the server so that we can time out here
         sessionTimeout = env.getProperty("spring.session.timeout", Duration.class);
         rememberMeTimeout = env.getProperty("app.security.rememberMe.tokenValidity", Duration.class);
     }
@@ -102,7 +82,7 @@ public class SessionSecurityTest extends IntegrationTest {
         // Also, we don't want people to farm it for statistics on the cryptography of session tokens.
 
         // Attempt to access secured endpoint while unauthenticated
-        var response = unAuthClient.get().uri(testUserInfoUri).retrieve().toEntity(String.class);
+        var response = clientFactory.noLogin().get().uri(testUserInfoUri).retrieve().toEntity(String.class);
 
         assertResponse(response, 401, false, false);
     }
@@ -114,7 +94,7 @@ public class SessionSecurityTest extends IntegrationTest {
         // Also, we don't want people to farm it for statistics on the cryptography of session tokens.
 
         // Attempt to access secured endpoint while unauthenticated
-        var response = unAuthClient.get().uri(loginWithoutRememberMeUri).retrieve().toEntity(String.class);
+        var response = clientFactory.noLogin().get().uri(loginWithoutRememberMeUri).retrieve().toEntity(String.class);
 
         assertResponse(response, 401, false, false);
     }
@@ -126,7 +106,7 @@ public class SessionSecurityTest extends IntegrationTest {
         // Also, we don't want people to farm it for statistics on the cryptography of session tokens.
 
         // Attempt to access secured endpoint while unauthenticated
-        var response = unAuthClient.get().uri(loginWithRememberMeUri).retrieve().toEntity(String.class);
+        var response = clientFactory.noLogin().get().uri(loginWithRememberMeUri).retrieve().toEntity(String.class);
 
         assertResponse(response, 401, false, false);
     }

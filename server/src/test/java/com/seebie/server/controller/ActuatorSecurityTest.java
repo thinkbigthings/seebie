@@ -58,7 +58,7 @@ public class ActuatorSecurityTest extends IntegrationTest {
         userService.saveNewUser(userRegistration);
         userClient = clientFactory.login(userRegistration.username(), userRegistration.plainTextPassword());
 
-        unAuthClient = clientFactory.createUnAuthClient();
+        unAuthClient = clientFactory.noLogin();
     }
 
     private static final MultiValueMap<String,String> NO_PARAM = new LinkedMultiValueMap<>();

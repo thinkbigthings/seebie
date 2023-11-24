@@ -30,7 +30,7 @@ public class RestClientFactory {
                 .baseUrl(baseUrl);
     }
 
-    public RestClient createUnAuthClient() {
+    public RestClient noLogin() {
         return fromHttpClient(unAuth());
     }
 
