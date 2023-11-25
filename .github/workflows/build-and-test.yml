@@ -28,6 +28,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'zulu'
+          cache: gradle
 
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
