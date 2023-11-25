@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Reusable Setup and Build
-        uses: ./.github/workflows/action.yml
+        uses: ./.github/workflows/build-and-test.yml
 
       - name: Login to Heroku
         uses: akhileshns/heroku-deploy@v3.12.14

@@ -9,12 +9,14 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      # Checkout the repository first, otherwise the workflow won't be able to see the other action
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Reusable Setup and Build
-        uses: ./.github/actions/build-and-test
+  call-reusable-workflow:
+    uses: ./.github/workflows/build-and-test.yml
+#  build:
+#    runs-on: ubuntu-latest
+#    steps:
+#      # Checkout the repository first, otherwise the workflow won't be able to see the other action
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#
+#      - name: Reusable Setup and Build
+#        uses: ./.github/workflows/build-and-test.yml
