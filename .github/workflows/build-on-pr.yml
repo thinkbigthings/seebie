@@ -13,4 +13,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Reusable Setup and Build
-        uses: ./.github/workflows/setup-and-build.yml
+        uses: ./.github/workflows/build-and-test.yml

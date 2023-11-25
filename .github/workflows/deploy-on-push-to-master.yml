@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Reusable Setup and Build
-        uses: ./.github/workflows/setup-and-build.yml
+        uses: ./.github/workflows/build-and-test.yml
 
       - name: Login to Heroku
         uses: akhileshns/heroku-deploy@v3.12.14
