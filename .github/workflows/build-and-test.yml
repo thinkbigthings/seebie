@@ -2,20 +2,16 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Build and Deploy
+name: Build Pull Request
 
-on:
-  push:
-    branches: [ "master" ]
+on: workflow_call
 
 permissions:
   contents: read
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
 
       - name: Checkout
@@ -38,16 +34,3 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build
-
-      - name: Login to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.14
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "stage"
-          heroku_email: "thinkbigthings@gmail.com"
-          justlogin: true
-
-      - name: Deploy to Staging
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: -Papp=stage deployHeroku
