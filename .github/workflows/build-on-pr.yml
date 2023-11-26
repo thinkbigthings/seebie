@@ -8,6 +8,6 @@ on:
 permissions:
   contents: read
 
-#jobs:
-#  build:
-#    uses: ./.github/workflows/build-and-test.yml
+jobs:
+  build:
+    uses: ./.github/workflows/build-and-test.yml
