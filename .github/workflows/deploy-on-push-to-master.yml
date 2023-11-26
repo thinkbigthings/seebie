@@ -13,14 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: download artifact
+      - name: Reusable Setup and Build
+        uses: ./.github/workflows/build-and-test.yml
+
+      - name: Download Artifact from Build
         uses: actions/download-artifact@v3
         with:
           name: Server Jar
           path: server/build/libs
-
-      - name: Reusable Setup and Build
-        uses: ./.github/workflows/build-and-test.yml
 
       - name: Login to Heroku
         uses: akhileshns/heroku-deploy@v3.12.14
