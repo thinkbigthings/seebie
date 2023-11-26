@@ -25,6 +25,10 @@ jobs:
           name: Server Jar
           path: server/build/libs
 
+      - name: List files in the repository
+        run: |
+          ls server/build/libs
+
 #      - name: Login to Heroku
 #        uses: akhileshns/heroku-deploy@v3.12.14
 #        with:
