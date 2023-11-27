@@ -21,6 +21,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+        # heroku deployment needs git to be present
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Download Artifact from Build
         uses: actions/download-artifact@v3
         with:
