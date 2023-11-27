@@ -32,9 +32,8 @@ jobs:
         with:
           arguments: build
 
-
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: Server Jar
+          name: Build Artifacts
           path: server/build/libs/server-1.0-SNAPSHOT.jar
