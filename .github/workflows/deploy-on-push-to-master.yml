@@ -30,12 +30,16 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: Server Jar
-          path: server/build/libs
+          path: server/build
 
       # Debugging
-#      - name: List Downloaded Files
-#        run: |
-#          ls server/build/libs
+      - name: List Downloaded Files
+        run: |
+          ls server
+
+      - name: List Downloaded Files
+        run: |
+          ls server/build
 
       - name: Login to Heroku
         uses: akhileshns/heroku-deploy@v3.12.14
