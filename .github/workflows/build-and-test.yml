@@ -30,8 +30,7 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: -x integrationTest build
-        # arguments: build
+          arguments: build
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
