@@ -22,6 +22,11 @@ jobs:
 
     steps:
 
+      # heroku deployment needs git to be present
+      # and setup-java needs gradle to detect toolchains for downloads
+      - name: Checkout
+        uses: actions/checkout@v3
+
       # gradle needs Java
       - name: Set up Java 21
         uses: actions/setup-java@v3
@@ -29,10 +34,6 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
           cache: gradle
-
-        # heroku deployment needs git to be present
-      - name: Checkout
-        uses: actions/checkout@v3
 
       - name: Download Artifact from Build
         uses: actions/download-artifact@v3
