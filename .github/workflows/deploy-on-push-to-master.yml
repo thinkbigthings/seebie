@@ -1,8 +1,11 @@
 
 name: Build and Deploy
 
+#on:
+#  push:
+#    branches: [ "master" ]
 on:
-  push:
+  pull_request:
     branches: [ "master" ]
 
 permissions:
@@ -35,9 +38,10 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "stage"
           heroku_email: "thinkbigthings@gmail.com"
-          justlogin: true
+          procfile: "web: java --enable-preview -Dspring.datasource.url='${HEROKU_POSTGRESQL_CRIMSON_JDBC_URL}&autosave=conservative' -Dserver.port='${PORT}' -jar server/build/libs/server-1.0-SNAPSHOT.jar"
+#          justlogin: true
 
-      - name: Deploy to Staging
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: -Papp=stage deployHeroku
+#      - name: Deploy to Staging
+#        uses: gradle/gradle-build-action@v2
+#        with:
+#          arguments: -Papp=stage deployHeroku
