@@ -37,4 +37,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Build Artifacts
-          path: server/build
+          path: server/build/libs/server-1.0-SNAPSHOT.jar
