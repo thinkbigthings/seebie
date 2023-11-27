@@ -1,13 +1,13 @@
 
 name: Build On PR
 
-on:
-  pull_request:
-    branches: [ "master" ]
+#on:
+#  pull_request:
+#    branches: [ "master" ]
 
 permissions:
   contents: read
 
-#jobs:
-#  build:
-#    uses: ./.github/workflows/build-and-test.yml
+jobs:
+  build:
+    uses: ./.github/workflows/build-and-test.yml
