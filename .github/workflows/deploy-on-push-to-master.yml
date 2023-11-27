@@ -9,18 +9,25 @@ permissions:
   contents: read
 
 jobs:
+
   build:
+      uses: ./.github/workflows/build-and-test.yml
+
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
+
     steps:
-
-      - name: Reusable Setup and Build
-        uses: ./.github/workflows/build-and-test.yml
-
       - name: Download Artifact from Build
         uses: actions/download-artifact@v3
         with:
           name: Server Jar
           path: server/build/libs
+
+      # Debugging
+#      - name: List Downloaded Files
+#        run: |
+#          ls server/build/libs
 
       - name: Login to Heroku
         uses: akhileshns/heroku-deploy@v3.12.14
