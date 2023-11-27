@@ -38,7 +38,7 @@ jobs:
       - name: Download Artifact from Build
         uses: actions/download-artifact@v3
         with:
-          name: Server Jar
+          name: Build Artifacts
           path: server/build/libs/server-1.0-SNAPSHOT.jar
 
       # Debugging
