@@ -12,6 +12,8 @@ jobs:
 
   build:
       uses: ./.github/workflows/build-and-test.yml
+      with:
+        upload-artifact: true
 
   deploy:
     needs: build

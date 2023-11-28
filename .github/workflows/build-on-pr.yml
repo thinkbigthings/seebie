@@ -11,4 +11,6 @@ permissions:
 jobs:
   build:
     uses: ./.github/workflows/build-and-test.yml
+    with:
+      upload-artifact: false
 
