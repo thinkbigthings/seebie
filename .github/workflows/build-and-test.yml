@@ -7,6 +7,10 @@ on:
       upload-artifact:
         required: true
         type: boolean
+      gradle-args:
+        required: false
+        type: string
+        default:
 
 permissions:
   contents: read
@@ -35,7 +39,7 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build
+          arguments: ${{ inputs.gradle-args }} build
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3

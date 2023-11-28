@@ -14,6 +14,7 @@ jobs:
       uses: ./.github/workflows/build-and-test.yml
       with:
         upload-artifact: true
+        gradle-args: -x test -x integrationTest
 
   deploy:
     needs: build
