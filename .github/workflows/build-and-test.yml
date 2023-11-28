@@ -42,7 +42,7 @@ jobs:
           arguments: ${{ inputs.gradle-args }} build
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4-beta
+        uses: actions/upload-artifact@v3
         if: ${{ inputs.upload-artifact }}
         with:
           name: Build Artifacts
