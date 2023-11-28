@@ -1,7 +1,16 @@
 
 name: Build Pull Request
 
-on: workflow_call
+on:
+  workflow_call:
+    inputs:
+      upload-artifact:
+        required: true
+        type: boolean
+      gradle-args:
+        required: false
+        type: string
+        default:
 
 permissions:
   contents: read
@@ -30,10 +39,11 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build
+          arguments: ${{ inputs.gradle-args }} build
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4-beta
+        if: ${{ inputs.upload-artifact }}
         with:
           name: Build Artifacts
           path: server/build/libs/server-1.0-SNAPSHOT.jar
