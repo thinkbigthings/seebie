@@ -5,11 +5,26 @@ This is a project to record and analyze your sleep.
 
 ## Setup
 
-Before anything else: set up the prerequisite software for each of the subprojects
+Before anything else: set up the prerequisite software for each of the subprojects.
+Software that needs to be installed and available from the command line:
 
-[Setup for server project](server/README.md#prerequisites)
+### Java
 
-[Setup for web project](reactjs/README.md#prerequisites)
+Any major distribution of Java 21 should work,
+but this project has been tested with the distribution from Zulu.
+Try sdkman to install and manage Java versions.
+
+### Docker
+
+On Linux: `sudo apt install docker.io`
+Note: On Linux, needed to run docker as sudo.
+docker daemon must run as root, but you can specify that a group other than docker should own the Unix socket with the -G option.
+
+On Mac: can install [Docker Desktop](https://hub.docker.com/editions/community/docker-ce-desktop-mac) or use brew.
+
+### Node
+
+* Node 20.6.1
 
 
 ## Quickstart Commands
