@@ -1,14 +1,12 @@
 package com.seebie.server.mapper.entitytodto;
 
 import com.seebie.server.dto.SleepDetails;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.function.Function;
 
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 
-@Component
 public class SleepDetailsToCsvRow implements Function<SleepDetails, List<String>> {
 
     @Override
