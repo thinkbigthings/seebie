@@ -13,7 +13,6 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.seebie.server.Functional.uncheck;
 import static java.util.stream.Collectors.joining;
@@ -35,10 +34,10 @@ public class SleepDetailsToCsv implements Function<List<SleepDetails>, String> {
         return Arrays.asList(CSV_OUTPUT.getHeader()).stream().collect(joining(","));
     }
 
-    private SleepDetailsToCsvRow toCsvRow;
+    private SleepDetailsToCsvRow toCsvRow = new SleepDetailsToCsvRow();
 
-    public SleepDetailsToCsv(SleepDetailsToCsvRow sleepDetailsToCsvRow) {
-        this.toCsvRow = sleepDetailsToCsvRow;
+    public SleepDetailsToCsv() {
+
     }
 
     @Override
