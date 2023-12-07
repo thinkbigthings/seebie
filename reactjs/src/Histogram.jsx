@@ -23,8 +23,7 @@ Chart.register(...registerables)
 const histOptions = {
     scales: {
         x: {
-            stacked: true,
-            offset: true,
+            stacked: false,
             grid: {
                 offset: true
             },
@@ -36,7 +35,7 @@ const histOptions = {
             }
         },
         y: {
-            stacked: true
+            stacked: false
         }
     }
 }
@@ -196,10 +195,9 @@ function Histogram(props) {
         fetchPost(sleepEndpoint, pageSettingsToRequest(pageSettings))
             .then(response => response.json())
             .then(histData => {
-                // reverse datasets so the bars are stacked in the same order as the filter dropdowns
                 setBarData({
                     labels: histData.bins.map(bin => bin/60),
-                    datasets: histData.dataSets.map((data, i) => createDataset(pageSettings.filters[i], data)).reverse()
+                    datasets: histData.dataSets.map((data, i) => createDataset(pageSettings.filters[i], data))
                 });
             })
     }, [sleepEndpoint, createdCount, pageSettings]);
