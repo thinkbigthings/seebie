@@ -63,7 +63,6 @@ SleepDataManager.createInitSleepData = () => {
         stopTime: SleepDataManager.toIsoString(today),
         notes: '',
         minutesAwake: 0,
-        tags: [],
         zoneId: Intl.DateTimeFormat().resolvedOptions().timeZone
     }
 }

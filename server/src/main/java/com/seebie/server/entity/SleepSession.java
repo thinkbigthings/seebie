@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,13 +41,6 @@ public class SleepSession implements Serializable {
 
     @NotNull
     private String notes = "";
-
-    @ManyToMany
-    @JoinTable(
-            name = "sleep_session_tag",
-            joinColumns = @JoinColumn(name = "sleep_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<Tag> tags = new HashSet<>();
 
     @Basic
     private int minutesAwake = 0;
@@ -96,7 +88,7 @@ public class SleepSession implements Serializable {
         return minutesAsleep;
     }
 
-    public void setSleepData(int minutesAwake, String notes, Set<Tag> newTags, ZonedDateTime start, ZonedDateTime stop, String zoneId) {
+    public void setSleepData(int minutesAwake, String notes, ZonedDateTime start, ZonedDateTime stop, String zoneId) {
 
         this.minutesAwake = minutesAwake;
         this.notes = notes;
@@ -109,9 +101,6 @@ public class SleepSession implements Serializable {
         // because after saving, database computed values are not available until after the transaction closes
         // and the returned entity after save won't have the updated value
         this.minutesAsleep = (int)Duration.between(startTime, stopTime).abs().toMinutes() - minutesAwake;
-
-        this.tags.clear();
-        this.tags.addAll(newTags);
     }
 
     public String getNotes() {
@@ -124,14 +113,6 @@ public class SleepSession implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
     }
 
     public int getMinutesAwake() {

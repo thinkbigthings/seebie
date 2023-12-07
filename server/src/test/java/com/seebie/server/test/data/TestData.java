@@ -98,7 +98,7 @@ public class TestData {
     }
 
     public static SleepData createStandardSleepData(ZonedDateTime startTime, ZonedDateTime stopTime) {
-        return new SleepData("", 0, new HashSet<>(), startTime, stopTime, AMERICA_NEW_YORK);
+        return new SleepData("", 0, startTime, stopTime, AMERICA_NEW_YORK);
     }
 
     public static SleepData createRandomSleepData() {
@@ -124,14 +124,14 @@ public class TestData {
     public static SleepData createRandomSleepData(ZonedDateTime stopTime, String zoneId) {
         long sleepDuration = getGaussianRandom(3*60, 9*60);
         var startTime = stopTime.withZoneSameInstant(ZoneId.of(zoneId)).minusMinutes(sleepDuration);
-        return new SleepData(faker.lorem().paragraph(3), 0, new HashSet<>(),
+        return new SleepData(faker.lorem().paragraph(3), 0,
                 startTime.plusMinutes(random.nextInt(60)),
                 stopTime.minusMinutes(random.nextInt(60)),
                 zoneId);
     }
 
     public static SleepData increment(SleepData data, Duration amountToAdd) {
-        return new SleepData(data.notes(), data.minutesAwake(), data.tags(),
+        return new SleepData(data.notes(), data.minutesAwake(),
                 data.startTime().plus(amountToAdd),
                 data.stopTime().plus(amountToAdd), data.zoneId());
     }

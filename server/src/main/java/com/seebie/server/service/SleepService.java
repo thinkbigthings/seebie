@@ -3,7 +3,6 @@ package com.seebie.server.service;
 import com.seebie.server.dto.*;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv;
-import com.seebie.server.mapper.dtotoentity.TagMapper;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.mapper.entitytodto.SleepMapper;
 import com.seebie.server.repository.SleepRepository;
@@ -26,17 +25,15 @@ public class SleepService {
 
     private SleepRepository sleepRepository;
     private UnsavedSleepListMapper entityMapper;
-    private TagMapper tagMapper;
 
     private SleepMapper sleepMapper = new SleepMapper();
 
     private CsvToSleepData fromCsv;
     private SleepDetailsToCsv toCsv;
 
-    public SleepService(SleepRepository sleepRepository, TagMapper tagMapper, UnsavedSleepListMapper entityMapper, CsvToSleepData fromCsv, SleepDetailsToCsv toCsv) {
+    public SleepService(SleepRepository sleepRepository, UnsavedSleepListMapper entityMapper, CsvToSleepData fromCsv, SleepDetailsToCsv toCsv) {
         this.sleepRepository = sleepRepository;
         this.entityMapper = entityMapper;
-        this.tagMapper = tagMapper;
         this.fromCsv = fromCsv;
         this.toCsv = toCsv;
     }
@@ -70,7 +67,7 @@ public class SleepService {
         var entity = sleepRepository.findBy(username, sleepId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sleep session not found"));
 
-        entity.setSleepData(dto.minutesAwake(), dto.notes(), tagMapper.apply(dto.tags()), dto.startTime(), dto.stopTime(), dto.zoneId());
+        entity.setSleepData(dto.minutesAwake(), dto.notes(), dto.startTime(), dto.stopTime(), dto.zoneId());
     }
 
     @Transactional(readOnly = true)

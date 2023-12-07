@@ -97,7 +97,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         var data = createStandardSleepData(now.minusHours(1), now);
         var badTimezone = sleepListMapper.toUnsavedEntity(username, data);
 
-        badTimezone.setSleepData(60, "", new HashSet<>(), data.startTime(), data.stopTime(), "nowhere/badZone");
+        badTimezone.setSleepData(60, "", data.startTime(), data.stopTime(), "nowhere/badZone");
 
         var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepRepository.save(badTimezone));
         assertEquals("sleep_session_zone_id_fkey", ((ConstraintViolationException)exception.getCause()).getConstraintName());

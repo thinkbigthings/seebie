@@ -35,7 +35,6 @@ import {
     faMoon,
     faServer,
     faSignOut,
-    // faTag,
     faTools,
     faUser,
     faUsers
