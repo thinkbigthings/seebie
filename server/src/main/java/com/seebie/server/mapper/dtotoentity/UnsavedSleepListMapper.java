@@ -13,11 +13,9 @@ import java.util.function.BiFunction;
 @Component
 public class UnsavedSleepListMapper implements BiFunction<String, List<SleepData>, List<SleepSession>> {
 
-    private TagMapper tagMapper;
     private UserRepository userRepository;
 
-    public UnsavedSleepListMapper(TagMapper tagMapper, UserRepository userRepository) {
-        this.tagMapper = tagMapper;
+    public UnsavedSleepListMapper(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -39,7 +37,7 @@ public class UnsavedSleepListMapper implements BiFunction<String, List<SleepData
     public SleepSession toUnsavedEntity(User user, SleepData dto) {
         SleepSession entity = new SleepSession();
         entity.setUser(user);
-        entity.setSleepData(dto.minutesAwake(), dto.notes(), tagMapper.apply(dto.tags()), dto.startTime(), dto.stopTime(), dto.zoneId());
+        entity.setSleepData(dto.minutesAwake(), dto.notes(), dto.startTime(), dto.stopTime(), dto.zoneId());
         return entity;
     }
 

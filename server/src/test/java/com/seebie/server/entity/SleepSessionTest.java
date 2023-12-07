@@ -14,9 +14,9 @@ public class SleepSessionTest {
     @Test
     public void testCalculation() {
 
-        var data = new SleepData("", 15, new HashSet<>(), ZonedDateTime.now(), ZonedDateTime.now().minusHours(1), AMERICA_NEW_YORK);
+        var data = new SleepData("", 15, ZonedDateTime.now(), ZonedDateTime.now().minusHours(1), AMERICA_NEW_YORK);
         var entity = new SleepSession();
-        entity.setSleepData(data.minutesAwake(), data.notes(), new HashSet<>(), data.startTime(), data.stopTime(), data.zoneId());
+        entity.setSleepData(data.minutesAwake(), data.notes(),  data.startTime(), data.stopTime(), data.zoneId());
 
         assertEquals(45, entity.getMinutesAsleep());
     }
