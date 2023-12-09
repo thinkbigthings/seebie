@@ -45,34 +45,29 @@ tasks.withType(JavaExec) {
 
 dependencies {
 
+    implementation 'org.apache.commons:commons-csv:1.10.0'
+    implementation 'org.flywaydb:flyway-core:9.22.2'
     implementation 'org.postgresql:postgresql:42.6.0'
-
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-web:3.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-actuator:3.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-security:3.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-validation:3.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.0'
-    implementation 'org.springframework.boot:spring-boot-testcontainers:3.2.0'
     implementation 'org.springframework.session:spring-session-jdbc:3.1.2'
 
-    implementation 'org.apache.commons:commons-csv:1.10.0'
-
-    implementation 'org.flywaydb:flyway-core:9.22.2'
-
-    testImplementation 'org.springframework.security:spring-security-test:6.1.4'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.2.0'
     testImplementation 'net.datafaker:datafaker:2.0.1'
-
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
-
-    testImplementation "org.testcontainers:testcontainers:1.19.0"
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers:3.2.0'
+    testImplementation 'org.springframework.security:spring-security-test:6.1.4'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.2.0'
     testImplementation "org.testcontainers:junit-jupiter:1.19.0"
     testImplementation "org.testcontainers:postgresql:1.19.0"
+    testImplementation "org.testcontainers:testcontainers:1.19.0"
 }
 
-// Since Spring Boot 2.5, it builds both an executable jar and a plain jar suitable for use as a library.
+// Spring Boot builds both an executable jar and a plain jar suitable for use as a library.
 // This block prevents building the "plain" jar so we only build the executable jar
 jar {
     enabled = false
@@ -89,16 +84,16 @@ jacocoTestReport {
         xml.required = false
         csv.required = false
         html.required = true
-        html.outputLocation = file("${buildDir}/reports/jacoco/html")
+        html.outputLocation = layout.buildDirectory.file("reports/jacoco/html").get().asFile
     }
 
     // so we can get test data from both tests and integration tests
-    getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/**/jacocoTest.exec"))
+    getExecutionData().from(fileTree(layout.buildDirectory).include("/jacoco/**/jacocoTest.exec"))
 
     // ignore code that's not a good fit for unit testing
     // e.g. getters and setters in JPA entities
     afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
+        classDirectories.from(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
                     "**/entity/*"
             ])
@@ -114,8 +109,8 @@ test {
         excludeTags "integration"
     }
     jacoco {
-        destinationFile = file("$buildDir/jacoco/test/jacocoTest.exec")
-        classDumpDir = file("$buildDir/jacoco/test/classpathdumps")
+        destinationFile = layout.buildDirectory.file("jacoco/test/jacocoTest.exec").get().asFile
+        classDumpDir = layout.buildDirectory.file("jacoco/test/classpathdumps").get().asFile
     }
     finalizedBy jacocoTestReport // report is always generated after tests run
 }
@@ -134,8 +129,8 @@ def integrationTest = tasks.register("integrationTest", Test) {
         events 'passed', 'skipped', 'failed' // , 'started' // if you want to see which test is hanging
     }
     jacoco {
-        destinationFile = file("$buildDir/jacoco/integrationTest/jacocoTest.exec")
-        classDumpDir = file("$buildDir/jacoco/integrationTest/classpathdumps")
+        destinationFile = layout.buildDirectory.file("jacoco/integrationTest/jacocoTest.exec").get().asFile
+        classDumpDir = layout.buildDirectory.file("jacoco/integrationTest/classpathdumps").get().asFile
     }
 
     finalizedBy jacocoTestReport // report is always generated after tests run
