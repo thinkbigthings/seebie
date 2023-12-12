@@ -3,7 +3,6 @@ package com.seebie.server.test;
 import com.seebie.server.PropertyLogger;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.client.RestClientFactory;
 import com.seebie.server.test.data.TestDataPopulator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -68,14 +67,9 @@ public class IntegrationTest {
 
     protected static DefaultUriBuilderFactory baseUribuilder;
 
-    protected static DefaultUriBuilderFactory apiUribuilder;
-
     @BeforeAll
     public static void setup(@Autowired RestClient.Builder builder, @LocalServerPort int randomServerPort) {
-
-        var baseUrl = STR."https://localhost:\{randomServerPort}";
-        baseUribuilder = new DefaultUriBuilderFactory(baseUrl);
-
+        baseUribuilder = new DefaultUriBuilderFactory(STR."https://localhost:\{randomServerPort}");
     }
 
 }

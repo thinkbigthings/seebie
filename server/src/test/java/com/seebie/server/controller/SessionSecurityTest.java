@@ -58,8 +58,7 @@ public class SessionSecurityTest extends IntegrationTest {
 
     @BeforeAll
     public static void setup(@Autowired Environment env,
-                             @Autowired RestClient.Builder builder,
-                             @LocalServerPort int randomServerPort) throws MalformedURLException
+                             @Autowired RestClient.Builder builder) throws MalformedURLException
     {
         var apiUriBuilder = baseUribuilder.builder().path("/api");
 
