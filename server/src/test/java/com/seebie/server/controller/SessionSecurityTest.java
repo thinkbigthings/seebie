@@ -57,13 +57,12 @@ public class SessionSecurityTest extends IntegrationTest {
     }
 
     @BeforeAll
-    public static void setup(@Autowired Environment env,
-                             @Autowired RestClient.Builder builder) throws MalformedURLException
-    {
+    public static void setup(@Autowired Environment env, @Autowired RestClient.Builder builder) {
+
         var apiUriBuilder = baseUribuilder.builder().path("/api");
 
         // we get the rest client builder as configured for the app, including mappers
-        clientFactory = new RestClientFactory(builder, apiUriBuilder.build().toURL().toString());
+        clientFactory = new RestClientFactory(builder, apiUriBuilder.build());
 
         var loginBuilder = baseUribuilder.builder().path("/api").path("/login");
         loginWithoutRememberMeUri = loginBuilder.replaceQueryParam("remember-me", "false").build();

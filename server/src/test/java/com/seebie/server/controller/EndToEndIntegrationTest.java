@@ -42,16 +42,15 @@ public class EndToEndIntegrationTest extends IntegrationTest {
     private static RestClientFactory clientFactory;
 
     @BeforeAll
-    public static void createTestData(@Autowired RestClient.Builder builder,
-                                      @Autowired UserService userService) throws MalformedURLException
-    {
+    public static void createTestData(@Autowired RestClient.Builder builder, @Autowired UserService userService) {
+
         LOG.info("");
         LOG.info("=======================================================================================");
         LOG.info("Creating test data");
         LOG.info("");
 
         // we get the rest client builder as configured for the app, including mappers
-        clientFactory = new RestClientFactory(builder, baseUribuilder.builder().build().toURL().toString());
+        clientFactory = new RestClientFactory(builder, baseUribuilder.builder().build());
 
         RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(testUserRegistration);

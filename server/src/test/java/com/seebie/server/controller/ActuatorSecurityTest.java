@@ -43,12 +43,12 @@ public class ActuatorSecurityTest extends IntegrationTest {
     private static RestClient userClient;
 
     @BeforeAll
-    public static void setup(@Autowired RestClient.Builder builder, @Autowired UserService userService) throws MalformedURLException
-    {
+    public static void setup(@Autowired RestClient.Builder builder, @Autowired UserService userService) {
+
         // no /api prefix for actuator endpoints
 
         // we get the rest client builder as configured for the app, including mappers
-        clientFactory = new RestClientFactory(builder, baseUribuilder.builder().build().toURL().toString());
+        clientFactory = new RestClientFactory(builder, baseUribuilder.builder().build());
 
         adminClient = clientFactory.login("admin", "admin");
 
