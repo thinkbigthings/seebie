@@ -19,7 +19,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.web.client.RestClient;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
