@@ -43,8 +43,7 @@ public class ActuatorSecurityTest extends IntegrationTest {
     private static RestClient userClient;
 
     @BeforeAll
-    public static void setup(@Autowired RestClient.Builder builder,
-                             @Autowired UserService userService) throws MalformedURLException
+    public static void setup(@Autowired RestClient.Builder builder, @Autowired UserService userService) throws MalformedURLException
     {
         // no /api prefix for actuator endpoints
 

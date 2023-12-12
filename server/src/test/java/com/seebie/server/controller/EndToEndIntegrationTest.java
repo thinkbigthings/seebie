@@ -51,8 +51,7 @@ public class EndToEndIntegrationTest extends IntegrationTest {
         LOG.info("");
 
         // we get the rest client builder as configured for the app, including mappers
-        var baseUrl = baseUribuilder.builder().build().toURL().toString();
-        clientFactory = new RestClientFactory(builder, baseUrl);
+        clientFactory = new RestClientFactory(builder, baseUribuilder.builder().build().toURL().toString());
 
         RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(testUserRegistration);
