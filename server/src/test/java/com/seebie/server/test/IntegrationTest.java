@@ -3,15 +3,21 @@ package com.seebie.server.test;
 import com.seebie.server.PropertyLogger;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
+import com.seebie.server.test.client.RestClientFactory;
 import com.seebie.server.test.data.TestDataPopulator;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.context.ImportTestcontainers;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mail.MailSender;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
@@ -58,6 +64,18 @@ public class IntegrationTest {
     static {
         postgres.withUrlParam("autosave", "conservative");
         postgres.start();
+    }
+
+    protected static DefaultUriBuilderFactory baseUribuilder;
+
+    protected static DefaultUriBuilderFactory apiUribuilder;
+
+    @BeforeAll
+    public static void setup(@Autowired RestClient.Builder builder, @LocalServerPort int randomServerPort) {
+
+        var baseUrl = STR."https://localhost:\{randomServerPort}";
+        baseUribuilder = new DefaultUriBuilderFactory(baseUrl);
+
     }
 
 }

@@ -12,9 +12,9 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import java.net.HttpCookie;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -36,7 +36,6 @@ public class SessionSecurityTest extends IntegrationTest {
     private static Duration rememberMeTimeout;
 
     private static RestClientFactory clientFactory;
-    private static DefaultUriBuilderFactory uriBuilderFactory;
 
     private String testUserName;
     private String testUserPassword;
@@ -53,21 +52,21 @@ public class SessionSecurityTest extends IntegrationTest {
         testUserName = userRegistration.username();
         testUserPassword = userRegistration.plainTextPassword();
 
-        testUserInfoUri = uriBuilderFactory.builder().path("/user/").path(userRegistration.username()).build();
+        var apiUriBuilder = baseUribuilder.builder().path("/api");
+        testUserInfoUri = apiUriBuilder.path("/user/").path(userRegistration.username()).build();
     }
 
     @BeforeAll
     public static void setup(@Autowired Environment env,
                              @Autowired RestClient.Builder builder,
-                             @LocalServerPort int randomServerPort)
+                             @LocalServerPort int randomServerPort) throws MalformedURLException
     {
-        var baseUrl = STR."https://localhost:\{randomServerPort}/api";
-        uriBuilderFactory = new DefaultUriBuilderFactory(baseUrl);
+        var apiUriBuilder = baseUribuilder.builder().path("/api");
 
         // we get the rest client builder as configured for the app, including mappers
-        clientFactory = new RestClientFactory(builder, baseUrl);
+        clientFactory = new RestClientFactory(builder, apiUriBuilder.build().toURL().toString());
 
-        var loginBuilder = uriBuilderFactory.builder().path("/login");
+        var loginBuilder = baseUribuilder.builder().path("/api").path("/login");
         loginWithoutRememberMeUri = loginBuilder.replaceQueryParam("remember-me", "false").build();
         loginWithRememberMeUri =  loginBuilder.replaceQueryParam("remember-me", "true").build();
 
