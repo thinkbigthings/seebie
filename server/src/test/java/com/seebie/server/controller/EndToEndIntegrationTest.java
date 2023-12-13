@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.web.client.RestClient;
@@ -32,7 +31,7 @@ public class EndToEndIntegrationTest extends IntegrationTest {
 
     protected static Logger LOG = LoggerFactory.getLogger(EndToEndIntegrationTest.class);
 
-    private static URI users;
+    private static URI usersUrl;
 
     private static String testUserName;
     private static String testUserPassword;
@@ -42,26 +41,27 @@ public class EndToEndIntegrationTest extends IntegrationTest {
     private static RestClientFactory clientFactory;
 
     @BeforeAll
-    public static void createTestData(@Autowired RestClient.Builder builder,
-                                      @Autowired UserService userService,
-                                      @LocalServerPort int randomServerPort)
-    {
+    public static void createTestData(@Autowired RestClient.Builder builder, @Autowired UserService userService) {
+
         LOG.info("");
         LOG.info("=======================================================================================");
         LOG.info("Creating test data");
         LOG.info("");
 
-        var baseUrl = STR."https://localhost:\{randomServerPort}/api/";
-        clientFactory = new RestClientFactory(builder, baseUrl);
-        users = URI.create(baseUrl + "user");
+        // we get the rest client builder as configured for the app, including mappers
+        clientFactory = new RestClientFactory(builder, baseUribuilder.builder().build());
 
         RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(testUserRegistration);
 
         testUserName = testUserRegistration.username();
         testUserPassword = testUserRegistration.plainTextPassword();
-        testUserUrl = URI.create(users + "/" + testUserName);
-        testUserUpdatePasswordUrl = URI.create(testUserUrl + "/password/update");
+
+        var userUriBuilder = baseUribuilder.builder().pathSegment("api", "user");
+
+        usersUrl = userUriBuilder.build();
+        testUserUrl = userUriBuilder.pathSegment(testUserName).build();
+        testUserUpdatePasswordUrl = userUriBuilder.pathSegment("password", "update").build();
     }
 
     @Test()
@@ -71,7 +71,7 @@ public class EndToEndIntegrationTest extends IntegrationTest {
         RestClient admin = clientFactory.login("admin", "admin");
 
         var userPage = new ParameterizedTypeReference<ParsablePage<UserSummary>>() {};
-        Page<UserSummary> page = admin.get().uri(users).retrieve().body(userPage);
+        Page<UserSummary> page = admin.get().uri(usersUrl).retrieve().body(userPage);
 
         assertTrue(page.isFirst());
         assertTrue(page.getTotalElements() >= 1);

@@ -12,13 +12,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -44,19 +41,13 @@ public class ActuatorSecurityTest extends IntegrationTest {
     private static RestClient adminClient;
     private static RestClient userClient;
 
-    private static DefaultUriBuilderFactory uriBuilderFactory;
-
     @BeforeAll
-    public static void setup(@Autowired RestClient.Builder builder, @LocalServerPort int randomServerPort,
-                             @Autowired UserService userService,
-                             @Autowired MappingJackson2HttpMessageConverter converter)
-    {
+    public static void setup(@Autowired RestClient.Builder builder, @Autowired UserService userService) {
+
         // no /api prefix for actuator endpoints
-        var baseUrl = STR."https://localhost:\{randomServerPort}";
-        uriBuilderFactory = new DefaultUriBuilderFactory(baseUrl);
 
         // we get the rest client builder as configured for the app, including mappers
-        clientFactory = new RestClientFactory(builder, baseUrl);
+        clientFactory = new RestClientFactory(builder, baseUribuilder.builder().build());
 
         adminClient = clientFactory.login("admin", "admin");
 
@@ -123,7 +114,7 @@ public class ActuatorSecurityTest extends IntegrationTest {
 
     private void testSecurity(RestClient client, HttpMethod method, String urlPath, MultiValueMap<String,String> urlParams, int expectedStatus) {
 
-        var uri = uriBuilderFactory.builder().path(urlPath).queryParams(urlParams).build();
+        var uri = baseUribuilder.builder().path(urlPath).queryParams(urlParams).build();
         var req = client.mutate().build().method(method).uri(uri);
         LOG.info("Testing {} {}", method, uri);
 

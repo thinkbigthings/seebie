@@ -6,6 +6,7 @@ import org.springframework.web.client.RestClient;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import java.net.CookieManager;
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -18,7 +19,7 @@ public class RestClientFactory {
 
     private static final SSLContext insecureContext = createInsecureSsl();
 
-    public RestClientFactory(RestClient.Builder restClientBuilder, String baseUrl) {
+    public RestClientFactory(RestClient.Builder restClientBuilder, URI baseUrl) {
 
         // would like to customize the builder at system startup time
         // with a RestClientCustomizer or ObjectProvider<RestClientCustomizer>
@@ -26,7 +27,7 @@ public class RestClientFactory {
 
         this.restClientBuilder = restClientBuilder.clone()
                 .defaultStatusHandler(status -> status.is4xxClientError(), (request,resp) -> {}) // don't throw exceptions on 4XX errors
-                .baseUrl(baseUrl);
+                .baseUrl(baseUrl.toString());
     }
 
     public RestClient noLogin() {
