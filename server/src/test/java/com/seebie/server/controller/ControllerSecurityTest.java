@@ -89,6 +89,7 @@ public class ControllerSecurityTest {
 
 	private static final String[] chartParams = new String[]{"from", from, "to", to};
 	private static final HistogramRequest histogramRequest = new HistogramRequest(1, new FilterList(List.of()));
+	private static final Challenge challenge = createRandomChallenge(0, 14);
 
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	@Autowired
@@ -146,9 +147,11 @@ public class ControllerSecurityTest {
 				test.get(STR."/api/user/\{USERNAME}/sleep/chart", chartParams, 401),
 				test.post(STR."/api/user/\{USERNAME}/sleep/histogram", histogramRequest, 401),
 				test.get(STR."/api/user/\{USERNAME}/sleep/download", 401),
-				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 401)
+				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 401),
 
-
+				// challenge controller
+				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 401),
+				test.get(STR."/api/user/\{USERNAME}/challenge", 401)
 		);
 	}
 
@@ -184,7 +187,11 @@ public class ControllerSecurityTest {
 				test.get(STR."/api/user/\{USERNAME}/sleep/chart", chartParams, 200),
 				test.post(STR."/api/user/\{USERNAME}/sleep/histogram", histogramRequest, 200),
 				test.get(STR."/api/user/\{USERNAME}/sleep/download", 200),
-				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 200)
+				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 200),
+
+				// challenge controller
+				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 200),
+				test.get(STR."/api/user/\{USERNAME}/challenge", 200)
 		);
 	}
 
@@ -226,7 +233,11 @@ public class ControllerSecurityTest {
 
 				test.get(STR."/api/user/\{ADMINNAME}/sleep/chart", new String[]{"from", from, "to", to}, 403),
 				test.get(STR."/api/user/\{ADMINNAME}/sleep/download", 403),
-				test.post(STR."/api/user/\{ADMINNAME}/sleep/upload", file, 403)
+				test.post(STR."/api/user/\{ADMINNAME}/sleep/upload", file, 403),
+
+				// challenge controller
+				test.post(STR."/api/user/\{ADMINNAME}/challenge", challenge, 403),
+				test.get(STR."/api/user/\{ADMINNAME}/challenge", 403)
 		);
 	}
 
