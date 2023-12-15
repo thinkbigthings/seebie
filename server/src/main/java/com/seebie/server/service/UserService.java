@@ -4,27 +4,23 @@ import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.UserSummary;
 import com.seebie.server.entity.Notification;
+import com.seebie.server.entity.Role;
+import com.seebie.server.entity.User;
 import com.seebie.server.mapper.entitytodto.UserMapper;
 import com.seebie.server.repository.NotificationRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.seebie.server.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.seebie.server.entity.Role;
-import com.seebie.server.entity.User;
-import com.seebie.server.repository.UserRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.time.Instant;
 
 
 @Service
 public class UserService {
-
-    private static Logger LOG = LoggerFactory.getLogger(UserService.class);
 
     private UserMapper toUserRecord = new UserMapper();
 

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import Button from "react-bootstrap/Button";
@@ -8,11 +8,13 @@ import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import DatePicker from "react-datepicker";
+import useApiPost from "./useApiPost";
+import SleepDataManager from "./SleepDataManager";
 
 function Challenge() {
 
     const {username} = useParams();
-    const challengeEndpoint = `/api/user/${username}/sleep/histogram`;
+    const challengeEndpoint = `/api/user/${username}/challenge`;
 
     const suggestedEndDate = new Date();
     suggestedEndDate.setDate(suggestedEndDate.getDate()+14);
@@ -25,6 +27,18 @@ function Challenge() {
         localStartTime: new Date(),
         localEndTime: suggestedEndDate
     });
+
+    const post = useApiPost();
+
+    const saveData = () => {
+        post(challengeEndpoint, {
+            name: challenge.name,
+            description: challenge.description,
+            start: SleepDataManager.toIsoLocalDate(challenge.localStartTime),
+            finish: SleepDataManager.toIsoLocalDate(challenge.localEndTime)
+        }).then(saveChallenge);
+    }
+
 
     const updateChallenge = (updateValues) => {
         setChallenge({...challenge, ...updateValues});
@@ -79,7 +93,7 @@ function Challenge() {
                 <Modal.Footer>
                     <div className="d-flex flex-row">
                         <Button className="me-3" variant="primary"
-                                onClick={saveChallenge}>Save</Button>
+                                onClick={saveData}>Save</Button>
                         <Button className="" variant="secondary"
                                 onClick={() => setShowCreateChallenge(false)}>Cancel</Button>
                     </div>
