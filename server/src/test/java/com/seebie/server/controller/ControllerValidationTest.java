@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
 import com.seebie.server.security.WebSecurityConfig;
+import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.AppRequest;
@@ -65,6 +66,9 @@ public class ControllerValidationTest {
 
 	@MockBean
 	private SleepService sleepService;
+
+	@MockBean
+	private ChallengeService challengeService;
 
 	private static final String USERNAME = "someuser";
 	private static final String ADMINNAME = "admin";
