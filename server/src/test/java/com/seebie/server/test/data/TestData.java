@@ -1,18 +1,17 @@
 package com.seebie.server.test.data;
 
-import com.seebie.server.dto.SleepData;
-import com.seebie.server.dto.SleepDetails;
+import com.seebie.server.dto.*;
 import com.seebie.server.mapper.entitytodto.SleepDetailsToCsvRow;
 import net.datafaker.Faker;
-import com.seebie.server.dto.PersonalInfo;
-import com.seebie.server.dto.RegistrationRequest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.IntStream;
 
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
@@ -42,6 +41,27 @@ public class TestData {
 
     public static RegistrationRequest createRandomUserRegistration() {
         return createRandomUserRegistration("user");
+    }
+
+    public static List<Challenge> createRandomChallenges(int count) {
+        return IntStream.range(0, count)
+                .mapToObj(num -> createRandomChallenge(num * -15, 14))
+                .toList();
+    }
+
+    /**
+     *
+     * @param daysOffsetStart if negative, number of days to go back in time from today.
+     * @return
+     */
+    public static Challenge createRandomChallenge(int daysOffsetStart, int lengthDays) {
+
+        var start = LocalDate.now().plusDays(daysOffsetStart);
+        var finish = start.plusDays(lengthDays);
+
+        return new Challenge(STR."\{faker.starTrek().location()} \{randomUUID()}",
+                faker.lorem().paragraph(3),
+                start, finish);
     }
 
     public static MockMultipartFile createMultipart(String content) {

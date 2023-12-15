@@ -43,6 +43,14 @@ public class Challenge implements Serializable {
         // no arg constructor is required by JPA
     }
 
+    public Challenge(String name, String description, LocalDate start, LocalDate finish, User user) {
+        this.name = name;
+        this.description = description;
+        this.start = start;
+        this.finish = finish;
+        this.user = user;
+    }
+
     public Long getId() {
         return id;
     }

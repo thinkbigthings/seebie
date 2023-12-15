@@ -6,8 +6,6 @@ import com.seebie.server.service.UserService;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -47,11 +45,9 @@ class UserRepositoryTest extends IntegrationTest {
     @Test
     public void testListUsers() {
 
-        long numberUsers = userRepository.count();
         Page<User> userPage = userRepository.findAll(PageRequest.of(0, 10));
 
         assertEquals(10, userPage.getNumberOfElements());
         assertTrue(userPage.getTotalElements() > 10);
-        assertTrue(numberUsers > 10);
     }
 }
