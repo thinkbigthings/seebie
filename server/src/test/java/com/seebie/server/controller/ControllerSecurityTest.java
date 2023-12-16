@@ -1,6 +1,5 @@
 package com.seebie.server.controller;
 
-
 import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
 import com.seebie.server.security.WebSecurityConfig;
@@ -190,7 +189,7 @@ public class ControllerSecurityTest {
 				test.get(STR."/api/user/\{USERNAME}/sleep/download", 200),
 				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 200),
 
-				// challenge controller
+				// challenge controller - admin can see other users data
 				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 200),
 				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 200)
 		);
@@ -213,7 +212,7 @@ public class ControllerSecurityTest {
 				test.post(STR."/api/user/\{ADMINNAME}/password/update", password, 403),
 				test.get(STR."/api/user/\{ADMINNAME}", 403),
 
-				// sleep controller
+				// sleep controller - user can see own data
 				test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
 				test.get(STR."/api/user/\{USERNAME}/sleep", 200),
 				test.get(STR."/api/user/\{USERNAME}/sleep" + "/1", 200),
@@ -224,7 +223,7 @@ public class ControllerSecurityTest {
 				test.get(STR."/api/user/\{USERNAME}/sleep/download", 200),
 				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 200),
 
-				// sleep controller - should not access other user endpoints
+				// sleep controller - user cannot see other user data
 
 				test.post(STR."/api/user/\{ADMINNAME}/sleep", sleepData, 403),
 				test.get(STR."/api/user/\{ADMINNAME}/sleep", 403),
@@ -236,7 +235,11 @@ public class ControllerSecurityTest {
 				test.get(STR."/api/user/\{ADMINNAME}/sleep/download", 403),
 				test.post(STR."/api/user/\{ADMINNAME}/sleep/upload", file, 403),
 
-				// challenge controller
+				// challenge controller - user can see own data
+				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 200),
+				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 200),
+
+				// challenge controller - user cannot see other user data
 				test.post(STR."/api/user/\{ADMINNAME}/challenge", challenge, 403),
 				test.get(STR."/api/user/\{ADMINNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 403)
 		);
