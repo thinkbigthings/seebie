@@ -10,15 +10,16 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.IntStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
-import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
+import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.joining;
 import static org.springframework.http.HttpMethod.*;
-import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.util.MimeTypeUtils.TEXT_PLAIN_VALUE;
 
 public class TestData {
@@ -41,12 +42,6 @@ public class TestData {
 
     public static RegistrationRequest createRandomUserRegistration() {
         return createRandomUserRegistration("user");
-    }
-
-    public static List<Challenge> createRandomChallenges(int count) {
-        return IntStream.range(0, count)
-                .mapToObj(num -> createRandomChallenge(num * -15, 14))
-                .toList();
     }
 
     /**
