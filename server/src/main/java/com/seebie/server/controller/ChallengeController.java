@@ -1,12 +1,17 @@
 package com.seebie.server.controller;
 
 import com.seebie.server.dto.Challenge;
+import com.seebie.server.dto.ChallengeList;
+import com.seebie.server.dto.ZoneIdConstraint;
 import com.seebie.server.service.ChallengeService;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
@@ -33,8 +38,9 @@ public class ChallengeController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/user/{username}/challenge", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<Challenge> getUsers(@PathVariable String username) {
-        return challengeService.getChallenges(username);
+    public ChallengeList getChallenges(@PathVariable String username, @RequestParam @ZoneIdConstraint String zoneId) {
+        LocalDate today = LocalDate.now(ZoneId.of(zoneId));
+        return challengeService.getChallenges(username, today);
     }
 
 }

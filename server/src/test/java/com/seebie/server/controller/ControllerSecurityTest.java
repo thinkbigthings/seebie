@@ -35,7 +35,8 @@ import java.util.function.Function;
 import static com.seebie.server.controller.ControllerValidationTest.testDataObj2Str;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
-import static org.mockito.ArgumentMatchers.*;
+import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -151,7 +152,7 @@ public class ControllerSecurityTest {
 
 				// challenge controller
 				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 401),
-				test.get(STR."/api/user/\{USERNAME}/challenge", 401)
+				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 401)
 		);
 	}
 
@@ -191,7 +192,7 @@ public class ControllerSecurityTest {
 
 				// challenge controller
 				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 200),
-				test.get(STR."/api/user/\{USERNAME}/challenge", 200)
+				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 200)
 		);
 	}
 
@@ -237,7 +238,7 @@ public class ControllerSecurityTest {
 
 				// challenge controller
 				test.post(STR."/api/user/\{ADMINNAME}/challenge", challenge, 403),
-				test.get(STR."/api/user/\{ADMINNAME}/challenge", 403)
+				test.get(STR."/api/user/\{ADMINNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 403)
 		);
 	}
 

@@ -9,7 +9,7 @@ CREATE TABLE challenge (
     start           DATE            NOT NULL,
     finish          DATE            NOT NULL,
     name            VARCHAR(255)    NOT NULL,
-    description     VARCHAR(255)    NOT NULL,
+    description     VARCHAR(500)    NOT NULL,
     CONSTRAINT stop_after_start CHECK (finish >= start),
     UNIQUE(user_id, name)
 );
