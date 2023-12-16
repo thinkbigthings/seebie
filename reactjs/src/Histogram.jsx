@@ -11,7 +11,7 @@ import Form from 'react-bootstrap/Form';
 import SleepDataManager from "./SleepDataManager";
 import {NavHeader} from "./App";
 import CollapsibleFilter from "./component/CollapsibleFilter";
-import {basicHeader} from "./utility/BasicHeaders";
+import {basicHeader, fetchPost} from "./utility/BasicHeaders";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
@@ -44,21 +44,6 @@ const isDateRangeValid = (d1, d2)  => {
     let j1 = d1.toJSON().slice(0, 10);
     let j2 = d2.toJSON().slice(0, 10);
     return j1 < j2;
-}
-
-const requestHeaders = basicHeader();
-
-const fetchPost = (url, body) => {
-
-    const bodyString = typeof body === 'string' ? body : JSON.stringify(body);
-
-    const requestMeta = {
-        headers: requestHeaders,
-        method: 'POST',
-        body: bodyString
-    };
-
-    return fetch(url, requestMeta);
 }
 
 const histogramColor = ['#897b9c', '#596b7c', '#393b4c'];

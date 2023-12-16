@@ -33,6 +33,16 @@ public class ChallengeService {
                 .orElseThrow(() -> new EntityNotFoundException(STR."No user found: \{username}"));
     }
 
+    /**
+     * The status is according to the challenge dates relative to the current date:
+     * challenge end date is in the past means it's completed,
+     * challenge start date in the future means it's upcoming,
+     * challenge start and end enclose the current date means it's in progress.
+     *
+     * @param username
+     * @param today
+     * @return
+     */
     @Transactional(readOnly = true)
     public ChallengeList getChallenges(String username, LocalDate today) {
 

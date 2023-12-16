@@ -3,7 +3,7 @@ import {VITE_API_VERSION, VERSION_HEADER} from "./Constants";
 
 
 const GET = {
-    headers: basicHeader(),
+    headers: basicHeader(false),
     method: 'GET'
 };
 
@@ -26,4 +26,19 @@ function basicHeader(hasRequestBody=true) {
     return headers;
 }
 
-export {basicHeader, GET}
+const fetchPost = (url, body) => {
+
+    const bodyString = typeof body === 'string' ? body : JSON.stringify(body);
+    const requestHeaders = basicHeader();
+
+    const requestMeta = {
+        headers: requestHeaders,
+        method: 'POST',
+        body: bodyString
+    };
+
+    return fetch(url, requestMeta);
+}
+
+
+export {basicHeader, GET, fetchPost}

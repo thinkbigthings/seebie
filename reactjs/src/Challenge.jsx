@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import Button from "react-bootstrap/Button";
@@ -10,15 +10,20 @@ import Alert from "react-bootstrap/Alert";
 import DatePicker from "react-datepicker";
 import useApiPost from "./useApiPost";
 import SleepDataManager from "./SleepDataManager";
+import {GET} from "./utility/BasicHeaders";
 
-function Challenge() {
+function Challenge(props) {
 
     const {username} = useParams();
+
+    const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
     const challengeEndpoint = `/api/user/${username}/challenge`;
+    const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
 
     const suggestedEndDate = new Date();
     suggestedEndDate.setDate(suggestedEndDate.getDate()+14);
 
+    const [createdCount, setCreatedCount] = useState(0);
     const [showCreateSuccess, setShowCreateSuccess] = useState(false);
     const [showCreateChallenge, setShowCreateChallenge] = useState(false);
     const [challenge, setChallenge] = useState({
@@ -26,6 +31,11 @@ function Challenge() {
         description: "",
         localStartTime: new Date(),
         localEndTime: suggestedEndDate
+    });
+    const [savedChallenges, setSavedChallenges] = useState({
+        current: null,
+        upcoming: [],
+        completed: []
     });
 
     const post = useApiPost();
@@ -36,18 +46,26 @@ function Challenge() {
             description: challenge.description,
             start: SleepDataManager.toIsoLocalDate(challenge.localStartTime),
             finish: SleepDataManager.toIsoLocalDate(challenge.localEndTime)
-        }).then(saveChallenge);
+        })
+        .then(() => {
+            setShowCreateChallenge(false);
+            setShowCreateSuccess(true);
+            setCreatedCount(createdCount + 1);
+        });
     }
 
+    useEffect(() => {
+        fetch(challengeEndpointTz, GET)
+            .then((response) => response.json())
+            .then(setSavedChallenges)
+            .catch(error => console.log(error));
+    }, [createdCount]);
 
     const updateChallenge = (updateValues) => {
         setChallenge({...challenge, ...updateValues});
     }
 
-    const saveChallenge = () => {
-        setShowCreateChallenge(false);
-        setShowCreateSuccess(true);
-    }
+    const hasCurrent = (savedChallenges.current !== null);
 
     return (
         <Container>
@@ -120,6 +138,11 @@ function Challenge() {
                 </Button>
             </NavHeader>
 
+            <Container className="container mt-3 px-0">
+                {hasCurrent
+                    ? `Current Challenge: ${savedChallenges.current.name} from ${savedChallenges.current.start} to ${savedChallenges.current.finish}`
+                    : "No current challenge"}
+            </Container>
 
         </Container>
     );

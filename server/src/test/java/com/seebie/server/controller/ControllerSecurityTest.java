@@ -166,11 +166,11 @@ public class ControllerSecurityTest {
 
 				test.put(STR."/api/user/\{USERNAME}/personalInfo", info, 200),
 				test.post(STR."/api/user/\{USERNAME}/password/update", password, 200),
-				test.get("/api/user/" + USERNAME, 200),
+				test.get(STR."/api/user/\{USERNAME}", 200),
 
 				test.put(STR."/api/user/\{ADMINNAME}/personalInfo", info, 200),
 				test.post(STR."/api/user/\{ADMINNAME}/password/update", password, 200),
-				test.get("/api/user/" + ADMINNAME, 200),
+				test.get(STR."/api/user/\{ADMINNAME}", 200),
 
 				// sleep controller
 				test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
@@ -206,12 +206,12 @@ public class ControllerSecurityTest {
 
 				test.put(STR."/api/user/\{USERNAME}/personalInfo", info, 200),
 				test.post(STR."/api/user/\{USERNAME}/password/update", password, 200),
-				test.get("/api/user/" + USERNAME, 200),
+				test.get(STR."/api/user/\{USERNAME}", 200),
 
 				// user controller - should not access other user endpoints
 				test.put(STR."/api/user/\{ADMINNAME}/personalInfo", info, 403),
 				test.post(STR."/api/user/\{ADMINNAME}/password/update", password, 403),
-				test.get("/api/user/" + ADMINNAME, 403),
+				test.get(STR."/api/user/\{ADMINNAME}", 403),
 
 				// sleep controller
 				test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
