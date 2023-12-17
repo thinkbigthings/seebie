@@ -53,7 +53,7 @@ const createDataset = (displayInfo, data) => {
     return {
             fill: true,
             data: data,
-            label: toShortName(displayInfo.challenge.name),
+            label: displayInfo.challenge.name,
             borderColor: displayInfo.color,
             backgroundColor: displayInfo.color
         };
@@ -94,7 +94,8 @@ const toExactTime = (challenge) => {
     start.setHours(0, 0, 0);
     finish.setHours(23, 59, 59);
     return {
-        name: challenge.name,
+        name: toShortName(challenge.name),
+        fullName: challenge.name,
         description: challenge.description,
         start: start,
         finish: finish
@@ -105,6 +106,7 @@ const last30days = createRange(30);
 
 const defaultChallenge = {
     name: "Last 30 Days",
+    fullName: "Last 30 Days",
     description: "Last 30 Days",
     start: last30days.from,
     finish: last30days.to
@@ -152,7 +154,13 @@ function Histogram2(props) {
         let newPageSettings = structuredClone(pageSettings);
 
         // event target value is the challenge name, option value has to be a string not an object, so need to find it
-        savedChallenges.completed.filter(challenge => challenge.name === event.target.value)
+        if(defaultChallenge.fullName === event.target.value) {
+            newPageSettings.filters.push({
+                challenge: defaultChallenge,
+                color: availableColors[0]
+            })
+        }
+        savedChallenges.completed.filter(challenge => challenge.fullName === event.target.value)
             .forEach(matchedChallenge => {
                 newPageSettings.filters.push({
                     challenge: matchedChallenge,
@@ -162,6 +170,18 @@ function Histogram2(props) {
 
         setShowSelectChallenge(false);
         setPageSettings(newPageSettings);
+    }
+
+    const availableChallengeFilters = [];
+    if( ! isActiveFilter(defaultChallenge)) {
+        availableChallengeFilters.push(defaultChallenge);
+    }
+    savedChallenges.completed.filter(challenge => ! isActiveFilter(challenge))
+        .forEach(challenge => availableChallengeFilters.push(challenge));
+
+
+    function isActiveFilter(searchChallenge) {
+        return pageSettings.filters.filter(filter => filter.challenge.fullName === searchChallenge.fullName).length > 0
     }
 
     function onRemoveFilter(i) {
@@ -195,6 +215,7 @@ function Histogram2(props) {
             })
     }, [histogramEndpoint, createdCount, pageSettings]);
 
+
     const chartArea = barData.datasets.filter(dataset => dataset.data.length > 0).length >= 1
         ?    <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={barData} />
         :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
@@ -208,21 +229,15 @@ function Histogram2(props) {
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Select onChange={onSelectChallenge}>
-
-                        <option key={defaultChallenge.name} value={defaultChallenge.name}>
-                            {defaultChallenge.name}
-                        </option>
-
-                        {
-                            savedChallenges.completed.map(challenge => {
-                                return (
-                                    <option key={challenge.name} value={challenge.name}>
-                                        {challenge.name}
-                                    </option>
-                                )
-                            })
+                        <option>Select a Challenge</option>
+                        {availableChallengeFilters.map(challenge => {
+                            return (
+                                <option key={challenge.fullName} value={challenge.fullName}>
+                                    {challenge.name}
+                                </option>
+                            )
+                        })
                         }
-
                     </Form.Select>
                 </Modal.Body>
                 <Modal.Footer>
