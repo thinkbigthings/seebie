@@ -46,6 +46,7 @@ import Histogram from "./Histogram";
 import System from "./System";
 import Tools from "./Tools";
 import Challenge from "./Challenge";
+import Histogram2 from "./Histogram2";
 
 function App() {
 
@@ -136,7 +137,8 @@ function AuthenticatedApp() {
                     <Route path="/login" element={<div />} />
                     <Route path="/users/:username/challenge" element={<Challenge createdCount = {createdCount} />} />
                     <Route path="/users/:username/sleep/chart" element={<SleepChart createdCount={createdCount} />} />
-                    <Route path="/users/:username/histogram" element={<Histogram createdCount = {createdCount} />} />
+                    {/*<Route path="/users/:username/histogram" element={<Histogram createdCount = {createdCount} />} />*/}
+                    <Route path="/users/:username/histogram" element={<Histogram2 createdCount = {createdCount} />} />
                     <Route path="/users" element={<UserList/>} />
                     <Route path="/users/:username/edit" element={<EditUser />} />
                     <Route path="/users/:username/sleep/:sleepId/edit" element={<EditSleep />} />

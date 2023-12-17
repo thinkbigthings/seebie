@@ -10,13 +10,13 @@ import Row from "react-bootstrap/Row";
 import Form from 'react-bootstrap/Form';
 import SleepDataManager from "./SleepDataManager";
 import {NavHeader} from "./App";
-import CollapsibleFilter from "./component/CollapsibleFilter";
-import {basicHeader, fetchPost, GET} from "./utility/BasicHeaders";
+import {fetchPost, GET} from "./utility/BasicHeaders";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {createInitialRange} from "./SleepChart";
 import {useParams} from "react-router-dom";
+import Modal from "react-bootstrap/Modal";
 
 Chart.register(...registerables)
 
@@ -38,12 +38,6 @@ const histOptions = {
             stacked: false
         }
     }
-}
-
-const isDateRangeValid = (d1, d2)  => {
-    let j1 = d1.toJSON().slice(0, 10);
-    let j2 = d2.toJSON().slice(0, 10);
-    return j1 < j2;
 }
 
 const histogramColor = ['#897b9c', '#596b7c', '#393b4c'];
@@ -68,8 +62,8 @@ const createDataset = (displayInfo, data) => {
 const pageSettingsToRequest = (pageSettings) => {
 
     const newDataFilters = pageSettings.filters.map((filter) => { return {
-            from: SleepDataManager.toIsoString(filter.from),
-            to: SleepDataManager.toIsoString(filter.to)
+            from: SleepDataManager.toIsoString(filter.challenge.start),
+            to: SleepDataManager.toIsoString(filter.challenge.finish)
         }}
     );
 
@@ -82,6 +76,27 @@ const pageSettingsToRequest = (pageSettings) => {
 
 }
 
+const toExactTimes = (challengeList) => {
+    let exactChallengeList = {};
+    exactChallengeList.current = challengeList.current === null ? null : toExactTime(challengeList.current);
+    exactChallengeList.upcoming = challengeList.upcoming.map(toExactTime);
+    exactChallengeList.completed = challengeList.completed.map(toExactTime);
+    return exactChallengeList;
+}
+
+const toExactTime = (challenge) => {
+    let start = new Date(challenge.start);
+    let finish = new Date(challenge.finish);
+    start.setHours(0, 0, 0);
+    finish.setHours(23, 59, 59);
+    return {
+        name: challenge.name,
+        description: challenge.description,
+        start: start,
+        finish: finish
+    }
+}
+
 const initialRange = createInitialRange();
 
 const initialChallenge = {
@@ -91,29 +106,23 @@ const initialChallenge = {
     finish: initialRange.to
 }
 
-function Histogram(props) {
-
-    const {username} = useParams();
-
-    const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
-    const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
+function Histogram2(props) {
 
     // TODO createdCount should be named "sleepLoggedCountSinceAppLoad" or something
     // this is so the page is updated when the user logs sleep
     const {createdCount} = props;
 
-    const sleepEndpoint = '/api/user/' + username + '/sleep/histogram';
+    const {username} = useParams();
 
-    let [numFiltersCreated, setNumFiltersCreated] = useState(1);
+    const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
+    const histogramEndpoint = `/api/user/${username}/sleep/histogram`;
 
     let [pageSettings, setPageSettings] = useState({
                                                                     binSize: 60,
                                                                     filters: [
                                                                         {
                                                                             challenge: initialChallenge,
-                                                                            from: initialRange.from,
-                                                                            to: initialRange.to,
-                                                                            title: "Set " + numFiltersCreated,
                                                                             color: histogramColor[0]
                                                                         }
                                                                     ]
@@ -124,66 +133,35 @@ function Histogram(props) {
         upcoming: [],
         completed: []
     });
-
-    let [filterDisplay, setFilterDisplay] = useState([ {
-                                                                        collapsed: true
-                                                                    }
-                                                                ]);
+    const [showSelectChallenge, setShowSelectChallenge] = useState(false);
 
     let[barData, setBarData] = useState({
                                                                     labels: [],
                                                                     datasets: []
                                                                 });
 
-    const onAddFilter = () => {
-
-        let newNumFiltersCreated = numFiltersCreated + 1;
+    const onSelectChallenge = event => {
 
         let usedColors = pageSettings.filters.map(filter => filter.color);
         let availableColors = histogramColor.filter(color => ! usedColors.includes(color));
 
         let newPageSettings = structuredClone(pageSettings);
-        newPageSettings.filters.push({
-            from: initialRange.from,
-            to: initialRange.to,
-            title: "Set " + newNumFiltersCreated,
-            color: availableColors[0]
+
+        // event target value is the challenge name, it has to be a string, can't be an object directly so need to find it
+        savedChallenges.completed.filter(challenge => challenge.name === event.target.value).forEach(matchedChallenge => {
+            newPageSettings.filters.push({
+                challenge: matchedChallenge,
+                color: availableColors[0]
+            });
         });
+
         setPageSettings(newPageSettings);
-
-        let newFilterDisplay = structuredClone(filterDisplay);
-        newFilterDisplay.push({
-            collapsed: false
-        });
-        setFilterDisplay(newFilterDisplay);
-
-        setNumFiltersCreated(newNumFiltersCreated);
     }
 
     function onRemoveFilter(i) {
-
         let newPageSettings = structuredClone(pageSettings);
         newPageSettings.filters.splice(i, 1);
         setPageSettings(newPageSettings);
-
-        let newFilterDisplay = structuredClone(filterDisplay);
-        newFilterDisplay.splice(i, 1);
-        setFilterDisplay(newFilterDisplay);
-    }
-
-    function onToggleCollapse(i) {
-        let newFilterDisplay = structuredClone(filterDisplay);
-        newFilterDisplay[i].collapsed = ! newFilterDisplay[i].collapsed;
-        setFilterDisplay(newFilterDisplay);
-    }
-
-    function updateSearchRange(updateValues, i) {
-        let newPageSettings = structuredClone(pageSettings);
-        let updatedRange = {...pageSettings.filters[i], ...updateValues};
-        if( isDateRangeValid(updatedRange.from, updatedRange.to) ) {
-            newPageSettings.filters[i] = updatedRange;
-            setPageSettings(newPageSettings);
-        }
     }
 
     const updateBinSize = event => {
@@ -195,12 +173,13 @@ function Histogram(props) {
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
             .then((response) => response.json())
+            .then(toExactTimes)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, []);
 
     useEffect(() => {
-        fetchPost(sleepEndpoint, pageSettingsToRequest(pageSettings))
+        fetchPost(histogramEndpoint, pageSettingsToRequest(pageSettings))
             .then(response => response.json())
             .then(histData => {
                 setBarData({
@@ -208,7 +187,7 @@ function Histogram(props) {
                     datasets: histData.dataSets.map((data, i) => createDataset(pageSettings.filters[i], data))
                 });
             })
-    }, [sleepEndpoint, createdCount, pageSettings]);
+    }, [histogramEndpoint, createdCount, pageSettings]);
 
     const chartArea = barData.datasets.filter(dataset => dataset.data.length > 0).length >= 1
         ?    <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={barData} />
@@ -216,8 +195,40 @@ function Histogram(props) {
 
     return (
         <Container>
+
+            <Modal centered={true} show={showSelectChallenge} onHide={() => setShowSelectChallenge(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Select Challenge</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Select onChange={onSelectChallenge}>
+                        <option key={"Last 30 days"} value={"Last 30 days"}>
+                            {"Last 30 days"}
+                        </option>
+                        {
+                            savedChallenges.completed.map(challenge => {
+                                return (
+                                    <option key={challenge.name} value={challenge.name}>
+                                        {challenge.name}
+                                    </option>
+                                )
+                            })
+                        }
+                    </Form.Select>
+                </Modal.Body>
+                <Modal.Footer>
+                    <div className="d-flex flex-row">
+                        <Button className="me-3" variant="primary"
+                                onClick={onSelectChallenge}>Select</Button>
+                        <Button className="" variant="secondary"
+                                onClick={() => setShowSelectChallenge(false)}>Cancel</Button>
+                    </div>
+                </Modal.Footer>
+            </Modal>
+
             <NavHeader title="Sleep Histogram">
-                <Button variant="secondary" disabled={pageSettings.filters.length === 3} onClick={ onAddFilter } >
+                <Button variant="secondary" disabled={pageSettings.filters.length === histogramColor.length}
+                        onClick={ () => setShowSelectChallenge(true) } >
                     <FontAwesomeIcon icon={faPlus} />
                 </Button>
             </NavHeader>
@@ -227,16 +238,7 @@ function Histogram(props) {
                     return (
                         <Row key={i}>
                             <Col className="col-10 px-1">
-
-                                <CollapsibleFilter selectedStart={filter.from}
-                                                   color={filter.color}
-                                                   onChangeStart={(date) => updateSearchRange({from:date}, i)}
-                                                   selectedEnd={filter.to}
-                                                   onChangeEnd={(date) => updateSearchRange({to:date}, i)}
-                                                   title={pageSettings.filters[i].title}
-                                                   collapsed={filterDisplay[i].collapsed}
-                                                   onCollapseClick={() => onToggleCollapse(i)} />
-
+                                <Button>{filter.challenge.name.substring(0,24)}</Button>
                             </Col>
                             <Col className={"px-0"}>
                                 <Button variant="secondary" className="mx-1" disabled={pageSettings.filters.length === 1} onClick={ () => onRemoveFilter(i) } >
@@ -273,4 +275,4 @@ function Histogram(props) {
     );
 }
 
-export default Histogram;
+export default Histogram2;
