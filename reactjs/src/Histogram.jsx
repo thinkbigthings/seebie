@@ -15,7 +15,7 @@ import {basicHeader, fetchPost} from "./utility/BasicHeaders";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
-import {createInitialRange} from "./SleepChart";
+import {createRange} from "./SleepChart";
 import {useParams} from "react-router-dom";
 
 Chart.register(...registerables)
@@ -82,7 +82,7 @@ const pageSettingsToRequest = (pageSettings) => {
 
 }
 
-const initialRange = createInitialRange();
+const initialRange = createRange(30);
 
 function Histogram(props) {
 

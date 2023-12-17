@@ -14,7 +14,7 @@ import {fetchPost, GET} from "./utility/BasicHeaders";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
-import {createInitialRange} from "./SleepChart";
+import {createRange} from "./SleepChart";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 
@@ -53,7 +53,7 @@ const createDataset = (displayInfo, data) => {
     return {
             fill: true,
             data: data,
-            label: displayInfo.title,
+            label: toShortName(displayInfo.challenge.name),
             borderColor: displayInfo.color,
             backgroundColor: displayInfo.color
         };
@@ -74,6 +74,10 @@ const pageSettingsToRequest = (pageSettings) => {
         }
     }
 
+}
+
+const toShortName = (name) => {
+    return name.substring(0,27);
 }
 
 const toExactTimes = (challengeList) => {
@@ -97,13 +101,13 @@ const toExactTime = (challenge) => {
     }
 }
 
-const initialRange = createInitialRange();
+const last30days = createRange(30);
 
-const initialChallenge = {
+const defaultChallenge = {
     name: "Last 30 Days",
     description: "Last 30 Days",
-    start: initialRange.from,
-    finish: initialRange.to
+    start: last30days.from,
+    finish: last30days.to
 }
 
 function Histogram2(props) {
@@ -122,7 +126,7 @@ function Histogram2(props) {
                                                                     binSize: 60,
                                                                     filters: [
                                                                         {
-                                                                            challenge: initialChallenge,
+                                                                            challenge: defaultChallenge,
                                                                             color: histogramColor[0]
                                                                         }
                                                                     ]
@@ -147,14 +151,16 @@ function Histogram2(props) {
 
         let newPageSettings = structuredClone(pageSettings);
 
-        // event target value is the challenge name, it has to be a string, can't be an object directly so need to find it
-        savedChallenges.completed.filter(challenge => challenge.name === event.target.value).forEach(matchedChallenge => {
-            newPageSettings.filters.push({
-                challenge: matchedChallenge,
-                color: availableColors[0]
-            });
+        // event target value is the challenge name, option value has to be a string not an object, so need to find it
+        savedChallenges.completed.filter(challenge => challenge.name === event.target.value)
+            .forEach(matchedChallenge => {
+                newPageSettings.filters.push({
+                    challenge: matchedChallenge,
+                    color: availableColors[0]
+                });
         });
 
+        setShowSelectChallenge(false);
         setPageSettings(newPageSettings);
     }
 
@@ -202,9 +208,11 @@ function Histogram2(props) {
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Select onChange={onSelectChallenge}>
-                        <option key={"Last 30 days"} value={"Last 30 days"}>
-                            {"Last 30 days"}
+
+                        <option key={defaultChallenge.name} value={defaultChallenge.name}>
+                            {defaultChallenge.name}
                         </option>
+
                         {
                             savedChallenges.completed.map(challenge => {
                                 return (
@@ -214,6 +222,7 @@ function Histogram2(props) {
                                 )
                             })
                         }
+
                     </Form.Select>
                 </Modal.Body>
                 <Modal.Footer>
@@ -236,9 +245,9 @@ function Histogram2(props) {
             {
                 pageSettings.filters.map((filter, i) => {
                     return (
-                        <Row key={i}>
+                        <Row key={i} className={"pb-1"}>
                             <Col className="col-10 px-1">
-                                <Button>{filter.challenge.name.substring(0,24)}</Button>
+                                <Button className={"w-100 text-start"}>{toShortName(filter.challenge.name)}</Button>
                             </Col>
                             <Col className={"px-0"}>
                                 <Button variant="secondary" className="mx-1" disabled={pageSettings.filters.length === 1} onClick={ () => onRemoveFilter(i) } >
