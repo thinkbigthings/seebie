@@ -242,8 +242,6 @@ function Histogram2(props) {
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="d-flex flex-row">
-                        <Button className="me-3" variant="primary"
-                                onClick={onSelectChallenge}>Select</Button>
                         <Button className="" variant="secondary"
                                 onClick={() => setShowSelectChallenge(false)}>Cancel</Button>
                     </div>
