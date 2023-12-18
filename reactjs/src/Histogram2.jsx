@@ -258,9 +258,9 @@ function Histogram2(props) {
             {
                 pageSettings.filters.map((filter, i) => {
                     return (
-                        <Row key={i} className={"pb-1"}>
-                            <Col className="col-10 px-1">
-                                <Button className={"w-100 text-start"}>{toShortName(filter.challenge.name)}</Button>
+                        <Row style={{backgroundColor: filter.color}} key={i} className={"p-2 mb-1 pe-0 border rounded"}>
+                            <Col className="px-0 col-10 ">
+                                <div >{filter.challenge.fullName}</div>
                             </Col>
                             <Col className={"px-0"}>
                                 <Button variant="secondary" className="mx-1" disabled={pageSettings.filters.length === 1} onClick={ () => onRemoveFilter(i) } >
