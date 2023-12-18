@@ -210,9 +210,11 @@ function Histogram(props) {
             })
     }, [histogramEndpoint, createdCount, pageSettings]);
 
+    const maxFiltersUsed = (pageSettings.filters.length === histogramColor.length);
+    const challengesAvailable = (availableChallengeFilters.length > 0);
 
     const chartArea = barData.datasets.filter(dataset => dataset.data.length > 0).length >= 1
-        ?    <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={barData} />
+        ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={barData} />
         :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
 
     return (
@@ -244,7 +246,7 @@ function Histogram(props) {
             </Modal>
 
             <NavHeader title="Sleep Histogram">
-                <Button variant="secondary" disabled={pageSettings.filters.length === histogramColor.length}
+                <Button variant="success" disabled={maxFiltersUsed || ! challengesAvailable}
                         onClick={ () => setShowSelectChallenge(true) } >
                     <FontAwesomeIcon icon={faPlus} />
                 </Button>
@@ -258,7 +260,7 @@ function Histogram(props) {
                                 <div >{filter.challenge.name}</div>
                             </Col>
                             <Col className={"px-0"}>
-                                <Button variant="secondary" className="mx-1" disabled={pageSettings.filters.length === 1} onClick={ () => onRemoveFilter(i) } >
+                                <Button variant="warning" className="mx-1" disabled={pageSettings.filters.length === 1} onClick={ () => onRemoveFilter(i) } >
                                     <FontAwesomeIcon icon={faRemove} />
                                 </Button>
                             </Col>

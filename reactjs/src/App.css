@@ -18,6 +18,9 @@
     --lilac-gray: #4f4f5d;
     --slate: #6f6f9b;
     --peri-lilac: #7070c2;
+    --sage-green: #89a987;
+    --sage-green-darker: #6b8569;
+    --sage-yellow: #adaa48;
 }
 
 html, body {
@@ -78,8 +81,23 @@ body {
 /* Override Bootstrap styles      */
 /* ------------------------------ */
 
+/* ------------------------------ */
+.btn-success {
+    background-color: var(--sage-green);
+}
+.btn-success:hover {
+    background-color: var(--sage-green-darker);
+}
+.btn-success:disabled {
+    background-color: var(--steel-gray);
+}
+.btn-success:active:focus {
+    background-color: var(--sage-green-darker);
+}
+
+/* ------------------------------ */
 .btn-warning {
-    background-color: var(--light-gold);
+    background-color: var(--sage-yellow);
 }
 .btn-warning:hover {
     background-color: var(--bright-gold);
