@@ -4,7 +4,7 @@ import {faCaretLeft, faCaretRight,} from "@fortawesome/free-solid-svg-icons";
 import Container from "react-bootstrap/Container";
 import Table from "react-bootstrap/Table";
 import {Link, useParams} from "react-router-dom";
-import {toPagingLabel, useApiGet} from './useApiGet.jsx';
+import {toPagingLabel, useApiGet} from './hooks/useApiGet.jsx';
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import SleepDataManager from "./SleepDataManager";

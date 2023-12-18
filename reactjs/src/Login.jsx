@@ -3,8 +3,8 @@ import React, {useState} from 'react';
 import Button from "react-bootstrap/Button";
 
 import {VITE_API_VERSION, VERSION_HEADER} from "./utility/Constants";
-import useCurrentUser from "./useCurrentUser";
-import useHttpError from "./useHttpError";
+import useCurrentUser from "./hooks/useCurrentUser";
+import useHttpError from "./hooks/useHttpError";
 import {useNavigate} from 'react-router-dom';
 import {GET} from "./utility/BasicHeaders";
 import copy from "./utility/Copier";

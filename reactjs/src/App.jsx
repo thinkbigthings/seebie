@@ -13,7 +13,7 @@ import ErrorBoundary from './ErrorBoundary.jsx';
 
 import {ErrorProvider} from './ErrorContext.jsx';
 import ErrorModal from "./ErrorModal";
-import useCurrentUser from "./useCurrentUser";
+import useCurrentUser from "./hooks/useCurrentUser";
 import {CurrentUserContext, CurrentUserProvider} from "./CurrentUserContext";
 import {GET} from "./utility/BasicHeaders";
 

@@ -1,18 +1,21 @@
 
-import {basicHeader} from "./utility/BasicHeaders";
+import {basicHeader} from "../utility/BasicHeaders";
 import useHttpError from "./useHttpError";
 
 
-const useApiDelete = () => {
+const useApiPost = () => {
 
     const requestHeaders = basicHeader();
     const {throwOnHttpError} = useHttpError();
 
-    function callDelete(url) {
+    function post(url, body) {
+
+        const bodyString = typeof body === 'string' ? body : JSON.stringify(body);
 
         const requestMeta = {
             headers: requestHeaders,
-            method: 'DELETE'
+            method: 'POST',
+            body: bodyString
         };
 
         return fetch(url, requestMeta)
@@ -20,7 +23,7 @@ const useApiDelete = () => {
             .catch(error => console.log(error));
     }
 
-    return callDelete;
+    return post;
 };
 
-export default useApiDelete;
+export default useApiPost;

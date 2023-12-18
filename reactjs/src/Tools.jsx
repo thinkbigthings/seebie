@@ -8,8 +8,8 @@ import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import Form from 'react-bootstrap/Form';
 import Row from "react-bootstrap/Row";
-import useHttpError from "./useHttpError";
-import {useApiGet} from "./useApiGet";
+import useHttpError from "./hooks/useHttpError";
+import {useApiGet} from "./hooks/useApiGet";
 import {useParams} from "react-router-dom";
 
 function Tools() {

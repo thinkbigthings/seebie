@@ -5,9 +5,9 @@ import ResetPasswordModal from "./ResetPasswordModal.jsx";
 
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
-import useCurrentUser from "./useCurrentUser";
-import useApiPost from "./useApiPost";
-import useApiPut from "./useApiPut";
+import useCurrentUser from "./hooks/useCurrentUser";
+import useApiPost from "./hooks/useApiPost";
+import useApiPut from "./hooks/useApiPut";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey} from "@fortawesome/free-solid-svg-icons";
