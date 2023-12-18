@@ -10,13 +10,26 @@ import copy from "./utility/Copier";
 
 const SleepDataManager = { };
 
+SleepDataManager.toIsoLocalDate = (date) => {
+
+    const tzo = -date.getTimezoneOffset();
+    const dif = tzo >= 0 ? '+' : '-';
+    const pad = function(num) {
+        return (num < 10 ? '0' : '') + num;
+    };
+
+    return date.getFullYear() +
+        '-' + pad(date.getMonth() + 1) +
+        '-' + pad(date.getDate());
+}
+
 SleepDataManager.toIsoString = (date) => {
 
-    const tzo = -date.getTimezoneOffset(),
-        dif = tzo >= 0 ? '+' : '-',
-        pad = function(num) {
-            return (num < 10 ? '0' : '') + num;
-        };
+    const tzo = -date.getTimezoneOffset();
+    const dif = tzo >= 0 ? '+' : '-';
+    const pad = function(num) {
+        return (num < 10 ? '0' : '') + num;
+    };
 
     return date.getFullYear() +
         '-' + pad(date.getMonth() + 1) +

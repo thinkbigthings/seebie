@@ -10,17 +10,22 @@ import Row from "react-bootstrap/Row";
 import Form from 'react-bootstrap/Form';
 import SleepDataManager from "./SleepDataManager";
 import {NavHeader} from "./App";
-import CollapsibleFilter from "./component/CollapsibleFilter";
-import {basicHeader} from "./utility/BasicHeaders";
+import {fetchPost, GET} from "./utility/BasicHeaders";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
-import {createInitialRange} from "./SleepChart";
+import {createRange} from "./SleepChart";
 import {useParams} from "react-router-dom";
+import Modal from "react-bootstrap/Modal";
 
 Chart.register(...registerables)
 
 const histOptions = {
+    plugins: {
+        legend: {
+            display: false
+        },
+    },
     scales: {
         x: {
             stacked: false,
@@ -40,27 +45,6 @@ const histOptions = {
     }
 }
 
-const isDateRangeValid = (d1, d2)  => {
-    let j1 = d1.toJSON().slice(0, 10);
-    let j2 = d2.toJSON().slice(0, 10);
-    return j1 < j2;
-}
-
-const requestHeaders = basicHeader();
-
-const fetchPost = (url, body) => {
-
-    const bodyString = typeof body === 'string' ? body : JSON.stringify(body);
-
-    const requestMeta = {
-        headers: requestHeaders,
-        method: 'POST',
-        body: bodyString
-    };
-
-    return fetch(url, requestMeta);
-}
-
 const histogramColor = ['#897b9c', '#596b7c', '#393b4c'];
 
 const binSizeOptions = [
@@ -74,7 +58,7 @@ const createDataset = (displayInfo, data) => {
     return {
             fill: true,
             data: data,
-            label: displayInfo.title,
+            label: displayInfo.challenge.name,
             borderColor: displayInfo.color,
             backgroundColor: displayInfo.color
         };
@@ -83,8 +67,8 @@ const createDataset = (displayInfo, data) => {
 const pageSettingsToRequest = (pageSettings) => {
 
     const newDataFilters = pageSettings.filters.map((filter) => { return {
-            from: SleepDataManager.toIsoString(filter.from),
-            to: SleepDataManager.toIsoString(filter.to)
+            from: SleepDataManager.toIsoString(filter.challenge.start),
+            to: SleepDataManager.toIsoString(filter.challenge.finish)
         }}
     );
 
@@ -97,91 +81,108 @@ const pageSettingsToRequest = (pageSettings) => {
 
 }
 
-const initialRange = createInitialRange();
+const toExactTimes = (challengeList) => {
+    let exactChallengeList = {};
+    exactChallengeList.current = challengeList.current === null ? null : toExactTime(challengeList.current);
+    exactChallengeList.upcoming = challengeList.upcoming.map(toExactTime);
+    exactChallengeList.completed = challengeList.completed.map(toExactTime);
+    return exactChallengeList;
+}
+
+const toExactTime = (challenge) => {
+    let start = new Date(challenge.start);
+    let finish = new Date(challenge.finish);
+    start.setHours(0, 0, 0);
+    finish.setHours(23, 59, 59);
+    return {
+        name: challenge.name,
+        description: challenge.description,
+        start: start,
+        finish: finish
+    }
+}
+
+const last30days = createRange(30);
+
+const defaultChallenge = {
+    name: "Last 30 Days",
+    description: "Last 30 Days",
+    start: last30days.from,
+    finish: last30days.to
+}
 
 function Histogram(props) {
-
-    const {username} = useParams();
 
     // TODO createdCount should be named "sleepLoggedCountSinceAppLoad" or something
     // this is so the page is updated when the user logs sleep
     const {createdCount} = props;
 
-    const sleepEndpoint = '/api/user/' + username + '/sleep/histogram';
+    const {username} = useParams();
 
-    let [numFiltersCreated, setNumFiltersCreated] = useState(1);
+    const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
+    const histogramEndpoint = `/api/user/${username}/sleep/histogram`;
 
     let [pageSettings, setPageSettings] = useState({
                                                                     binSize: 60,
                                                                     filters: [
                                                                         {
-                                                                            from: initialRange.from,
-                                                                            to: initialRange.to,
-                                                                            title: "Set " + numFiltersCreated,
+                                                                            challenge: defaultChallenge,
                                                                             color: histogramColor[0]
                                                                         }
-                                                                    ]
+                                                                    ],
+                                                                    availableFilters: []
                                                                 });
 
-    let [filterDisplay, setFilterDisplay] = useState([ {
-                                                                        collapsed: true
-                                                                    }
-                                                                ]);
+    const [savedChallenges, setSavedChallenges] = useState({
+        current: null,
+        upcoming: [],
+        completed: []
+    });
+    const [showSelectChallenge, setShowSelectChallenge] = useState(false);
 
     let[barData, setBarData] = useState({
                                                                     labels: [],
                                                                     datasets: []
                                                                 });
 
-    const onAddFilter = () => {
-
-        let newNumFiltersCreated = numFiltersCreated + 1;
+    const onSelectChallenge = event => {
 
         let usedColors = pageSettings.filters.map(filter => filter.color);
         let availableColors = histogramColor.filter(color => ! usedColors.includes(color));
 
+        // event target value is the challenge name, option value has to be a string not an object, so need to find it
+        const selectedName = event.target.value;
+        const foundChallenge = defaultChallenge.name == selectedName
+            ? defaultChallenge
+            : savedChallenges.completed.find(challenge => challenge.name === selectedName);
+
         let newPageSettings = structuredClone(pageSettings);
         newPageSettings.filters.push({
-            from: initialRange.from,
-            to: initialRange.to,
-            title: "Set " + newNumFiltersCreated,
-            color: availableColors[0]
-        });
+                    challenge: foundChallenge,
+                    color: availableColors[0]
+                });
+
+        setShowSelectChallenge(false);
         setPageSettings(newPageSettings);
+    }
 
-        let newFilterDisplay = structuredClone(filterDisplay);
-        newFilterDisplay.push({
-            collapsed: false
-        });
-        setFilterDisplay(newFilterDisplay);
+    const availableChallengeFilters = [];
+    if( ! isActiveFilter(defaultChallenge)) {
+        availableChallengeFilters.push(defaultChallenge);
+    }
+    savedChallenges.completed.filter(challenge => ! isActiveFilter(challenge))
+        .forEach(challenge => availableChallengeFilters.push(challenge));
 
-        setNumFiltersCreated(newNumFiltersCreated);
+
+    function isActiveFilter(searchChallenge) {
+        return pageSettings.filters.filter(filter => filter.challenge.name === searchChallenge.name).length > 0
     }
 
     function onRemoveFilter(i) {
-
         let newPageSettings = structuredClone(pageSettings);
         newPageSettings.filters.splice(i, 1);
         setPageSettings(newPageSettings);
-
-        let newFilterDisplay = structuredClone(filterDisplay);
-        newFilterDisplay.splice(i, 1);
-        setFilterDisplay(newFilterDisplay);
-    }
-
-    function onToggleCollapse(i) {
-        let newFilterDisplay = structuredClone(filterDisplay);
-        newFilterDisplay[i].collapsed = ! newFilterDisplay[i].collapsed;
-        setFilterDisplay(newFilterDisplay);
-    }
-
-    function updateSearchRange(updateValues, i) {
-        let newPageSettings = structuredClone(pageSettings);
-        let updatedRange = {...pageSettings.filters[i], ...updateValues};
-        if( isDateRangeValid(updatedRange.from, updatedRange.to) ) {
-            newPageSettings.filters[i] = updatedRange;
-            setPageSettings(newPageSettings);
-        }
     }
 
     const updateBinSize = event => {
@@ -190,9 +191,16 @@ function Histogram(props) {
         setPageSettings(newPageState);
     };
 
+    useEffect(() => {
+        fetch(challengeEndpointTz, GET)
+            .then((response) => response.json())
+            .then(toExactTimes)
+            .then(setSavedChallenges)
+            .catch(error => console.log(error));
+    }, []);
 
     useEffect(() => {
-        fetchPost(sleepEndpoint, pageSettingsToRequest(pageSettings))
+        fetchPost(histogramEndpoint, pageSettingsToRequest(pageSettings))
             .then(response => response.json())
             .then(histData => {
                 setBarData({
@@ -200,7 +208,8 @@ function Histogram(props) {
                     datasets: histData.dataSets.map((data, i) => createDataset(pageSettings.filters[i], data))
                 });
             })
-    }, [sleepEndpoint, createdCount, pageSettings]);
+    }, [histogramEndpoint, createdCount, pageSettings]);
+
 
     const chartArea = barData.datasets.filter(dataset => dataset.data.length > 0).length >= 1
         ?    <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={barData} />
@@ -208,8 +217,35 @@ function Histogram(props) {
 
     return (
         <Container>
+
+            <Modal centered={true} show={showSelectChallenge} onHide={() => setShowSelectChallenge(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Select Challenge</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Select onChange={onSelectChallenge}>
+                        <option>Select a Challenge</option>
+                        {availableChallengeFilters.map(challenge => {
+                            return (
+                                <option key={challenge.name} value={challenge.name}>
+                                    {challenge.name}
+                                </option>
+                            )
+                        })
+                        }
+                    </Form.Select>
+                </Modal.Body>
+                <Modal.Footer>
+                    <div className="d-flex flex-row">
+                        <Button className="" variant="secondary"
+                                onClick={() => setShowSelectChallenge(false)}>Cancel</Button>
+                    </div>
+                </Modal.Footer>
+            </Modal>
+
             <NavHeader title="Sleep Histogram">
-                <Button variant="secondary" disabled={pageSettings.filters.length === 3} onClick={ onAddFilter } >
+                <Button variant="secondary" disabled={pageSettings.filters.length === histogramColor.length}
+                        onClick={ () => setShowSelectChallenge(true) } >
                     <FontAwesomeIcon icon={faPlus} />
                 </Button>
             </NavHeader>
@@ -217,18 +253,9 @@ function Histogram(props) {
             {
                 pageSettings.filters.map((filter, i) => {
                     return (
-                        <Row key={i}>
-                            <Col className="col-10 px-1">
-
-                                <CollapsibleFilter selectedStart={filter.from}
-                                                   color={filter.color}
-                                                   onChangeStart={(date) => updateSearchRange({from:date}, i)}
-                                                   selectedEnd={filter.to}
-                                                   onChangeEnd={(date) => updateSearchRange({to:date}, i)}
-                                                   title={pageSettings.filters[i].title}
-                                                   collapsed={filterDisplay[i].collapsed}
-                                                   onCollapseClick={() => onToggleCollapse(i)} />
-
+                        <Row style={{backgroundColor: filter.color}} key={i} className={"p-2 mb-1 pe-0 border rounded"}>
+                            <Col className="px-0 col-10 ">
+                                <div >{filter.challenge.name}</div>
                             </Col>
                             <Col className={"px-0"}>
                                 <Button variant="secondary" className="mx-1" disabled={pageSettings.filters.length === 1} onClick={ () => onRemoveFilter(i) } >

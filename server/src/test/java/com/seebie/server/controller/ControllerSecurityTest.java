@@ -1,9 +1,9 @@
 package com.seebie.server.controller;
 
-
 import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
 import com.seebie.server.security.WebSecurityConfig;
+import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.AppRequest;
@@ -34,7 +34,8 @@ import java.util.function.Function;
 import static com.seebie.server.controller.ControllerValidationTest.testDataObj2Str;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
-import static org.mockito.ArgumentMatchers.*;
+import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -71,6 +72,9 @@ public class ControllerSecurityTest {
 	@MockBean
 	private SleepService sleepService;
 
+	@MockBean
+	private ChallengeService challengeService;
+
 	private static final String USERNAME = "someuser";
 	private static final String ADMINNAME = "admin";
 
@@ -85,6 +89,7 @@ public class ControllerSecurityTest {
 
 	private static final String[] chartParams = new String[]{"from", from, "to", to};
 	private static final HistogramRequest histogramRequest = new HistogramRequest(1, new FilterList(List.of()));
+	private static final Challenge challenge = createRandomChallenge(0, 14);
 
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	@Autowired
@@ -142,9 +147,11 @@ public class ControllerSecurityTest {
 				test.get(STR."/api/user/\{USERNAME}/sleep/chart", chartParams, 401),
 				test.post(STR."/api/user/\{USERNAME}/sleep/histogram", histogramRequest, 401),
 				test.get(STR."/api/user/\{USERNAME}/sleep/download", 401),
-				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 401)
+				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 401),
 
-
+				// challenge controller
+				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 401),
+				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 401)
 		);
 	}
 
@@ -158,11 +165,11 @@ public class ControllerSecurityTest {
 
 				test.put(STR."/api/user/\{USERNAME}/personalInfo", info, 200),
 				test.post(STR."/api/user/\{USERNAME}/password/update", password, 200),
-				test.get("/api/user/" + USERNAME, 200),
+				test.get(STR."/api/user/\{USERNAME}", 200),
 
 				test.put(STR."/api/user/\{ADMINNAME}/personalInfo", info, 200),
 				test.post(STR."/api/user/\{ADMINNAME}/password/update", password, 200),
-				test.get("/api/user/" + ADMINNAME, 200),
+				test.get(STR."/api/user/\{ADMINNAME}", 200),
 
 				// sleep controller
 				test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
@@ -180,7 +187,11 @@ public class ControllerSecurityTest {
 				test.get(STR."/api/user/\{USERNAME}/sleep/chart", chartParams, 200),
 				test.post(STR."/api/user/\{USERNAME}/sleep/histogram", histogramRequest, 200),
 				test.get(STR."/api/user/\{USERNAME}/sleep/download", 200),
-				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 200)
+				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 200),
+
+				// challenge controller - admin can see other users data
+				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 200),
+				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 200)
 		);
 	}
 
@@ -194,14 +205,14 @@ public class ControllerSecurityTest {
 
 				test.put(STR."/api/user/\{USERNAME}/personalInfo", info, 200),
 				test.post(STR."/api/user/\{USERNAME}/password/update", password, 200),
-				test.get("/api/user/" + USERNAME, 200),
+				test.get(STR."/api/user/\{USERNAME}", 200),
 
 				// user controller - should not access other user endpoints
 				test.put(STR."/api/user/\{ADMINNAME}/personalInfo", info, 403),
 				test.post(STR."/api/user/\{ADMINNAME}/password/update", password, 403),
-				test.get("/api/user/" + ADMINNAME, 403),
+				test.get(STR."/api/user/\{ADMINNAME}", 403),
 
-				// sleep controller
+				// sleep controller - user can see own data
 				test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
 				test.get(STR."/api/user/\{USERNAME}/sleep", 200),
 				test.get(STR."/api/user/\{USERNAME}/sleep" + "/1", 200),
@@ -212,7 +223,7 @@ public class ControllerSecurityTest {
 				test.get(STR."/api/user/\{USERNAME}/sleep/download", 200),
 				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 200),
 
-				// sleep controller - should not access other user endpoints
+				// sleep controller - user cannot see other user data
 
 				test.post(STR."/api/user/\{ADMINNAME}/sleep", sleepData, 403),
 				test.get(STR."/api/user/\{ADMINNAME}/sleep", 403),
@@ -222,7 +233,15 @@ public class ControllerSecurityTest {
 
 				test.get(STR."/api/user/\{ADMINNAME}/sleep/chart", new String[]{"from", from, "to", to}, 403),
 				test.get(STR."/api/user/\{ADMINNAME}/sleep/download", 403),
-				test.post(STR."/api/user/\{ADMINNAME}/sleep/upload", file, 403)
+				test.post(STR."/api/user/\{ADMINNAME}/sleep/upload", file, 403),
+
+				// challenge controller - user can see own data
+				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 200),
+				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 200),
+
+				// challenge controller - user cannot see other user data
+				test.post(STR."/api/user/\{ADMINNAME}/challenge", challenge, 403),
+				test.get(STR."/api/user/\{ADMINNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 403)
 		);
 	}
 

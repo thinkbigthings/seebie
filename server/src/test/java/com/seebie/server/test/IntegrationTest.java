@@ -1,6 +1,7 @@
 package com.seebie.server.test;
 
 import com.seebie.server.PropertyLogger;
+import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.TestDataPopulator;
@@ -41,8 +42,8 @@ public class IntegrationTest {
         }
 
         @Bean
-        public TestDataPopulator createTestDataPopulator(UserService userService, SleepService sleepService) {
-            return new TestDataPopulator(userService, sleepService);
+        public TestDataPopulator createTestDataPopulator(UserService users, SleepService sleep, ChallengeService challenges) {
+            return new TestDataPopulator(users, sleep, challenges);
         }
 
         @Bean public MailSender createMailSenderToLogs() {

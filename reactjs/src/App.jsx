@@ -28,23 +28,25 @@ import Home from "./Home";
 import {NavDropdown} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
-    // faBook,
-    faChartLine, faChartSimple,
+    faChartLine,
+    faChartSimple,
     faCog,
     faList,
     faMoon,
     faServer,
     faSignOut,
     faTools,
+    faTrophy,
     faUser,
     faUsers
 } from "@fortawesome/free-solid-svg-icons";
 import {CreateSleepSession} from "./CreateSleepSession";
 import SleepList from "./SleepList";
 import {SleepChart} from "./SleepChart";
-import Histogram from "./Histogram";
 import System from "./System";
 import Tools from "./Tools";
+import Challenge from "./Challenge";
+import Histogram from "./Histogram";
 
 function App() {
 
@@ -133,6 +135,7 @@ function AuthenticatedApp() {
                     <Route path="/" element={<Home />} />
                     <Route path="/users/:username/sleep/list" element={<SleepList createdCount={createdCount} />} />
                     <Route path="/login" element={<div />} />
+                    <Route path="/users/:username/challenge" element={<Challenge createdCount = {createdCount} />} />
                     <Route path="/users/:username/sleep/chart" element={<SleepChart createdCount={createdCount} />} />
                     <Route path="/users/:username/histogram" element={<Histogram createdCount = {createdCount} />} />
                     <Route path="/users" element={<UserList/>} />
@@ -155,6 +158,7 @@ function SideNav(props) {
 
     return (
         <Nav defaultActiveKey="/home" className="flex-column col-sm-2">
+            <NavItem name="Challenge" icon={faTrophy} href={`#/users/${username}/challenge`} />
             <NavItem name="List" icon={faList} href={"#/users/"+username+"/sleep/list" } />
             <NavItem name="Chart" icon={faChartLine} href={"#/users/"+username+"/sleep/chart" } />
             <NavItem name="Analysis" icon={faChartSimple} href={"#/users/"+username+"/histogram"} />

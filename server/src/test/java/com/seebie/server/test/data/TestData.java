@@ -1,25 +1,25 @@
 package com.seebie.server.test.data;
 
-import com.seebie.server.dto.SleepData;
-import com.seebie.server.dto.SleepDetails;
+import com.seebie.server.dto.*;
 import com.seebie.server.mapper.entitytodto.SleepDetailsToCsvRow;
 import net.datafaker.Faker;
-import com.seebie.server.dto.PersonalInfo;
-import com.seebie.server.dto.RegistrationRequest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
-import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
+import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.joining;
 import static org.springframework.http.HttpMethod.*;
-import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.util.MimeTypeUtils.TEXT_PLAIN_VALUE;
 
 public class TestData {
@@ -42,6 +42,21 @@ public class TestData {
 
     public static RegistrationRequest createRandomUserRegistration() {
         return createRandomUserRegistration("user");
+    }
+
+    /**
+     *
+     * @param daysOffsetStart if negative, number of days to go back in time from today.
+     * @return
+     */
+    public static Challenge createRandomChallenge(int daysOffsetStart, int lengthDays) {
+
+        var start = LocalDate.now().plusDays(daysOffsetStart);
+        var finish = start.plusDays(lengthDays);
+
+        return new Challenge(STR."\{faker.starTrek().location()} \{randomUUID()}",
+                faker.lorem().paragraph(3),
+                start, finish);
     }
 
     public static MockMultipartFile createMultipart(String content) {

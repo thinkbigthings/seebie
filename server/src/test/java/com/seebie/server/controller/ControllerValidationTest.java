@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
 import com.seebie.server.security.WebSecurityConfig;
+import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.AppRequest;
@@ -66,6 +67,9 @@ public class ControllerValidationTest {
 	@MockBean
 	private SleepService sleepService;
 
+	@MockBean
+	private ChallengeService challengeService;
+
 	private static final String USERNAME = "someuser";
 	private static final String ADMINNAME = "admin";
 
@@ -89,7 +93,10 @@ public class ControllerValidationTest {
 	private static final MockMultipartFile badFile = createMultipart("text");
 	private static final MockMultipartFile goodFile = createMultipart(createCsv(1));
 
-	private static TestData.ArgumentBuilder test;
+	private static final Challenge invalidChallenge = new Challenge("", "", null, null);
+	private static final Challenge validChallenge = TestData.createRandomChallenge(0, 14);
+
+		private static TestData.ArgumentBuilder test;
 
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	@Autowired
@@ -157,7 +164,10 @@ public class ControllerValidationTest {
 				test.post(STR."/api/user/\{USERNAME}/sleep/histogram", invalidHistReq,   400),
 
 				test.post(STR."/api/user/\{USERNAME}/sleep/upload", badFile, 400),
-				test.post(STR."/api/user/\{USERNAME}/sleep/upload", goodFile, 200)
+				test.post(STR."/api/user/\{USERNAME}/sleep/upload", goodFile, 200),
+
+				test.post(STR."/api/user/\{USERNAME}/challenge", invalidChallenge, 400),
+				test.post(STR."/api/user/\{USERNAME}/challenge", validChallenge, 200)
 		);
 	}
 

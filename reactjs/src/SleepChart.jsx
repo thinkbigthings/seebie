@@ -71,13 +71,13 @@ const isDateRangeValid = (d1, d2)  => {
     return j1 < j2;
 }
 
-const createInitialRange = () => {
+const createRange = (lastNDays) => {
 
     let today = new Date();
     today.setHours(23, 59, 59);
 
     let lastMonth = new Date(today.getTime());
-    lastMonth.setDate(today.getDate() - 30);
+    lastMonth.setDate(today.getDate() - lastNDays);
     lastMonth.setHours(0, 0, 0);
 
     return {from: lastMonth, to: today};
@@ -89,7 +89,7 @@ function SleepChart(props) {
 
     const {createdCount} = props;
 
-    let [range, setRange] = useState(createInitialRange());
+    let [range, setRange] = useState(createRange(30));
     let [chartData, setChartData] = useState(initialChartData);
 
     function updateSearchRange(updateValues) {
@@ -134,4 +134,4 @@ function SleepChart(props) {
     );
 }
 
-export {SleepChart, createInitialRange};
+export {SleepChart, createRange};
