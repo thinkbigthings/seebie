@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
-import useApiPost from "./useApiPost";
+import useApiPost from "./hooks/useApiPost";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 

@@ -8,7 +8,7 @@ import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import DatePicker from "react-datepicker";
-import useApiPost from "./useApiPost";
+import useApiPost from "./hooks/useApiPost";
 import SleepDataManager from "./SleepDataManager";
 import {GET} from "./utility/BasicHeaders";
 
@@ -110,7 +110,7 @@ function Challenge(props) {
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="d-flex flex-row">
-                        <Button className="me-3" variant="primary"
+                        <Button className="me-3" variant="success"
                                 onClick={saveData}>Save</Button>
                         <Button className="" variant="secondary"
                                 onClick={() => setShowCreateChallenge(false)}>Cancel</Button>
@@ -128,12 +128,12 @@ function Challenge(props) {
                     </Alert>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={() => setShowCreateSuccess(false)}>OK</Button>
+                    <Button variant="success" onClick={() => setShowCreateSuccess(false)}>OK</Button>
                 </Modal.Footer>
             </Modal>
 
             <NavHeader title="Sleep Challenge">
-                <Button variant="secondary" disabled={false} onClick={() => setShowCreateChallenge(true)}>
+                <Button variant="success" disabled={false} onClick={() => setShowCreateChallenge(true)}>
                     <FontAwesomeIcon icon={faPlus}/>
                 </Button>
             </NavHeader>

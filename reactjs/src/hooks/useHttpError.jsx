@@ -1,5 +1,5 @@
-import {recoveryActions} from "./ErrorContext";
-import {VITE_API_VERSION, VERSION_HEADER} from "./utility/Constants";
+import {recoveryActions} from "../ErrorContext";
+import {VITE_API_VERSION, VERSION_HEADER} from "../utility/Constants";
 import useError from "./useError";
 
 const useHttpError = () => {
