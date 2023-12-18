@@ -21,6 +21,11 @@ import Modal from "react-bootstrap/Modal";
 Chart.register(...registerables)
 
 const histOptions = {
+    plugins: {
+        legend: {
+            display: false
+        },
+    },
     scales: {
         x: {
             stacked: false,
