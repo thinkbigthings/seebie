@@ -25,7 +25,7 @@ public class ChallengeService {
     }
 
     @Transactional
-    public void saveNewChallenge(Challenge challenge, String username) {
+    public void saveNewChallenge(String username, Challenge challenge) {
 
         userRepo.findByUsername(username)
                 .map(user -> toEntity.apply(user, challenge))

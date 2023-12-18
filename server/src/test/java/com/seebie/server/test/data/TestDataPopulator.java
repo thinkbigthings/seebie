@@ -42,11 +42,11 @@ public class TestDataPopulator implements ApplicationListener<ContextRefreshedEv
 
         createRandomSleepData(60, AMERICA_NEW_YORK).forEach(d -> sleepService.saveNew(username, d));
 
-        challengeService.saveNewChallenge(createRandomChallenge(-90, 14), username);
-        challengeService.saveNewChallenge(createRandomChallenge(-60, 14), username);
-        challengeService.saveNewChallenge(createRandomChallenge(-30, 14), username);
-        challengeService.saveNewChallenge(createRandomChallenge(-1, 14), username);
-        challengeService.saveNewChallenge(createRandomChallenge(30, 14), username);
+        challengeService.saveNewChallenge(username, createRandomChallenge(-90, 14));
+        challengeService.saveNewChallenge(username, createRandomChallenge(-60, 14));
+        challengeService.saveNewChallenge(username, createRandomChallenge(-30, 14));
+        challengeService.saveNewChallenge(username, createRandomChallenge(-1, 14));
+        challengeService.saveNewChallenge(username, createRandomChallenge(30, 14));
     }
 
 }

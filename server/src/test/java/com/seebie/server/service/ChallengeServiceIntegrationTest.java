@@ -7,11 +7,8 @@ import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.PageRequest;
 
 import static com.seebie.server.test.data.TestData.createRandomChallenge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,9 +45,9 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
 
         var challenge = createRandomChallenge(-1, 14);
 
-        challengeService.saveNewChallenge(challenge, username);
+        challengeService.saveNewChallenge(username, challenge);
 
-        var exception = assertThrows(DataIntegrityViolationException.class, () -> challengeService.saveNewChallenge(challenge, username));
+        var exception = assertThrows(DataIntegrityViolationException.class, () -> challengeService.saveNewChallenge(username, challenge));
         assertEquals("challenge_user_id_name_key", ((ConstraintViolationException)exception.getCause()).getConstraintName());
     }
 
@@ -64,8 +61,8 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
 
         // if the constraint is working, this is the happy path: name can be used across users
         // but in the UI it is a unique identifier, so it should be unique per user
-        challengeService.saveNewChallenge(challenge, username1);
-        challengeService.saveNewChallenge(challenge, username2);
+        challengeService.saveNewChallenge(username1, challenge);
+        challengeService.saveNewChallenge(username2, challenge);
     }
 
     private String saveNewUser() {
