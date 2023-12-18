@@ -125,7 +125,8 @@ function Histogram2(props) {
                                                                             challenge: defaultChallenge,
                                                                             color: histogramColor[0]
                                                                         }
-                                                                    ]
+                                                                    ],
+                                                                    availableFilters: []
                                                                 });
 
     const [savedChallenges, setSavedChallenges] = useState({
@@ -145,22 +146,17 @@ function Histogram2(props) {
         let usedColors = pageSettings.filters.map(filter => filter.color);
         let availableColors = histogramColor.filter(color => ! usedColors.includes(color));
 
-        let newPageSettings = structuredClone(pageSettings);
-
         // event target value is the challenge name, option value has to be a string not an object, so need to find it
-        if(defaultChallenge.name === event.target.value) {
-            newPageSettings.filters.push({
-                challenge: defaultChallenge,
-                color: availableColors[0]
-            })
-        }
-        savedChallenges.completed.filter(challenge => challenge.name === event.target.value)
-            .forEach(matchedChallenge => {
-                newPageSettings.filters.push({
-                    challenge: matchedChallenge,
+        const selectedName = event.target.value;
+        const foundChallenge = defaultChallenge.name == selectedName
+            ? defaultChallenge
+            : savedChallenges.completed.find(challenge => challenge.name === selectedName);
+
+        let newPageSettings = structuredClone(pageSettings);
+        newPageSettings.filters.push({
+                    challenge: foundChallenge,
                     color: availableColors[0]
                 });
-        });
 
         setShowSelectChallenge(false);
         setPageSettings(newPageSettings);
