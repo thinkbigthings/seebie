@@ -79,7 +79,6 @@ public class Challenge implements Serializable {
         this.finish = finish;
     }
 
-
     public String getDescription() {
         return description;
     }

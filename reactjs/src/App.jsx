@@ -28,14 +28,15 @@ import Home from "./Home";
 import {NavDropdown} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
-    // faBook,
-    faChartLine, faChartSimple,
+    faChartLine,
+    faChartSimple,
     faCog,
     faList,
     faMoon,
     faServer,
     faSignOut,
-    faTools, faTrophy,
+    faTools,
+    faTrophy,
     faUser,
     faUsers
 } from "@fortawesome/free-solid-svg-icons";
@@ -136,7 +137,6 @@ function AuthenticatedApp() {
                     <Route path="/login" element={<div />} />
                     <Route path="/users/:username/challenge" element={<Challenge createdCount = {createdCount} />} />
                     <Route path="/users/:username/sleep/chart" element={<SleepChart createdCount={createdCount} />} />
-                    {/*<Route path="/users/:username/histogram" element={<Histogram createdCount = {createdCount} />} />*/}
                     <Route path="/users/:username/histogram" element={<Histogram createdCount = {createdCount} />} />
                     <Route path="/users" element={<UserList/>} />
                     <Route path="/users/:username/edit" element={<EditUser />} />
