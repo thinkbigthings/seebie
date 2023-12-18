@@ -42,7 +42,6 @@ import {
 import {CreateSleepSession} from "./CreateSleepSession";
 import SleepList from "./SleepList";
 import {SleepChart} from "./SleepChart";
-import Histogram from "./Histogram";
 import System from "./System";
 import Tools from "./Tools";
 import Challenge from "./Challenge";
