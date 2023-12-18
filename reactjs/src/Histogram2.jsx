@@ -76,10 +76,6 @@ const pageSettingsToRequest = (pageSettings) => {
 
 }
 
-const toShortName = (name) => {
-    return name.substring(0,27);
-}
-
 const toExactTimes = (challengeList) => {
     let exactChallengeList = {};
     exactChallengeList.current = challengeList.current === null ? null : toExactTime(challengeList.current);
@@ -94,8 +90,7 @@ const toExactTime = (challenge) => {
     start.setHours(0, 0, 0);
     finish.setHours(23, 59, 59);
     return {
-        name: toShortName(challenge.name),
-        fullName: challenge.name,
+        name: challenge.name,
         description: challenge.description,
         start: start,
         finish: finish
@@ -106,7 +101,6 @@ const last30days = createRange(30);
 
 const defaultChallenge = {
     name: "Last 30 Days",
-    fullName: "Last 30 Days",
     description: "Last 30 Days",
     start: last30days.from,
     finish: last30days.to
@@ -154,13 +148,13 @@ function Histogram2(props) {
         let newPageSettings = structuredClone(pageSettings);
 
         // event target value is the challenge name, option value has to be a string not an object, so need to find it
-        if(defaultChallenge.fullName === event.target.value) {
+        if(defaultChallenge.name === event.target.value) {
             newPageSettings.filters.push({
                 challenge: defaultChallenge,
                 color: availableColors[0]
             })
         }
-        savedChallenges.completed.filter(challenge => challenge.fullName === event.target.value)
+        savedChallenges.completed.filter(challenge => challenge.name === event.target.value)
             .forEach(matchedChallenge => {
                 newPageSettings.filters.push({
                     challenge: matchedChallenge,
@@ -181,7 +175,7 @@ function Histogram2(props) {
 
 
     function isActiveFilter(searchChallenge) {
-        return pageSettings.filters.filter(filter => filter.challenge.fullName === searchChallenge.fullName).length > 0
+        return pageSettings.filters.filter(filter => filter.challenge.name === searchChallenge.name).length > 0
     }
 
     function onRemoveFilter(i) {
@@ -232,7 +226,7 @@ function Histogram2(props) {
                         <option>Select a Challenge</option>
                         {availableChallengeFilters.map(challenge => {
                             return (
-                                <option key={challenge.fullName} value={challenge.fullName}>
+                                <option key={challenge.name} value={challenge.name}>
                                     {challenge.name}
                                 </option>
                             )
@@ -260,7 +254,7 @@ function Histogram2(props) {
                     return (
                         <Row style={{backgroundColor: filter.color}} key={i} className={"p-2 mb-1 pe-0 border rounded"}>
                             <Col className="px-0 col-10 ">
-                                <div >{filter.challenge.fullName}</div>
+                                <div >{filter.challenge.name}</div>
                             </Col>
                             <Col className={"px-0"}>
                                 <Button variant="secondary" className="mx-1" disabled={pageSettings.filters.length === 1} onClick={ () => onRemoveFilter(i) } >
