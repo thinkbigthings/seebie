@@ -111,7 +111,7 @@ const defaultChallenge = {
     finish: last30days.to
 }
 
-function Histogram2(props) {
+function Histogram(props) {
 
     // TODO createdCount should be named "sleepLoggedCountSinceAppLoad" or something
     // this is so the page is updated when the user logs sleep
@@ -292,4 +292,4 @@ function Histogram2(props) {
     );
 }
 
-export default Histogram2;
+export default Histogram;
