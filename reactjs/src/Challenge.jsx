@@ -12,7 +12,7 @@ import useApiPost from "./hooks/useApiPost";
 import SleepDataManager from "./SleepDataManager";
 import {GET} from "./utility/BasicHeaders";
 import {Tab, Tabs} from "react-bootstrap";
-import CollapsibleFaq from "./component/CollapsibleFaq";
+import CollapsibleContent from "./component/CollapsibleContent";
 
 function Challenge(props) {
 
@@ -70,11 +70,11 @@ function Challenge(props) {
 
     const currentChallengeElement = (savedChallenges.current !== null)
         ? <div>
-            <CollapsibleFaq title={savedChallenges.current.name}>
+            <CollapsibleContent title={savedChallenges.current.name}>
                 <div className={"mb-2 pb-2 border-bottom"}>{savedChallenges.current.description}</div>
                 <div className={"fw-bold"}>Start: {savedChallenges.current.start}</div>
                 <div className={"fw-bold"}>Finish: {savedChallenges.current.finish}</div>
-            </CollapsibleFaq>
+            </CollapsibleContent>
         </div>
         : <div>No current challenge</div>;
 
@@ -159,11 +159,11 @@ function Challenge(props) {
                         <Container className="px-0 overflow-y-scroll h-70vh ">
                             {savedChallenges.completed.map((challenge, index) => {
                                 return (
-                                    <CollapsibleFaq key={index} title={challenge.name}>
+                                    <CollapsibleContent key={index} title={challenge.name}>
                                         <div className={"mb-2 pb-2 border-bottom"}>{challenge.description}</div>
                                         <div className={"fw-bold"}>Start: {challenge.start}</div>
                                         <div className={"fw-bold"}>Finish: {challenge.finish}</div>
-                                    </CollapsibleFaq>
+                                    </CollapsibleContent>
                                 );
                             })}
                         </Container>
@@ -172,11 +172,11 @@ function Challenge(props) {
                         <Container className="px-0 overflow-y-scroll h-70vh ">
                             {savedChallenges.upcoming.map((challenge, index) => {
                                 return (
-                                    <CollapsibleFaq key={index} title={challenge.name}>
+                                    <CollapsibleContent key={index} title={challenge.name}>
                                         <div className={"mb-2 pb-2 border-bottom"}>{challenge.description}</div>
                                         <div className={"fw-bold"}>Start: {challenge.start}</div>
                                         <div className={"fw-bold"}>Finish: {challenge.finish}</div>
-                                    </CollapsibleFaq>
+                                    </CollapsibleContent>
                                 );
                             })}
                         </Container>

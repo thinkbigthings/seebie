@@ -7,7 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDown} from "@fortawesome/free-solid-svg-icons";
 
 
-function CollapsibleFaq(props) {
+function CollapsibleContent(props) {
 
     const {title} = props;
 
@@ -44,4 +44,4 @@ function CollapsibleFaq(props) {
 
 }
 
-export default CollapsibleFaq;
+export default CollapsibleContent;
