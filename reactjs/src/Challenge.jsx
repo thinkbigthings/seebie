@@ -151,7 +151,7 @@ function Challenge(props) {
             </NavHeader>
 
             <Container className="container mt-3 px-0">
-                <Tabs defaultActiveKey="completed" id="challenge-tabs">
+                <Tabs defaultActiveKey="current" id="challenge-tabs">
                     <Tab eventKey="current" title="Current">
                         {currentChallengeElement}
                     </Tab>
