@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faPlus, faUser} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
@@ -11,6 +11,8 @@ import DatePicker from "react-datepicker";
 import useApiPost from "./hooks/useApiPost";
 import SleepDataManager from "./SleepDataManager";
 import {GET} from "./utility/BasicHeaders";
+import {Tab, Tabs} from "react-bootstrap";
+import CollapsibleContent from "./component/CollapsibleContent";
 
 function Challenge(props) {
 
@@ -21,7 +23,7 @@ function Challenge(props) {
     const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
 
     const suggestedEndDate = new Date();
-    suggestedEndDate.setDate(suggestedEndDate.getDate()+14);
+    suggestedEndDate.setDate(suggestedEndDate.getDate() + 14);
 
     const [createdCount, setCreatedCount] = useState(0);
     const [showCreateSuccess, setShowCreateSuccess] = useState(false);
@@ -47,11 +49,11 @@ function Challenge(props) {
             start: SleepDataManager.toIsoLocalDate(challenge.localStartTime),
             finish: SleepDataManager.toIsoLocalDate(challenge.localEndTime)
         })
-        .then(() => {
-            setShowCreateChallenge(false);
-            setShowCreateSuccess(true);
-            setCreatedCount(createdCount + 1);
-        });
+            .then(() => {
+                setShowCreateChallenge(false);
+                setShowCreateSuccess(true);
+                setCreatedCount(createdCount + 1);
+            });
     }
 
     useEffect(() => {
@@ -65,12 +67,22 @@ function Challenge(props) {
         setChallenge({...challenge, ...updateValues});
     }
 
-    const hasCurrent = (savedChallenges.current !== null);
+
+    const currentChallengeElement = (savedChallenges.current !== null)
+        ? <div>
+            <CollapsibleContent title={savedChallenges.current.name}>
+                <div className={"mb-2 pb-2 border-bottom"}>{savedChallenges.current.description}</div>
+                <div className={"fw-bold"}>Start: {savedChallenges.current.start}</div>
+                <div className={"fw-bold"}>Finish: {savedChallenges.current.finish}</div>
+            </CollapsibleContent>
+        </div>
+        : <div>No current challenge</div>;
+
 
     return (
         <Container>
 
-            <Modal centered={true} show={showCreateChallenge} onHide={() => setShowCreateChallenge(false)} >
+        <Modal centered={true} show={showCreateChallenge} onHide={() => setShowCreateChallenge(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Create Your Sleep Challenge</Modal.Title>
                 </Modal.Header>
@@ -80,21 +92,21 @@ function Challenge(props) {
                             <label htmlFor="challengeName" className="form-label">Challenge Name</label>
                             <input type="email" className="form-control" id="challengeName" placeholder=""
                                    value={challenge.name}
-                                   onChange={e => updateChallenge({name : e.target.value })} />
+                                   onChange={e => updateChallenge({name: e.target.value})}/>
                         </Container>
                         <Container className="ps-0 mb-3">
                             <label type="text" htmlFor="description" className="form-label">Description</label>
                             <textarea rows="8" className="form-control" id="description" placeholder=""
                                       value={challenge.description}
-                                      onChange={e => updateChallenge({description : e.target.value })} />
+                                      onChange={e => updateChallenge({description: e.target.value})}/>
                         </Container>
                         <Container className="ps-0 mb-3">
                             <label htmlFor="startDate" className="form-label">Start Date</label>
                             <div>
                                 <DatePicker
                                     className="form-control" id="startDate" dateFormat="MMMM d, yyyy"
-                                    onChange={ date => updateChallenge({localStartTime : date })}
-                                    selected={challenge.localStartTime} />
+                                    onChange={date => updateChallenge({localStartTime: date})}
+                                    selected={challenge.localStartTime}/>
                             </div>
                         </Container>
                         <Container className="ps-0 mb-3">
@@ -102,8 +114,8 @@ function Challenge(props) {
                             <div>
                                 <DatePicker
                                     className="form-control" id="startDate" dateFormat="MMMM d, yyyy"
-                                    onChange={ date => updateChallenge({localEndTime : date })}
-                                    selected={challenge.localEndTime} />
+                                    onChange={date => updateChallenge({localEndTime: date})}
+                                    selected={challenge.localEndTime}/>
                             </div>
                         </Container>
                     </form>
@@ -139,9 +151,37 @@ function Challenge(props) {
             </NavHeader>
 
             <Container className="container mt-3 px-0">
-                {hasCurrent
-                    ? `Current Challenge: ${savedChallenges.current.name} from ${savedChallenges.current.start} to ${savedChallenges.current.finish}`
-                    : "No current challenge"}
+                <Tabs defaultActiveKey="current" id="challenge-tabs">
+                    <Tab eventKey="current" title="Current">
+                        {currentChallengeElement}
+                    </Tab>
+                    <Tab eventKey="completed" title="Completed">
+                        <Container className="px-0 overflow-y-scroll h-70vh ">
+                            {savedChallenges.completed.map((challenge, index) => {
+                                return (
+                                    <CollapsibleContent key={index} title={challenge.name}>
+                                        <div className={"mb-2 pb-2 border-bottom"}>{challenge.description}</div>
+                                        <div className={"fw-bold"}>Start: {challenge.start}</div>
+                                        <div className={"fw-bold"}>Finish: {challenge.finish}</div>
+                                    </CollapsibleContent>
+                                );
+                            })}
+                        </Container>
+                    </Tab>
+                    <Tab eventKey="upcoming" title="Future">
+                        <Container className="px-0 overflow-y-scroll h-70vh ">
+                            {savedChallenges.upcoming.map((challenge, index) => {
+                                return (
+                                    <CollapsibleContent key={index} title={challenge.name}>
+                                        <div className={"mb-2 pb-2 border-bottom"}>{challenge.description}</div>
+                                        <div className={"fw-bold"}>Start: {challenge.start}</div>
+                                        <div className={"fw-bold"}>Finish: {challenge.finish}</div>
+                                    </CollapsibleContent>
+                                );
+                            })}
+                        </Container>
+                    </Tab>
+                </Tabs>
             </Container>
 
         </Container>

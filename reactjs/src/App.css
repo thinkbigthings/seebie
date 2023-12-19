@@ -72,6 +72,9 @@ body {
 .h-90vh {
     height: 90vh;
 }
+.h-70vh {
+    height: 70vh;
+}
 
 .app-highlight {
     color: var(--soft-peach);
