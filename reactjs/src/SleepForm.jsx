@@ -5,6 +5,10 @@ import DatePickerButton from "./component/DatePickerButton";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import SleepDataManager from "./SleepDataManager";
+import Button from "react-bootstrap/Button";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import InfoModalButton from "./component/InfoModalButton";
 
 function SleepForm(props) {
 
@@ -45,21 +49,20 @@ function SleepForm(props) {
                                   onChange={ date => updateSleepSession({localStopTime : date })} />
                 </Col>
             </Row>
-            <Row className={"pb-2"}>
+            <Row className={"pb-4"}>
                 <Col md={6} className={"col-4 pe-0"}>
                     <label htmlFor="minutesAwake" className="">Minutes Awake</label>
                 </Col>
-                <Col md={6} className={"col-8 "}>
+                <Col md={5} className={"col-6 "}>
                     <input type="text" className="form-control" id="minutesAwake"
                                placeholder="Minutes Awake"
                                value={sleepData.minutesAwake}
                                onChange={e => updateSleepSession({minutesAwake : e.target.value})} />
                 </Col>
-            </Row>
-            <Row className={"pb-2"}>
-                <Col md={6} className={"col-12"}>
-                    {/*TODO make this an info popup on click, with an info icon next to minutes*/}
-                    Total time you were awake during the night including time to fall asleep and time awake at night
+                <Col md={1} className={"col-1 p-0"}>
+                    <InfoModalButton titleText="Minutes Awake"
+                                     modalText="This includes the time it takes to fall asleep,
+                                      and the amount of time spent awake during the night" />
                 </Col>
             </Row>
             <Row className={"pb-2"}>
