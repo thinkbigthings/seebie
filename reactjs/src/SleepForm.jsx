@@ -30,11 +30,11 @@ function SleepForm(props) {
             <Row>
                 <Col md={6} className={"pe-4"}>
                     <div className="mb-3">
-                        <label htmlFor="dateStart" className="form-label d-block">Time Fell Asleep</label>
+                        <label htmlFor="dateStart" className="form-label d-block">Went to Bed</label>
                         <DatePickerButton selected={sleepData.localStartTime} onChange={ date => updateSleepSession({localStartTime : date })} />
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="dateEnd" className="form-label d-block">Time Woke Up</label>
+                        <label htmlFor="dateEnd" className="form-label d-block">Got Up</label>
                         <DatePickerButton selected={sleepData.localStopTime} onChange={ date => updateSleepSession({localStopTime : date })} />
                     </div>
                     <div className="mb-3">
