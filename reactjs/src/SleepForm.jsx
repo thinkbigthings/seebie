@@ -24,6 +24,8 @@ function SleepForm(props) {
         updatedSleep.startTime = localStartTime + sleepData.startTime.substring(19);
         updatedSleep.stopTime = localStopTime + sleepData.stopTime.substring(19);
 
+        // TODO let the user know if the data is invalid
+        // TODO allow the user to use either a numeric string or HH:mm format
         if(SleepDataManager.isDataValid(updatedSleep)) {
             setSleepData(updatedSleep);
         }
