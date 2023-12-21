@@ -29,11 +29,8 @@ function CreateSleepSession(props) {
     const post = useApiPost();
 
     const saveData = () => {
-
-        const formattedData = SleepDataManager.format(sleepData);
-
-        post(sleepUrl, formattedData)
-            .then(result => setShowModal(false))
+        post(sleepUrl, SleepDataManager.format(sleepData))
+            .then(closeModal)
             .then(onSave);
     }
 
@@ -49,13 +46,18 @@ function CreateSleepSession(props) {
     const hasCurrentChallenge = (savedChallenges.current !== null);
     const challengeTitle = hasCurrentChallenge ? savedChallenges.current.name : "";
 
+    const closeModal = () => {
+        setSleepData(SleepDataManager.createInitSleepData());
+        setShowModal(false);
+    }
+
     return (
         <>
             <Button variant="secondary" className="px-4 py-2" onClick={() => setShowModal(true)}>
                 <FontAwesomeIcon className="me-2" icon={faPlus} />Log Sleep
             </Button>
 
-            <Modal show={showModal} onHide={() => setShowModal(false)} >
+            <Modal show={showModal} onHide={closeModal} >
                 <Modal.Header closeButton>
                     <Modal.Title className={"w-100"}>
                         {defaultTitle}
@@ -66,7 +68,7 @@ function CreateSleepSession(props) {
                     <SleepForm setSleepData={setSleepData} sleepData={sleepData} />
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={ () => setShowModal(false) }>Cancel</Button>
+                    <Button variant="secondary" onClick={ closeModal }>Cancel</Button>
                     <Button variant="primary" onClick={ saveData }>Save</Button>
                 </Modal.Footer>
             </Modal>
