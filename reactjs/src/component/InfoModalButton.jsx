@@ -11,15 +11,15 @@ const InfoModalButton = ({ titleText, modalText }) => {
 
   return (
     <>
-      <Button variant="secondary" onClick={handleShow}>
-          <FontAwesomeIcon className="app-highlight ms-2" icon={faQuestion} />
+      <Button variant="secondary" className={"rounded-circle"} onClick={handleShow}>
+          <FontAwesomeIcon className="app-highlight " icon={faQuestion} />
       </Button>
 
       <Modal show={show} onHide={handleClose} onClick={handleClose} centered >
-        <Modal.Header closeButton>
+        <Modal.Header className={"app-faq-button border-secondary border-bottom-2"} closeButton>
           <Modal.Title>{titleText}</Modal.Title>
         </Modal.Header>
-        <Modal.Body>{modalText}</Modal.Body>
+        <Modal.Body className={"app-highlight app-faq-button"}>{modalText}</Modal.Body>
       </Modal>
     </>
   );

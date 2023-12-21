@@ -59,10 +59,10 @@ function SleepForm(props) {
                                value={sleepData.minutesAwake}
                                onChange={e => updateSleepSession({minutesAwake : e.target.value})} />
                 </Col>
-                <Col md={1} className={"col-1 p-0"}>
+                <Col md={1} className={"col-1"}>
                     <InfoModalButton titleText="Minutes Awake"
                                      modalText="This includes the time it takes to fall asleep,
-                                      and the amount of time spent awake during the night" />
+                                      plus the amount of time spent awake during the night" />
                 </Col>
             </Row>
             <Row className={"pb-2"}>
