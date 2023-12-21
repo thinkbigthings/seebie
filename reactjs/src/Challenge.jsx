@@ -77,7 +77,6 @@ function Challenge(props) {
     }
 
     // TODO add margin when no current challenge
-    // TODO try colors and textures in progress bar, and percentage text or N/M days text
 
     let progress = 0;
     if(savedChallenges.current !== null) {
@@ -92,9 +91,9 @@ function Challenge(props) {
                 <div className={"mb-2 pb-2 border-bottom"}>{savedChallenges.current.description}</div>
                 <div className={"fw-bold"}>Start: {savedChallenges.current.start}</div>
                 <div className={"fw-bold"}>Finish: {savedChallenges.current.finish}</div>
-                <div className="progress" role="progressbar" aria-label="Basic example" aria-valuenow={progress}
-                     aria-valuemin="0" aria-valuemax="100">
-                    <div className="progress-bar" style={{width: progress + "%"}}></div>
+                <div className="progress my-2" role="progressbar" style={{height: "25px"}}
+                     aria-label="Basic example" aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100">
+                    <div className="progress-bar btn-secondary" style={{width: progress + "%"}}>{progress + "%"}</div>
                 </div>
             </CollapsibleContent>
         </div>
