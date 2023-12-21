@@ -6,7 +6,7 @@ import Button from "react-bootstrap/Button";
 
 const ButtonWrapper = React.forwardRef(({value, onClick, className}, ref) => {
     return (
-        <Button ref={ref} onClick={onClick} className={className}>
+        <Button ref={ref} onClick={onClick} className={"form-control"}>
             {value}
         </Button>
     );
@@ -18,17 +18,21 @@ function DatePickerButton(props) {
     // TODO also apply className, id, placeholder, and set from caller appropriately
     const {selected, onChange} = props;
 
+    // see https://github.com/Hacker0x01/react-datepicker/issues/2099 about the wrapperClassName
+
     return (
         <DatePicker
+            wrapperClassName="w-100 form-control"
             selected={selected}
-            className="form-control" id="dateStart" placeholder="Start Time"
-            dateFormat="MMMM d, yyyy h:mm aa"
+            id="dateStart"
+            placeholder="Start Time"
+            dateFormat="MMM d, yyyy h:mm aa"
             showTimeSelect
             timeIntervals={15}
             timeCaption="time"
             timeFormat="p"
             onChange={ onChange }
-            customInput={<ButtonWrapper />}
+            customInput={<ButtonWrapper  />}
         />
     );
 

@@ -89,7 +89,7 @@ function Challenge(props) {
                 <Modal.Body>
                     <form>
                         <Container className="ps-0 mb-3">
-                            <label htmlFor="challengeName" className="form-label">Challenge Name</label>
+                            <label htmlFor="challengeName" className="form-label">Short Name</label>
                             <input type="email" className="form-control" id="challengeName" placeholder=""
                                    value={challenge.name}
                                    onChange={e => updateChallenge({name: e.target.value})}/>
