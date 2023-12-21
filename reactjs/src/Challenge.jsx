@@ -76,16 +76,16 @@ function Challenge(props) {
         setChallenge({...challenge, ...updateValues});
     }
 
-    // TODO add margin when no current challenge
+    const hasCurrentChallenge = (savedChallenges.current === null);
 
     let progress = 0;
-    if(savedChallenges.current !== null) {
+    if (hasCurrentChallenge) {
         const startDate = new Date(savedChallenges.current.start);
         const finishDate = new Date(savedChallenges.current.finish);
         progress = calculateProgress(startDate, new Date(), finishDate);
     }
 
-    const currentChallengeElement = (savedChallenges.current !== null)
+    const currentChallengeElement = hasCurrentChallenge
         ? <div>
             <CollapsibleContent title={savedChallenges.current.name}>
                 <div className={"mb-2 pb-2 border-bottom"}>{savedChallenges.current.description}</div>
@@ -97,7 +97,7 @@ function Challenge(props) {
                 </div>
             </CollapsibleContent>
         </div>
-        : <div>No current challenge</div>;
+        : <div className={"my-2"}>No current challenge</div>;
 
 
     return (
