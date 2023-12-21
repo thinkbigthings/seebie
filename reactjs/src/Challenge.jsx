@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus, faUser} from "@fortawesome/free-solid-svg-icons";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
@@ -13,6 +13,15 @@ import SleepDataManager from "./SleepDataManager";
 import {GET} from "./utility/BasicHeaders";
 import {Tab, Tabs} from "react-bootstrap";
 import CollapsibleContent from "./component/CollapsibleContent";
+
+function calculateProgress(start, now, end) {
+
+    const totalDuration = end - start;
+    const durationFromStartToNow = now - start;
+    const effectiveDuration = Math.min(durationFromStartToNow, totalDuration);
+
+    return Math.round((effectiveDuration / totalDuration) * 100);
+}
 
 function Challenge(props) {
 
@@ -49,11 +58,11 @@ function Challenge(props) {
             start: SleepDataManager.toIsoLocalDate(challenge.localStartTime),
             finish: SleepDataManager.toIsoLocalDate(challenge.localEndTime)
         })
-            .then(() => {
-                setShowCreateChallenge(false);
-                setShowCreateSuccess(true);
-                setCreatedCount(createdCount + 1);
-            });
+        .then(() => {
+            setShowCreateChallenge(false);
+            setShowCreateSuccess(true);
+            setCreatedCount(createdCount + 1);
+        });
     }
 
     useEffect(() => {
@@ -67,6 +76,15 @@ function Challenge(props) {
         setChallenge({...challenge, ...updateValues});
     }
 
+    // TODO add margin when no current challenge
+    // TODO try colors and textures in progress bar, and percentage text or N/M days text
+
+    let progress = 0;
+    if(savedChallenges.current !== null) {
+        const startDate = new Date(savedChallenges.current.start);
+        const finishDate = new Date(savedChallenges.current.finish);
+        progress = calculateProgress(startDate, new Date(), finishDate);
+    }
 
     const currentChallengeElement = (savedChallenges.current !== null)
         ? <div>
@@ -74,6 +92,10 @@ function Challenge(props) {
                 <div className={"mb-2 pb-2 border-bottom"}>{savedChallenges.current.description}</div>
                 <div className={"fw-bold"}>Start: {savedChallenges.current.start}</div>
                 <div className={"fw-bold"}>Finish: {savedChallenges.current.finish}</div>
+                <div className="progress" role="progressbar" aria-label="Basic example" aria-valuenow={progress}
+                     aria-valuemin="0" aria-valuemax="100">
+                    <div className="progress-bar" style={{width: progress + "%"}}></div>
+                </div>
             </CollapsibleContent>
         </div>
         : <div>No current challenge</div>;
@@ -82,7 +104,7 @@ function Challenge(props) {
     return (
         <Container>
 
-        <Modal centered={true} show={showCreateChallenge} onHide={() => setShowCreateChallenge(false)}>
+            <Modal centered={true} show={showCreateChallenge} onHide={() => setShowCreateChallenge(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Create Your Sleep Challenge</Modal.Title>
                 </Modal.Header>
