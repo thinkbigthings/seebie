@@ -76,7 +76,7 @@ function Challenge(props) {
         setChallenge({...challenge, ...updateValues});
     }
 
-    const hasCurrentChallenge = (savedChallenges.current === null);
+    const hasCurrentChallenge = (savedChallenges.current !== null);
 
     let progress = 0;
     if (hasCurrentChallenge) {
