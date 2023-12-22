@@ -1,6 +1,7 @@
 import React from 'react';
 import CollapsibleContent from "./component/CollapsibleContent";
 import Container from "react-bootstrap/Container";
+import {PREDEFINED_CHALLENGES} from "./utility/Constants";
 
 function Home() {
 
@@ -19,7 +20,7 @@ function Home() {
             </CollapsibleContent>
 
             <CollapsibleContent title="How does this improve my sleep?">
-                You can track your sleep baseline, try a new evening routine, then
+                You can track your sleep to establish a baseline, challenge yourself to try a new evening routine, then
                 compare the two time periods to see how the new routine affected your sleep.
                 If you can see the improvement, it will help motivate you to keep that routine!
             </CollapsibleContent>
@@ -35,12 +36,11 @@ function Home() {
                 and keep you on track. Maintaining your sleep habits is just as important as establishing them.
             </CollapsibleContent>
 
-            <CollapsibleContent title="What are some routines I can try?">
+            <CollapsibleContent title="What are some things I can try?">
+                <div className={"mb-2"}>When you go to the Challenges section to add a challenge, you will be able to see some common ideas.
+                    Here they are listed for your convenience:</div>
                 <ul>
-                    <li>Go to bed at the same time every day, even on weekends</li>
-                    <li>Do something quiet and relaxing in low light for 60 minutes before bed instead of looking at your phone or watching a show</li>
-                    <li>Cut your caffeine in half, or finish all caffeine for the day before lunch</li>
-                    <li>Don't look at the clock during the night</li>
+                    {PREDEFINED_CHALLENGES.map(challenge => <li>{challenge.description}</li>)}
                 </ul>
             </CollapsibleContent>
 

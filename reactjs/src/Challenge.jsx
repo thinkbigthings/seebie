@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus, faQuestion} from "@fortawesome/free-solid-svg-icons";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
@@ -13,42 +13,8 @@ import SleepDataManager from "./SleepDataManager";
 import {GET} from "./utility/BasicHeaders";
 import {Tab, Tabs} from "react-bootstrap";
 import CollapsibleContent from "./component/CollapsibleContent";
+import {PREDEFINED_CHALLENGES} from "./utility/Constants";
 
-
-const predefinedChallenges = [
-    {
-        title: "Consistent bedtime",
-        description: "Go to bed at the same time every day even on weekends"
-    },
-    {
-        title: "Proper wind down",
-        description: "Do something quiet and relaxing in low light for 1-2 hours before bed instead of looking at your phone or watching a show"
-    },
-    {
-        title: "Reduce Caffeine",
-        description: "Cut your caffeine in half, finish all caffeine before lunch, or eliminate caffeine entirely"
-    },
-    {
-        title: "No clock",
-        description: "Don't look at the clock during the night"
-    },
-    {
-        title: "Natural sunlight",
-        description: "Get 30 minutes of natural sunlight outside as early in the day as you can"
-    },
-    {
-        title: "Meditate daily",
-        description: "Meditate at the same time every day, even just 5 minutes."
-    },
-    {
-        title: "Cool temperature",
-        description: "Set the overnight temperature in your bedroom to 60-68 degrees Fahrenheit, and/or use a cooling mattress"
-    },
-    {
-        title: "Maintenance",
-        description: "Maintain current habits for next three months to make sure your sleep doesn't degrade over time"
-    }
-];
 
 function calculateProgress(start, now, end) {
 
@@ -207,10 +173,10 @@ function Challenge(props) {
                 </Modal.Header>
                 <Modal.Body>
                     <Alert variant="secondary">
-                        Select from a list here, you'll be able to edit it, and customize the name and dates.
+                        Select from a pre-defined list here. Once selected, you'll be able to edit it and customize the name and dates.
                     </Alert>
                     <Container className="px-0 overflow-y-scroll h-50vh ">
-                        {predefinedChallenges.map((challenge, index) => {
+                        {PREDEFINED_CHALLENGES.map((challenge, index) => {
                             return (
                                 <CollapsibleContent key={index} title={challenge.title}>
                                     <div className={"mb-2 pb-2 border-bottom"}>{challenge.description}</div>
