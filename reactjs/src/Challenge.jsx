@@ -75,7 +75,7 @@ function Challenge(props) {
     const suggestedEndDate = new Date();
     suggestedEndDate.setDate(suggestedEndDate.getDate() + 14);
 
-    const [challenge, setChallenge] = useState({
+    const [challengeEdit, setChallengeEdit] = useState({
         name: "",
         description: "",
         localStartTime: new Date(),
@@ -92,10 +92,10 @@ function Challenge(props) {
 
     const saveData = () => {
         post(challengeEndpoint, {
-            name: challenge.name,
-            description: challenge.description,
-            start: SleepDataManager.toIsoLocalDate(challenge.localStartTime),
-            finish: SleepDataManager.toIsoLocalDate(challenge.localEndTime)
+            name: challengeEdit.name,
+            description: challengeEdit.description,
+            start: SleepDataManager.toIsoLocalDate(challengeEdit.localStartTime),
+            finish: SleepDataManager.toIsoLocalDate(challengeEdit.localEndTime)
         })
         .then(() => {
             setShowCreateChallenge(false);
@@ -112,7 +112,7 @@ function Challenge(props) {
     }, [createdCount]);
 
     const updateChallenge = (updateValues) => {
-        setChallenge({...challenge, ...updateValues});
+        setChallengeEdit({...challengeEdit, ...updateValues});
     }
 
     const selectPressed = () => {
@@ -159,13 +159,13 @@ function Challenge(props) {
                         <Container className="ps-0 mb-3">
                             <label htmlFor="challengeName" className="form-label">Short Name</label>
                             <input type="email" className="form-control" id="challengeName" placeholder=""
-                                   value={challenge.name}
+                                   value={challengeEdit.name}
                                    onChange={e => updateChallenge({name: e.target.value})}/>
                         </Container>
                         <Container className="ps-0 mb-3">
                             <label type="text" htmlFor="description" className="form-label">Description</label>
                             <textarea rows="8" className="form-control" id="description" placeholder=""
-                                      value={challenge.description}
+                                      value={challengeEdit.description}
                                       onChange={e => updateChallenge({description: e.target.value})}/>
                         </Container>
                         <Container className="ps-0 mb-3">
@@ -174,7 +174,7 @@ function Challenge(props) {
                                 <DatePicker
                                     className="form-control" id="startDate" dateFormat="MMMM d, yyyy"
                                     onChange={date => updateChallenge({localStartTime: date})}
-                                    selected={challenge.localStartTime}/>
+                                    selected={challengeEdit.localStartTime}/>
                             </div>
                         </Container>
                         <Container className="ps-0 mb-3">
@@ -183,7 +183,7 @@ function Challenge(props) {
                                 <DatePicker
                                     className="form-control" id="startDate" dateFormat="MMMM d, yyyy"
                                     onChange={date => updateChallenge({localEndTime: date})}
-                                    selected={challenge.localEndTime}/>
+                                    selected={challengeEdit.localEndTime}/>
                             </div>
                         </Container>
                     </form>
@@ -209,6 +209,26 @@ function Challenge(props) {
                     <Alert variant="secondary">
                         Select from a list here, you'll be able to edit it, and customize the name and dates.
                     </Alert>
+                    <Container className="px-0 overflow-y-scroll h-50vh ">
+                        {predefinedChallenges.map((challenge, index) => {
+                            return (
+                                <CollapsibleContent key={index} title={challenge.title}>
+                                    <div className={"mb-2 pb-2 border-bottom"}>{challenge.description}</div>
+                                    <Button variant="success" className="mt-2 w-100"
+                                            onClick={() => {
+                                                updateChallenge({
+                                                    name: challenge.title,
+                                                    description: challenge.description
+                                                });
+                                                setShowPredefinedChallenges(false);
+                                                setShowCreateChallenge(true);
+                                            }}>
+                                        Select
+                                    </Button>
+                                </CollapsibleContent>
+                            );
+                        })}
+                        </Container>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => {
