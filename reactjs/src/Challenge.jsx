@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faPlus, faQuestion} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
@@ -13,6 +13,42 @@ import SleepDataManager from "./SleepDataManager";
 import {GET} from "./utility/BasicHeaders";
 import {Tab, Tabs} from "react-bootstrap";
 import CollapsibleContent from "./component/CollapsibleContent";
+
+
+const predefinedChallenges = [
+    {
+        title: "Consistent bedtime",
+        description: "Go to bed at the same time every day even on weekends"
+    },
+    {
+        title: "Proper wind down",
+        description: "Do something quiet and relaxing in low light for 1-2 hours before bed instead of looking at your phone or watching a show"
+    },
+    {
+        title: "Reduce Caffeine",
+        description: "Cut your caffeine in half, finish all caffeine before lunch, or eliminate caffeine entirely"
+    },
+    {
+        title: "No clock",
+        description: "Don't look at the clock during the night"
+    },
+    {
+        title: "Natural sunlight",
+        description: "Get 30 minutes of natural sunlight outside as early in the day as you can"
+    },
+    {
+        title: "Meditate daily",
+        description: "Meditate at the same time every day, even just 5 minutes."
+    },
+    {
+        title: "Cool temperature",
+        description: "Set the overnight temperature in your bedroom to 60-68 degrees Fahrenheit, and/or use a cooling mattress"
+    },
+    {
+        title: "Maintenance",
+        description: "Maintain current habits for next three months to make sure your sleep doesn't degrade over time"
+    }
+];
 
 function calculateProgress(start, now, end) {
 
@@ -31,18 +67,21 @@ function Challenge(props) {
     const challengeEndpoint = `/api/user/${username}/challenge`;
     const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
 
-    const suggestedEndDate = new Date();
-    suggestedEndDate.setDate(suggestedEndDate.getDate() + 14);
-
     const [createdCount, setCreatedCount] = useState(0);
     const [showCreateSuccess, setShowCreateSuccess] = useState(false);
     const [showCreateChallenge, setShowCreateChallenge] = useState(false);
+    const [showPredefinedChallenges, setShowPredefinedChallenges] = useState(false);
+
+    const suggestedEndDate = new Date();
+    suggestedEndDate.setDate(suggestedEndDate.getDate() + 14);
+
     const [challenge, setChallenge] = useState({
         name: "",
         description: "",
         localStartTime: new Date(),
         localEndTime: suggestedEndDate
     });
+
     const [savedChallenges, setSavedChallenges] = useState({
         current: null,
         upcoming: [],
@@ -76,6 +115,12 @@ function Challenge(props) {
         setChallenge({...challenge, ...updateValues});
     }
 
+    const selectPressed = () => {
+        setShowPredefinedChallenges(true);
+        setShowCreateChallenge(false);
+    }
+
+
     const hasCurrentChallenge = (savedChallenges.current !== null);
 
     let progress = 0;
@@ -99,15 +144,17 @@ function Challenge(props) {
         </div>
         : <div className={"my-2"}>No current challenge</div>;
 
-
     return (
         <Container>
 
             <Modal centered={true} show={showCreateChallenge} onHide={() => setShowCreateChallenge(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Create Your Sleep Challenge</Modal.Title>
+                    <Modal.Title>Create Sleep Challenge</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    <Button variant="secondary" className={"app-highlight w-100 mb-3"} onClick={selectPressed}>
+                        Select from a list
+                    </Button>
                     <form>
                         <Container className="ps-0 mb-3">
                             <label htmlFor="challengeName" className="form-label">Short Name</label>
@@ -148,6 +195,26 @@ function Challenge(props) {
                         <Button className="" variant="secondary"
                                 onClick={() => setShowCreateChallenge(false)}>Cancel</Button>
                     </div>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal centered={true} show={showPredefinedChallenges} onHide={() => {
+                setShowPredefinedChallenges(false);
+                setShowCreateChallenge(true);
+            }}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Predefined Challenges</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Alert variant="secondary">
+                        Select from a list here, you'll be able to edit it, and customize the name and dates.
+                    </Alert>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => {
+                        setShowPredefinedChallenges(false);
+                        setShowCreateChallenge(true);
+                    }}>Back To Create Challenge</Button>
                 </Modal.Footer>
             </Modal>
 
