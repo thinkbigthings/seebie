@@ -37,8 +37,10 @@ function Home() {
             </CollapsibleContent>
 
             <CollapsibleContent title="What are some things I can try?">
-                <div className={"mb-2"}>When you go to the Challenges section to add a challenge, you will be able to see some common ideas.
-                    Here they are listed for your convenience:</div>
+                <div className={"mb-2"}>
+                    When you go to the Challenges section to add a challenge, you will be able to see some common ideas.
+                    Here they are listed for your convenience:
+                </div>
                 <ul>
                     {PREDEFINED_CHALLENGES.map(challenge => <li>{challenge.description}</li>)}
                 </ul>

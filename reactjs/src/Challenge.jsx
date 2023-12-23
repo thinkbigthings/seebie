@@ -25,6 +25,17 @@ function calculateProgress(start, now, end) {
     return Math.round((effectiveDuration / totalDuration) * 100);
 }
 
+function emptyChallenge() {
+    const suggestedEndDate = new Date();
+    suggestedEndDate.setDate(suggestedEndDate.getDate() + 14);
+    return {
+        name: "",
+        description: "",
+        localStartTime: new Date(),
+        localEndTime: suggestedEndDate
+    };
+}
+
 function Challenge(props) {
 
     const {username} = useParams();
@@ -41,12 +52,7 @@ function Challenge(props) {
     const suggestedEndDate = new Date();
     suggestedEndDate.setDate(suggestedEndDate.getDate() + 14);
 
-    const [challengeEdit, setChallengeEdit] = useState({
-        name: "",
-        description: "",
-        localStartTime: new Date(),
-        localEndTime: suggestedEndDate
-    });
+    const [challengeEdit, setChallengeEdit] = useState(emptyChallenge());
 
     const [savedChallenges, setSavedChallenges] = useState({
         current: null,
@@ -63,11 +69,8 @@ function Challenge(props) {
             start: SleepDataManager.toIsoLocalDate(challengeEdit.localStartTime),
             finish: SleepDataManager.toIsoLocalDate(challengeEdit.localEndTime)
         })
-        .then(() => {
-            setShowCreateChallenge(false);
-            setShowCreateSuccess(true);
-            setCreatedCount(createdCount + 1);
-        });
+        .then(clearChallengeEdit)
+        .then(() => setCreatedCount(createdCount + 1));
     }
 
     useEffect(() => {
@@ -76,6 +79,11 @@ function Challenge(props) {
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, [createdCount]);
+
+    const clearChallengeEdit = () => {
+        setShowCreateChallenge(false);
+        setChallengeEdit(emptyChallenge());
+    }
 
     const updateChallenge = (updateValues) => {
         setChallengeEdit({...challengeEdit, ...updateValues});
@@ -113,7 +121,7 @@ function Challenge(props) {
     return (
         <Container>
 
-            <Modal centered={true} show={showCreateChallenge} onHide={() => setShowCreateChallenge(false)}>
+            <Modal centered={true} show={showCreateChallenge} onHide={clearChallengeEdit}>
                 <Modal.Header closeButton>
                     <Modal.Title>Create Sleep Challenge</Modal.Title>
                 </Modal.Header>
@@ -159,15 +167,15 @@ function Challenge(props) {
                         <Button className="me-3" variant="success"
                                 onClick={saveData}>Save</Button>
                         <Button className="" variant="secondary"
-                                onClick={() => setShowCreateChallenge(false)}>Cancel</Button>
+                                onClick={clearChallengeEdit}>Cancel</Button>
                     </div>
                 </Modal.Footer>
             </Modal>
 
             <Modal centered={true} show={showPredefinedChallenges} onHide={() => {
-                setShowPredefinedChallenges(false);
-                setShowCreateChallenge(true);
-            }}>
+                                                                            setShowPredefinedChallenges(false);
+                                                                            setShowCreateChallenge(true);
+                                                                        }}>
                 <Modal.Header closeButton>
                     <Modal.Title>Predefined Challenges</Modal.Title>
                 </Modal.Header>
@@ -198,9 +206,12 @@ function Challenge(props) {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => {
-                        setShowPredefinedChallenges(false);
-                        setShowCreateChallenge(true);
-                    }}>Back To Create Challenge</Button>
+                                                                        setShowPredefinedChallenges(false);
+                                                                        setShowCreateChallenge(true);
+                                                                    }}
+                    >
+                        Back To Create Challenge
+                    </Button>
                 </Modal.Footer>
             </Modal>
 
