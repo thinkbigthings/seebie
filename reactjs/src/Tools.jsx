@@ -4,13 +4,12 @@ import {NavHeader} from "./App";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload, faUpload} from "@fortawesome/free-solid-svg-icons";
-import Modal from "react-bootstrap/Modal";
-import Alert from "react-bootstrap/Alert";
 import Form from 'react-bootstrap/Form';
 import Row from "react-bootstrap/Row";
 import useHttpError from "./hooks/useHttpError";
 import {useApiGet} from "./hooks/useApiGet";
 import {useParams} from "react-router-dom";
+import SuccessModal from "./component/SuccessModal";
 
 function Tools() {
 
@@ -69,19 +68,9 @@ function Tools() {
     return (
         <Container>
 
-            <Modal centered={true} show={showSuccessModal} onHide={() => setShowSuccessModal(false)} >
-                <Modal.Header closeButton>
-                    <Modal.Title>Upload Success</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Alert variant="success">
-                        Uploaded {uploadSuccessInfo.numImported} records for user {username}.
-                    </Alert>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={()=> setShowSuccessModal(false)} >OK</Button>
-                </Modal.Footer>
-            </Modal>
+            <SuccessModal title="Upload Success" showing={showSuccessModal} handleClose={() => setShowSuccessModal(false)}>
+                Uploaded {uploadSuccessInfo.numImported} records for user {username}.
+            </SuccessModal>
 
             <NavHeader title="Tools" />
 

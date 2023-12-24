@@ -5,9 +5,6 @@ import DatePickerButton from "./component/DatePickerButton";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import SleepDataManager from "./SleepDataManager";
-import Button from "react-bootstrap/Button";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import InfoModalButton from "./component/InfoModalButton";
 
 function SleepForm(props) {
