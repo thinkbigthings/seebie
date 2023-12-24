@@ -14,6 +14,7 @@ import {GET} from "./utility/BasicHeaders";
 import {Tab, Tabs} from "react-bootstrap";
 import CollapsibleContent from "./component/CollapsibleContent";
 import {PREDEFINED_CHALLENGES} from "./utility/Constants";
+import SuccessModal from "./component/SuccessModal";
 
 
 function calculateProgress(start, now, end) {
@@ -66,6 +67,7 @@ function Challenge(props) {
             finish: SleepDataManager.toIsoLocalDate(challengeEdit.localEndTime)
         })
         .then(clearChallengeEdit)
+        .then(() => setShowCreateSuccess(true))
         .then(() => setCreatedCount(createdCount + 1));
     }
 
@@ -203,19 +205,9 @@ function Challenge(props) {
                 </Modal.Footer>
             </Modal>
 
-            <Modal centered={true} show={showCreateSuccess} onHide={() => setShowCreateSuccess(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Creation Success</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Alert variant="success">
-                        Challenge created successfully! It will appear in your list of challenges.
-                    </Alert>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="success" onClick={() => setShowCreateSuccess(false)}>OK</Button>
-                </Modal.Footer>
-            </Modal>
+            <SuccessModal title="Creation Success" showing={showCreateSuccess} handleClose={() => setShowCreateSuccess(false)}>
+                Challenge created successfully! It will appear in your list of challenges.
+            </SuccessModal>
 
             <NavHeader title="Sleep Challenge">
                 <Button variant="success" disabled={false} onClick={() => setShowCreateChallenge(true)}>

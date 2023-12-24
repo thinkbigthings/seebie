@@ -4,6 +4,7 @@ import {faQuestion} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const InfoModalButton = ({ titleText, modalText }) => {
+
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
