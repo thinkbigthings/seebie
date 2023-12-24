@@ -48,10 +48,6 @@ function Challenge(props) {
     const [showCreateSuccess, setShowCreateSuccess] = useState(false);
     const [showCreateChallenge, setShowCreateChallenge] = useState(false);
     const [showPredefinedChallenges, setShowPredefinedChallenges] = useState(false);
-
-    const suggestedEndDate = new Date();
-    suggestedEndDate.setDate(suggestedEndDate.getDate() + 14);
-
     const [challengeEdit, setChallengeEdit] = useState(emptyChallenge());
 
     const [savedChallenges, setSavedChallenges] = useState({
@@ -89,11 +85,20 @@ function Challenge(props) {
         setChallengeEdit({...challengeEdit, ...updateValues});
     }
 
-    const selectPressed = () => {
-        setShowPredefinedChallenges(true);
-        setShowCreateChallenge(false);
+    const onSelectChallenge = (challenge) => {
+        return () => {
+            updateChallenge({
+                name: challenge.title,
+                description: challenge.description
+            });
+            swapModals();
+        }
     }
 
+    const swapModals = () => {
+        setShowCreateChallenge( ! showCreateChallenge);
+        setShowPredefinedChallenges( ! showPredefinedChallenges);
+    }
 
     const hasCurrentChallenge = (savedChallenges.current !== null);
 
@@ -126,7 +131,7 @@ function Challenge(props) {
                     <Modal.Title>Create Sleep Challenge</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Button variant="secondary" className={"app-highlight w-100 mb-3"} onClick={selectPressed}>
+                    <Button variant="secondary" className={"app-highlight w-100 mb-3"} onClick={swapModals}>
                         Select from a list
                     </Button>
                     <form>
@@ -164,18 +169,13 @@ function Challenge(props) {
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="d-flex flex-row">
-                        <Button className="me-3" variant="success"
-                                onClick={saveData}>Save</Button>
-                        <Button className="" variant="secondary"
-                                onClick={clearChallengeEdit}>Cancel</Button>
+                        <Button className="me-3" variant="success" onClick={saveData}>Save</Button>
+                        <Button className="" variant="secondary" onClick={clearChallengeEdit}>Cancel</Button>
                     </div>
                 </Modal.Footer>
             </Modal>
 
-            <Modal centered={true} show={showPredefinedChallenges} onHide={() => {
-                                                                            setShowPredefinedChallenges(false);
-                                                                            setShowCreateChallenge(true);
-                                                                        }}>
+            <Modal centered={true} show={showPredefinedChallenges} onHide={swapModals}>
                 <Modal.Header closeButton>
                     <Modal.Title>Predefined Challenges</Modal.Title>
                 </Modal.Header>
@@ -188,15 +188,7 @@ function Challenge(props) {
                             return (
                                 <CollapsibleContent key={index} title={challenge.title}>
                                     <div className={"mb-2 pb-2 border-bottom"}>{challenge.description}</div>
-                                    <Button variant="success" className="mt-2 w-100"
-                                            onClick={() => {
-                                                updateChallenge({
-                                                    name: challenge.title,
-                                                    description: challenge.description
-                                                });
-                                                setShowPredefinedChallenges(false);
-                                                setShowCreateChallenge(true);
-                                            }}>
+                                    <Button variant="success" className="mt-2 w-100" onClick={onSelectChallenge(challenge)}>
                                         Select
                                     </Button>
                                 </CollapsibleContent>
@@ -205,11 +197,7 @@ function Challenge(props) {
                         </Container>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => {
-                                                                        setShowPredefinedChallenges(false);
-                                                                        setShowCreateChallenge(true);
-                                                                    }}
-                    >
+                    <Button variant="secondary" onClick={swapModals}>
                         Back To Create Challenge
                     </Button>
                 </Modal.Footer>
