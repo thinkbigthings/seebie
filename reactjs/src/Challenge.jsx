@@ -15,16 +15,8 @@ import {Tab, Tabs} from "react-bootstrap";
 import CollapsibleContent from "./component/CollapsibleContent";
 import {PREDEFINED_CHALLENGES} from "./utility/Constants";
 import SuccessModal from "./component/SuccessModal";
+import CollapsibleChallenge from "./component/CollapsibleChallenge";
 
-
-function calculateProgress(start, now, end) {
-
-    const totalDuration = end - start;
-    const durationFromStartToNow = now - start;
-    const effectiveDuration = Math.min(durationFromStartToNow, totalDuration);
-
-    return Math.round((effectiveDuration / totalDuration) * 100);
-}
 
 function emptyChallenge() {
     const suggestedEndDate = new Date();
@@ -102,27 +94,8 @@ function Challenge(props) {
         setShowPredefinedChallenges( ! showPredefinedChallenges);
     }
 
-    const hasCurrentChallenge = (savedChallenges.current !== null);
-
-    let progress = 0;
-    if (hasCurrentChallenge) {
-        const startDate = new Date(savedChallenges.current.start);
-        const finishDate = new Date(savedChallenges.current.finish);
-        progress = calculateProgress(startDate, new Date(), finishDate);
-    }
-
-    const currentChallengeElement = hasCurrentChallenge
-        ? <div>
-            <CollapsibleContent title={savedChallenges.current.name}>
-                <div className={"mb-2 pb-2 border-bottom"}>{savedChallenges.current.description}</div>
-                <div className={"fw-bold"}>Start: {savedChallenges.current.start}</div>
-                <div className={"fw-bold"}>Finish: {savedChallenges.current.finish}</div>
-                <div className="progress my-2" role="progressbar" style={{height: "25px"}}
-                     aria-label="Basic example" aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100">
-                    <div className="progress-bar btn-secondary" style={{width: progress + "%"}}>{progress + "%"}</div>
-                </div>
-            </CollapsibleContent>
-        </div>
+    const currentChallengeElement = (savedChallenges.current !== null)
+        ? <CollapsibleChallenge key="0" challenge={savedChallenges.current} />
         : <div className={"my-2"}>No current challenge</div>;
 
     return (
@@ -222,28 +195,16 @@ function Challenge(props) {
                     </Tab>
                     <Tab eventKey="completed" title="Completed">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
-                            {savedChallenges.completed.map((challenge, index) => {
-                                return (
-                                    <CollapsibleContent key={index} title={challenge.name}>
-                                        <div className={"mb-2 pb-2 border-bottom"}>{challenge.description}</div>
-                                        <div className={"fw-bold"}>Start: {challenge.start}</div>
-                                        <div className={"fw-bold"}>Finish: {challenge.finish}</div>
-                                    </CollapsibleContent>
-                                );
-                            })}
+                            {savedChallenges.completed.map((challenge, index) =>
+                                <CollapsibleChallenge key={index} challenge={challenge} />
+                            )}
                         </Container>
                     </Tab>
                     <Tab eventKey="upcoming" title="Future">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
-                            {savedChallenges.upcoming.map((challenge, index) => {
-                                return (
-                                    <CollapsibleContent key={index} title={challenge.name}>
-                                        <div className={"mb-2 pb-2 border-bottom"}>{challenge.description}</div>
-                                        <div className={"fw-bold"}>Start: {challenge.start}</div>
-                                        <div className={"fw-bold"}>Finish: {challenge.finish}</div>
-                                    </CollapsibleContent>
-                                );
-                            })}
+                            {savedChallenges.upcoming.map((challenge, index) =>
+                                <CollapsibleChallenge key={index} challenge={challenge} />
+                            )}
                         </Container>
                     </Tab>
                 </Tabs>

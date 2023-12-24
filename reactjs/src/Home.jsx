@@ -25,14 +25,19 @@ function Home() {
                 Here's how it works:
                 <p />
                 <ol>
-                    <li>Select a Challenge: Open the Challenge page and tap the '+' button. Choose from a list of
+                    <li key="1">
+                        Select a Challenge: Open the Challenge page and tap the '+' button. Choose from a list of
                         popular sleep improvement ideas or create your own.
                     </li>
-                    <li>Set Your Dates: Choose when to start and end your challenge.</li>
-                    <li>Track Your Progress: After completing the challenge, visit the histogram page. Compare your
+                    <li key="2">
+                        Set Your Dates: Choose when to start and end your challenge.
+                    </li>
+                    <li key="3">
+                        Track Your Progress: After completing the challenge, visit the histogram page. Compare your
                         sleep during the challenge with your sleep before it.
                     </li>
-                    <li>See the Results: If your sleep improved, consider keeping the new habit and start another
+                    <li key="4">
+                        See the Results: If your sleep improved, consider keeping the new habit and start another
                         challenge to further enhance your sleep quality.
                     </li>
                 </ol>
@@ -57,7 +62,7 @@ function Home() {
                     Here they are listed for your convenience:
                 </div>
                 <ul>
-                    {PREDEFINED_CHALLENGES.map(challenge => <li>{challenge.description}</li>)}
+                    {PREDEFINED_CHALLENGES.map(challenge => <li key={challenge.name}>{challenge.description}</li>)}
                 </ul>
             </CollapsibleContent>
 
