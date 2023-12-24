@@ -85,11 +85,11 @@ function Challenge(props) {
         setChallengeEdit({...challengeEdit, ...updateValues});
     }
 
-    const onSelectChallenge = (challenge) => {
+    const onSelectChallenge = (selectedChallenge) => {
         return () => {
             updateChallenge({
-                name: challenge.title,
-                description: challenge.description
+                name: selectedChallenge.title,
+                description: selectedChallenge.description
             });
             swapModals();
         }
