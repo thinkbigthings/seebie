@@ -11,6 +11,10 @@ function SleepForm(props) {
 
     const {setSleepData, sleepData} = props;
 
+    function isNumericString(value) {
+        return /^\d+$/.test(value);
+    }
+
     function updateSleepSession(updateValues) {
 
         let updatedSleep = {...sleepData, ...updateValues};
@@ -22,8 +26,10 @@ function SleepForm(props) {
         updatedSleep.stopTime = localStopTime + sleepData.stopTime.substring(19);
 
         // TODO let the user know if the data is invalid
+        let minutesAwakeValidity = isNumericString(updatedSleep.minutesAwake);
+
         // TODO allow the user to use either a numeric string or HH:mm format
-        if(SleepDataManager.isDataValid(updatedSleep)) {
+        if(minutesAwakeValidity) {
             setSleepData(updatedSleep);
         }
     }

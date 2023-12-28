@@ -31,10 +31,14 @@ function Tools() {
     const [data] = useApiGet(sleepUrl, 1, 0);
     const numUserRecords = data.totalElements;
 
-    const changeHandler = (event) => {
+    const onFilePicked = (event) => {
         setSelectedFile(event.target.files[0]);
         setIsFilePicked(true);
     }
+
+
+    const isCsv = isFilePicked && selectedFile.type === "text/csv";
+
 
     const onUploadSuccess = (uploadResponse) => {
         setUploadSuccessInfo(uploadResponse);
@@ -61,9 +65,6 @@ function Tools() {
             .then(onUploadSuccess)
             .catch((error) => console.error('Error:', error));
     }
-
-
-    const isCsv = selectedFile !== undefined && selectedFile.type === "text/csv";
 
     return (
         <Container>
@@ -94,7 +95,7 @@ function Tools() {
 
                 <Form.Group controlId="formFile" className="mb-3">
                     <Form.Label>Select CSV file with sleep data to upload</Form.Label>
-                    <Form.Control type="file" name={"file"} onChange={changeHandler} />
+                    <Form.Control type="file" name={"file"} onChange={onFilePicked} />
                     {
                         (isFilePicked) && (! isCsv) ?
                             <Container>
