@@ -82,7 +82,7 @@ function Challenge(props) {
     const onSelectChallenge = (selectedChallenge) => {
         return () => {
             updateChallenge({
-                name: selectedChallenge.title,
+                name: selectedChallenge.name,
                 description: selectedChallenge.description
             });
             swapModals();
@@ -161,7 +161,7 @@ function Challenge(props) {
                     <Container className="px-0 overflow-y-scroll h-50vh ">
                         {PREDEFINED_CHALLENGES.map((challenge, index) => {
                             return (
-                                <CollapsibleContent key={index} title={challenge.title}>
+                                <CollapsibleContent key={index} title={challenge.name}>
                                     <div className={"mb-2 pb-2 border-bottom"}>{challenge.description}</div>
                                     <Button variant="success" className="mt-2 w-100" onClick={onSelectChallenge(challenge)}>
                                         Select
