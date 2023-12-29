@@ -55,12 +55,7 @@ function Tools() {
     };
 
     const isCsv = selectedFile && selectedFile.type === "text/csv";
-
-    const showValidMessage = isCsv && selectedFile;
-    const showInvalidMessage = !isCsv && selectedFile;
-    const validStyle = showValidMessage ? "was-validated" : "";
-
-    console.log(validStyle);
+    const uploadInvalid = selectedFile && !isCsv;
 
     return (
         <Container>
@@ -89,16 +84,24 @@ function Tools() {
                 <h4 className="mb-3">Import</h4>
 
                 <Form>
-                    <Form.Group controlId="formFile" className={validStyle + " mb-3"}>
+                    <Form.Group controlId="formFile">
                         <Form.Label>Select CSV file with sleep data to upload</Form.Label>
-                        <Form.Control type="file" name="file" onChange={onFilePicked} isInvalid={showInvalidMessage} />
-                        <Form.Control.Feedback type="invalid">
+                        <Form.Control
+                            type="file"
+                            name="file"
+                            onChange={onFilePicked}
+                            isValid={isCsv}
+                            isInvalid={uploadInvalid}
+                        />
+                        <Form.Control.Feedback
+                                        type="invalid"
+                                        className={"mh-24px d-block " + ((uploadInvalid) ? 'visible' : 'invisible')}>
                             Please select a CSV file.
                         </Form.Control.Feedback>
                     </Form.Group>
 
                     <Button variant="secondary" onClick={handleSubmission} disabled={!isCsv}>
-                        <FontAwesomeIcon className="app-highlight me-2" icon={faUpload} />
+                        <FontAwesomeIcon className="app-highlight me-2" icon={faUpload}/>
                         Upload
                     </Button>
                 </Form>
