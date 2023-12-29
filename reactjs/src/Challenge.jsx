@@ -43,22 +43,23 @@ function Challenge(props) {
     const [showCreateChallenge, setShowCreateChallenge] = useState(false);
     const [showPredefinedChallenges, setShowPredefinedChallenges] = useState(false);
     const [challengeEdit, setChallengeEdit] = useState(emptyChallenge());
-
-
+    const [savedChallenges, setSavedChallenges] = useState({
+        current: null,
+        upcoming: [],
+        completed: []
+    });
 
     // validation of the overall form so we know whether to enable the save button
-    // made invalid to start so the name can be blank before showing validation messages
+    // this is set as invalid to start so the name can be blank before showing validation messages
     const [dataValid, setDataValid] = useState(false);
 
     // validation of individual fields for validation feedback to the user
     const [dateOrderValid, setDateOrderValid] = useState(true);
     const [nameValid, setNameValid] = useState(true);
+    const [nameUnique, setNameUnique] = useState(true);
 
 
     // TODO we use raw form, try Form, would be nice to turn the date pickers red if invalid
-
-    // TODO Add validation that checks for the same name and blocks the save and lets the user know
-    // ensure we reset all the validation on cancel or dismiss
 
     // TODO Validate on creating overlapping-dated challenges, allow but warn.
     // ensure we reset all the validation on cancel or dismiss
@@ -67,11 +68,6 @@ function Challenge(props) {
     //    that's the situation, but let the user proceed. Need to be clear that this is not recommended.
     //    Might be easier to return the whole list of challenges and let the caller split by upcoming/completed?
 
-    const [savedChallenges, setSavedChallenges] = useState({
-        current: null,
-        upcoming: [],
-        completed: []
-    });
 
     const post = useApiPost();
 
@@ -99,6 +95,7 @@ function Challenge(props) {
         setChallengeEdit(emptyChallenge());
         setDateOrderValid(true);
         setNameValid(true);
+        setNameUnique(true);
         setDataValid(true);
     }
 
@@ -115,7 +112,15 @@ function Challenge(props) {
         let updatedNameValid = updatedChallengeForm.name !== '' && updatedChallengeForm.name.trim() === updatedChallengeForm.name
         setNameValid(updatedNameValid);
 
-        setDataValid( updatedDateOrderValid && updatedNameValid);
+        let allSavedChallenges = savedChallenges.upcoming.concat(savedChallenges.completed);
+        if(savedChallenges.current !== null) {
+            allSavedChallenges.push(savedChallenges.current);
+        }
+
+        let updatedNameUnique = allSavedChallenges.filter(c => c.name === updatedChallengeForm.name).length === 0;
+        setNameUnique(updatedNameUnique);
+
+        setDataValid( updatedDateOrderValid && updatedNameValid && updatedNameUnique);
     }
 
     const onSelectChallenge = (selectedChallenge) => {
@@ -151,9 +156,23 @@ function Challenge(props) {
                     <form>
                         <Container className="ps-0">
                             <label htmlFor="challengeName" className="form-label">Short Name</label>
-                            <input type="text" className="form-control" id="challengeName" placeholder=""
-                                   value={challengeEdit.name}
-                                   onChange={e => updateChallenge({name: e.target.value})}/>
+                            <Form.Control.Feedback
+                                type="invalid"
+                                className={"d-inline ms-1 " + ((! nameUnique) ? 'visible' : 'invisible')}>
+                                This name is already used
+                            </Form.Control.Feedback>
+                            <Form.Control
+                                type="text"
+                                className="form-control"
+                                id="challengeName"
+                                placeholder=""
+                                value={challengeEdit.name}
+                                onChange={e => updateChallenge({name: e.target.value})}
+                                isInvalid={ ! nameValid || ! nameUnique}
+                            />
+                            {/*<input type="text" className="form-control" id="challengeName" placeholder=""*/}
+                            {/*       value={challengeEdit.name}*/}
+                            {/*       onChange={e => updateChallenge({name: e.target.value})}/>*/}
                         </Container>
                         <Form.Control.Feedback
                             type="invalid"
