@@ -13,8 +13,6 @@ import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import {NavHeader} from "./App";
 import {useNavigate, useParams} from "react-router-dom";
-import data from "bootstrap/js/src/dom/data";
-
 
 function EditSleep() {
 
@@ -22,7 +20,7 @@ function EditSleep() {
 
     const {username, sleepId} = useParams();
 
-    const sleepEndpoint = '/api/user/' + username + '/sleep/' + sleepId;
+    const sleepEndpoint = `/api/user/${username}/sleep/${sleepId}`;
 
     const [loaded, setLoaded] = useState(false);
     const [showDeleteWarning, setShowDeleteWarning] = useState(false);

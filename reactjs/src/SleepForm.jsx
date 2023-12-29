@@ -28,8 +28,6 @@ function SleepForm(props) {
         updatedSleep.startTime = localStartTime + sleepData.startTime.substring(19);
         updatedSleep.stopTime = localStopTime + sleepData.stopTime.substring(19);
 
-        // TODO update calls from create and edit
-
         setMinutesAwakeValidity(isNumericString(updatedSleep.minutesAwake));
         setDataValid(isNumericString(updatedSleep.minutesAwake));
         setSleepData(updatedSleep);
