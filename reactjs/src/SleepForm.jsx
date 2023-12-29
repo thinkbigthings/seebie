@@ -7,15 +7,17 @@ import Row from "react-bootstrap/Row";
 import SleepDataManager from "./SleepDataManager";
 import InfoModalButton from "./component/InfoModalButton";
 
+function isNumericString(value) {
+    return /^\d+$/.test(value);
+}
+
 function SleepForm(props) {
 
     const {setSleepData, sleepData} = props;
 
-    function isNumericString(value) {
-        return /^\d+$/.test(value);
-    }
+    const [minutesAwakeValidity, setMinutesAwakeValidity] = React.useState(true);
 
-    function updateSleepSession(updateValues) {
+    const updateSleepSession = (updateValues) => {
 
         let updatedSleep = {...sleepData, ...updateValues};
 
@@ -25,11 +27,10 @@ function SleepForm(props) {
         updatedSleep.startTime = localStartTime + sleepData.startTime.substring(19);
         updatedSleep.stopTime = localStopTime + sleepData.stopTime.substring(19);
 
-        // TODO let the user know if the data is invalid
-        let minutesAwakeValidity = isNumericString(updatedSleep.minutesAwake);
+        const updatedMinutesAwakeValidity = isNumericString(updatedSleep.minutesAwake);
+        setMinutesAwakeValidity(updatedMinutesAwakeValidity);
 
-        // TODO allow the user to use either a numeric string or HH:mm format
-        if(minutesAwakeValidity) {
+        if(updatedMinutesAwakeValidity) {
             setSleepData(updatedSleep);
         }
     }
