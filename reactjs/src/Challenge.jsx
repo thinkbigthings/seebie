@@ -54,10 +54,8 @@ function Challenge(props) {
     const [dateOrderValid, setDateOrderValid] = useState(true);
     const [nameValid, setNameValid] = useState(true);
 
-    // TODO Do validation on name is trimmable string
 
     // TODO we use raw form, try Form, would be nice to turn the date pickers red if invalid
-
 
     // TODO Add validation that checks for the same name and blocks the save and lets the user know
     // ensure we reset all the validation on cancel or dismiss
@@ -113,7 +111,8 @@ function Challenge(props) {
         let updatedDateOrderValid = updatedChallengeForm.localStartTime < updatedChallengeForm.localEndTime;
         setDateOrderValid(updatedDateOrderValid);
 
-        let updatedNameValid = updatedChallengeForm.name !== '';
+        console.log("updatedChallengeForm.name: [" + updatedChallengeForm.name+ "]");
+        let updatedNameValid = updatedChallengeForm.name !== '' && updatedChallengeForm.name.trim() === updatedChallengeForm.name
         setNameValid(updatedNameValid);
 
         setDataValid( updatedDateOrderValid && updatedNameValid);
@@ -152,7 +151,7 @@ function Challenge(props) {
                     <form>
                         <Container className="ps-0">
                             <label htmlFor="challengeName" className="form-label">Short Name</label>
-                            <input type="email" className="form-control" id="challengeName" placeholder=""
+                            <input type="text" className="form-control" id="challengeName" placeholder=""
                                    value={challengeEdit.name}
                                    onChange={e => updateChallenge({name: e.target.value})}/>
                         </Container>
