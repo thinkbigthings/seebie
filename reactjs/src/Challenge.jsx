@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faExclamationTriangle, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
@@ -58,15 +58,14 @@ function Challenge(props) {
     const [nameValid, setNameValid] = useState(true);
     const [nameUnique, setNameUnique] = useState(true);
 
-
-    // TODO we use raw form, try Form, would be nice to turn the date pickers red if invalid
+    // this is a warning, so we don't disable the save button
+    const [datesOverlap, setDatesOverlap] = useState(false);
 
     // TODO Validate on creating overlapping-dated challenges, allow but warn.
-    // ensure we reset all the validation on cancel or dismiss
-    //    We have all the challenges on the challenge screen: Query for challenges where the given start is between
-    //    challenge start/finish and same for given finish. Pop up a validation message if trying to save and
-    //    that's the situation, but let the user proceed. Need to be clear that this is not recommended.
-    //    Might be easier to return the whole list of challenges and let the caller split by upcoming/completed?
+
+    // TODO we use raw form, try Form
+
+    // TODO if possible, turn the date pickers red if invalid
 
 
     const post = useApiPost();
@@ -96,6 +95,7 @@ function Challenge(props) {
         setDateOrderValid(true);
         setNameValid(true);
         setNameUnique(true);
+        setDatesOverlap(false)
         setDataValid(true);
     }
 
@@ -119,6 +119,16 @@ function Challenge(props) {
 
         let updatedNameUnique = allSavedChallenges.filter(c => c.name === updatedChallengeForm.name).length === 0;
         setNameUnique(updatedNameUnique);
+
+        // Query for challenges where the given start is between challenge start/finish and same for given finish
+        let updatedDatesOverlap = allSavedChallenges.some(c => {
+                let challengeStart = new Date(c.start);
+                let challengeEnd = new Date(c.finish);
+                return (updatedChallengeForm.localStartTime >= challengeStart && updatedChallengeForm.localStartTime <= challengeEnd)
+                    || (updatedChallengeForm.localEndTime >= challengeStart && updatedChallengeForm.localEndTime <= challengeEnd);
+            });
+
+        setDatesOverlap(updatedDatesOverlap);
 
         setDataValid( updatedDateOrderValid && updatedNameValid && updatedNameUnique);
     }
@@ -158,7 +168,7 @@ function Challenge(props) {
                             <label htmlFor="challengeName" className="form-label">Short Name</label>
                             <Form.Control.Feedback
                                 type="invalid"
-                                className={"d-inline ms-1 " + ((! nameUnique) ? 'visible' : 'invisible')}>
+                                className={"d-inline ms-1 " + ((!nameUnique) ? 'visible' : 'invisible')}>
                                 This name is already used
                             </Form.Control.Feedback>
                             <Form.Control
@@ -168,20 +178,17 @@ function Challenge(props) {
                                 placeholder=""
                                 value={challengeEdit.name}
                                 onChange={e => updateChallenge({name: e.target.value})}
-                                isInvalid={ ! nameValid || ! nameUnique}
+                                isInvalid={!nameValid || !nameUnique}
                             />
-                            {/*<input type="text" className="form-control" id="challengeName" placeholder=""*/}
-                            {/*       value={challengeEdit.name}*/}
-                            {/*       onChange={e => updateChallenge({name: e.target.value})}/>*/}
                         </Container>
                         <Form.Control.Feedback
                             type="invalid"
-                            className={"mh-24px d-block " + ((! nameValid) ? 'visible' : 'invisible')}>
+                            className={"mh-24px d-block " + ((!nameValid) ? 'visible' : 'invisible')}>
                             Name cannot be empty or have space at the ends
                         </Form.Control.Feedback>
                         <Container className="ps-0 mb-3">
                             <label type="text" htmlFor="description" className="form-label">Description</label>
-                            <textarea rows="8" className="form-control" id="description" placeholder=""
+                            <textarea rows="6" className="form-control" id="description" placeholder=""
                                       value={challengeEdit.description}
                                       onChange={e => updateChallenge({description: e.target.value})}/>
                         </Container>
@@ -196,7 +203,7 @@ function Challenge(props) {
                             </div>
                             <Form.Control.Feedback
                                 type="invalid"
-                                className={"mh-24px d-block " + ((! dateOrderValid) ? 'visible' : 'invisible')}>
+                                className={"mh-24px d-block " + ((!dateOrderValid) ? 'visible' : 'invisible')}>
                                 Start date must be before end date
                             </Form.Control.Feedback>
                         </Container>
@@ -210,15 +217,20 @@ function Challenge(props) {
                             </div>
                             <Form.Control.Feedback
                                 type="invalid"
-                                className={"mh-24px d-block " + ((! dateOrderValid) ? 'visible' : 'invisible')}>
-                                Start date must be before end date
+                                className={"mh-24px d-block " + ((!dateOrderValid) ? 'visible' : 'invisible')}>
+                                End date must be after start date
                             </Form.Control.Feedback>
                         </Container>
                     </form>
+                    <label className={"text-warning " + ((datesOverlap) ? 'visible' : 'invisible')}>
+                        <FontAwesomeIcon icon={faExclamationTriangle} className={"pe-1"}/>
+                        This date range overlaps another challenge which is not recommended
+                    </label>
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="d-flex flex-row">
-                        <Button className="me-3" variant="success" onClick={saveData} disabled={ ! dataValid}>Save</Button>
+                        <Button className="me-3" variant="success" onClick={saveData}
+                                disabled={!dataValid}>Save</Button>
                         <Button className="" variant="secondary" onClick={clearChallengeEdit}>Cancel</Button>
                     </div>
                 </Modal.Footer>
