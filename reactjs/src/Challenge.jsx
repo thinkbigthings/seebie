@@ -61,8 +61,6 @@ function Challenge(props) {
     // this is a warning, so we don't disable the save button
     const [datesOverlap, setDatesOverlap] = useState(false);
 
-    // TODO Validate on creating overlapping-dated challenges, allow but warn.
-
     // TODO we use raw form, try Form
 
     // TODO if possible, turn the date pickers red if invalid
