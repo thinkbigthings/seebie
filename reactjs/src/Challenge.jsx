@@ -61,11 +61,6 @@ function Challenge(props) {
     // this is a warning, so we don't disable the save button
     const [datesOverlap, setDatesOverlap] = useState(false);
 
-    // TODO refactor so this file is smaller
-
-    // TODO if possible, turn the date pickers red if invalid
-
-
     const post = useApiPost();
 
     const saveData = () => {
@@ -159,9 +154,8 @@ function Challenge(props) {
                     <Form>
                         <Container className="ps-0">
                             <label htmlFor="challengeName" className="form-label">Short Name</label>
-                            <Form.Control.Feedback
-                                type="invalid"
-                                className={"d-inline ms-1 " + ((!nameUnique) ? 'visible' : 'invisible')}>
+                            <Form.Control.Feedback type="invalid"
+                                                    className={"d-inline ms-1 " + ((!nameUnique) ? 'visible' : 'invisible')}>
                                 This name is already used
                             </Form.Control.Feedback>
                             <Form.Control
@@ -174,9 +168,8 @@ function Challenge(props) {
                                 isInvalid={!nameValid || !nameUnique}
                             />
                         </Container>
-                        <Form.Control.Feedback
-                            type="invalid"
-                            className={"mh-24px d-block " + ((!nameValid) ? 'visible' : 'invisible')}>
+                        <Form.Control.Feedback type="invalid"
+                                               className={"mh-24px d-block " + ((!nameValid) ? 'visible' : 'invisible')}>
                             Name cannot be empty or have space at the ends
                         </Form.Control.Feedback>
                         <Container className="ps-0 mb-3">
@@ -189,28 +182,26 @@ function Challenge(props) {
                         <Container className="ps-0">
                             <label htmlFor="startDate" className="form-label">Start Date</label>
                             <div>
-                                <DatePicker
-                                    className="form-control" id="startDate" dateFormat="MMMM d, yyyy"
-                                    onChange={date => updateChallenge({localStartTime: date})}
-                                    selected={challengeEdit.localStartTime}/>
+                                <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
+                                            id="startDate" dateFormat="MMMM d, yyyy"
+                                            onChange={date => updateChallenge({localStartTime: date})}
+                                            selected={challengeEdit.localStartTime}/>
                             </div>
-                            <Form.Control.Feedback
-                                type="invalid"
-                                className={"mh-24px d-block " + ((!dateOrderValid) ? 'visible' : 'invisible')}>
+                            <Form.Control.Feedback type="invalid"
+                                                   className={"mh-24px d-block " + ((!dateOrderValid) ? 'visible' : 'invisible')}>
                                 Start date must be before end date
                             </Form.Control.Feedback>
                         </Container>
                         <Container className="ps-0">
                             <label htmlFor="endDate" className="form-label">End Date</label>
                             <div>
-                                <DatePicker
-                                    className="form-control" id="startDate" dateFormat="MMMM d, yyyy"
-                                    onChange={date => updateChallenge({localEndTime: date})}
-                                    selected={challengeEdit.localEndTime}/>
+                                <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
+                                            id="startDate" dateFormat="MMMM d, yyyy"
+                                            onChange={date => updateChallenge({localEndTime: date})}
+                                            selected={challengeEdit.localEndTime}/>
                             </div>
-                            <Form.Control.Feedback
-                                type="invalid"
-                                className={"mh-24px d-block " + ((!dateOrderValid) ? 'visible' : 'invisible')}>
+                            <Form.Control.Feedback type="invalid"
+                                                   className={"mh-24px d-block " + ((!dateOrderValid) ? 'visible' : 'invisible')}>
                                 End date must be after start date
                             </Form.Control.Feedback>
                         </Container>

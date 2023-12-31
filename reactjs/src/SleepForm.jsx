@@ -67,9 +67,8 @@ function SleepForm(props) {
                         isValid={minutesAwakeValidity}
                         isInvalid={ ! minutesAwakeValidity}
                     />
-                    <Form.Control.Feedback
-                        type="invalid"
-                        className={"mh-24px d-block " + ((! minutesAwakeValidity) ? 'visible' : 'invisible')}>
+                    <Form.Control.Feedback type="invalid"
+                                           className={"mh-24px d-block " + ((! minutesAwakeValidity) ? 'visible' : 'invisible')}>
                         Minutes Awake must be a number.
                     </Form.Control.Feedback>
                 </Col>

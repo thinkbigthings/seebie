@@ -93,9 +93,8 @@ function Tools() {
                             isValid={isCsv}
                             isInvalid={uploadInvalid}
                         />
-                        <Form.Control.Feedback
-                                        type="invalid"
-                                        className={"mh-24px d-block " + ((uploadInvalid) ? 'visible' : 'invisible')}>
+                        <Form.Control.Feedback type="invalid"
+                                               className={"mh-24px d-block " + ((uploadInvalid) ? 'visible' : 'invisible')}>
                             Please select a CSV file.
                         </Form.Control.Feedback>
                     </Form.Group>
