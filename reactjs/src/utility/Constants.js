@@ -20,6 +20,10 @@ export const PREDEFINED_CHALLENGES = [
         description: "Cut your caffeine in half, finish all caffeine before lunch, or eliminate caffeine entirely"
     },
     {
+        name: "No alcohol before bed",
+        description: "Do not consume alcohol within 4 hours of bedtime"
+    },
+    {
         name: "No Nighttime clock",
         description: "Don't look at the clock during the night"
     },
@@ -34,6 +38,13 @@ export const PREDEFINED_CHALLENGES = [
     {
         name: "Cool overnight temperature",
         description: "Set the overnight temperature in your bedroom to 60-68 degrees Fahrenheit, and/or use a cooling mattress"
+    },
+    {
+        name: "Sleep restriction therapy",
+        description: "The amount of time in bed is deliberately limited to match actual sleep time, " +
+            "helping to consolidate sleep and increase sleep efficiency. " +
+            "This involves a strict sleep schedule, avoiding staying in bed while awake, " +
+            "and gradually increasing sleep time as sleep efficiency improves."
     },
     {
         name: "Maintenance",
