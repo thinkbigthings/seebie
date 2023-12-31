@@ -30,7 +30,7 @@ public class ChallengeValidationTest {
 
     @ParameterizedTest
     @MethodSource("provideSleepDataArguments")
-    public void testScanForNotifications(Challenge data, int numberViolations) {
+    public void testChallengeValidation(Challenge data, int numberViolations) {
 
         var violations = validator.validate(data);
 

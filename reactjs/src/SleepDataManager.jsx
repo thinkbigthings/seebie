@@ -87,12 +87,4 @@ SleepDataManager.minuteToHrMin = (minutes) => {
     return hr + 'hr ' + m + 'm';
 }
 
-SleepDataManager.isDataValid = (sleepData) => {
-    const numericRegex=/^[0-9]+$/;
-    if( numericRegex.test(sleepData.minutesAwake)) {
-        return true;
-    }
-    return false;
-}
-
 export default SleepDataManager;

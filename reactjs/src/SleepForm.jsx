@@ -6,12 +6,19 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import SleepDataManager from "./SleepDataManager";
 import InfoModalButton from "./component/InfoModalButton";
+import Form from "react-bootstrap/Form";
+
+function isNumericString(value) {
+    return /^\d+$/.test(value);
+}
 
 function SleepForm(props) {
 
-    const {setSleepData, sleepData} = props;
+    const {setSleepData, sleepData, setDataValid} = props;
 
-    function updateSleepSession(updateValues) {
+    const [minutesAwakeValidity, setMinutesAwakeValidity] = React.useState(true);
+
+    const updateSleepSession = (updateValues) => {
 
         let updatedSleep = {...sleepData, ...updateValues};
 
@@ -21,11 +28,9 @@ function SleepForm(props) {
         updatedSleep.startTime = localStartTime + sleepData.startTime.substring(19);
         updatedSleep.stopTime = localStopTime + sleepData.stopTime.substring(19);
 
-        // TODO let the user know if the data is invalid
-        // TODO allow the user to use either a numeric string or HH:mm format
-        if(SleepDataManager.isDataValid(updatedSleep)) {
-            setSleepData(updatedSleep);
-        }
+        setMinutesAwakeValidity(isNumericString(updatedSleep.minutesAwake));
+        setDataValid(isNumericString(updatedSleep.minutesAwake));
+        setSleepData(updatedSleep);
     }
 
     return (
@@ -48,20 +53,29 @@ function SleepForm(props) {
                                   onChange={ date => updateSleepSession({localStopTime : date })} />
                 </Col>
             </Row>
-            <Row className={"pb-4"}>
+            <Row>
                 <Col md={6} className={"col-4 pe-0"}>
                     <label htmlFor="minutesAwake" className="">Minutes Awake</label>
                 </Col>
                 <Col md={5} className={"col-6 "}>
-                    <input type="text" className="form-control" id="minutesAwake"
-                               placeholder="Minutes Awake"
-                               value={sleepData.minutesAwake}
-                               onChange={e => updateSleepSession({minutesAwake : e.target.value})} />
+                    <Form.Control
+                        type="text"
+                        placeholder="Minutes Awake"
+                        value={sleepData.minutesAwake}
+                        name="minutesAwakeField"
+                        onChange={e => updateSleepSession({minutesAwake: e.target.value})}
+                        isValid={minutesAwakeValidity}
+                        isInvalid={ ! minutesAwakeValidity}
+                    />
+                    <Form.Control.Feedback type="invalid"
+                                           className={"mh-24px d-block " + ((! minutesAwakeValidity) ? 'visible' : 'invisible')}>
+                        Minutes Awake must be a number.
+                    </Form.Control.Feedback>
                 </Col>
                 <Col md={1} className={"col-1"}>
                     <InfoModalButton titleText="Minutes Awake"
                                      modalText="This includes the time it takes to fall asleep,
-                                      plus the amount of time spent awake during the night" />
+                                      plus the amount of time spent awake during the night"/>
                 </Col>
             </Row>
             <Row className={"pb-2"}>
@@ -77,4 +91,4 @@ function SleepForm(props) {
     );
 }
 
-export {SleepForm};
+export {SleepForm, isNumericString};

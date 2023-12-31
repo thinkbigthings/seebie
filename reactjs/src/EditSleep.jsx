@@ -14,18 +14,19 @@ import Alert from "react-bootstrap/Alert";
 import {NavHeader} from "./App";
 import {useNavigate, useParams} from "react-router-dom";
 
-
 function EditSleep() {
 
     const navigate = useNavigate();
 
     const {username, sleepId} = useParams();
 
-    const sleepEndpoint = '/api/user/' + username + '/sleep/' + sleepId;
+    const sleepEndpoint = `/api/user/${username}/sleep/${sleepId}`;
 
     const [loaded, setLoaded] = useState(false);
     const [showDeleteWarning, setShowDeleteWarning] = useState(false);
     const [sleepData, setSleepData] = useState(SleepDataManager.createInitSleepData());
+    const [dataValid, setDataValid] = useState(true);
+
     const put = useApiPut();
     const callDelete = useApiDelete();
 
@@ -57,11 +58,13 @@ function EditSleep() {
             </NavHeader>
 
             <Container id="sleepFormWrapper" className="px-0">
-                {loaded ? <SleepForm setSleepData={setSleepData} sleepData={sleepData} /> : <div />}
+                {loaded
+                    ? <SleepForm setSleepData={setSleepData} sleepData={sleepData} setDataValid={setDataValid} />
+                    : <div /> }
             </Container>
 
             <div className="d-flex flex-row">
-                <Button className="me-3" variant="primary" onClick={onSave} >Save</Button>
+                <Button className="me-3" variant="primary" onClick={onSave} disabled={ ! dataValid} >Save</Button>
                 <Button  variant="secondary" onClick={() => navigate(-1)}>Cancel</Button>
             </div>
 

@@ -29,7 +29,7 @@ public class RegistrationRequestValidationTest {
 
     @ParameterizedTest
     @MethodSource("provideRegistrationArguments")
-    public void testScanForNotifications(RegistrationRequest data, int numberViolations) {
+    public void testRegistrationValidation(RegistrationRequest data, int numberViolations) {
 
         // annotations are applied on record components
         // these will be applied on sending to a controller

@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faExclamationTriangle, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
@@ -16,6 +16,7 @@ import CollapsibleContent from "./component/CollapsibleContent";
 import {PREDEFINED_CHALLENGES} from "./utility/Constants";
 import SuccessModal from "./component/SuccessModal";
 import CollapsibleChallenge from "./component/CollapsibleChallenge";
+import Form from "react-bootstrap/Form";
 
 
 function emptyChallenge() {
@@ -42,12 +43,23 @@ function Challenge(props) {
     const [showCreateChallenge, setShowCreateChallenge] = useState(false);
     const [showPredefinedChallenges, setShowPredefinedChallenges] = useState(false);
     const [challengeEdit, setChallengeEdit] = useState(emptyChallenge());
-
     const [savedChallenges, setSavedChallenges] = useState({
         current: null,
         upcoming: [],
         completed: []
     });
+
+    // validation of the overall form so we know whether to enable the save button
+    // this is set as invalid to start so the name can be blank before showing validation messages
+    const [dataValid, setDataValid] = useState(false);
+
+    // validation of individual fields for validation feedback to the user
+    const [dateOrderValid, setDateOrderValid] = useState(true);
+    const [nameValid, setNameValid] = useState(true);
+    const [nameUnique, setNameUnique] = useState(true);
+
+    // this is a warning, so we don't disable the save button
+    const [datesOverlap, setDatesOverlap] = useState(false);
 
     const post = useApiPost();
 
@@ -73,20 +85,50 @@ function Challenge(props) {
     const clearChallengeEdit = () => {
         setShowCreateChallenge(false);
         setChallengeEdit(emptyChallenge());
+        setDateOrderValid(true);
+        setNameValid(true);
+        setNameUnique(true);
+        setDatesOverlap(false)
+        setDataValid(true);
     }
 
     const updateChallenge = (updateValues) => {
-        setChallengeEdit({...challengeEdit, ...updateValues});
+
+        let allSavedChallenges = savedChallenges.upcoming.concat(savedChallenges.completed);
+        if(savedChallenges.current !== null) {
+            allSavedChallenges.push(savedChallenges.current);
+        }
+
+        let updatedChallengeForm = {...challengeEdit, ...updateValues};
+        setChallengeEdit(updatedChallengeForm);
+
+        let updatedDateOrderValid = updatedChallengeForm.localStartTime < updatedChallengeForm.localEndTime;
+        setDateOrderValid(updatedDateOrderValid);
+
+        let updatedNameValid = updatedChallengeForm.name !== '' && updatedChallengeForm.name.trim() === updatedChallengeForm.name
+        setNameValid(updatedNameValid);
+
+        let updatedNameUnique = ! allSavedChallenges.some(c => c.name === updatedChallengeForm.name);
+        setNameUnique(updatedNameUnique);
+
+        setDataValid( updatedDateOrderValid && updatedNameValid && updatedNameUnique);
+
+        // Query for challenges where the given start is between challenge start/finish and same for given finish
+        let updatedDatesOverlap = allSavedChallenges.some(c => {
+            let challengeStart = new Date(c.start);
+            let challengeEnd = new Date(c.finish);
+            return (updatedChallengeForm.localStartTime >= challengeStart && updatedChallengeForm.localStartTime <= challengeEnd)
+                || (updatedChallengeForm.localEndTime >= challengeStart && updatedChallengeForm.localEndTime <= challengeEnd);
+        });
+        setDatesOverlap(updatedDatesOverlap);
     }
 
     const onSelectChallenge = (selectedChallenge) => {
-        return () => {
-            updateChallenge({
-                name: selectedChallenge.title,
-                description: selectedChallenge.description
-            });
-            swapModals();
-        }
+        updateChallenge({
+            name: selectedChallenge.name,
+            description: selectedChallenge.description
+        });
+        swapModals();
     }
 
     const swapModals = () => {
@@ -109,42 +151,70 @@ function Challenge(props) {
                     <Button variant="secondary" className={"app-highlight w-100 mb-3"} onClick={swapModals}>
                         Select from a list
                     </Button>
-                    <form>
-                        <Container className="ps-0 mb-3">
+                    <Form>
+                        <Container className="ps-0">
                             <label htmlFor="challengeName" className="form-label">Short Name</label>
-                            <input type="email" className="form-control" id="challengeName" placeholder=""
-                                   value={challengeEdit.name}
-                                   onChange={e => updateChallenge({name: e.target.value})}/>
+                            <Form.Control.Feedback type="invalid"
+                                                    className={"d-inline ms-1 " + ((!nameUnique) ? 'visible' : 'invisible')}>
+                                This name is already used
+                            </Form.Control.Feedback>
+                            <Form.Control
+                                type="text"
+                                className="form-control"
+                                id="challengeName"
+                                placeholder=""
+                                value={challengeEdit.name}
+                                onChange={e => updateChallenge({name: e.target.value})}
+                                isInvalid={!nameValid || !nameUnique}
+                            />
                         </Container>
+                        <Form.Control.Feedback type="invalid"
+                                               className={"mh-24px d-block " + ((!nameValid) ? 'visible' : 'invisible')}>
+                            Name cannot be empty or have space at the ends
+                        </Form.Control.Feedback>
                         <Container className="ps-0 mb-3">
                             <label type="text" htmlFor="description" className="form-label">Description</label>
-                            <textarea rows="8" className="form-control" id="description" placeholder=""
+                            <textarea rows="6" className="form-control" id="description" placeholder=""
                                       value={challengeEdit.description}
                                       onChange={e => updateChallenge({description: e.target.value})}/>
                         </Container>
-                        <Container className="ps-0 mb-3">
+
+                        <Container className="ps-0">
                             <label htmlFor="startDate" className="form-label">Start Date</label>
                             <div>
-                                <DatePicker
-                                    className="form-control" id="startDate" dateFormat="MMMM d, yyyy"
-                                    onChange={date => updateChallenge({localStartTime: date})}
-                                    selected={challengeEdit.localStartTime}/>
+                                <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
+                                            id="startDate" dateFormat="MMMM d, yyyy"
+                                            onChange={date => updateChallenge({localStartTime: date})}
+                                            selected={challengeEdit.localStartTime}/>
                             </div>
+                            <Form.Control.Feedback type="invalid"
+                                                   className={"mh-24px d-block " + ((!dateOrderValid) ? 'visible' : 'invisible')}>
+                                Start date must be before end date
+                            </Form.Control.Feedback>
                         </Container>
-                        <Container className="ps-0 mb-3">
+                        <Container className="ps-0">
                             <label htmlFor="endDate" className="form-label">End Date</label>
                             <div>
-                                <DatePicker
-                                    className="form-control" id="startDate" dateFormat="MMMM d, yyyy"
-                                    onChange={date => updateChallenge({localEndTime: date})}
-                                    selected={challengeEdit.localEndTime}/>
+                                <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
+                                            id="startDate" dateFormat="MMMM d, yyyy"
+                                            onChange={date => updateChallenge({localEndTime: date})}
+                                            selected={challengeEdit.localEndTime}/>
                             </div>
+                            <Form.Control.Feedback type="invalid"
+                                                   className={"mh-24px d-block " + ((!dateOrderValid) ? 'visible' : 'invisible')}>
+                                End date must be after start date
+                            </Form.Control.Feedback>
                         </Container>
-                    </form>
+                    </Form>
+                    <label className={"text-warning " + ((datesOverlap) ? 'visible' : 'invisible')}>
+                        <FontAwesomeIcon icon={faExclamationTriangle} className={"pe-1"}/>
+                        This date range overlaps another challenge which is not recommended
+                    </label>
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="d-flex flex-row">
-                        <Button className="me-3" variant="success" onClick={saveData}>Save</Button>
+                        <Button className="me-3" variant="success" onClick={saveData}
+                                disabled={!dataValid}>Save</Button>
                         <Button className="" variant="secondary" onClick={clearChallengeEdit}>Cancel</Button>
                     </div>
                 </Modal.Footer>
@@ -161,9 +231,9 @@ function Challenge(props) {
                     <Container className="px-0 overflow-y-scroll h-50vh ">
                         {PREDEFINED_CHALLENGES.map((challenge, index) => {
                             return (
-                                <CollapsibleContent key={index} title={challenge.title}>
+                                <CollapsibleContent key={index} title={challenge.name}>
                                     <div className={"mb-2 pb-2 border-bottom"}>{challenge.description}</div>
-                                    <Button variant="success" className="mt-2 w-100" onClick={onSelectChallenge(challenge)}>
+                                    <Button variant="success" className="mt-2 w-100" onClick={ () => onSelectChallenge(challenge)}>
                                         Select
                                     </Button>
                                 </CollapsibleContent>

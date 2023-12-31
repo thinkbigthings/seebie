@@ -3,7 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import useApiPost from "./hooks/useApiPost";
 import 'react-datepicker/dist/react-datepicker.css';
-import {SleepForm} from "./SleepForm";
+import {isNumericString, SleepForm} from "./SleepForm";
 import SleepDataManager from "./SleepDataManager";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
@@ -19,6 +19,7 @@ function CreateSleepSession(props) {
     const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
 
     const [sleepData, setSleepData] = useState(SleepDataManager.createInitSleepData());
+    const [dataValid, setDataValid] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [savedChallenges, setSavedChallenges] = useState({
         current: null,
@@ -65,11 +66,11 @@ function CreateSleepSession(props) {
                 </Modal.Header>
                 <Modal.Body>
                     {hasCurrentChallenge && <div className={"app-highlight h6 alert alert-light "}>{challengeTitle}</div>}
-                    <SleepForm setSleepData={setSleepData} sleepData={sleepData} />
+                    <SleepForm setSleepData={setSleepData} sleepData={sleepData} setDataValid={setDataValid}/>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={ closeModal }>Cancel</Button>
-                    <Button variant="primary" onClick={ saveData }>Save</Button>
+                    <Button variant="primary" onClick={ saveData } disabled={!dataValid}>Save</Button>
                 </Modal.Footer>
             </Modal>
         </>

@@ -68,7 +68,14 @@ body {
     background-color: var(--lilac-gray);
 }
 
-/* as of Bootstrap 5.3, there isn't a direct utility class for setting height in viewport units (vh) */
+/* Bootstrap 5.3 does not have a direct utility class for setting min height in pixels */
+
+.mh-24px {
+    min-height: 24px;
+}
+
+/* Bootstrap 5.3 does not have a direct utility class for setting height in viewport units (vh) */
+
 .h-90vh {
     height: 90vh;
 }

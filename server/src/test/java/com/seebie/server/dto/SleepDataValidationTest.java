@@ -36,7 +36,7 @@ public class SleepDataValidationTest {
 
     @ParameterizedTest
     @MethodSource("provideSleepDataArguments")
-    public void testScanForNotifications(SleepData data, int numberViolations) {
+    public void testSleepDataValidation(SleepData data, int numberViolations) {
 
         var violations = validator.validate(data);
 
