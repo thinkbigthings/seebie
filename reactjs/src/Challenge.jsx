@@ -61,7 +61,7 @@ function Challenge(props) {
     // this is a warning, so we don't disable the save button
     const [datesOverlap, setDatesOverlap] = useState(false);
 
-    // TODO we use raw form, try Form
+    // TODO refactor so this file is smaller
 
     // TODO if possible, turn the date pickers red if invalid
 
@@ -99,46 +99,41 @@ function Challenge(props) {
 
     const updateChallenge = (updateValues) => {
 
-        let updatedChallengeForm = {...challengeEdit, ...updateValues};
-
-        setChallengeEdit(updatedChallengeForm);
-
-        let updatedDateOrderValid = updatedChallengeForm.localStartTime < updatedChallengeForm.localEndTime;
-        setDateOrderValid(updatedDateOrderValid);
-
-        console.log("updatedChallengeForm.name: [" + updatedChallengeForm.name+ "]");
-        let updatedNameValid = updatedChallengeForm.name !== '' && updatedChallengeForm.name.trim() === updatedChallengeForm.name
-        setNameValid(updatedNameValid);
-
         let allSavedChallenges = savedChallenges.upcoming.concat(savedChallenges.completed);
         if(savedChallenges.current !== null) {
             allSavedChallenges.push(savedChallenges.current);
         }
 
-        let updatedNameUnique = allSavedChallenges.filter(c => c.name === updatedChallengeForm.name).length === 0;
+        let updatedChallengeForm = {...challengeEdit, ...updateValues};
+        setChallengeEdit(updatedChallengeForm);
+
+        let updatedDateOrderValid = updatedChallengeForm.localStartTime < updatedChallengeForm.localEndTime;
+        setDateOrderValid(updatedDateOrderValid);
+
+        let updatedNameValid = updatedChallengeForm.name !== '' && updatedChallengeForm.name.trim() === updatedChallengeForm.name
+        setNameValid(updatedNameValid);
+
+        let updatedNameUnique = ! allSavedChallenges.some(c => c.name === updatedChallengeForm.name);
         setNameUnique(updatedNameUnique);
+
+        setDataValid( updatedDateOrderValid && updatedNameValid && updatedNameUnique);
 
         // Query for challenges where the given start is between challenge start/finish and same for given finish
         let updatedDatesOverlap = allSavedChallenges.some(c => {
-                let challengeStart = new Date(c.start);
-                let challengeEnd = new Date(c.finish);
-                return (updatedChallengeForm.localStartTime >= challengeStart && updatedChallengeForm.localStartTime <= challengeEnd)
-                    || (updatedChallengeForm.localEndTime >= challengeStart && updatedChallengeForm.localEndTime <= challengeEnd);
-            });
-
+            let challengeStart = new Date(c.start);
+            let challengeEnd = new Date(c.finish);
+            return (updatedChallengeForm.localStartTime >= challengeStart && updatedChallengeForm.localStartTime <= challengeEnd)
+                || (updatedChallengeForm.localEndTime >= challengeStart && updatedChallengeForm.localEndTime <= challengeEnd);
+        });
         setDatesOverlap(updatedDatesOverlap);
-
-        setDataValid( updatedDateOrderValid && updatedNameValid && updatedNameUnique);
     }
 
     const onSelectChallenge = (selectedChallenge) => {
-        return () => {
-            updateChallenge({
-                name: selectedChallenge.name,
-                description: selectedChallenge.description
-            });
-            swapModals();
-        }
+        updateChallenge({
+            name: selectedChallenge.name,
+            description: selectedChallenge.description
+        });
+        swapModals();
     }
 
     const swapModals = () => {
@@ -161,7 +156,7 @@ function Challenge(props) {
                     <Button variant="secondary" className={"app-highlight w-100 mb-3"} onClick={swapModals}>
                         Select from a list
                     </Button>
-                    <form>
+                    <Form>
                         <Container className="ps-0">
                             <label htmlFor="challengeName" className="form-label">Short Name</label>
                             <Form.Control.Feedback
@@ -219,7 +214,7 @@ function Challenge(props) {
                                 End date must be after start date
                             </Form.Control.Feedback>
                         </Container>
-                    </form>
+                    </Form>
                     <label className={"text-warning " + ((datesOverlap) ? 'visible' : 'invisible')}>
                         <FontAwesomeIcon icon={faExclamationTriangle} className={"pe-1"}/>
                         This date range overlaps another challenge which is not recommended
@@ -247,7 +242,7 @@ function Challenge(props) {
                             return (
                                 <CollapsibleContent key={index} title={challenge.name}>
                                     <div className={"mb-2 pb-2 border-bottom"}>{challenge.description}</div>
-                                    <Button variant="success" className="mt-2 w-100" onClick={onSelectChallenge(challenge)}>
+                                    <Button variant="success" className="mt-2 w-100" onClick={ () => onSelectChallenge(challenge)}>
                                         Select
                                     </Button>
                                 </CollapsibleContent>
