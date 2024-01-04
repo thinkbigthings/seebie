@@ -17,6 +17,8 @@ import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {createRange} from "./SleepChart";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
+import {withExactTimes} from "./utility/Mapper";
+import {emptyChallengeList} from "./utility/Constants";
 
 Chart.register(...registerables)
 
@@ -67,8 +69,8 @@ const createDataset = (displayInfo, data) => {
 const pageSettingsToRequest = (pageSettings) => {
 
     const newDataFilters = pageSettings.filters.map((filter) => { return {
-            from: SleepDataManager.toIsoString(filter.challenge.start),
-            to: SleepDataManager.toIsoString(filter.challenge.finish)
+            from: SleepDataManager.toIsoString(filter.challenge.exactStart),
+            to: SleepDataManager.toIsoString(filter.challenge.exactFinish)
         }}
     );
 
@@ -81,34 +83,13 @@ const pageSettingsToRequest = (pageSettings) => {
 
 }
 
-const toExactTimes = (challengeList) => {
-    let exactChallengeList = {};
-    exactChallengeList.current = challengeList.current === null ? null : toExactTime(challengeList.current);
-    exactChallengeList.upcoming = challengeList.upcoming.map(toExactTime);
-    exactChallengeList.completed = challengeList.completed.map(toExactTime);
-    return exactChallengeList;
-}
-
-const toExactTime = (challenge) => {
-    let start = new Date(challenge.start);
-    let finish = new Date(challenge.finish);
-    start.setHours(0, 0, 0);
-    finish.setHours(23, 59, 59);
-    return {
-        name: challenge.name,
-        description: challenge.description,
-        start: start,
-        finish: finish
-    }
-}
-
 const last30days = createRange(30);
 
 const defaultChallenge = {
     name: "Last 30 Days",
     description: "Last 30 Days",
-    start: last30days.from,
-    finish: last30days.to
+    exactStart: last30days.from,
+    exactFinish: last30days.to
 }
 
 function Histogram(props) {
@@ -134,11 +115,7 @@ function Histogram(props) {
                                                                     availableFilters: []
                                                                 });
 
-    const [savedChallenges, setSavedChallenges] = useState({
-        current: null,
-        upcoming: [],
-        completed: []
-    });
+    const [savedChallenges, setSavedChallenges] = useState(emptyChallengeList);
     const [showSelectChallenge, setShowSelectChallenge] = useState(false);
 
     let[barData, setBarData] = useState({
@@ -194,7 +171,7 @@ function Histogram(props) {
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
             .then((response) => response.json())
-            .then(toExactTimes)
+            .then(withExactTimes)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, []);

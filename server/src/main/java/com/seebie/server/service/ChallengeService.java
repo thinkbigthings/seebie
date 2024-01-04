@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -33,25 +35,25 @@ public class ChallengeService {
                 .orElseThrow(() -> new EntityNotFoundException(STR."No user found: \{username}"));
     }
 
+    @Transactional(readOnly = true)
+    public ChallengeList getChallenges(String username, LocalDate today) {
+        return sortChallenges(challengeRepo.findAllByUsername(username), today);
+    }
+
     /**
      * The status is according to the challenge dates relative to the current date:
      * challenge end date is in the past means it's completed,
      * challenge start date in the future means it's upcoming,
      * challenge start and end enclose the current date means it's in progress.
-     *
-     * @param username
-     * @param today
-     * @return
      */
-    @Transactional(readOnly = true)
-    public ChallengeList getChallenges(String username, LocalDate today) {
+    public ChallengeList sortChallenges(List<Challenge> challenges, LocalDate today) {
 
-        var challenges = challengeRepo.findAllByUsername(username);
-        var current = challenges.stream()
-                .filter(c -> c.finish().isAfter(today) && c.start().isBefore(today))
-                .findFirst().orElse(null);
         var completed = challenges.stream().filter(c -> c.finish().isBefore(today)).toList();
         var upcoming = challenges.stream().filter(c -> c.start().isAfter(today)).toList();
+
+        var current = new ArrayList<>(challenges);
+        current.removeAll(completed);
+        current.removeAll(upcoming);
 
         return new ChallengeList(current, completed, upcoming);
     }
