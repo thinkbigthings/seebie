@@ -3,11 +3,13 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import useApiPost from "./hooks/useApiPost";
 import 'react-datepicker/dist/react-datepicker.css';
-import {isNumericString, SleepForm} from "./SleepForm";
+import {SleepForm} from "./SleepForm";
 import SleepDataManager from "./SleepDataManager";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./utility/BasicHeaders";
+import {emptyChallengeList} from "./utility/Constants";
+import CollapsibleContent from "./component/CollapsibleContent";
 
 function CreateSleepSession(props) {
 
@@ -21,11 +23,7 @@ function CreateSleepSession(props) {
     const [sleepData, setSleepData] = useState(SleepDataManager.createInitSleepData());
     const [dataValid, setDataValid] = useState(true);
     const [showModal, setShowModal] = useState(false);
-    const [savedChallenges, setSavedChallenges] = useState({
-        current: null,
-        upcoming: [],
-        completed: []
-    });
+    const [savedChallenges, setSavedChallenges] = useState(emptyChallengeList);
 
     const post = useApiPost();
 
@@ -41,11 +39,16 @@ function CreateSleepSession(props) {
             .then((response) => response.json())
             .then(setSavedChallenges)
             .catch(error => console.log(error));
-    }, []);
+    }, [showModal]);
 
     const defaultTitle = "Log Sleep";
-    const hasCurrentChallenge = (savedChallenges.current !== null);
-    const challengeTitle = hasCurrentChallenge ? savedChallenges.current.name : "";
+
+    const challengeTitles = savedChallenges.current.map(c => c.name);
+    if(challengeTitles.length === 0) {
+        challengeTitles.push("No Challenges are in progress");
+    }
+
+    console.log(challengeTitles)
 
     const closeModal = () => {
         setSleepData(SleepDataManager.createInitSleepData());
@@ -65,7 +68,18 @@ function CreateSleepSession(props) {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {hasCurrentChallenge && <div className={"app-highlight h6 alert alert-light "}>{challengeTitle}</div>}
+                    <CollapsibleContent title={"Challenge in progress"}>
+                        <ul>
+                            {challengeTitles.map((title, index) => {
+                                return (
+                                    <li key={title}>
+                                        {title}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </CollapsibleContent>
+                    <div className={"my-2"} />
                     <SleepForm setSleepData={setSleepData} sleepData={sleepData} setDataValid={setDataValid}/>
                 </Modal.Body>
                 <Modal.Footer>
