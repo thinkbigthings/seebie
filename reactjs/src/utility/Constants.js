@@ -6,6 +6,12 @@ const { VITE_API_VERSION } = import.meta.env;
 
 export {VERSION_HEADER, VITE_API_VERSION};
 
+export const emptyChallengeList = {
+    current: [],
+    upcoming: [],
+    completed: []
+};
+
 export const PREDEFINED_CHALLENGES = [
     {
         name: "Consistent bedtime",

@@ -9,17 +9,16 @@ import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import DatePicker from "react-datepicker";
 import useApiPost from "./hooks/useApiPost";
-import SleepDataManager from "./SleepDataManager";
 import {GET} from "./utility/BasicHeaders";
 import {Tab, Tabs} from "react-bootstrap";
 import CollapsibleContent from "./component/CollapsibleContent";
-import {PREDEFINED_CHALLENGES} from "./utility/Constants";
+import {emptyChallengeList, PREDEFINED_CHALLENGES} from "./utility/Constants";
 import SuccessModal from "./component/SuccessModal";
 import CollapsibleChallenge from "./component/CollapsibleChallenge";
 import Form from "react-bootstrap/Form";
+import {toChallengeDto, withExactTimes} from "./utility/Mapper";
 
-
-function emptyChallenge() {
+function emptyEditableChallenge() {
     const suggestedEndDate = new Date();
     suggestedEndDate.setDate(suggestedEndDate.getDate() + 14);
     return {
@@ -42,14 +41,10 @@ function Challenge(props) {
     const [showCreateSuccess, setShowCreateSuccess] = useState(false);
     const [showCreateChallenge, setShowCreateChallenge] = useState(false);
     const [showPredefinedChallenges, setShowPredefinedChallenges] = useState(false);
-    const [challengeEdit, setChallengeEdit] = useState(emptyChallenge());
-    const [savedChallenges, setSavedChallenges] = useState({
-        current: null,
-        upcoming: [],
-        completed: []
-    });
+    const [editableChallenge, setEditableChallenge] = useState(emptyEditableChallenge());
+    const [savedChallenges, setSavedChallenges] = useState(emptyChallengeList);
 
-    // validation of the overall form so we know whether to enable the save button
+    // validation of the overall form, so we know whether to enable the save button
     // this is set as invalid to start so the name can be blank before showing validation messages
     const [dataValid, setDataValid] = useState(false);
 
@@ -64,12 +59,7 @@ function Challenge(props) {
     const post = useApiPost();
 
     const saveData = () => {
-        post(challengeEndpoint, {
-            name: challengeEdit.name,
-            description: challengeEdit.description,
-            start: SleepDataManager.toIsoLocalDate(challengeEdit.localStartTime),
-            finish: SleepDataManager.toIsoLocalDate(challengeEdit.localEndTime)
-        })
+        post(challengeEndpoint, toChallengeDto(editableChallenge))
         .then(clearChallengeEdit)
         .then(() => setShowCreateSuccess(true))
         .then(() => setCreatedCount(createdCount + 1));
@@ -78,13 +68,14 @@ function Challenge(props) {
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
             .then((response) => response.json())
+            .then(withExactTimes)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, [createdCount]);
 
     const clearChallengeEdit = () => {
         setShowCreateChallenge(false);
-        setChallengeEdit(emptyChallenge());
+        setEditableChallenge(emptyEditableChallenge());
         setDateOrderValid(true);
         setNameValid(true);
         setNameUnique(true);
@@ -94,13 +85,8 @@ function Challenge(props) {
 
     const updateChallenge = (updateValues) => {
 
-        let allSavedChallenges = savedChallenges.upcoming.concat(savedChallenges.completed);
-        if(savedChallenges.current !== null) {
-            allSavedChallenges.push(savedChallenges.current);
-        }
-
-        let updatedChallengeForm = {...challengeEdit, ...updateValues};
-        setChallengeEdit(updatedChallengeForm);
+        let updatedChallengeForm = {...editableChallenge, ...updateValues};
+        setEditableChallenge(updatedChallengeForm);
 
         let updatedDateOrderValid = updatedChallengeForm.localStartTime < updatedChallengeForm.localEndTime;
         setDateOrderValid(updatedDateOrderValid);
@@ -108,6 +94,7 @@ function Challenge(props) {
         let updatedNameValid = updatedChallengeForm.name !== '' && updatedChallengeForm.name.trim() === updatedChallengeForm.name
         setNameValid(updatedNameValid);
 
+        let allSavedChallenges = savedChallenges.upcoming.concat(savedChallenges.completed).concat(savedChallenges.current);
         let updatedNameUnique = ! allSavedChallenges.some(c => c.name === updatedChallengeForm.name);
         setNameUnique(updatedNameUnique);
 
@@ -115,10 +102,8 @@ function Challenge(props) {
 
         // Query for challenges where the given start is between challenge start/finish and same for given finish
         let updatedDatesOverlap = allSavedChallenges.some(c => {
-            let challengeStart = new Date(c.start);
-            let challengeEnd = new Date(c.finish);
-            return (updatedChallengeForm.localStartTime >= challengeStart && updatedChallengeForm.localStartTime <= challengeEnd)
-                || (updatedChallengeForm.localEndTime >= challengeStart && updatedChallengeForm.localEndTime <= challengeEnd);
+            return (updatedChallengeForm.localStartTime >= c.exactStart && updatedChallengeForm.localStartTime <= c.exactFinish)
+                || (updatedChallengeForm.localEndTime >= c.exactStart && updatedChallengeForm.localEndTime <= c.exactFinish);
         });
         setDatesOverlap(updatedDatesOverlap);
     }
@@ -135,10 +120,6 @@ function Challenge(props) {
         setShowCreateChallenge( ! showCreateChallenge);
         setShowPredefinedChallenges( ! showPredefinedChallenges);
     }
-
-    const currentChallengeElement = (savedChallenges.current !== null)
-        ? <CollapsibleChallenge key="0" challenge={savedChallenges.current} />
-        : <div className={"my-2"}>No current challenge</div>;
 
     return (
         <Container>
@@ -163,7 +144,7 @@ function Challenge(props) {
                                 className="form-control"
                                 id="challengeName"
                                 placeholder=""
-                                value={challengeEdit.name}
+                                value={editableChallenge.name}
                                 onChange={e => updateChallenge({name: e.target.value})}
                                 isInvalid={!nameValid || !nameUnique}
                             />
@@ -175,7 +156,7 @@ function Challenge(props) {
                         <Container className="ps-0 mb-3">
                             <label type="text" htmlFor="description" className="form-label">Description</label>
                             <textarea rows="6" className="form-control" id="description" placeholder=""
-                                      value={challengeEdit.description}
+                                      value={editableChallenge.description}
                                       onChange={e => updateChallenge({description: e.target.value})}/>
                         </Container>
 
@@ -185,7 +166,7 @@ function Challenge(props) {
                                 <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
                                             id="startDate" dateFormat="MMMM d, yyyy"
                                             onChange={date => updateChallenge({localStartTime: date})}
-                                            selected={challengeEdit.localStartTime}/>
+                                            selected={editableChallenge.localStartTime}/>
                             </div>
                             <Form.Control.Feedback type="invalid"
                                                    className={"mh-24px d-block " + ((!dateOrderValid) ? 'visible' : 'invisible')}>
@@ -198,7 +179,7 @@ function Challenge(props) {
                                 <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
                                             id="startDate" dateFormat="MMMM d, yyyy"
                                             onChange={date => updateChallenge({localEndTime: date})}
-                                            selected={challengeEdit.localEndTime}/>
+                                            selected={editableChallenge.localEndTime}/>
                             </div>
                             <Form.Control.Feedback type="invalid"
                                                    className={"mh-24px d-block " + ((!dateOrderValid) ? 'visible' : 'invisible')}>
@@ -261,7 +242,11 @@ function Challenge(props) {
             <Container className="container mt-3 px-0">
                 <Tabs defaultActiveKey="current" id="challenge-tabs">
                     <Tab eventKey="current" title="Current">
-                        {currentChallengeElement}
+                        <Container className="px-0 overflow-y-scroll h-70vh ">
+                            {savedChallenges.current.map((challenge, index) =>
+                                <CollapsibleChallenge key={index} challenge={challenge} />
+                            )}
+                        </Container>
                     </Tab>
                     <Tab eventKey="completed" title="Completed">
                         <Container className="px-0 overflow-y-scroll h-70vh ">

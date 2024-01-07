@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import static com.seebie.server.service.ChallengeService.ChallengeCategory.*;
+import static java.util.stream.Collectors.groupingBy;
 
 
 @Service
@@ -33,27 +37,34 @@ public class ChallengeService {
                 .orElseThrow(() -> new EntityNotFoundException(STR."No user found: \{username}"));
     }
 
-    /**
-     * The status is according to the challenge dates relative to the current date:
-     * challenge end date is in the past means it's completed,
-     * challenge start date in the future means it's upcoming,
-     * challenge start and end enclose the current date means it's in progress.
-     *
-     * @param username
-     * @param today
-     * @return
-     */
     @Transactional(readOnly = true)
     public ChallengeList getChallenges(String username, LocalDate today) {
+        return sortChallenges(challengeRepo.findAllByUsername(username), today);
+    }
 
-        var challenges = challengeRepo.findAllByUsername(username);
-        var current = challenges.stream()
-                .filter(c -> c.finish().isAfter(today) && c.start().isBefore(today))
-                .findFirst().orElse(null);
-        var completed = challenges.stream().filter(c -> c.finish().isBefore(today)).toList();
-        var upcoming = challenges.stream().filter(c -> c.start().isAfter(today)).toList();
+    public ChallengeList sortChallenges(List<Challenge> challenges, LocalDate today) {
+
+        var groupedChallenges = challenges.stream().collect(groupingBy(c -> categorize(c, today)));
+
+        List<Challenge> completed = groupedChallenges.getOrDefault(COMPLETED, List.of());
+        List<Challenge> upcoming = groupedChallenges.getOrDefault(UPCOMING, List.of());
+        List<Challenge> current = groupedChallenges.getOrDefault(CURRENT, List.of());
 
         return new ChallengeList(current, completed, upcoming);
+    }
+
+    public enum ChallengeCategory {
+        COMPLETED, UPCOMING, CURRENT;
+    }
+
+    public ChallengeCategory categorize(Challenge challenge, LocalDate today) {
+        if (challenge.finish().isBefore(today)) {
+            return COMPLETED;
+        }
+        if (challenge.start().isAfter(today)) {
+            return UPCOMING;
+        }
+        return CURRENT;
     }
 
 }
