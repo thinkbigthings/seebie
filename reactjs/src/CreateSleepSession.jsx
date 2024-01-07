@@ -33,7 +33,7 @@ function CreateSleepSession(props) {
             .then(onSave);
     }
 
-    // load current challenge
+    // load current challenges
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
             .then((response) => response.json())
@@ -42,13 +42,6 @@ function CreateSleepSession(props) {
     }, [showModal]);
 
     const defaultTitle = "Log Sleep";
-
-    const challengeTitles = savedChallenges.current.map(c => c.name);
-    if(challengeTitles.length === 0) {
-        challengeTitles.push("No Challenges are in progress");
-    }
-
-    console.log(challengeTitles)
 
     const closeModal = () => {
         setSleepData(SleepDataManager.createInitSleepData());
@@ -68,17 +61,18 @@ function CreateSleepSession(props) {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <CollapsibleContent title={"Challenge in progress"}>
-                        <ul>
-                            {challengeTitles.map((title, index) => {
-                                return (
-                                    <li key={title}>
-                                        {title}
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </CollapsibleContent>
+                    {savedChallenges.current.length === 0
+                        ? <span />
+                        : <CollapsibleContent title={"Challenge in progress"}>
+                            <ul>
+                                {savedChallenges.current.map((c, index) => {
+                                    return (
+                                        <li key={c.name}>{c.name}</li>
+                                    );
+                                })}
+                            </ul>
+                        </CollapsibleContent>
+                    }
                     <div className={"my-2"} />
                     <SleepForm setSleepData={setSleepData} sleepData={sleepData} setDataValid={setDataValid}/>
                 </Modal.Body>
