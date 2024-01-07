@@ -23,6 +23,7 @@ function CreateSleepSession(props) {
     const [sleepData, setSleepData] = useState(SleepDataManager.createInitSleepData());
     const [dataValid, setDataValid] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const [openCount, setOpenCount] = useState(1);
     const [savedChallenges, setSavedChallenges] = useState(emptyChallengeList);
 
     const post = useApiPost();
@@ -39,9 +40,14 @@ function CreateSleepSession(props) {
             .then((response) => response.json())
             .then(setSavedChallenges)
             .catch(error => console.log(error));
-    }, [showModal]);
+    }, [openCount]);
 
     const defaultTitle = "Log Sleep";
+
+    const openModal = () => {
+        setOpenCount(openCount + 1);
+        setShowModal(true);
+    }
 
     const closeModal = () => {
         setSleepData(SleepDataManager.createInitSleepData());
@@ -50,7 +56,7 @@ function CreateSleepSession(props) {
 
     return (
         <>
-            <Button variant="secondary" className="px-4 py-2" onClick={() => setShowModal(true)}>
+            <Button variant="secondary" className="px-4 py-2" onClick={openModal}>
                 <FontAwesomeIcon className="me-2" icon={faPlus} />Log Sleep
             </Button>
 
