@@ -244,21 +244,21 @@ function Challenge(props) {
                     <Tab eventKey="current" title="Current">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
                             {savedChallenges.current.map((saved, index) =>
-                                <CollapsibleChallenge key={index} challenge={saved.challenge} />
+                                <CollapsibleChallenge key={index} challenge={saved} />
                             )}
                         </Container>
                     </Tab>
                     <Tab eventKey="completed" title="Completed">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
                             {savedChallenges.completed.map((saved, index) =>
-                                <CollapsibleChallenge key={index} challenge={saved.challenge} />
+                                <CollapsibleChallenge key={index} challenge={saved} />
                             )}
                         </Container>
                     </Tab>
                     <Tab eventKey="upcoming" title="Future">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
                             {savedChallenges.upcoming.map((saved, index) =>
-                                <CollapsibleChallenge key={index} challenge={saved.challenge} />
+                                <CollapsibleChallenge key={index} challenge={saved} />
                             )}
                         </Container>
                     </Tab>
