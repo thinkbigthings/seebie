@@ -95,13 +95,13 @@ function Challenge(props) {
         setNameValid(updatedNameValid);
 
         let allSavedChallenges = savedChallenges.upcoming.concat(savedChallenges.completed).concat(savedChallenges.current);
-        let updatedNameUnique = ! allSavedChallenges.some(c => c.name === updatedChallengeForm.name);
+        let updatedNameUnique = ! allSavedChallenges.some(c => c.challenge.name === updatedChallengeForm.name);
         setNameUnique(updatedNameUnique);
 
         setDataValid( updatedDateOrderValid && updatedNameValid && updatedNameUnique);
 
         // Query for challenges where the given start is between challenge start/finish and same for given finish
-        let updatedDatesOverlap = allSavedChallenges.some(c => {
+        let updatedDatesOverlap = allSavedChallenges.map(c=>c.challenge).some(c => {
             return (updatedChallengeForm.localStartTime >= c.exactStart && updatedChallengeForm.localStartTime <= c.exactFinish)
                 || (updatedChallengeForm.localEndTime >= c.exactStart && updatedChallengeForm.localEndTime <= c.exactFinish);
         });
@@ -243,22 +243,22 @@ function Challenge(props) {
                 <Tabs defaultActiveKey="current" id="challenge-tabs">
                     <Tab eventKey="current" title="Current">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
-                            {savedChallenges.current.map((challenge, index) =>
-                                <CollapsibleChallenge key={index} challenge={challenge} />
+                            {savedChallenges.current.map((saved, index) =>
+                                <CollapsibleChallenge key={index} challenge={saved.challenge} />
                             )}
                         </Container>
                     </Tab>
                     <Tab eventKey="completed" title="Completed">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
-                            {savedChallenges.completed.map((challenge, index) =>
-                                <CollapsibleChallenge key={index} challenge={challenge} />
+                            {savedChallenges.completed.map((saved, index) =>
+                                <CollapsibleChallenge key={index} challenge={saved.challenge} />
                             )}
                         </Container>
                     </Tab>
                     <Tab eventKey="upcoming" title="Future">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
-                            {savedChallenges.upcoming.map((challenge, index) =>
-                                <CollapsibleChallenge key={index} challenge={challenge} />
+                            {savedChallenges.upcoming.map((saved, index) =>
+                                <CollapsibleChallenge key={index} challenge={saved.challenge} />
                             )}
                         </Container>
                     </Tab>

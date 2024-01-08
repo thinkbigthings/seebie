@@ -71,7 +71,7 @@ function CreateSleepSession(props) {
                         ? <span />
                         : <CollapsibleContent title={"Challenge in progress"}>
                             <ul>
-                                {savedChallenges.current.map(c =>
+                                {savedChallenges.current.map(c => c.challenge).map(c =>
                                     <li key={c.name}>{c.name}</li>)
                                 }
                             </ul>

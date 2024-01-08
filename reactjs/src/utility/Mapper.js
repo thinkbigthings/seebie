@@ -8,20 +8,21 @@ const withExactTimes = (challengeList) => {
     return exactChallengeList;
 }
 
-const withExactTime = (challenge) => {
-    let exactStart = new Date(challenge.start);
-    let exactFinish = new Date(challenge.finish);
+const withExactTime = (challengeDetail) => {
+    let exactStart = new Date(challengeDetail.challenge.start);
+    let exactFinish = new Date(challengeDetail.challenge.finish);
     exactStart.setHours(0, 0, 0);
     exactFinish.setHours(23, 59, 59);
+
     return {
-        name: challenge.name,
-        description: challenge.description,
-        start: challenge.start,
-        finish: challenge.finish,
-        exactStart: exactStart,
-        exactFinish: exactFinish
-    }
-}
+        ...challengeDetail,
+        challenge: {
+            ...challengeDetail.challenge,
+            exactStart: exactStart,
+            exactFinish: exactFinish
+        }
+    };
+};
 
 const toChallengeDto = (challenge) =>{
     return {

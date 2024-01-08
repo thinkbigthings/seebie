@@ -1,6 +1,7 @@
 package com.seebie.server.service;
 
 import com.seebie.server.dto.Challenge;
+import com.seebie.server.dto.ChallengeDetails;
 import com.seebie.server.dto.ChallengeList;
 import com.seebie.server.mapper.dtotoentity.UnsavedChallengeMapper;
 import com.seebie.server.repository.ChallengeRepository;
@@ -42,13 +43,13 @@ public class ChallengeService {
         return sortChallenges(challengeRepo.findAllByUsername(username), today);
     }
 
-    public ChallengeList sortChallenges(List<Challenge> challenges, LocalDate today) {
+    public ChallengeList sortChallenges(List<ChallengeDetails> challenges, LocalDate today) {
 
-        var groupedChallenges = challenges.stream().collect(groupingBy(c -> categorize(c, today)));
+        var groupedChallenges = challenges.stream().collect(groupingBy(c -> categorize(c.challenge(), today)));
 
-        List<Challenge> completed = groupedChallenges.getOrDefault(COMPLETED, List.of());
-        List<Challenge> upcoming = groupedChallenges.getOrDefault(UPCOMING, List.of());
-        List<Challenge> current = groupedChallenges.getOrDefault(CURRENT, List.of());
+        List<ChallengeDetails> completed = groupedChallenges.getOrDefault(COMPLETED, List.of());
+        List<ChallengeDetails> upcoming = groupedChallenges.getOrDefault(UPCOMING, List.of());
+        List<ChallengeDetails> current = groupedChallenges.getOrDefault(CURRENT, List.of());
 
         return new ChallengeList(current, completed, upcoming);
     }

@@ -63,6 +63,6 @@ class ChallengeRepositoryTest extends IntegrationTest {
         assertEquals(upcoming.size(), saved.upcoming().size());
         assertEquals(completed.size(), saved.completed().size());
         assertEquals(1, saved.current().size());
-        assertEquals(current.name(), saved.current().getFirst().name());
+        assertEquals(current.name(), saved.current().getFirst().challenge().name());
     }
 }
