@@ -38,6 +38,14 @@ public class ChallengeService {
                 .orElseThrow(() -> new EntityNotFoundException(STR."No user found: \{username}"));
     }
 
+    @Transactional
+    public void remove(String username, Long challengeId) {
+        challengeRepo.findByUsername(username, challengeId)
+                .ifPresentOrElse(challengeRepo::delete, () -> {
+                    throw new EntityNotFoundException(STR."No challenge with id \{challengeId} found for user \{username}");
+                });
+    }
+
     @Transactional(readOnly = true)
     public ChallengeList getChallenges(String username, LocalDate today) {
         return sortChallenges(challengeRepo.findAllByUsername(username), today);

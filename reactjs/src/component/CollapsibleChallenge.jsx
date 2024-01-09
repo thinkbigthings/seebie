@@ -1,5 +1,6 @@
 import CollapsibleContent from "./CollapsibleContent";
 import React from "react";
+import Button from "react-bootstrap/Button";
 
 function calculateProgress(start, now, end) {
 
@@ -20,10 +21,10 @@ const locale = "en-US";
 
 function CollapsibleChallenge(props) {
 
-    const {challenge} = props;
+    const {challenge, onDelete} = props;
 
-    const startDate = new Date(challenge.challenge.start);
-    const finishDate = new Date(challenge.challenge.finish);
+    const startDate = new Date(challenge.start);
+    const finishDate = new Date(challenge.finish);
     const now = new Date();
 
     const inProgress = startDate < now && now < finishDate;
@@ -33,8 +34,8 @@ function CollapsibleChallenge(props) {
     const formattedFinish = finishDate.toLocaleDateString(locale, localeOptions);
 
     return (
-        <CollapsibleContent title={challenge.challenge.name}>
-            <div className={"mb-2 pb-2 border-bottom"}>{challenge.challenge.description}</div>
+        <CollapsibleContent title={challenge.name}>
+            <div className={"mb-2 pb-2 border-bottom"}>{challenge.description}</div>
             <div className={"fw-bold"}>{formattedStart} --- {formattedFinish}</div>
             {inProgress
                 ? <div className="progress my-2" role="progressbar" style={{height: "25px"}}
@@ -43,6 +44,9 @@ function CollapsibleChallenge(props) {
                   </div>
                 : <span />
             }
+            <div className="d-flex justify-content-end">
+                <Button variant="danger" onClick={onDelete}>Delete</Button>
+            </div>
         </CollapsibleContent>
     );
 }

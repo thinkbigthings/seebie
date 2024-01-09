@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
@@ -18,4 +19,11 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
             """)
     List<ChallengeDetails> findAllByUsername(String username);
 
+    @Query("""
+            SELECT e
+            FROM Challenge e
+            WHERE e.user.username=:username
+            AND e.id=:challengeId
+            """)
+    Optional<Challenge> findByUsername(String username, Long challengeId);
 }

@@ -17,6 +17,7 @@ import SuccessModal from "./component/SuccessModal";
 import CollapsibleChallenge from "./component/CollapsibleChallenge";
 import Form from "react-bootstrap/Form";
 import {toChallengeDto, withExactTimes} from "./utility/Mapper";
+import useApiDelete from "./hooks/useApiDelete";
 
 function emptyEditableChallenge() {
     const suggestedEndDate = new Date();
@@ -32,12 +33,14 @@ function emptyEditableChallenge() {
 function Challenge(props) {
 
     const {username} = useParams();
+    const callDelete = useApiDelete();
 
     const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
     const challengeEndpoint = `/api/user/${username}/challenge`;
     const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
 
     const [createdCount, setCreatedCount] = useState(0);
+    const [deletedCount, setDeletedCount] = useState(0);
     const [showCreateSuccess, setShowCreateSuccess] = useState(false);
     const [showCreateChallenge, setShowCreateChallenge] = useState(false);
     const [showPredefinedChallenges, setShowPredefinedChallenges] = useState(false);
@@ -71,7 +74,7 @@ function Challenge(props) {
             .then(withExactTimes)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
-    }, [createdCount]);
+    }, [createdCount, deletedCount]);
 
     const clearChallengeEdit = () => {
         setShowCreateChallenge(false);
@@ -119,6 +122,11 @@ function Challenge(props) {
     const swapModals = () => {
         setShowCreateChallenge( ! showCreateChallenge);
         setShowPredefinedChallenges( ! showPredefinedChallenges);
+    }
+
+    const deleteChallenge = (challengeId) => {
+        const endpoint = `/api/user/${username}/challenge/${challengeId}`;
+        callDelete(endpoint).then(() => setDeletedCount(deletedCount + 1));
     }
 
     return (
@@ -244,21 +252,24 @@ function Challenge(props) {
                     <Tab eventKey="current" title="Current">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
                             {savedChallenges.current.map((saved, index) =>
-                                <CollapsibleChallenge key={index} challenge={saved} />
+                                <CollapsibleChallenge key={index} challenge={saved.challenge}
+                                                      onDelete={() => deleteChallenge(saved.id)} />
                             )}
                         </Container>
                     </Tab>
                     <Tab eventKey="completed" title="Completed">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
                             {savedChallenges.completed.map((saved, index) =>
-                                <CollapsibleChallenge key={index} challenge={saved} />
+                                <CollapsibleChallenge key={index} challenge={saved.challenge}
+                                                      onDelete={() => deleteChallenge(saved.id)} />
                             )}
                         </Container>
                     </Tab>
                     <Tab eventKey="upcoming" title="Future">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
                             {savedChallenges.upcoming.map((saved, index) =>
-                                <CollapsibleChallenge key={index} challenge={saved} />
+                                <CollapsibleChallenge key={index} challenge={saved.challenge}
+                                                      onDelete={() => deleteChallenge(saved.id)} />
                             )}
                         </Container>
                     </Tab>
