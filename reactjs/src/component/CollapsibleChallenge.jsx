@@ -1,6 +1,6 @@
 import CollapsibleContent from "./CollapsibleContent";
 import React from "react";
-import Button from "react-bootstrap/Button";
+import WarningButton from "./WarningButton";
 
 function calculateProgress(start, now, end) {
 
@@ -45,7 +45,9 @@ function CollapsibleChallenge(props) {
                 : <span />
             }
             <div className="d-flex justify-content-end">
-                <Button variant="danger" onClick={onDelete}>Delete</Button>
+                <WarningButton buttonText="Delete" onConfirm={onDelete}>
+                    Are you sure you want to delete this challenge?
+                </WarningButton>
             </div>
         </CollapsibleContent>
     );
