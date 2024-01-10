@@ -149,10 +149,20 @@ public class ControllerSecurityTest {
 				test.get(STR."/api/user/\{USERNAME}/sleep/download", 401),
 				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 401),
 
+				test.get(STR."/api/user/\{ADMINNAME}/sleep/chart", chartParams, 401),
+				test.post(STR."/api/user/\{ADMINNAME}/sleep/histogram", histogramRequest, 401),
+				test.get(STR."/api/user/\{ADMINNAME}/sleep/download", 401),
+				test.post(STR."/api/user/\{ADMINNAME}/sleep/upload", file, 401),
+
 				// challenge controller
 				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 401),
-				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 401)
-		);
+				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 401),
+				test.delete(STR."/api/user/\{USERNAME}/challenge" + "/1", 401),
+
+				test.post(STR."/api/user/\{ADMINNAME}/challenge", challenge, 401),
+				test.get(STR."/api/user/\{ADMINNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 401),
+				test.delete(STR."/api/user/\{ADMINNAME}/challenge" + "/1", 401)
+			);
 	}
 
 	private static List<Arguments> provideAdminTestParameters() {
@@ -189,9 +199,19 @@ public class ControllerSecurityTest {
 				test.get(STR."/api/user/\{USERNAME}/sleep/download", 200),
 				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 200),
 
-				// challenge controller - admin can see other users data
+				test.get(STR."/api/user/\{ADMINNAME}/sleep/chart", chartParams, 200),
+				test.post(STR."/api/user/\{ADMINNAME}/sleep/histogram", histogramRequest, 200),
+				test.get(STR."/api/user/\{ADMINNAME}/sleep/download", 200),
+				test.post(STR."/api/user/\{ADMINNAME}/sleep/upload", file, 200),
+
+				// challenge controller
 				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 200),
-				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 200)
+				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 200),
+				test.delete(STR."/api/user/\{USERNAME}/challenge" + "/1", 200),
+
+				test.post(STR."/api/user/\{ADMINNAME}/challenge", challenge, 200),
+				test.get(STR."/api/user/\{ADMINNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 200),
+				test.delete(STR."/api/user/\{ADMINNAME}/challenge" + "/1", 200)
 		);
 	}
 
@@ -212,18 +232,12 @@ public class ControllerSecurityTest {
 				test.post(STR."/api/user/\{ADMINNAME}/password/update", password, 403),
 				test.get(STR."/api/user/\{ADMINNAME}", 403),
 
-				// sleep controller - user can see own data
+				// sleep controller
 				test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
 				test.get(STR."/api/user/\{USERNAME}/sleep", 200),
 				test.get(STR."/api/user/\{USERNAME}/sleep" + "/1", 200),
 				test.put(STR."/api/user/\{USERNAME}/sleep" + "/1", sleepData, 200),
 				test.delete(STR."/api/user/\{USERNAME}/sleep" + "/1", 200),
-
-				test.get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", from, "to", to}, 200),
-				test.get(STR."/api/user/\{USERNAME}/sleep/download", 200),
-				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 200),
-
-				// sleep controller - user cannot see other user data
 
 				test.post(STR."/api/user/\{ADMINNAME}/sleep", sleepData, 403),
 				test.get(STR."/api/user/\{ADMINNAME}/sleep", 403),
@@ -231,17 +245,24 @@ public class ControllerSecurityTest {
 				test.put(STR."/api/user/\{ADMINNAME}/sleep" + "/1", sleepData, 403),
 				test.delete(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 403),
 
-				test.get(STR."/api/user/\{ADMINNAME}/sleep/chart", new String[]{"from", from, "to", to}, 403),
+				test.get(STR."/api/user/\{USERNAME}/sleep/chart", chartParams, 200),
+				test.post(STR."/api/user/\{USERNAME}/sleep/histogram", histogramRequest, 200),
+				test.get(STR."/api/user/\{USERNAME}/sleep/download", 200),
+				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 200),
+
+				test.get(STR."/api/user/\{ADMINNAME}/sleep/chart", chartParams, 403),
+				test.post(STR."/api/user/\{ADMINNAME}/sleep/histogram", histogramRequest, 403),
 				test.get(STR."/api/user/\{ADMINNAME}/sleep/download", 403),
 				test.post(STR."/api/user/\{ADMINNAME}/sleep/upload", file, 403),
 
-				// challenge controller - user can see own data
+				// challenge controller
 				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 200),
 				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 200),
+				test.delete(STR."/api/user/\{USERNAME}/challenge" + "/1", 200),
 
-				// challenge controller - user cannot see other user data
 				test.post(STR."/api/user/\{ADMINNAME}/challenge", challenge, 403),
-				test.get(STR."/api/user/\{ADMINNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 403)
+				test.get(STR."/api/user/\{ADMINNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 403),
+				test.delete(STR."/api/user/\{ADMINNAME}/challenge" + "/1", 403)
 		);
 	}
 
