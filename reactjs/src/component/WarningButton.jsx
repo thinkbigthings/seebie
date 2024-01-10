@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import Alert from "react-bootstrap/Alert";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTrash} from "@fortawesome/free-solid-svg-icons";
 
 const WarningButton = (props) => {
 
@@ -13,7 +15,10 @@ const WarningButton = (props) => {
 
   return (
     <>
-        <Button variant="danger" onClick={handleShow}>{buttonText}</Button>
+        <Button variant="danger" onClick={handleShow}>
+            <FontAwesomeIcon className="me-2" icon={faTrash} />
+            {buttonText}
+        </Button>
 
         <Modal show={show} onHide={handleClose} >
             <Modal.Header closeButton>

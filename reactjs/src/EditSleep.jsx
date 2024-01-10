@@ -6,13 +6,10 @@ import useApiPut from "./hooks/useApiPut";
 import SleepDataManager from "./SleepDataManager";
 import {GET} from "./utility/BasicHeaders";
 import Button from "react-bootstrap/Button";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import useApiDelete from "./hooks/useApiDelete";
-import Modal from "react-bootstrap/Modal";
-import Alert from "react-bootstrap/Alert";
 import {NavHeader} from "./App";
 import {useNavigate, useParams} from "react-router-dom";
+import WarningButton from "./component/WarningButton";
 
 function EditSleep() {
 
@@ -23,7 +20,6 @@ function EditSleep() {
     const sleepEndpoint = `/api/user/${username}/sleep/${sleepId}`;
 
     const [loaded, setLoaded] = useState(false);
-    const [showDeleteWarning, setShowDeleteWarning] = useState(false);
     const [sleepData, setSleepData] = useState(SleepDataManager.createInitSleepData());
     const [dataValid, setDataValid] = useState(true);
 
@@ -51,10 +47,9 @@ function EditSleep() {
         <Container>
 
             <NavHeader title="Sleep Details">
-                <Button variant="danger"  onClick={()=>setShowDeleteWarning(true)}>
-                    <FontAwesomeIcon className="me-2" icon={faTrash} />
-                    Delete
-                </Button>
+                <WarningButton buttonText="Delete" onConfirm={deleteById}>
+                    This deletes the current sleep log entry and cannot be undone. Proceed?
+                </WarningButton>
             </NavHeader>
 
             <Container id="sleepFormWrapper" className="px-0">
@@ -67,21 +62,6 @@ function EditSleep() {
                 <Button className="me-3" variant="primary" onClick={onSave} disabled={ ! dataValid} >Save</Button>
                 <Button  variant="secondary" onClick={() => navigate(-1)}>Cancel</Button>
             </div>
-
-            <Modal show={showDeleteWarning} onHide={() => setShowDeleteWarning(false)} >
-                <Modal.Header closeButton>
-                    <Modal.Title>Warning</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Alert variant="warning">
-                        This deletes the current sleep log entry and cannot be undone. Proceed?
-                    </Alert>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowDeleteWarning(false)}>Cancel</Button>
-                    <Button variant="warning" onClick={deleteById} >Delete</Button>
-                </Modal.Footer>
-            </Modal>
 
         </Container>
     );

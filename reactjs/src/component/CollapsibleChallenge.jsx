@@ -46,7 +46,7 @@ function CollapsibleChallenge(props) {
             }
             <div className="d-flex justify-content-end">
                 <WarningButton buttonText="Delete" onConfirm={onDelete}>
-                    Are you sure you want to delete this challenge?
+                    Are you sure you want to delete this challenge? This cannot be undone.
                 </WarningButton>
             </div>
         </CollapsibleContent>
