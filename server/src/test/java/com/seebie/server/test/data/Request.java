@@ -7,24 +7,24 @@ import org.springframework.util.MultiValueMap;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.util.CollectionUtils.unmodifiableMultiValueMap;
 
-public record AppRequest(HttpMethod httpMethod, String url, Object reqBody, MultiValueMap<String, String> reqParams) {
+public record Request(HttpMethod httpMethod, String url, Object reqBody, MultiValueMap<String, String> reqParams) {
 
     public static final MultiValueMap<String, String> NO_PARAM = unmodifiableMultiValueMap(new LinkedMultiValueMap<>());
 
-    public AppRequest() {
+    public Request() {
         this(GET, "", "", NO_PARAM);
     }
 
-    public AppRequest method(HttpMethod newHttpMethod) {
-        return new AppRequest(newHttpMethod, url, reqBody, reqParams);
+    public Request method(HttpMethod newHttpMethod) {
+        return new Request(newHttpMethod, url, reqBody, reqParams);
     }
 
-    public AppRequest url(String newUrl) {
-        return new AppRequest(httpMethod, newUrl, reqBody, reqParams);
+    public Request url(String newUrl) {
+        return new Request(httpMethod, newUrl, reqBody, reqParams);
     }
 
-    public AppRequest body(Object newReqBody) {
-        return new AppRequest(httpMethod, url, newReqBody, reqParams);
+    public Request body(Object newReqBody) {
+        return new Request(httpMethod, url, newReqBody, reqParams);
     }
 
     /**
@@ -34,7 +34,7 @@ public record AppRequest(HttpMethod httpMethod, String url, Object reqBody, Mult
      * @param newReqParams
      * @return
      */
-    public AppRequest params(String... newReqParams) {
+    public Request params(String... newReqParams) {
         if(newReqParams.length % 2 != 0) {
             throw new IllegalArgumentException("Number of args must be even");
         }
@@ -42,7 +42,7 @@ public record AppRequest(HttpMethod httpMethod, String url, Object reqBody, Mult
         for (int i = 0; i < newReqParams.length; i += 2) {
             newParams.add(newReqParams[i], newReqParams[i + 1]);
         }
-        return new AppRequest(httpMethod, url, reqBody, unmodifiableMultiValueMap(newParams));
+        return new Request(httpMethod, url, reqBody, unmodifiableMultiValueMap(newParams));
     }
 
 }

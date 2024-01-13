@@ -8,7 +8,7 @@ import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.data.AppRequest;
+import com.seebie.server.test.data.Request;
 import com.seebie.server.test.data.MvcRequestMapper;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
@@ -102,7 +102,7 @@ public class ControllerValidationTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-	private static Function<AppRequest, RequestBuilder> toRequest;
+	private static Function<Request, RequestBuilder> toRequest;
 
 	@BeforeEach
 	public void setup() {
@@ -175,7 +175,7 @@ public class ControllerValidationTest {
 	@MethodSource("provideAdminTestParameters")
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
-	void testAdminValidation(AppRequest testData, int expectedStatus) throws Exception {
+	void testAdminValidation(Request testData, int expectedStatus) throws Exception {
 		test(testData, expectedStatus);
 	}
 
@@ -183,11 +183,11 @@ public class ControllerValidationTest {
 	@MethodSource("provideUserTestParameters")
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
-	void testUserValidation(AppRequest testData, int expectedStatus) throws Exception {
+	void testUserValidation(Request testData, int expectedStatus) throws Exception {
 		test(testData, expectedStatus);
 	}
 
-	private void test(AppRequest testData, int expectedStatus) throws Exception {
+	private void test(Request testData, int expectedStatus) throws Exception {
 		mockMvc.perform(toRequest.apply(testData))
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));

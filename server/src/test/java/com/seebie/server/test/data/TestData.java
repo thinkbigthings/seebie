@@ -10,10 +10,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
+import java.util.*;
 
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
@@ -151,6 +148,37 @@ public class TestData {
                 data.stopTime().plus(amountToAdd), data.zoneId());
     }
 
+    public static class RequestResponseBuilder {
+
+        private Map<Request, Response> map = new HashMap<>();
+
+        public List<Arguments> build(Response.Role role) {
+            return map.entrySet().stream()
+                            .map(entry -> Arguments.of(entry.getKey(), entry.getValue().expected(role)))
+                            .toList();
+        }
+
+        public void post(String urlPath, Object reqBody, int unauthenticated, int user, int admin) {
+            map.put(new Request().method(POST).url(urlPath).body(reqBody), new Response(unauthenticated, user, admin));
+        }
+
+        public void put(String urlPath, Object reqBody, int unauthenticated, int user, int admin) {
+            map.put(new Request().method(PUT).url(urlPath).body(reqBody), new Response(unauthenticated, user, admin));
+        }
+
+        public void get(String urlPath, String[] requestParams,int unauthenticated, int user, int admin) {
+            map.put(new Request().method(GET).url(urlPath).params(requestParams), new Response(unauthenticated, user, admin));
+        }
+
+        public void get(String urlPath, int unauthenticated, int user, int admin) {
+            get(urlPath, new String[]{}, unauthenticated, user, admin);
+        }
+
+        public void delete(String urlPath, int unauthenticated, int user, int admin) {
+            map.put(new Request().method(DELETE).url(urlPath), new Response(unauthenticated, user, admin));
+        }
+    }
+
     public static class ArgumentBuilder {
 
         private String host;
@@ -160,15 +188,15 @@ public class TestData {
         }
 
         public Arguments post(String urlPath, Object reqBody, int expected) {
-            return Arguments.of(new AppRequest().method(POST).url(host + urlPath).body(reqBody), expected);
+            return Arguments.of(new Request().method(POST).url(host + urlPath).body(reqBody), expected);
         }
 
         public Arguments put(String urlPath, Object reqBody, int expected) {
-            return Arguments.of(new AppRequest().method(PUT).url(host + urlPath).body(reqBody), expected);
+            return Arguments.of(new Request().method(PUT).url(host + urlPath).body(reqBody), expected);
         }
 
         public Arguments get(String urlPath, String[] requestParams, int expected) {
-            return Arguments.of(new AppRequest().method(GET).url(host + urlPath).params(requestParams), expected);
+            return Arguments.of(new Request().method(GET).url(host + urlPath).params(requestParams), expected);
         }
 
         public Arguments get(String urlPath, int expected) {
@@ -176,7 +204,7 @@ public class TestData {
         }
 
         public Arguments delete(String urlPath, int expected) {
-            return Arguments.of(new AppRequest().method(DELETE).url(host + urlPath), expected);
+            return Arguments.of(new Request().method(DELETE).url(host + urlPath), expected);
         }
     }
 }
