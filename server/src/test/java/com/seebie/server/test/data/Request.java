@@ -11,20 +11,24 @@ public record Request(HttpMethod httpMethod, String url, Object reqBody, MultiVa
 
     public static final MultiValueMap<String, String> NO_PARAM = unmodifiableMultiValueMap(new LinkedMultiValueMap<>());
 
-    public Request() {
-        this(GET, "", "", NO_PARAM);
+    public static Request post(String urlPath, Object reqBody) {
+        return new Request(POST, urlPath, reqBody, NO_PARAM);
     }
 
-    public Request method(HttpMethod newHttpMethod) {
-        return new Request(newHttpMethod, url, reqBody, reqParams);
+    public static Request put(String urlPath, Object reqBody) {
+        return new Request(PUT, urlPath, reqBody, NO_PARAM);
     }
 
-    public Request url(String newUrl) {
-        return new Request(httpMethod, newUrl, reqBody, reqParams);
+    public static Request get(String urlPath, String[] requestParams) {
+        return new Request(GET, urlPath, "", toParams(requestParams));
     }
 
-    public Request body(Object newReqBody) {
-        return new Request(httpMethod, url, newReqBody, reqParams);
+    public static Request get(String urlPath) {
+        return new Request( GET, urlPath, "", NO_PARAM);
+    }
+
+    public static Request delete(String urlPath) {
+        return new Request(DELETE, urlPath, "", NO_PARAM);
     }
 
     /**
@@ -34,15 +38,15 @@ public record Request(HttpMethod httpMethod, String url, Object reqBody, MultiVa
      * @param newReqParams
      * @return
      */
-    public Request params(String... newReqParams) {
+    public static MultiValueMap<String, String> toParams(String... newReqParams) {
         if(newReqParams.length % 2 != 0) {
             throw new IllegalArgumentException("Number of args must be even");
         }
-        var newParams = new LinkedMultiValueMap<>(reqParams);
+        var newParams = new LinkedMultiValueMap<String, String>();
         for (int i = 0; i < newReqParams.length; i += 2) {
             newParams.add(newReqParams[i], newReqParams[i + 1]);
         }
-        return new Request(httpMethod, url, reqBody, unmodifiableMultiValueMap(newParams));
+        return unmodifiableMultiValueMap(newParams);
     }
 
 }

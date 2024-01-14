@@ -35,8 +35,10 @@ import java.util.function.Function;
 
 import static com.seebie.server.Functional.uncheck;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
+import static com.seebie.server.test.data.Request.*;
 import static com.seebie.server.test.data.TestData.*;
 import static java.time.ZonedDateTime.now;
+import static org.junit.jupiter.params.provider.Arguments.of;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -96,8 +98,6 @@ public class ControllerValidationTest {
 	private static final Challenge invalidChallenge = new Challenge("", "", null, null);
 	private static final Challenge validChallenge = TestData.createRandomChallenge(0, 14);
 
-		private static TestData.ArgumentBuilder test;
-
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	@Autowired
 	private MockMvc mockMvc;
@@ -131,15 +131,12 @@ public class ControllerValidationTest {
 
 		// so we get the mapper as configured for the app
 		toRequest = new MvcRequestMapper(testDataObj2Str(converter.getObjectMapper()));
-
-		test = new TestData.ArgumentBuilder();
 	}
 
 	private static List<Arguments> provideAdminTestParameters() {
 		return List.of(
-
-				test.post("/api/registration", registration, 200),
-				test.post("/api/registration", invalidRegistration, 400)
+				of(post("/api/registration", registration), 200),
+				of(post("/api/registration", invalidRegistration), 400)
 		);
 	}
 
@@ -147,27 +144,27 @@ public class ControllerValidationTest {
 
 		return List.of(
 
-				test.put(STR."/api/user/\{USERNAME}/personalInfo", info, 200),
-				test.put(STR."/api/user/\{USERNAME}/personalInfo", invalidInfo, 400),
+				of(put(STR."/api/user/\{USERNAME}/personalInfo", info), 200),
+				of(put(STR."/api/user/\{USERNAME}/personalInfo", invalidInfo), 400),
 
-				test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
-				test.post(STR."/api/user/\{USERNAME}/sleep", invalidSleepData, 400),
+				of(post(STR."/api/user/\{USERNAME}/sleep", sleepData), 200),
+				of(post(STR."/api/user/\{USERNAME}/sleep", invalidSleepData), 400),
 
-				test.put(STR."/api/user/\{USERNAME}/sleep" + "/1", sleepData, 200),
-				test.put(STR."/api/user/\{USERNAME}/sleep" + "/1", invalidSleepData, 400),
+				of(put(STR."/api/user/\{USERNAME}/sleep" + "/1", sleepData), 200),
+				of(put(STR."/api/user/\{USERNAME}/sleep" + "/1", invalidSleepData), 400),
 
-				test.get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", from, "to", to},   200),
-				test.get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", "",   "to", ""},   400),
-				test.get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", to,   "to", from}, 400),
+				of(get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", from, "to", to}),   200),
+				of(get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", "",   "to", ""}),   400),
+				of(get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", to,   "to", from}), 400),
 
-				test.post(STR."/api/user/\{USERNAME}/sleep/histogram", validHistReq,   200),
-				test.post(STR."/api/user/\{USERNAME}/sleep/histogram", invalidHistReq,   400),
+				of(post(STR."/api/user/\{USERNAME}/sleep/histogram", validHistReq),   200),
+				of(post(STR."/api/user/\{USERNAME}/sleep/histogram", invalidHistReq),   400),
 
-				test.post(STR."/api/user/\{USERNAME}/sleep/upload", badFile, 400),
-				test.post(STR."/api/user/\{USERNAME}/sleep/upload", goodFile, 200),
+				of(post(STR."/api/user/\{USERNAME}/sleep/upload", badFile), 400),
+				of(post(STR."/api/user/\{USERNAME}/sleep/upload", goodFile), 200),
 
-				test.post(STR."/api/user/\{USERNAME}/challenge", invalidChallenge, 400),
-				test.post(STR."/api/user/\{USERNAME}/challenge", validChallenge, 200)
+				of(post(STR."/api/user/\{USERNAME}/challenge", invalidChallenge), 400),
+				of(post(STR."/api/user/\{USERNAME}/challenge", validChallenge), 200)
 		);
 	}
 

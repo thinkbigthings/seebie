@@ -16,7 +16,6 @@ import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.joining;
-import static org.springframework.http.HttpMethod.*;
 import static org.springframework.util.MimeTypeUtils.TEXT_PLAIN_VALUE;
 
 public class TestData {
@@ -150,61 +149,48 @@ public class TestData {
 
     public static class RequestResponseBuilder {
 
-        private Map<Request, Response> map = new HashMap<>();
-
-        public List<Arguments> build(Response.Role role) {
-            return map.entrySet().stream()
-                            .map(entry -> Arguments.of(entry.getKey(), entry.getValue().expected(role)))
-                            .toList();
+        public enum Role {
+            USER, ADMIN, UNAUTHENTICATED
         }
 
-        public void post(String urlPath, Object reqBody, int unauthenticated, int user, int admin) {
-            map.put(new Request().method(POST).url(urlPath).body(reqBody), new Response(unauthenticated, user, admin));
+        private List<Arguments> unauthenticated = new ArrayList<>();
+        private List<Arguments> user = new ArrayList<>();
+        private List<Arguments> admin = new ArrayList<>();
+
+        public RequestResponseBuilder post(String urlPath, Object reqBody, int unauthenticated, int user, int admin) {
+            return addArgs(Request.post(urlPath, reqBody), unauthenticated, user, admin);
         }
 
-        public void put(String urlPath, Object reqBody, int unauthenticated, int user, int admin) {
-            map.put(new Request().method(PUT).url(urlPath).body(reqBody), new Response(unauthenticated, user, admin));
+        public RequestResponseBuilder put(String urlPath, Object reqBody, int unauthenticated, int user, int admin) {
+            return addArgs(Request.put(urlPath, reqBody), unauthenticated, user, admin);
         }
 
-        public void get(String urlPath, String[] requestParams,int unauthenticated, int user, int admin) {
-            map.put(new Request().method(GET).url(urlPath).params(requestParams), new Response(unauthenticated, user, admin));
+        public RequestResponseBuilder get(String urlPath, String[] requestParams, int unauthenticated, int user, int admin) {
+            return addArgs(Request.get(urlPath, requestParams), unauthenticated, user, admin);
         }
 
-        public void get(String urlPath, int unauthenticated, int user, int admin) {
-            get(urlPath, new String[]{}, unauthenticated, user, admin);
+        public RequestResponseBuilder get(String urlPath, int unauthenticated, int user, int admin) {
+            return get(urlPath, new String[]{}, unauthenticated, user, admin);
         }
 
-        public void delete(String urlPath, int unauthenticated, int user, int admin) {
-            map.put(new Request().method(DELETE).url(urlPath), new Response(unauthenticated, user, admin));
-        }
-    }
-
-    public static class ArgumentBuilder {
-
-        private String host;
-
-        public ArgumentBuilder() {
-            this.host = "";
+        public RequestResponseBuilder delete(String urlPath, int unauthenticated, int user, int admin) {
+            return addArgs(Request.delete(urlPath), unauthenticated, user, admin);
         }
 
-        public Arguments post(String urlPath, Object reqBody, int expected) {
-            return Arguments.of(new Request().method(POST).url(host + urlPath).body(reqBody), expected);
+        public RequestResponseBuilder addArgs(Request request, int unauthenticated, int user, int admin) {
+            this.unauthenticated.add(Arguments.of(request, unauthenticated));
+            this.user.add(Arguments.of(request, user));
+            this.admin.add(Arguments.of(request, admin));
+            return this;
         }
 
-        public Arguments put(String urlPath, Object reqBody, int expected) {
-            return Arguments.of(new Request().method(PUT).url(host + urlPath).body(reqBody), expected);
-        }
-
-        public Arguments get(String urlPath, String[] requestParams, int expected) {
-            return Arguments.of(new Request().method(GET).url(host + urlPath).params(requestParams), expected);
-        }
-
-        public Arguments get(String urlPath, int expected) {
-            return get(urlPath, new String[]{}, expected);
-        }
-
-        public Arguments delete(String urlPath, int expected) {
-            return Arguments.of(new Request().method(DELETE).url(host + urlPath), expected);
+        public List<Arguments> build(Role role) {
+            return switch(role) {
+                case USER -> this.user;
+                case UNAUTHENTICATED -> this.unauthenticated;
+                case ADMIN -> this.admin;
+            };
         }
     }
+
 }

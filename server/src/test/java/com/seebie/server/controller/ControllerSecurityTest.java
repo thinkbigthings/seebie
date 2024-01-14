@@ -7,8 +7,8 @@ import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.data.Request;
-import com.seebie.server.test.data.Response;
 import com.seebie.server.test.data.MvcRequestMapper;
+import com.seebie.server.test.data.Response;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -159,14 +159,14 @@ public class ControllerSecurityTest {
 	}
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
-		return test.build(Response.Role.UNAUTHENTICATED);
+		return test.build(RequestResponseBuilder.Role.UNAUTHENTICATED);
 	}
 
 	private static List<Arguments> provideUserTestParameters() {
-		return test.build(Response.Role.USER);
+		return test.build(RequestResponseBuilder.Role.USER);
 	}
 	private static List<Arguments> provideAdminTestParameters() {
-		return test.build(Response.Role.ADMIN);
+		return test.build(RequestResponseBuilder.Role.ADMIN);
 	}
 
 
