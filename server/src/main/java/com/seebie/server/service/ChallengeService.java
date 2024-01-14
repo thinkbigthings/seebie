@@ -7,8 +7,10 @@ import com.seebie.server.mapper.dtotoentity.UnsavedChallengeMapper;
 import com.seebie.server.repository.ChallengeRepository;
 import com.seebie.server.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,6 +38,21 @@ public class ChallengeService {
                 .map(user -> toEntity.apply(user, challenge))
                 .map(challengeRepo::save)
                 .orElseThrow(() -> new EntityNotFoundException(STR."No user found: \{username}"));
+    }
+
+    @Transactional
+    public void update(String username, Long challengeId, Challenge dto) {
+
+        var entity = challengeRepo.findByUsername(username, challengeId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Challenge not found"));
+
+        entity.setChallengeData(dto.name(), dto.description(), dto.start(), dto.finish());
+    }
+
+    @Transactional(readOnly = true)
+    public Challenge retrieve(String username, Long challengeId) {
+        return challengeRepo.findDtoBy(username, challengeId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Challenge not found"));
     }
 
     @Transactional

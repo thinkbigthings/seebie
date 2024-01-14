@@ -20,6 +20,14 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     List<ChallengeDetails> findAllByUsername(String username);
 
     @Query("""
+            SELECT new com.seebie.server.dto.Challenge(e.name, e.description, e.start, e.finish)
+            FROM Challenge e
+            WHERE e.user.username=:username
+            AND e.id=:challengeId 
+            """)
+    Optional<com.seebie.server.dto.Challenge> findDtoBy(String username, Long challengeId);
+
+    @Query("""
             SELECT e
             FROM Challenge e
             WHERE e.user.username=:username

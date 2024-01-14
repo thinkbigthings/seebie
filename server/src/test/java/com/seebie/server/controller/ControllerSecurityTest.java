@@ -151,10 +151,14 @@ public class ControllerSecurityTest {
 
 		test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 401, 200, 200);
 		test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 401, 200, 200);
+		test.get(STR."/api/user/\{USERNAME}/challenge" + "/1", 401, 200, 200);
+		test.put(STR."/api/user/\{USERNAME}/challenge" + "/1", challenge, 401, 200, 200);
 		test.delete(STR."/api/user/\{USERNAME}/challenge" + "/1", 401, 200, 200);
 
 		test.post(STR."/api/user/\{ADMINNAME}/challenge", challenge, 401, 403, 200);
 		test.get(STR."/api/user/\{ADMINNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 401, 403, 200);
+		test.get(STR."/api/user/\{ADMINNAME}/challenge" + "/1", 401, 403, 200);
+		test.put(STR."/api/user/\{ADMINNAME}/challenge" + "/1", challenge, 401, 403, 200);
 		test.delete(STR."/api/user/\{ADMINNAME}/challenge" + "/1", 401, 403, 200);
 	}
 

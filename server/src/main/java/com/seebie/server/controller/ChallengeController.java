@@ -2,6 +2,7 @@ package com.seebie.server.controller;
 
 import com.seebie.server.dto.Challenge;
 import com.seebie.server.dto.ChallengeList;
+import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.ZoneIdConstraint;
 import com.seebie.server.service.ChallengeService;
 import jakarta.validation.Valid;
@@ -31,6 +32,20 @@ public class ChallengeController {
     @ResponseBody
     public void createChallenge(@PathVariable String username, @Valid @RequestBody Challenge challenge) {
         challengeService.saveNewChallenge(username, challenge);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/user/{username}/challenge/{challengeId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void updateChallenge(@Valid @RequestBody Challenge challengeData, @PathVariable String username, @PathVariable Long challengeId) {
+        challengeService.update(username, challengeId, challengeData);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/user/{username}/challenge/{challengeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Challenge getChallenge(@PathVariable String username, @PathVariable Long challengeId) {
+        return challengeService.retrieve(username, challengeId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")

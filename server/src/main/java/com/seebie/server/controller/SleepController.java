@@ -98,7 +98,6 @@ public class SleepController {
     @RequestMapping(value="/user/{username}/sleep/{sleepId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public SleepData getSleepSession(@PathVariable String username, @PathVariable Long sleepId) {
-
         return sleepService.retrieve(username, sleepId);
     }
 
@@ -106,7 +105,6 @@ public class SleepController {
     @RequestMapping(value="/user/{username}/sleep/{sleepId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public void updateSleepSession(@Valid @RequestBody SleepData sleepData, @PathVariable String username, @PathVariable Long sleepId) {
-
         sleepService.update(username, sleepId, sleepData);
     }
 

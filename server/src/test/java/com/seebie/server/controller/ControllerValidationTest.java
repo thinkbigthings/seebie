@@ -150,8 +150,8 @@ public class ControllerValidationTest {
 				of(post(STR."/api/user/\{USERNAME}/sleep", sleepData), 200),
 				of(post(STR."/api/user/\{USERNAME}/sleep", invalidSleepData), 400),
 
-				of(put(STR."/api/user/\{USERNAME}/sleep" + "/1", sleepData), 200),
-				of(put(STR."/api/user/\{USERNAME}/sleep" + "/1", invalidSleepData), 400),
+				of(put(STR."/api/user/\{USERNAME}/sleep/1", sleepData), 200),
+				of(put(STR."/api/user/\{USERNAME}/sleep/1", invalidSleepData), 400),
 
 				of(get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", from, "to", to}),   200),
 				of(get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", "",   "to", ""}),   400),
@@ -164,7 +164,10 @@ public class ControllerValidationTest {
 				of(post(STR."/api/user/\{USERNAME}/sleep/upload", goodFile), 200),
 
 				of(post(STR."/api/user/\{USERNAME}/challenge", invalidChallenge), 400),
-				of(post(STR."/api/user/\{USERNAME}/challenge", validChallenge), 200)
+				of(post(STR."/api/user/\{USERNAME}/challenge", validChallenge), 200),
+
+				of(put(STR."/api/user/\{USERNAME}/challenge/1", invalidChallenge), 400),
+				of(put(STR."/api/user/\{USERNAME}/challenge/1", validChallenge), 200)
 		);
 	}
 
