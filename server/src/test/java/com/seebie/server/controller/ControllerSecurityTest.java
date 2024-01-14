@@ -6,8 +6,9 @@ import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.data.AppRequest;
+import com.seebie.server.test.data.Request;
 import com.seebie.server.test.data.MvcRequestMapper;
+import com.seebie.server.test.data.Response;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -95,9 +96,9 @@ public class ControllerSecurityTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-	private static Function<AppRequest, RequestBuilder> toRequest;
+	private static Function<Request, RequestBuilder> toRequest;
 
-	private static TestData.ArgumentBuilder test;
+	private static TestData.RequestResponseBuilder test;
 
 	@BeforeEach
 	public void setup() {
@@ -112,143 +113,67 @@ public class ControllerSecurityTest {
 		// so we get the mapper as configured for the app
 		toRequest = new MvcRequestMapper(testDataObj2Str(converter.getObjectMapper()));
 		
-		test = new TestData.ArgumentBuilder();
+		test = new RequestResponseBuilder();
+
+		test.post("/api/registration", registration, 401, 403, 200);
+		test.get("/api/login", 401, 200, 200);
+		test.get("/api/user", 401, 403, 200);
+
+		test.put(STR."/api/user/\{USERNAME}/personalInfo", info, 401, 200, 200);
+		test.post(STR."/api/user/\{USERNAME}/password/update", password, 401, 200, 200);
+		test.get(STR."/api/user/\{USERNAME}", 401, 200, 200);
+
+		test.put(STR."/api/user/\{ADMINNAME}/personalInfo", info, 401, 403, 200);
+		test.post(STR."/api/user/\{ADMINNAME}/password/update", password, 401, 403, 200);
+		test.get(STR."/api/user/\{ADMINNAME}", 401, 403, 200);
+
+		test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 401, 200, 200);
+		test.get(STR."/api/user/\{USERNAME}/sleep", 401, 200, 200);
+		test.get(STR."/api/user/\{USERNAME}/sleep" + "/1", 401, 200, 200);
+		test.put(STR."/api/user/\{USERNAME}/sleep" + "/1", sleepData, 401, 200, 200);
+		test.delete(STR."/api/user/\{USERNAME}/sleep" + "/1", 401, 200, 200);
+
+		test.post(STR."/api/user/\{ADMINNAME}/sleep", sleepData, 401, 403, 200);
+		test.get(STR."/api/user/\{ADMINNAME}/sleep", 401, 403, 200);
+		test.get(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 401, 403, 200);
+		test.put(STR."/api/user/\{ADMINNAME}/sleep" + "/1", sleepData, 401, 403, 200);
+		test.delete(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 401, 403, 200);
+
+		test.get(STR."/api/user/\{USERNAME}/sleep/chart", chartParams, 401, 200, 200);
+		test.post(STR."/api/user/\{USERNAME}/sleep/histogram", histogramRequest, 401, 200, 200);
+		test.get(STR."/api/user/\{USERNAME}/sleep/download", 401, 200, 200);
+		test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 401, 200, 200);
+
+		test.get(STR."/api/user/\{ADMINNAME}/sleep/chart", chartParams, 401, 403, 200);
+		test.post(STR."/api/user/\{ADMINNAME}/sleep/histogram", histogramRequest, 401, 403, 200);
+		test.get(STR."/api/user/\{ADMINNAME}/sleep/download", 401, 403, 200);
+		test.post(STR."/api/user/\{ADMINNAME}/sleep/upload", file, 401, 403, 200);
+
+		test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 401, 200, 200);
+		test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 401, 200, 200);
+		test.delete(STR."/api/user/\{USERNAME}/challenge" + "/1", 401, 200, 200);
+
+		test.post(STR."/api/user/\{ADMINNAME}/challenge", challenge, 401, 403, 200);
+		test.get(STR."/api/user/\{ADMINNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 401, 403, 200);
+		test.delete(STR."/api/user/\{ADMINNAME}/challenge" + "/1", 401, 403, 200);
 	}
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
-		return List.of(
-
-				// user controller
-				test.post("/api/registration", registration, 401),
-				test.get("/api/login", 401),
-				test.get("/api/user", 401),
-
-				test.put(STR."/api/user/\{USERNAME}/personalInfo", registration, 401),
-				test.post(STR."/api/user/\{USERNAME}/password/update", password, 401),
-				test.get(STR."/api/user/\{USERNAME}", 401),
-
-				test.put(STR."/api/user/\{ADMINNAME}/personalInfo", info, 401),
-				test.post(STR."/api/user/\{ADMINNAME}/password/update", password, 401),
-				test.get(STR."/api/user/\{ADMINNAME}", 401),
-
-				// sleep controller
-				test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 401),
-				test.get(STR."/api/user/\{USERNAME}/sleep", 401),
-				test.get(STR."/api/user/\{USERNAME}/sleep" + "/1", 401),
-				test.put(STR."/api/user/\{USERNAME}/sleep" + "/1", sleepData, 401),
-				test.delete(STR."/api/user/\{USERNAME}/sleep" + "/1", 401),
-
-				test.post(STR."/api/user/\{ADMINNAME}/sleep", sleepData, 401),
-				test.get(STR."/api/user/\{ADMINNAME}/sleep", 401),
-				test.get(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 401),
-				test.put(STR."/api/user/\{ADMINNAME}/sleep" + "/1", sleepData, 401),
-				test.delete(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 401),
-
-				test.get(STR."/api/user/\{USERNAME}/sleep/chart", chartParams, 401),
-				test.post(STR."/api/user/\{USERNAME}/sleep/histogram", histogramRequest, 401),
-				test.get(STR."/api/user/\{USERNAME}/sleep/download", 401),
-				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 401),
-
-				// challenge controller
-				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 401),
-				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 401)
-		);
-	}
-
-	private static List<Arguments> provideAdminTestParameters() {
-		return List.of(
-
-				// user controller
-				test.post("/api/registration", registration, 200),
-				test.get("/api/login", 200),
-				test.get("/api/user", 200),
-
-				test.put(STR."/api/user/\{USERNAME}/personalInfo", info, 200),
-				test.post(STR."/api/user/\{USERNAME}/password/update", password, 200),
-				test.get(STR."/api/user/\{USERNAME}", 200),
-
-				test.put(STR."/api/user/\{ADMINNAME}/personalInfo", info, 200),
-				test.post(STR."/api/user/\{ADMINNAME}/password/update", password, 200),
-				test.get(STR."/api/user/\{ADMINNAME}", 200),
-
-				// sleep controller
-				test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
-				test.get(STR."/api/user/\{USERNAME}/sleep", 200),
-				test.get(STR."/api/user/\{USERNAME}/sleep" + "/1", 200),
-				test.put(STR."/api/user/\{USERNAME}/sleep" + "/1", sleepData, 200),
-				test.delete(STR."/api/user/\{USERNAME}/sleep" + "/1", 200),
-
-				test.post(STR."/api/user/\{ADMINNAME}/sleep", sleepData, 200),
-				test.get(STR."/api/user/\{ADMINNAME}/sleep", 200),
-				test.get(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 200),
-				test.put(STR."/api/user/\{ADMINNAME}/sleep" + "/1", sleepData, 200),
-				test.delete(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 200),
-
-				test.get(STR."/api/user/\{USERNAME}/sleep/chart", chartParams, 200),
-				test.post(STR."/api/user/\{USERNAME}/sleep/histogram", histogramRequest, 200),
-				test.get(STR."/api/user/\{USERNAME}/sleep/download", 200),
-				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 200),
-
-				// challenge controller - admin can see other users data
-				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 200),
-				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 200)
-		);
+		return test.build(RequestResponseBuilder.Role.UNAUTHENTICATED);
 	}
 
 	private static List<Arguments> provideUserTestParameters() {
-		return List.of(
-
-				// user controller
-				test.post("/api/registration", registration, 403),
-				test.get("/api/login", 200),
-				test.get("/api/user", 403),
-
-				test.put(STR."/api/user/\{USERNAME}/personalInfo", info, 200),
-				test.post(STR."/api/user/\{USERNAME}/password/update", password, 200),
-				test.get(STR."/api/user/\{USERNAME}", 200),
-
-				// user controller - should not access other user endpoints
-				test.put(STR."/api/user/\{ADMINNAME}/personalInfo", info, 403),
-				test.post(STR."/api/user/\{ADMINNAME}/password/update", password, 403),
-				test.get(STR."/api/user/\{ADMINNAME}", 403),
-
-				// sleep controller - user can see own data
-				test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
-				test.get(STR."/api/user/\{USERNAME}/sleep", 200),
-				test.get(STR."/api/user/\{USERNAME}/sleep" + "/1", 200),
-				test.put(STR."/api/user/\{USERNAME}/sleep" + "/1", sleepData, 200),
-				test.delete(STR."/api/user/\{USERNAME}/sleep" + "/1", 200),
-
-				test.get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", from, "to", to}, 200),
-				test.get(STR."/api/user/\{USERNAME}/sleep/download", 200),
-				test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 200),
-
-				// sleep controller - user cannot see other user data
-
-				test.post(STR."/api/user/\{ADMINNAME}/sleep", sleepData, 403),
-				test.get(STR."/api/user/\{ADMINNAME}/sleep", 403),
-				test.get(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 403),
-				test.put(STR."/api/user/\{ADMINNAME}/sleep" + "/1", sleepData, 403),
-				test.delete(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 403),
-
-				test.get(STR."/api/user/\{ADMINNAME}/sleep/chart", new String[]{"from", from, "to", to}, 403),
-				test.get(STR."/api/user/\{ADMINNAME}/sleep/download", 403),
-				test.post(STR."/api/user/\{ADMINNAME}/sleep/upload", file, 403),
-
-				// challenge controller - user can see own data
-				test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 200),
-				test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 200),
-
-				// challenge controller - user cannot see other user data
-				test.post(STR."/api/user/\{ADMINNAME}/challenge", challenge, 403),
-				test.get(STR."/api/user/\{ADMINNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 403)
-		);
+		return test.build(RequestResponseBuilder.Role.USER);
 	}
+	private static List<Arguments> provideAdminTestParameters() {
+		return test.build(RequestResponseBuilder.Role.ADMIN);
+	}
+
 
 	@ParameterizedTest
 	@MethodSource("provideUnauthenticatedTestParameters")
 	@DisplayName("Unauthenticated Access")
-	void testUnauthenticatedSecurity(AppRequest testData, int expectedStatus) throws Exception {
+	void testUnauthenticatedSecurity(Request testData, int expectedStatus) throws Exception {
 		test(testData, expectedStatus);
 	}
 
@@ -256,7 +181,7 @@ public class ControllerSecurityTest {
 	@MethodSource("provideAdminTestParameters")
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
-	void testAdminSecurity(AppRequest testData, int expectedStatus) throws Exception {
+	void testAdminSecurity(Request testData, int expectedStatus) throws Exception {
 		test(testData, expectedStatus);
 	}
 
@@ -264,11 +189,11 @@ public class ControllerSecurityTest {
 	@MethodSource("provideUserTestParameters")
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
-	void testUserSecurity(AppRequest testData, int expectedStatus) throws Exception {
+	void testUserSecurity(Request testData, int expectedStatus) throws Exception {
 		test(testData, expectedStatus);
 	}
 
-	private void test(AppRequest testData, int expectedStatus) throws Exception {
+	private void test(Request testData, int expectedStatus) throws Exception {
 		mockMvc.perform(toRequest.apply(testData))
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));

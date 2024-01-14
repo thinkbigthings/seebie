@@ -9,7 +9,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 
-public class MvcRequestMapper implements Function<AppRequest, RequestBuilder> {
+public class MvcRequestMapper implements Function<Request, RequestBuilder> {
 
     private Function<Object, String> mapper;
 
@@ -18,7 +18,7 @@ public class MvcRequestMapper implements Function<AppRequest, RequestBuilder> {
     }
 
     @Override
-    public RequestBuilder apply(AppRequest request) {
+    public RequestBuilder apply(Request request) {
 
             return request.reqBody() instanceof MockMultipartFile multipartFile
                     ? multipart(request.url())

@@ -10,16 +10,12 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
+import java.util.*;
 
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.joining;
-import static org.springframework.http.HttpMethod.*;
 import static org.springframework.util.MimeTypeUtils.TEXT_PLAIN_VALUE;
 
 public class TestData {
@@ -151,32 +147,50 @@ public class TestData {
                 data.stopTime().plus(amountToAdd), data.zoneId());
     }
 
-    public static class ArgumentBuilder {
+    public static class RequestResponseBuilder {
 
-        private String host;
-
-        public ArgumentBuilder() {
-            this.host = "";
+        public enum Role {
+            USER, ADMIN, UNAUTHENTICATED
         }
 
-        public Arguments post(String urlPath, Object reqBody, int expected) {
-            return Arguments.of(new AppRequest().method(POST).url(host + urlPath).body(reqBody), expected);
+        private List<Arguments> unauthenticated = new ArrayList<>();
+        private List<Arguments> user = new ArrayList<>();
+        private List<Arguments> admin = new ArrayList<>();
+
+        public RequestResponseBuilder post(String urlPath, Object reqBody, int unauthenticated, int user, int admin) {
+            return addArgs(Request.post(urlPath, reqBody), unauthenticated, user, admin);
         }
 
-        public Arguments put(String urlPath, Object reqBody, int expected) {
-            return Arguments.of(new AppRequest().method(PUT).url(host + urlPath).body(reqBody), expected);
+        public RequestResponseBuilder put(String urlPath, Object reqBody, int unauthenticated, int user, int admin) {
+            return addArgs(Request.put(urlPath, reqBody), unauthenticated, user, admin);
         }
 
-        public Arguments get(String urlPath, String[] requestParams, int expected) {
-            return Arguments.of(new AppRequest().method(GET).url(host + urlPath).params(requestParams), expected);
+        public RequestResponseBuilder get(String urlPath, String[] requestParams, int unauthenticated, int user, int admin) {
+            return addArgs(Request.get(urlPath, requestParams), unauthenticated, user, admin);
         }
 
-        public Arguments get(String urlPath, int expected) {
-            return get(urlPath, new String[]{}, expected);
+        public RequestResponseBuilder get(String urlPath, int unauthenticated, int user, int admin) {
+            return get(urlPath, new String[]{}, unauthenticated, user, admin);
         }
 
-        public Arguments delete(String urlPath, int expected) {
-            return Arguments.of(new AppRequest().method(DELETE).url(host + urlPath), expected);
+        public RequestResponseBuilder delete(String urlPath, int unauthenticated, int user, int admin) {
+            return addArgs(Request.delete(urlPath), unauthenticated, user, admin);
+        }
+
+        public RequestResponseBuilder addArgs(Request request, int unauthenticated, int user, int admin) {
+            this.unauthenticated.add(Arguments.of(request, unauthenticated));
+            this.user.add(Arguments.of(request, user));
+            this.admin.add(Arguments.of(request, admin));
+            return this;
+        }
+
+        public List<Arguments> build(Role role) {
+            return switch(role) {
+                case USER -> this.user;
+                case UNAUTHENTICATED -> this.unauthenticated;
+                case ADMIN -> this.admin;
+            };
         }
     }
+
 }

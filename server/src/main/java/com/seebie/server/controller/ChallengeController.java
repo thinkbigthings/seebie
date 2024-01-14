@@ -41,4 +41,11 @@ public class ChallengeController {
         return challengeService.getChallenges(username, today);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/user/{username}/challenge/{challengeId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void delete(@PathVariable String username, @PathVariable Long challengeId) {
+        challengeService.remove(username, challengeId);
+    }
+
 }

@@ -132,7 +132,7 @@ function Histogram(props) {
         const selectedName = event.target.value;
         const foundChallenge = defaultChallenge.name == selectedName
             ? defaultChallenge
-            : savedChallenges.completed.find(challenge => challenge.name === selectedName);
+            : savedChallenges.completed.find(saved => saved.challenge.name === selectedName);
 
         let newPageSettings = structuredClone(pageSettings);
         newPageSettings.filters.push({

@@ -114,7 +114,6 @@ public class SleepController {
     @RequestMapping(value="/user/{username}/sleep/{sleepId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public void delete(@PathVariable String username, @PathVariable Long sleepId) {
-
         sleepService.remove(username, sleepId);
     }
 
