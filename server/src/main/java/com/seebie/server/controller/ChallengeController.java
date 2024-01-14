@@ -2,7 +2,6 @@ package com.seebie.server.controller;
 
 import com.seebie.server.dto.Challenge;
 import com.seebie.server.dto.ChallengeList;
-import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.ZoneIdConstraint;
 import com.seebie.server.service.ChallengeService;
 import jakarta.validation.Valid;

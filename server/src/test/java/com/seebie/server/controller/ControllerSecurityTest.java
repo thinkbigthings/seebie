@@ -98,7 +98,7 @@ public class ControllerSecurityTest {
 
 	private static Function<Request, RequestBuilder> toRequest;
 
-	private static TestData.RequestResponseBuilder test;
+	private static TestData.RequestResponseBuilder test = new RequestResponseBuilder();
 
 	@BeforeEach
 	public void setup() {
@@ -112,8 +112,6 @@ public class ControllerSecurityTest {
 
 		// so we get the mapper as configured for the app
 		toRequest = new MvcRequestMapper(testDataObj2Str(converter.getObjectMapper()));
-		
-		test = new RequestResponseBuilder();
 
 		test.post("/api/registration", registration, 401, 403, 200);
 		test.get("/api/login", 401, 200, 200);
