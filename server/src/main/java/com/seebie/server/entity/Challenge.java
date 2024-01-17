@@ -51,6 +51,14 @@ public class Challenge implements Serializable {
         this.user = user;
     }
 
+
+    public void setChallengeData(String name, String description, LocalDate start, LocalDate finish) {
+        this.name = name;
+        this.description = description;
+        this.start = start;
+        this.finish = finish;
+    }
+
     public Long getId() {
         return id;
     }

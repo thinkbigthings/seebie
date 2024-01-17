@@ -3,12 +3,15 @@ package com.seebie.server.service;
 import com.seebie.server.dto.Challenge;
 import com.seebie.server.dto.ChallengeDetails;
 import com.seebie.server.dto.ChallengeList;
+import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.mapper.dtotoentity.UnsavedChallengeMapper;
 import com.seebie.server.repository.ChallengeRepository;
 import com.seebie.server.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,12 +33,29 @@ public class ChallengeService {
     }
 
     @Transactional
-    public void saveNewChallenge(String username, Challenge challenge) {
+    public ChallengeDetails saveNewChallenge(String username, Challenge challenge) {
 
-        userRepo.findByUsername(username)
+        var saved = userRepo.findByUsername(username)
                 .map(user -> toEntity.apply(user, challenge))
                 .map(challengeRepo::save)
                 .orElseThrow(() -> new EntityNotFoundException(STR."No user found: \{username}"));
+
+        return new ChallengeDetails(saved.getId(), saved.getName(), saved.getDescription(), saved.getStart(), saved.getFinish());
+    }
+
+    @Transactional
+    public void update(String username, Long challengeId, Challenge dto) {
+
+        var entity = challengeRepo.findByUsername(username, challengeId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Challenge not found"));
+
+        entity.setChallengeData(dto.name(), dto.description(), dto.start(), dto.finish());
+    }
+
+    @Transactional(readOnly = true)
+    public Challenge retrieve(String username, Long challengeId) {
+        return challengeRepo.findDtoBy(username, challengeId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Challenge not found"));
     }
 
     @Transactional

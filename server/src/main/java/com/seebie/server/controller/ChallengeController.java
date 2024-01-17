@@ -34,6 +34,20 @@ public class ChallengeController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/user/{username}/challenge/{challengeId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void updateChallenge(@Valid @RequestBody Challenge challengeData, @PathVariable String username, @PathVariable Long challengeId) {
+        challengeService.update(username, challengeId, challengeData);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/user/{username}/challenge/{challengeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Challenge getChallenge(@PathVariable String username, @PathVariable Long challengeId) {
+        return challengeService.retrieve(username, challengeId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/challenge", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ChallengeList getChallenges(@PathVariable String username, @RequestParam @ZoneIdConstraint String zoneId) {
