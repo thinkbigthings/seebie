@@ -17,7 +17,7 @@ import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {createRange} from "./SleepChart";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
-import {withExactTimes} from "./utility/Mapper";
+import { mapChallengeDetails, withExactTime} from "./utility/Mapper";
 import {emptyChallengeList} from "./utility/Constants";
 
 Chart.register(...registerables)
@@ -132,7 +132,7 @@ function Histogram(props) {
         const selectedName = event.target.value;
         const foundChallenge = defaultChallenge.name == selectedName
             ? defaultChallenge
-            : savedChallenges.completed.find(saved => saved.challenge.name === selectedName);
+            : savedChallenges.completed.find(saved => saved.name === selectedName);
 
         let newPageSettings = structuredClone(pageSettings);
         newPageSettings.filters.push({
@@ -171,7 +171,8 @@ function Histogram(props) {
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
             .then((response) => response.json())
-            .then(withExactTimes)
+            .then(challengeList => mapChallengeDetails(challengeList, withExactTime))
+            .then(challengeList => mapChallengeDetails(challengeList, detail => detail.challenge))
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, []);
