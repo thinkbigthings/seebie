@@ -1,11 +1,11 @@
 import SleepDataManager from "../SleepDataManager";
 
-const withExactTimes = (challengeList) => {
-    let exactChallengeList = {};
-    exactChallengeList.current = challengeList.current.map(withExactTime);
-    exactChallengeList.upcoming = challengeList.upcoming.map(withExactTime);
-    exactChallengeList.completed = challengeList.completed.map(withExactTime);
-    return exactChallengeList;
+const mapChallengeDetails = (challengeList, mapFunction) => {
+    let flatChallengeList = {};
+    flatChallengeList.current = challengeList.current.map(mapFunction);
+    flatChallengeList.upcoming = challengeList.upcoming.map(mapFunction);
+    flatChallengeList.completed = challengeList.completed.map(mapFunction);
+    return flatChallengeList;
 }
 
 const withExactTime = (challengeDetail) => {
@@ -33,4 +33,4 @@ const toChallengeDto = (challenge) =>{
     }
 }
 
-export {withExactTimes, toChallengeDto}
+export {withExactTime, toChallengeDto, mapChallengeDetails}
