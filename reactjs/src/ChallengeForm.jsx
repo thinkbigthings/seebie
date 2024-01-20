@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
@@ -18,30 +18,47 @@ function ChallengeForm(props) {
     // this is a warning, so we don't disable the save button
     const [datesOverlap, setDatesOverlap] = useState(false);
 
+    // Add a state variable to track user interaction with the name field
+    const [nameTouched, setNameTouched] = useState(false);
+
+
+    const validateChallenge = (challenge) => {
+
+        // name validation to consider if the user has interacted with the field
+        const nameValid = nameTouched
+            ? (challenge.name !== '' && challenge.name.trim() === challenge.name)
+            : true;
+        const dateOrderValid = challenge.localStartTime < challenge.localEndTime;
+        const allSavedChallengeDetails = savedChallenges.upcoming.concat(savedChallenges.completed).concat(savedChallenges.current);
+        const nameUnique = !allSavedChallengeDetails.some(challengeDetails => challengeDetails.challenge.name === challenge.name);
+        const datesOverlap = allSavedChallengeDetails.map(details => details.challenge).some(c => {
+            return (challenge.localStartTime >= c.exactStart && challenge.localStartTime <= c.exactFinish)
+                || (challenge.localEndTime >= c.exactStart && challenge.localEndTime <= c.exactFinish);
+        });
+
+        setDateOrderValid(dateOrderValid);
+        setNameValid(nameValid);
+        setNameUnique(nameUnique);
+        setDatesOverlap(datesOverlap);
+        setDataValid(dateOrderValid && nameValid && nameUnique);
+    };
+
+    // useEffect to run validation on component mount and whenever editableChallenge changes
+    // This is so the validation is run when the form is populated from outside
+    // (e.g. when the user selects a predefined challenge)
+    // and not just when the user edits the form
+    useEffect(() => {
+        validateChallenge(editableChallenge);
+    }, [editableChallenge]);
 
     const updateChallenge = (updateValues) => {
-
-        let updatedChallenge = {...editableChallenge, ...updateValues};
-
-        let updatedDateOrderValid = updatedChallenge.localStartTime < updatedChallenge.localEndTime;
-        setDateOrderValid(updatedDateOrderValid);
-
-        let updatedNameValid = updatedChallenge.name !== '' && updatedChallenge.name.trim() === updatedChallenge.name
-        setNameValid(updatedNameValid);
-
-        let allSavedChallengeDetails = savedChallenges.upcoming.concat(savedChallenges.completed).concat(savedChallenges.current);
-        let updatedNameUnique = ! allSavedChallengeDetails.some(challengeDetails => challengeDetails.challenge.name === updatedChallenge.name);
-        setNameUnique(updatedNameUnique);
-
-        // Query for challenges where the given start is between challenge start/finish and same for given finish
-        let updatedDatesOverlap = allSavedChallengeDetails.map(details => details.challenge).some(c => {
-            return (updatedChallenge.localStartTime >= c.exactStart && updatedChallenge.localStartTime <= c.exactFinish)
-                || (updatedChallenge.localEndTime >= c.exactStart && updatedChallenge.localEndTime <= c.exactFinish);
-        });
-        setDatesOverlap(updatedDatesOverlap);
-
-        setDataValid( updatedDateOrderValid && updatedNameValid && updatedNameUnique);
+        // Set nameTouched to true if the name field is being updated
+        if (updateValues.name !== undefined) {
+            setNameTouched(true);
+        }
+        const updatedChallenge = {...editableChallenge, ...updateValues};
         setEditableChallenge(updatedChallenge);
+        validateChallenge(updatedChallenge);
     }
 
 
