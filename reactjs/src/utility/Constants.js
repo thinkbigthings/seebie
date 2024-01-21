@@ -6,6 +6,17 @@ const { VITE_API_VERSION } = import.meta.env;
 
 export {VERSION_HEADER, VITE_API_VERSION};
 
+export const emptyEditableChallenge = () => {
+    const suggestedEndDate = new Date();
+    suggestedEndDate.setDate(suggestedEndDate.getDate() + 14);
+    return {
+        name: "",
+        description: "",
+        localStartTime: new Date(),
+        localEndTime: suggestedEndDate
+    };
+}
+
 export const emptyChallengeList = {
     current: [],
     upcoming: [],

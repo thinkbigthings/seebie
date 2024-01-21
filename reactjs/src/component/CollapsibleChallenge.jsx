@@ -1,6 +1,10 @@
 import CollapsibleContent from "./CollapsibleContent";
 import React from "react";
 import WarningButton from "./WarningButton";
+import {Link, useParams} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faChartSimple, faEdit} from "@fortawesome/free-solid-svg-icons";
+import Button from "react-bootstrap/Button";
 
 function calculateProgress(start, now, end) {
 
@@ -21,7 +25,9 @@ const locale = "en-US";
 
 function CollapsibleChallenge(props) {
 
-    const {challenge, onDelete} = props;
+    const {challenge, challengeId, onDelete} = props;
+
+    const {username} = useParams();
 
     const startDate = new Date(challenge.start);
     const finishDate = new Date(challenge.finish);
@@ -45,6 +51,11 @@ function CollapsibleChallenge(props) {
                 : <span />
             }
             <div className="d-flex justify-content-end">
+                <Link to={`/users/${username}/challenge/${challengeId}/edit` } >
+                    <Button variant={"secondary"} className="me-2" >
+                        <FontAwesomeIcon className="me-2" icon={faEdit} />Edit
+                    </Button>
+                </Link>
                 <WarningButton buttonText="Delete" onConfirm={onDelete}>
                     Are you sure you want to delete this challenge? This cannot be undone.
                 </WarningButton>

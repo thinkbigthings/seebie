@@ -47,6 +47,7 @@ import System from "./System";
 import Tools from "./Tools";
 import Challenge from "./Challenge";
 import Histogram from "./Histogram";
+import EditChallenge from "./EditChallenge";
 
 function App() {
 
@@ -141,6 +142,7 @@ function AuthenticatedApp() {
                     <Route path="/users" element={<UserList/>} />
                     <Route path="/users/:username/edit" element={<EditUser />} />
                     <Route path="/users/:username/sleep/:sleepId/edit" element={<EditSleep />} />
+                    <Route path="/users/:username/challenge/:challengeId/edit" element={<EditChallenge />} />
                     <Route path="/users/:username/tools" element={<Tools />} />
                     <Route path="/system" element={<System />} />
                 </Routes>

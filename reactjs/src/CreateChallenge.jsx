@@ -8,21 +8,12 @@ import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import useApiPost from "./hooks/useApiPost";
 import CollapsibleContent from "./component/CollapsibleContent";
-import {PREDEFINED_CHALLENGES} from "./utility/Constants";
+import {emptyEditableChallenge, PREDEFINED_CHALLENGES} from "./utility/Constants";
 import SuccessModal from "./component/SuccessModal";
 import {toChallengeDto} from "./utility/Mapper";
 import ChallengeForm from "./ChallengeForm";
 
-function emptyEditableChallenge() {
-    const suggestedEndDate = new Date();
-    suggestedEndDate.setDate(suggestedEndDate.getDate() + 14);
-    return {
-        name: "",
-        description: "",
-        localStartTime: new Date(),
-        localEndTime: suggestedEndDate
-    };
-}
+
 
 function CreateChallenge(props) {
 

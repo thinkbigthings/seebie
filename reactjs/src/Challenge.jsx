@@ -51,6 +51,7 @@ function Challenge(props) {
                         <Container className="px-0 overflow-y-scroll h-70vh ">
                             {savedChallenges.current.map((challengeDetails, index) =>
                                 <CollapsibleChallenge key={index} challenge={challengeDetails.challenge}
+                                                      challengeId = {challengeDetails.id}
                                                       onDelete={() => deleteChallenge(challengeDetails.id)} />
                             )}
                         </Container>
@@ -59,6 +60,7 @@ function Challenge(props) {
                         <Container className="px-0 overflow-y-scroll h-70vh ">
                             {savedChallenges.completed.map((challengeDetails, index) =>
                                 <CollapsibleChallenge key={index} challenge={challengeDetails.challenge}
+                                                      challengeId = {challengeDetails.id}
                                                       onDelete={() => deleteChallenge(challengeDetails.id)} />
                             )}
                         </Container>
@@ -67,6 +69,7 @@ function Challenge(props) {
                         <Container className="px-0 overflow-y-scroll h-70vh ">
                             {savedChallenges.upcoming.map((challengeDetails, index) =>
                                 <CollapsibleChallenge key={index} challenge={challengeDetails.challenge}
+                                                      challengeId = {challengeDetails.id}
                                                       onDelete={() => deleteChallenge(savedchallengeDetails.id)} />
                             )}
                         </Container>
