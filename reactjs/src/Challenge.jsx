@@ -70,7 +70,7 @@ function Challenge(props) {
                             {savedChallenges.upcoming.map((challengeDetails, index) =>
                                 <CollapsibleChallenge key={index} challenge={challengeDetails.challenge}
                                                       challengeId = {challengeDetails.id}
-                                                      onDelete={() => deleteChallenge(savedchallengeDetails.id)} />
+                                                      onDelete={() => deleteChallenge(challengeDetails.id)} />
                             )}
                         </Container>
                     </Tab>
