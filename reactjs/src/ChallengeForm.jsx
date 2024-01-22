@@ -82,7 +82,7 @@ function ChallengeForm(props) {
                </Container>
                <Form.Control.Feedback type="invalid"
                                       className={"mh-24px d-block " + ((!nameValid) ? 'visible' : 'invisible')}>
-                   Name cannot be empty or have space at the ends
+                   Can't be empty or have space at the ends
                </Form.Control.Feedback>
                <Container className="ps-0 mb-3">
                    <label type="text" htmlFor="description" className="form-label">Description</label>
