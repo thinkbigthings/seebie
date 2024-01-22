@@ -24,7 +24,16 @@ const withExactTime = (challengeDetail) => {
     };
 };
 
-const toChallengeDto = (challenge) =>{
+const fromChallengeDto = (challenge) => {
+    return {
+        name: challenge.name,
+        description: challenge.description,
+        localStartTime: new Date(challenge.start),
+        localEndTime: new Date(challenge.finish)
+    }
+}
+
+const toChallengeDto = (challenge) => {
     return {
         name: challenge.name,
         description: challenge.description,
@@ -33,4 +42,4 @@ const toChallengeDto = (challenge) =>{
     }
 }
 
-export {withExactTime, toChallengeDto, mapChallengeDetails}
+export {withExactTime, toChallengeDto, fromChallengeDto, mapChallengeDetails}
