@@ -12,11 +12,21 @@ import ChallengeForm from "./ChallengeForm";
 import {emptyChallengeList, emptyEditableChallenge} from "./utility/Constants";
 import {fromChallengeDto, mapChallengeDetails, toChallengeDto, withExactTime} from "./utility/Mapper";
 
+const removeDetailsWithId = (challengeList, challengeId) => {
+    return {
+        current: challengeList.current.filter(details => details.id !== challengeId),
+        upcoming: challengeList.upcoming.filter(details => details.id !== challengeId),
+        completed: challengeList.completed.filter(details => details.id !== challengeId)
+    }
+}
+
+
 function EditChallenge() {
 
     const navigate = useNavigate();
 
     const {username, challengeId} = useParams();
+    const numericChallengeId = +challengeId; // Converts string to number
 
     const challengeEndpoint = `/api/user/${username}/challenge/${challengeId}`;
     const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -30,6 +40,7 @@ function EditChallenge() {
     const put = useApiPut();
     const callDelete = useApiDelete();
 
+
     useEffect(() => {
         fetch(challengeEndpoint, GET)
             .then(response => response.json())
@@ -38,11 +49,11 @@ function EditChallenge() {
             .then(() => setLoaded(true))
     }, [setEditableChallenge, challengeEndpoint]);
 
-
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
             .then((response) => response.json())
             .then(challengeList => mapChallengeDetails(challengeList, withExactTime))
+            .then(challengeList => removeDetailsWithId(challengeList, numericChallengeId))
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, [challengeEndpointTz]);

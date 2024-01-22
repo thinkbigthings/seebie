@@ -21,7 +21,6 @@ function ChallengeForm(props) {
     // Add a state variable to track user interaction with the name field
     const [nameTouched, setNameTouched] = useState(false);
 
-
     const validateChallenge = (challenge) => {
 
         // name validation to consider if the user has interacted with the field
