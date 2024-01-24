@@ -92,6 +92,17 @@ const defaultChallenge = {
     exactFinish: last30days.to
 }
 
+const defaultPageSettings = {
+    binSize: 60,
+    filters: [
+        {
+            challenge: defaultChallenge,
+            color: histogramColor[0]
+        }
+    ],
+    availableFilters: []
+}
+
 function Histogram(props) {
 
     // TODO createdCount should be named "sleepLoggedCountSinceAppLoad" or something
@@ -104,24 +115,12 @@ function Histogram(props) {
     const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
     const histogramEndpoint = `/api/user/${username}/sleep/histogram`;
 
-    let [pageSettings, setPageSettings] = useState({
-                                                                    binSize: 60,
-                                                                    filters: [
-                                                                        {
-                                                                            challenge: defaultChallenge,
-                                                                            color: histogramColor[0]
-                                                                        }
-                                                                    ],
-                                                                    availableFilters: []
-                                                                });
+    let [pageSettings, setPageSettings] = useState(defaultPageSettings);
 
     const [savedChallenges, setSavedChallenges] = useState(emptyChallengeList);
     const [showSelectChallenge, setShowSelectChallenge] = useState(false);
 
-    let[barData, setBarData] = useState({
-                                                                    labels: [],
-                                                                    datasets: []
-                                                                });
+    let[barData, setBarData] = useState({ labels: [], datasets: [] });
 
     const onSelectChallenge = event => {
 
@@ -150,7 +149,8 @@ function Histogram(props) {
     }
     savedChallenges.completed.filter(challenge => ! isActiveFilter(challenge))
         .forEach(challenge => availableChallengeFilters.push(challenge));
-
+    savedChallenges.current.filter(challenge => ! isActiveFilter(challenge))
+        .forEach(challenge => availableChallengeFilters.push(challenge));
 
     function isActiveFilter(searchChallenge) {
         return pageSettings.filters.filter(filter => filter.challenge.name === searchChallenge.name).length > 0
