@@ -5,7 +5,8 @@ const toSelectableChallenges = (challengeList, defaultChallenge) => {
 
     let selectableChallenges = [...challengeList.current, ...challengeList.completed];
 
-    // if user already has a challenge with the same name as the default challenge, don't add it again
+    // if user already has a challenge with the same name as the default challenge,
+    // keep the user's challenge and don't provide the default challenge
     if ( ! selectableChallenges.some(challenge => challenge.name === defaultChallenge.name)) {
         selectableChallenges.push(defaultChallenge);
     }

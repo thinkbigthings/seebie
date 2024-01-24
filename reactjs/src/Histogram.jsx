@@ -34,7 +34,7 @@ const createDataset = (displayInfo, data) => {
 
 const pageSettingsToRequest = (pageSettings) => {
 
-    const newDataFilters = pageSettings.filters.map((filter) => { return {
+    const newDataFilters = pageSettings.filters.map( (filter) => { return {
             from: SleepDataManager.toIsoString(filter.challenge.exactStart),
             to: SleepDataManager.toIsoString(filter.challenge.exactFinish)
         }}
@@ -63,7 +63,7 @@ const defaultPageSettings = {
     filters: [
         {
             challenge: defaultChallenge,
-            color: HISTOGRAM_BIN_SIZE_OPTIONS[0]
+            color: HISTOGRAM_COLORS[0]
         }
     ],
     availableFilters: []
@@ -83,29 +83,22 @@ function Histogram(props) {
 
     let [pageSettings, setPageSettings] = useState(defaultPageSettings);
 
-    const [availableChallenges, setAvailableChallenges] = useState([]);
+    const [availableChallenges, setAvailableChallenges] = useState([defaultChallenge]);
     const [showSelectChallenge, setShowSelectChallenge] = useState(false);
 
     let[barData, setBarData] = useState({ labels: [], datasets: [] });
 
     const onSelectChallenge = event => {
 
-        // TODO Histogram page availableChallenges should be reset on the challenge select method like we do for colors.
-        //  pageSettings could contain the complete list of available and used challenges
-        //  and just swap challenges and colors back and forth
-        //  which would make it more consistent
         let usedColors = pageSettings.filters.map(filter => filter.color);
-        let availableColors = HISTOGRAM_COLORS.filter(color => ! usedColors.includes(color));
+        let selectableColors = HISTOGRAM_COLORS.filter(color => ! usedColors.includes(color));
+        let color = selectableColors[0];
 
         // event target value is the challenge name, option value has to be a string not an object, so need to find it
-        const selectedName = event.target.value;
-        const foundChallenge = availableChallenges.find(saved => saved.name === selectedName);
+        const challenge = availableChallenges.find(saved => saved.name === event.target.value);
 
         let newPageSettings = structuredClone(pageSettings);
-        newPageSettings.filters.push({
-                    challenge: foundChallenge,
-                    color: availableColors[0]
-                });
+        newPageSettings.filters.push({ challenge, color });
 
         setShowSelectChallenge(false);
         setPageSettings(newPageSettings);
