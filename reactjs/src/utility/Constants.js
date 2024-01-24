@@ -6,6 +6,39 @@ const { VITE_API_VERSION } = import.meta.env;
 
 export {VERSION_HEADER, VITE_API_VERSION};
 
+export const HISTOGRAM_COLORS = ['#897b9c', '#596b7c', '#393b4c'];
+
+export const HISTOGRAM_BIN_SIZE_OPTIONS = [
+    {value: 60, text: '60 minutes'},
+    {value: 30, text: '30 minutes'},
+    {value: 15, text: '15 minutes'},
+];
+
+export const HISTOGRAM_OPTIONS = {
+    plugins: {
+        legend: {
+            display: false
+        },
+    },
+    scales: {
+        x: {
+            stacked: false,
+            grid: {
+                offset: true
+            },
+            ticks: {
+                color: 'white',
+                font: {
+                    size: 18,
+                }
+            }
+        },
+        y: {
+            stacked: false
+        }
+    }
+}
+
 export const emptyEditableChallenge = () => {
     const suggestedEndDate = new Date();
     suggestedEndDate.setDate(suggestedEndDate.getDate() + 14);

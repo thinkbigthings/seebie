@@ -1,4 +1,3 @@
-
 import React, {useEffect, useState} from 'react';
 
 import { Chart, registerables } from 'chart.js'
@@ -18,41 +17,9 @@ import {createRange} from "./SleepChart";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import {mapChallengeDetails, toSelectableChallenges, withExactTime} from "./utility/Mapper";
+import {HISTOGRAM_BIN_SIZE_OPTIONS, HISTOGRAM_COLORS, HISTOGRAM_OPTIONS} from "./utility/Constants";
 
 Chart.register(...registerables)
-
-const histOptions = {
-    plugins: {
-        legend: {
-            display: false
-        },
-    },
-    scales: {
-        x: {
-            stacked: false,
-            grid: {
-                offset: true
-            },
-            ticks: {
-                color: 'white',
-                font: {
-                    size: 18,
-                }
-            }
-        },
-        y: {
-            stacked: false
-        }
-    }
-}
-
-const histogramColor = ['#897b9c', '#596b7c', '#393b4c'];
-
-const binSizeOptions = [
-    {value: 60, text: '60 minutes'},
-    {value: 30, text: '30 minutes'},
-    {value: 15, text: '15 minutes'},
-];
 
 // the resulting object goes into the chartData datasets array
 const createDataset = (displayInfo, data) => {
@@ -96,7 +63,7 @@ const defaultPageSettings = {
     filters: [
         {
             challenge: defaultChallenge,
-            color: histogramColor[0]
+            color: HISTOGRAM_BIN_SIZE_OPTIONS[0]
         }
     ],
     availableFilters: []
@@ -123,8 +90,12 @@ function Histogram(props) {
 
     const onSelectChallenge = event => {
 
+        // TODO Histogram page availableChallenges should be reset on the challenge select method like we do for colors.
+        //  pageSettings could contain the complete list of available and used challenges
+        //  and just swap challenges and colors back and forth
+        //  which would make it more consistent
         let usedColors = pageSettings.filters.map(filter => filter.color);
-        let availableColors = histogramColor.filter(color => ! usedColors.includes(color));
+        let availableColors = HISTOGRAM_COLORS.filter(color => ! usedColors.includes(color));
 
         // event target value is the challenge name, option value has to be a string not an object, so need to find it
         const selectedName = event.target.value;
@@ -179,11 +150,11 @@ function Histogram(props) {
             })
     }, [histogramEndpoint, createdCount, pageSettings]);
 
-    const maxFiltersUsed = (pageSettings.filters.length === histogramColor.length);
+    const maxFiltersUsed = (pageSettings.filters.length === HISTOGRAM_COLORS.length);
     const challengesAvailable = (availableChallengeFilters.length > 0);
 
     const chartArea = barData.datasets.filter(dataset => dataset.data.length > 0).length >= 1
-        ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={histOptions} data={barData} />
+        ?   <Bar className="pt-3" datasetIdKey="sleepChart" options={HISTOGRAM_OPTIONS} data={barData} />
         :   <h1 className="pt-5 mx-auto mw-100 text-center text-secondary">No Data Available</h1>
 
     return (
@@ -247,7 +218,7 @@ function Histogram(props) {
                 <Col className="col-md-4">
                     <Form.Select value={pageSettings.binSize} onChange={updateBinSize}>
                         {
-                            binSizeOptions.map(option => {
+                            HISTOGRAM_BIN_SIZE_OPTIONS.map(option => {
                                 return (
                                     <option key={option.value} value={option.value}>
                                         {option.text}
