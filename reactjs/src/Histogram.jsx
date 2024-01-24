@@ -17,8 +17,7 @@ import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {createRange} from "./SleepChart";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
-import { mapChallengeDetails, withExactTime} from "./utility/Mapper";
-import {emptyChallengeList} from "./utility/Constants";
+import {mapChallengeDetails, toSelectableChallenges, withExactTime} from "./utility/Mapper";
 
 Chart.register(...registerables)
 
@@ -117,7 +116,7 @@ function Histogram(props) {
 
     let [pageSettings, setPageSettings] = useState(defaultPageSettings);
 
-    const [savedChallenges, setSavedChallenges] = useState(emptyChallengeList);
+    const [availableChallenges, setAvailableChallenges] = useState([]);
     const [showSelectChallenge, setShowSelectChallenge] = useState(false);
 
     let[barData, setBarData] = useState({ labels: [], datasets: [] });
@@ -129,9 +128,7 @@ function Histogram(props) {
 
         // event target value is the challenge name, option value has to be a string not an object, so need to find it
         const selectedName = event.target.value;
-        const foundChallenge = defaultChallenge.name == selectedName
-            ? defaultChallenge
-            : savedChallenges.completed.find(saved => saved.name === selectedName);
+        const foundChallenge = availableChallenges.find(saved => saved.name === selectedName);
 
         let newPageSettings = structuredClone(pageSettings);
         newPageSettings.filters.push({
@@ -143,17 +140,10 @@ function Histogram(props) {
         setPageSettings(newPageSettings);
     }
 
-    const availableChallengeFilters = [];
-    if( ! isActiveFilter(defaultChallenge)) {
-        availableChallengeFilters.push(defaultChallenge);
-    }
-    savedChallenges.completed.filter(challenge => ! isActiveFilter(challenge))
-        .forEach(challenge => availableChallengeFilters.push(challenge));
-    savedChallenges.current.filter(challenge => ! isActiveFilter(challenge))
-        .forEach(challenge => availableChallengeFilters.push(challenge));
+    const availableChallengeFilters = availableChallenges.filter(challenge => ! isActiveFilter(challenge));
 
     function isActiveFilter(searchChallenge) {
-        return pageSettings.filters.filter(filter => filter.challenge.name === searchChallenge.name).length > 0
+        return pageSettings.filters.some(filter => filter.challenge.name === searchChallenge.name);
     }
 
     function onRemoveFilter(i) {
@@ -173,7 +163,8 @@ function Histogram(props) {
             .then((response) => response.json())
             .then(challengeList => mapChallengeDetails(challengeList, withExactTime))
             .then(challengeList => mapChallengeDetails(challengeList, detail => detail.challenge))
-            .then(setSavedChallenges)
+            .then(challengeList => toSelectableChallenges(challengeList, defaultChallenge))
+            .then(setAvailableChallenges)
             .catch(error => console.log(error));
     }, []);
 

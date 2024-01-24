@@ -1,11 +1,27 @@
 import SleepDataManager from "../SleepDataManager";
 
+// incoming list contains challenge not challengeDetails
+const toSelectableChallenges = (challengeList, defaultChallenge) => {
+
+    let selectableChallenges = [...challengeList.current, ...challengeList.completed];
+
+    // if user already has a challenge with the same name as the default challenge, don't add it again
+    if ( ! selectableChallenges.some(challenge => challenge.name === defaultChallenge.name)) {
+        selectableChallenges.push(defaultChallenge);
+    }
+
+    return selectableChallenges;
+}
+
 const mapChallengeDetails = (challengeList, mapFunction) => {
-    let flatChallengeList = {};
-    flatChallengeList.current = challengeList.current.map(mapFunction);
-    flatChallengeList.upcoming = challengeList.upcoming.map(mapFunction);
-    flatChallengeList.completed = challengeList.completed.map(mapFunction);
-    return flatChallengeList;
+
+    let newChallengeList = {};
+
+    newChallengeList.current = challengeList.current.map(mapFunction);
+    newChallengeList.upcoming = challengeList.upcoming.map(mapFunction);
+    newChallengeList.completed = challengeList.completed.map(mapFunction);
+
+    return newChallengeList;
 }
 
 const withExactTime = (challengeDetail) => {
@@ -42,4 +58,4 @@ const toChallengeDto = (challenge) => {
     }
 }
 
-export {withExactTime, toChallengeDto, fromChallengeDto, mapChallengeDetails}
+export {withExactTime, toSelectableChallenges, toChallengeDto, fromChallengeDto, mapChallengeDetails}
