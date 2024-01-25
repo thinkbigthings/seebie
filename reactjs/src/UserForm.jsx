@@ -1,11 +1,8 @@
 import React, {useReducer} from 'react';
 
 import Button from "react-bootstrap/Button";
-
-import copy from './utility/Copier.js';
 import Container from "react-bootstrap/Container";
 import useCurrentUser from "./hooks/useCurrentUser";
-
 
 
 function UserForm(props) {
@@ -19,7 +16,7 @@ function UserForm(props) {
     // possibly combined into a custom hook
     const formReducer = (formState, action) => {
 
-        let newState = copy(formState);
+        let newState = structuredClone(formState);
         switch(action.type) {
             case 'LOAD_USER': {
                 newState.user = action.payload

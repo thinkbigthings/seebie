@@ -61,7 +61,7 @@ public class SleepDetailsToCsvTest {
         assertEquals(2, count(csvNotes, "\""));
 
         assertEquals(3, count("\"\"\"", "\""));
-        assertEquals(2, count("\"asdf\"", "\""));
+        assertEquals(2, count("\"test\"", "\""));
         assertEquals(2, count("\"\"", "\""));
         assertEquals(1, count("\"", "\""));
     }

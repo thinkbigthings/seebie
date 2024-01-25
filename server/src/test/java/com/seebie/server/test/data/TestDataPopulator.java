@@ -36,9 +36,9 @@ public class TestDataPopulator implements ApplicationListener<ContextRefreshedEv
 
     private void populateTestData() {
 
-        String username = "asdf";
+        String username = "test";
 
-        userService.saveNewUser(new RegistrationRequest(username, "asdf", "staticTestUser@seebie.com"));
+        userService.saveNewUser(new RegistrationRequest(username, "test", "staticTestUser@seebie.com"));
 
         createRandomSleepData(60, AMERICA_NEW_YORK).forEach(d -> sleepService.saveNew(username, d));
 

@@ -1,6 +1,5 @@
 import {GET} from "../utility/BasicHeaders";
 import {useCallback, useEffect, useState} from "react";
-import copy from "../utility/Copier";
 
 const initialPage = {
     content: [],
@@ -25,7 +24,7 @@ const toPagingLabel = (pageData) => {
 // This is for paging
 const useApiGet = (initialUrl, customPageSize, reloadCount) => {
 
-    let customizedPage = copy(initialPage);
+    let customizedPage = structuredClone(initialPage);
     customizedPage.pageable.pageSize = customPageSize;
     const [data, setData] = useState(customizedPage);
 
@@ -37,7 +36,7 @@ const useApiGet = (initialUrl, customPageSize, reloadCount) => {
     // const {throwOnHttpError} = useHttpError();
 
     const movePage = useCallback((amount) => {
-        let pageable = copy(data.pageable);
+        let pageable = structuredClone(data.pageable);
         pageable.pageNumber = pageable.pageNumber + amount;
         setUrl(initialUrl + '?page=' + pageable.pageNumber + '&size=' + pageable.pageSize)
     }, [data.pageable, initialUrl]);

@@ -7,7 +7,6 @@ import useCurrentUser from "./hooks/useCurrentUser";
 import useHttpError from "./hooks/useHttpError";
 import {useNavigate} from 'react-router-dom';
 import {GET} from "./utility/BasicHeaders";
-import copy from "./utility/Copier";
 import Container from "react-bootstrap/Container";
 
 
@@ -15,7 +14,7 @@ function getWithCreds(url, credentials) {
 
     const encoded = btoa(credentials.username + ":" + credentials.password);
 
-    let authGet = copy(GET);
+    let authGet = structuredClone(GET);
     authGet.headers['Authorization'] = 'Basic ' + encoded;
 
     return fetch(url, authGet);

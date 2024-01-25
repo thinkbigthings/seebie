@@ -33,5 +33,5 @@ Software that needs to be installed and available from the command line:
 - From the project folder, start the back end with `gradlew server:bootTestRun`
 - From the reactjs folder, start the front end with `npm start`
 which will serve the front end files and open a browser for you.
-log in with username `admin` and password `admin` or `asdf` and `asdf`
+log in with username `admin` and password `admin` or `test` and `test`
 

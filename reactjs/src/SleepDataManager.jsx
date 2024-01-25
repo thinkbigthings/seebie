@@ -1,13 +1,4 @@
 
-
-// https://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-deep-clone-an-object-in-javascript/10916838
-
-// Can also use Lodash to copy, it has a ton of other utilities too
-
-import copy from "./utility/Copier";
-
-
-
 const SleepDataManager = { };
 
 SleepDataManager.toIsoLocalDate = (date) => {
@@ -42,7 +33,7 @@ SleepDataManager.toIsoString = (date) => {
 }
 
 SleepDataManager.parse = (json) => {
-    let parsed = copy(json);
+    let parsed = structuredClone(json);
     // keep the local time without the offset for display purposes
     parsed.localStartTime = new Date(Date.parse(json.startTime.substring(0, 19)));
     parsed.localStopTime = new Date(Date.parse(json.stopTime.substring(0, 19)));
@@ -54,7 +45,7 @@ SleepDataManager.parse = (json) => {
 
 SleepDataManager.format = (sleepData) => {
 
-    const formattedSleepData = copy(sleepData);
+    const formattedSleepData = structuredClone(sleepData);
 
     return JSON.stringify(formattedSleepData);
 }
