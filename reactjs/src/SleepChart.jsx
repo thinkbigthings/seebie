@@ -15,7 +15,6 @@ import {Line} from 'react-chartjs-2';
 import Container from "react-bootstrap/Container";
 import SleepDataManager from "./SleepDataManager";
 import {GET} from "./utility/BasicHeaders";
-import copy from "./utility/Copier";
 import {NavHeader} from "./App";
 import DateRangePicker from "./component/DateRangePicker";
 import {useParams} from "react-router-dom";
@@ -31,7 +30,6 @@ ChartJS.register(
     Filler,
     Legend
 );
-
 
 const chartOptions ={
     scales: {
@@ -109,7 +107,7 @@ function SleepChart(props) {
         fetch(sleepEndpoint, GET)
             .then(response => response.json())
             .then(json => {
-                let newChartData = copy(initialChartData);
+                let newChartData = structuredClone(initialChartData);
                 newChartData.datasets[0].data = json;
                 setChartData(newChartData);
             })
