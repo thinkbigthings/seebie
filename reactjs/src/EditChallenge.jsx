@@ -69,7 +69,7 @@ function EditChallenge() {
     return (
         <Container>
 
-            <NavHeader title="Sleep Details">
+            <NavHeader title="Challenge">
                 <WarningButton buttonText="Delete" onConfirm={deleteById}>
                     This deletes the current sleep challenge and cannot be undone. Proceed?
                 </WarningButton>
