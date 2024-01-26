@@ -5,6 +5,8 @@ import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 function ChallengeForm(props) {
 
@@ -64,7 +66,7 @@ function ChallengeForm(props) {
     return (
        <>
            <Form>
-               <Container className="ps-0">
+               <Container className="ps-0 pe-0">
                    <label htmlFor="challengeName" className="form-label">Short Name</label>
                    <Form.Control.Feedback type="invalid"
                                           className={"d-inline ms-1 " + ((!nameUnique) ? 'visible' : 'invisible')}>
@@ -84,38 +86,41 @@ function ChallengeForm(props) {
                                       className={"mh-24px d-block " + ((!nameValid) ? 'visible' : 'invisible')}>
                    Can't be empty or have space at the ends
                </Form.Control.Feedback>
-               <Container className="ps-0 mb-3">
-                   <label type="text" htmlFor="description" className="form-label">Description</label>
-                   <textarea rows="6" className="form-control" id="description" placeholder=""
+               <Container className="ps-0 mb-3 pe-0">
+                   <textarea rows="6" className="form-control" id="description" placeholder="Description"
                              value={editableChallenge.description}
                              onChange={e => updateChallenge({description: e.target.value})}/>
                </Container>
 
-               <Container className="ps-0">
-                   <label htmlFor="startDate" className="form-label">Start Date</label>
-                   <div>
-                       <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
-                                   id="startDate" dateFormat="MMMM d, yyyy"
-                                   onChange={date => updateChallenge({localStartTime: date})}
-                                   selected={editableChallenge.localStartTime}/>
-                   </div>
-                   <Form.Control.Feedback type="invalid"
-                                          className={"mh-24px d-block " + ((!dateOrderValid) ? 'visible' : 'invisible')}>
-                       Start date must be before end date
-                   </Form.Control.Feedback>
-               </Container>
-               <Container className="ps-0">
-                   <label htmlFor="endDate" className="form-label">End Date</label>
-                   <div>
-                       <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
-                                   id="startDate" dateFormat="MMMM d, yyyy"
-                                   onChange={date => updateChallenge({localEndTime: date})}
-                                   selected={editableChallenge.localEndTime}/>
-                   </div>
-                   <Form.Control.Feedback type="invalid"
-                                          className={"mh-24px d-block " + ((!dateOrderValid) ? 'visible' : 'invisible')}>
-                       End date must be after start date
-                   </Form.Control.Feedback>
+               <Container id="dateRangeId" className="p-0">
+                   <Row className={"pb-2"}>
+                       <Col md={6} className={"col-4 "}>
+                           <label htmlFor="startDate" className="form-label">Start Date</label>
+                       </Col>
+                       <Col md={6} className={"col-8 "}>
+                           <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
+                                       id="startDate" dateFormat="MMMM d, yyyy"
+                                       onChange={date => updateChallenge({localStartTime: date})}
+                                       selected={editableChallenge.localStartTime}/>
+                       </Col>
+                   </Row>
+                   <Row className={"pb-2"}>
+                       <Col md={6} className={"col-4 "}>
+                           <label htmlFor="endDate" className="form-label">End Date</label>
+                       </Col>
+                       <Col md={6} className={"col-8 "}>
+                           <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
+                                       id="startDate" dateFormat="MMMM d, yyyy"
+                                       onChange={date => updateChallenge({localEndTime: date})}
+                                       selected={editableChallenge.localEndTime}/>
+                       </Col>
+                   </Row>
+                   <Row>
+                       <Form.Control.Feedback type="invalid"
+                                              className={"mh-24px d-block " + ((!dateOrderValid) ? 'visible' : 'invisible')}>
+                           End date must be after start date
+                       </Form.Control.Feedback>
+                   </Row>
                </Container>
            </Form>
            <label className={"text-warning " + ((datesOverlap) ? 'visible' : 'invisible')}>
