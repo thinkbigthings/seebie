@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {defaultUser, UserContext} from "./UserContext";
+import {defaultUser, UserContext} from "./utility/UserContext";
 
 const UserProvider = (props) => {
 

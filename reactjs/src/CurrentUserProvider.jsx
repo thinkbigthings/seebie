@@ -1,6 +1,6 @@
 import {blankUser} from "./utility/Constants";
 import React, {useState} from "react";
-import {CurrentUserContext} from "./CurrentUserContext";
+import {CurrentUserContext} from "./utility/CurrentUserContext";
 
 const CurrentUserProvider = (props) => {
 

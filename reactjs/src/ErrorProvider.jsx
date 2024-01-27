@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {ErrorContext, noErrors} from "./ErrorContext";
+import {ErrorContext, noErrors} from "./utility/ErrorContext";
 
 const ErrorProvider = (props) => {
 

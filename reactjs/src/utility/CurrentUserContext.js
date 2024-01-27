@@ -1,5 +1,5 @@
 import React from 'react';
-import {blankUser} from "./utility/Constants";
+import {blankUser} from "./Constants";
 
 
 const CurrentUserContext = React.createContext([blankUser, (user) => {}]);

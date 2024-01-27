@@ -13,7 +13,7 @@ import ErrorBoundary from './ErrorBoundary.jsx';
 
 import ErrorModal from "./ErrorModal";
 import useCurrentUser from "./hooks/useCurrentUser";
-import {CurrentUserContext} from "./CurrentUserContext";
+import {CurrentUserContext} from "./utility/CurrentUserContext";
 import {GET} from "./utility/BasicHeaders";
 
 // This only has to be imported on one page, and it works for the whole site

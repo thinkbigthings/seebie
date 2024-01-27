@@ -5,7 +5,7 @@ import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 
 import useError from "./hooks/useError";
-import {recoveryActions} from "./ErrorContext";
+import {recoveryActions} from "./utility/ErrorContext";
 import useCurrentUser from "./hooks/useCurrentUser";
 
 function ErrorModal(props) {
