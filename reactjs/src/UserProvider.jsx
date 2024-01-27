@@ -1,15 +1,5 @@
-import React, {useState} from 'react';
-
-const defaultUser = {
-    displayName: '',
-    username: '',
-    password: '',
-    roles: [],
-    isLoggedIn: false,
-}
-
-const UserContext = React.createContext(defaultUser);
-UserContext.displayName = 'UserContext';
+import React, {useState} from "react";
+import {defaultUser, UserContext} from "./UserContext";
 
 const UserProvider = (props) => {
 
@@ -60,5 +50,4 @@ const UserProvider = (props) => {
         </UserContext.Provider>
     );
 }
-
-export {UserContext, UserProvider, defaultUser};
+export {UserProvider};

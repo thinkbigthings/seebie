@@ -1,4 +1,4 @@
-import SleepDataManager from "../SleepDataManager";
+import SleepDataManager from "./SleepDataManager";
 
 // incoming list contains challenge not challengeDetails
 const toSelectableChallenges = (challengeList, defaultChallenge) => {

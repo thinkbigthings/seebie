@@ -1,4 +1,3 @@
-export {blankUser};
 
 const VERSION_HEADER = 'X-Version';
 
@@ -113,4 +112,16 @@ export const blankUser = {
         notificationsEnabled: false
     },
     isLoggedIn: false,
+}
+
+export const createRange = (lastNDays) => {
+
+    let today = new Date();
+    today.setHours(23, 59, 59);
+
+    let lastMonth = new Date(today.getTime());
+    lastMonth.setDate(today.getDate() - lastNDays);
+    lastMonth.setHours(0, 0, 0);
+
+    return {from: lastMonth, to: today};
 }
