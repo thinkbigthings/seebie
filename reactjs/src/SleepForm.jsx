@@ -91,4 +91,4 @@ function SleepForm(props) {
     );
 }
 
-export {SleepForm, isNumericString};
+export {SleepForm};

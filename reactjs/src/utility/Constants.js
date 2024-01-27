@@ -1,3 +1,4 @@
+export {blankUser};
 
 const VERSION_HEADER = 'X-Version';
 
@@ -101,3 +102,15 @@ export const PREDEFINED_CHALLENGES = [
         description: "Maintain current habits for next three months to make sure your sleep doesn't degrade over time"
     }
 ];
+
+export const blankUser = {
+    username: '',
+    roles: [],
+    registrationTime: '',
+    personalInfo: {
+        displayName: '',
+        email: '',
+        notificationsEnabled: false
+    },
+    isLoggedIn: false,
+}
