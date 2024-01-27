@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import useApiPost from "./hooks/useApiPost";
 import 'react-datepicker/dist/react-datepicker.css';
 import {SleepForm} from "./SleepForm";
-import SleepDataManager from "./SleepDataManager";
+import SleepDataManager from "./utility/SleepDataManager";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./utility/BasicHeaders";

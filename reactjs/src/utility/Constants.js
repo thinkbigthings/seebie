@@ -101,3 +101,27 @@ export const PREDEFINED_CHALLENGES = [
         description: "Maintain current habits for next three months to make sure your sleep doesn't degrade over time"
     }
 ];
+
+export const blankUser = {
+    username: '',
+    roles: [],
+    registrationTime: '',
+    personalInfo: {
+        displayName: '',
+        email: '',
+        notificationsEnabled: false
+    },
+    isLoggedIn: false,
+}
+
+export const createRange = (lastNDays) => {
+
+    let today = new Date();
+    today.setHours(23, 59, 59);
+
+    let lastMonth = new Date(today.getTime());
+    lastMonth.setDate(today.getDate() - lastNDays);
+    lastMonth.setHours(0, 0, 0);
+
+    return {from: lastMonth, to: today};
+}

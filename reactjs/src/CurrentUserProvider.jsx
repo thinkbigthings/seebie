@@ -1,20 +1,6 @@
-import React, {useState} from 'react';
-
-
-const blankUser = {
-    username: '',
-    roles: [],
-    registrationTime: '',
-    personalInfo: {
-        displayName: '',
-        email: '',
-        notificationsEnabled: false
-    },
-    isLoggedIn: false,
-}
-
-const CurrentUserContext = React.createContext([blankUser, (user) => {}]);
-CurrentUserContext.displayName = 'CurrentUserContext';
+import {blankUser} from "./utility/Constants";
+import React, {useState} from "react";
+import {CurrentUserContext} from "./utility/CurrentUserContext";
 
 const CurrentUserProvider = (props) => {
 
@@ -33,5 +19,4 @@ const CurrentUserProvider = (props) => {
         </CurrentUserContext.Provider>
     );
 }
-
-export {CurrentUserContext, CurrentUserProvider, blankUser};
+export {CurrentUserProvider};

@@ -1,4 +1,4 @@
-import {recoveryActions} from "../ErrorContext";
+import {recoveryActions} from "../utility/ErrorContext";
 import {VITE_API_VERSION, VERSION_HEADER} from "../utility/Constants";
 import useError from "./useError";
 

@@ -13,11 +13,12 @@ import {
 } from "chart.js";
 import {Line} from 'react-chartjs-2';
 import Container from "react-bootstrap/Container";
-import SleepDataManager from "./SleepDataManager";
+import SleepDataManager from "./utility/SleepDataManager";
 import {GET} from "./utility/BasicHeaders";
 import {NavHeader} from "./App";
 import DateRangePicker from "./component/DateRangePicker";
 import {useParams} from "react-router-dom";
+import {createRange} from "./utility/Constants";
 
 
 ChartJS.register(
@@ -67,18 +68,6 @@ const isDateRangeValid = (d1, d2)  => {
     let j1 = d1.toJSON().slice(0, 10);
     let j2 = d2.toJSON().slice(0, 10);
     return j1 < j2;
-}
-
-const createRange = (lastNDays) => {
-
-    let today = new Date();
-    today.setHours(23, 59, 59);
-
-    let lastMonth = new Date(today.getTime());
-    lastMonth.setDate(today.getDate() - lastNDays);
-    lastMonth.setHours(0, 0, 0);
-
-    return {from: lastMonth, to: today};
 }
 
 function SleepChart(props) {
@@ -132,4 +121,4 @@ function SleepChart(props) {
     );
 }
 
-export {SleepChart, createRange};
+export {SleepChart};

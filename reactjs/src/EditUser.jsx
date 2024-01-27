@@ -12,9 +12,9 @@ import useApiPut from "./hooks/useApiPut";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./utility/BasicHeaders";
-import {blankUser} from "./CurrentUserContext";
 import {NavHeader} from "./App";
 import {useNavigate, useParams} from "react-router-dom";
+import {blankUser} from "./utility/Constants";
 
 
 function EditUser() {

@@ -11,10 +11,9 @@ import EditUser from './EditUser.jsx';
 import Login from './Login.jsx';
 import ErrorBoundary from './ErrorBoundary.jsx';
 
-import {ErrorProvider} from './ErrorContext.jsx';
 import ErrorModal from "./ErrorModal";
 import useCurrentUser from "./hooks/useCurrentUser";
-import {CurrentUserContext, CurrentUserProvider} from "./CurrentUserContext";
+import {CurrentUserContext} from "./utility/CurrentUserContext";
 import {GET} from "./utility/BasicHeaders";
 
 // This only has to be imported on one page, and it works for the whole site
@@ -48,6 +47,8 @@ import Tools from "./Tools";
 import Challenge from "./Challenge";
 import Histogram from "./Histogram";
 import EditChallenge from "./EditChallenge";
+import {CurrentUserProvider} from "./CurrentUserProvider";
+import {ErrorProvider} from "./ErrorProvider";
 
 function App() {
 

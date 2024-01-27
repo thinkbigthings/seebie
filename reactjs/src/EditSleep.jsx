@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {SleepForm} from "./SleepForm";
 import useApiPut from "./hooks/useApiPut";
-import SleepDataManager from "./SleepDataManager";
+import SleepDataManager from "./utility/SleepDataManager";
 import {GET} from "./utility/BasicHeaders";
 import Button from "react-bootstrap/Button";
 import useApiDelete from "./hooks/useApiDelete";

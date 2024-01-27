@@ -4,7 +4,7 @@ import Container from "react-bootstrap/Container";
 import DatePickerButton from "./component/DatePickerButton";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import SleepDataManager from "./SleepDataManager";
+import SleepDataManager from "./utility/SleepDataManager";
 import InfoModalButton from "./component/InfoModalButton";
 import Form from "react-bootstrap/Form";
 
@@ -91,4 +91,4 @@ function SleepForm(props) {
     );
 }
 
-export {SleepForm, isNumericString};
+export {SleepForm};
