@@ -22,15 +22,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-      # heroku deployment needs git to be present
-      # and setup-java needs gradle to detect toolchains for downloads
+      # files from other jobs are not available to other jobs
+      # heroku deployment needs git to be present so download that here
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # gradle needs Java
+      # We upload to Heroku using the heroku gradle plugin
+      # which needs gradle, which needs Java, so we need to download Java here
       - name: Set up Java 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'zulu'
@@ -48,7 +48,7 @@ jobs:
           ls -alrt server/build/libs
 
       - name: Login to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.14
+        uses: akhileshns/heroku-deploy@v3.13.15
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "stage"
@@ -56,6 +56,6 @@ jobs:
           justlogin: true
 
       - name: Deploy to Staging
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: -Papp=stage deployHeroku
