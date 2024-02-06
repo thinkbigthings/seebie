@@ -4,11 +4,11 @@ import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.ChallengeService;
+import com.seebie.server.service.ImportExportService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.data.Request;
 import com.seebie.server.test.data.MvcRequestMapper;
-import com.seebie.server.test.data.Response;
+import com.seebie.server.test.data.Request;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,6 +71,9 @@ public class ControllerSecurityTest {
 	private UserService service;
 
 	@MockBean
+	private ImportExportService importExportService;
+
+	@MockBean
 	private SleepService sleepService;
 
 	@MockBean
@@ -83,7 +86,8 @@ public class ControllerSecurityTest {
 	private static final SleepData sleepData = createRandomSleepData();
 	private static final PersonalInfo info = createRandomPersonalInfo();
 	private static final String password = "new_password";
-	private static final MockMultipartFile file = createMultipart(createCsv(1));
+	private static final MockMultipartFile csvFile = createMultipart(createCsv(1));
+	private static MockMultipartFile jsonFile; // see setup method
 
 	private static final String from = format(ZonedDateTime.now().minusDays(1));
 	private static final String to = format(ZonedDateTime.now());
@@ -108,7 +112,9 @@ public class ControllerSecurityTest {
 	}
 
 	@BeforeAll
-	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
+	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) throws Exception {
+
+		jsonFile = createMultipart(converter.getObjectMapper().writeValueAsString(randomUserData()));
 
 		// so we get the mapper as configured for the app
 		toRequest = new MvcRequestMapper(testDataObj2Str(converter.getObjectMapper()));
@@ -140,12 +146,18 @@ public class ControllerSecurityTest {
 		test.get(STR."/api/user/\{USERNAME}/sleep/chart", chartParams, 401, 200, 200);
 		test.post(STR."/api/user/\{USERNAME}/sleep/histogram", histogramRequest, 401, 200, 200);
 		test.get(STR."/api/user/\{USERNAME}/sleep/download", 401, 200, 200);
-		test.post(STR."/api/user/\{USERNAME}/sleep/upload", file, 401, 200, 200);
+		test.post(STR."/api/user/\{USERNAME}/sleep/upload", csvFile, 401, 200, 200);
 
 		test.get(STR."/api/user/\{ADMINNAME}/sleep/chart", chartParams, 401, 403, 200);
 		test.post(STR."/api/user/\{ADMINNAME}/sleep/histogram", histogramRequest, 401, 403, 200);
 		test.get(STR."/api/user/\{ADMINNAME}/sleep/download", 401, 403, 200);
-		test.post(STR."/api/user/\{ADMINNAME}/sleep/upload", file, 401, 403, 200);
+		test.post(STR."/api/user/\{ADMINNAME}/sleep/upload", csvFile, 401, 403, 200);
+
+		test.post(STR."/api/user/\{USERNAME}/import/json", jsonFile, 401, 200, 200);
+		test.get(STR."/api/user/\{USERNAME}/export/json", 401, 200, 200);
+
+		test.post(STR."/api/user/\{ADMINNAME}/import/json", jsonFile, 401, 403, 200);
+		test.get(STR."/api/user/\{ADMINNAME}/export/json", 401, 403, 200);
 
 		test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 401, 200, 200);
 		test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 401, 200, 200);

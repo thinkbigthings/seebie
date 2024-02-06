@@ -89,6 +89,10 @@ public class TestData {
         return csvString.toString();
     }
 
+    public static UserData randomUserData() {
+        return new UserData(createRandomSleepData(1, AMERICA_NEW_YORK), List.of());
+    }
+
     /**
      *
      * @return A list of daily SleepData whose zeroth element is today and last element is listCount days ago.

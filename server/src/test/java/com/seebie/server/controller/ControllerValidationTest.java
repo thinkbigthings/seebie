@@ -6,10 +6,11 @@ import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.ChallengeService;
+import com.seebie.server.service.ImportExportService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.data.Request;
 import com.seebie.server.test.data.MvcRequestMapper;
+import com.seebie.server.test.data.Request;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,6 +68,9 @@ public class ControllerValidationTest {
 	private UserService service;
 
 	@MockBean
+	private ImportExportService importExportService;
+
+	@MockBean
 	private SleepService sleepService;
 
 	@MockBean
@@ -92,8 +96,11 @@ public class ControllerValidationTest {
 	private static final HistogramRequest validHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(fromDate, toDate))));
 	private static final HistogramRequest invalidHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(toDate, fromDate))));
 
-	private static final MockMultipartFile badFile = createMultipart("text");
-	private static final MockMultipartFile goodFile = createMultipart(createCsv(1));
+	private static final MockMultipartFile badCsv = createMultipart("text");
+	private static final MockMultipartFile goodCsv = createMultipart(createCsv(1));
+
+	private static MockMultipartFile badJson = createMultipart("{[ text");
+	private static MockMultipartFile goodJson; // see setup method
 
 	private static final Challenge invalidChallenge = new Challenge("", "", null, null);
 	private static final Challenge validChallenge = TestData.createRandomChallenge(0, 14);
@@ -113,7 +120,7 @@ public class ControllerValidationTest {
 
 	/**
 	 * If the test data is a string, presume it is already in the correct format and return directly.
-	 * If you pass a string "" to the object mapper, it doesn't return the string, it returns """".
+	 * Because if you pass a string "" to the object mapper, it doesn't return the string, it returns """".
 	 *
 	 * @param mapper
 	 * @return
@@ -127,10 +134,12 @@ public class ControllerValidationTest {
 	}
 
 	@BeforeAll
-	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) {
+	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) throws Exception {
 
 		// so we get the mapper as configured for the app
 		toRequest = new MvcRequestMapper(testDataObj2Str(converter.getObjectMapper()));
+
+		goodJson = createMultipart(converter.getObjectMapper().writeValueAsString(randomUserData()));
 	}
 
 	private static List<Arguments> provideAdminTestParameters() {
@@ -160,8 +169,11 @@ public class ControllerValidationTest {
 				of(post(STR."/api/user/\{USERNAME}/sleep/histogram", validHistReq),   200),
 				of(post(STR."/api/user/\{USERNAME}/sleep/histogram", invalidHistReq),   400),
 
-				of(post(STR."/api/user/\{USERNAME}/sleep/upload", badFile), 400),
-				of(post(STR."/api/user/\{USERNAME}/sleep/upload", goodFile), 200),
+				of(post(STR."/api/user/\{USERNAME}/import/json", badJson), 400),
+				of(post(STR."/api/user/\{USERNAME}/import/json", goodJson), 200),
+
+				of(post(STR."/api/user/\{USERNAME}/sleep/upload", badCsv), 400),
+				of(post(STR."/api/user/\{USERNAME}/sleep/upload", goodCsv), 200),
 
 				of(post(STR."/api/user/\{USERNAME}/challenge", invalidChallenge), 400),
 				of(post(STR."/api/user/\{USERNAME}/challenge", validChallenge), 200),
