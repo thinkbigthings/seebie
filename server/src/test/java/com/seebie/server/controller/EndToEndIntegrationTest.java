@@ -70,6 +70,8 @@ public class EndToEndIntegrationTest extends IntegrationTest {
 
         RestClient admin = clientFactory.login("admin", "admin");
 
+        // anonymous inner classes should generally be avoided due to risk of memory leaks,
+        // but this is a test and we're not going to be creating a lot of these before the JVM exits
         var userPage = new ParameterizedTypeReference<ParsablePage<UserSummary>>() {};
         Page<UserSummary> page = admin.get().uri(usersUrl).retrieve().body(userPage);
 
