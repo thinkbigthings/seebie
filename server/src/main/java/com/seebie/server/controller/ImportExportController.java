@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.StringReader;
 
+import static com.seebie.server.mapper.dtotoentity.CsvToSleepData.CSV_INPUT;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
@@ -69,6 +71,48 @@ public class ImportExportController {
         long numImported = importExportService.saveUserData(username, userData);
 
         LOG.info(STR."Imported \{numImported} records for \{username}");
+
+        return new UploadResponse(numImported, username);
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/user/{username}/sleep/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<byte[]> downloadSleepData(@PathVariable String username) {
+
+        String filename = "seebie-data-" + username + ".csv";
+        String headerValue = "attachment; filename=" + filename;
+
+        String csv = importExportService.retrieveCsv(username);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
+                .body(csv.getBytes(UTF_8));
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
+    @RequestMapping(value="/user/{username}/sleep/upload", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public UploadResponse uploadSleepData(@PathVariable String username, @RequestParam("file") MultipartFile file) throws IOException {
+
+        String rawCsv = new String(file.getBytes(), UTF_8);
+
+        // validate first
+        try {
+            if(CSV_INPUT.parse(new StringReader(rawCsv)).stream().count() == 0) {
+                throw new IllegalArgumentException("No records were present");
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Could not parse CSV", e);
+        }
+
+        LOG.info("Upload started...");
+
+        long numImported = importExportService.saveCsv(username, rawCsv);
+
+        LOG.info("Imported " + numImported + " records.");
 
         return new UploadResponse(numImported, username);
     }

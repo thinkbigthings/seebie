@@ -1,8 +1,6 @@
 package com.seebie.server.service;
 
 import com.seebie.server.dto.*;
-import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
-import com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.mapper.entitytodto.SleepMapper;
 import com.seebie.server.repository.SleepRepository;
@@ -21,21 +19,15 @@ import java.util.List;
 @Service
 public class SleepService {
 
-    private static Logger LOG = LoggerFactory.getLogger(SleepService.class);
-
     private SleepRepository sleepRepository;
     private UnsavedSleepListMapper entityMapper;
 
     private SleepMapper sleepMapper = new SleepMapper();
 
-    private CsvToSleepData fromCsv;
-    private SleepDetailsToCsv toCsv;
 
-    public SleepService(SleepRepository sleepRepository, UnsavedSleepListMapper entityMapper, CsvToSleepData fromCsv, SleepDetailsToCsv toCsv) {
+    public SleepService(SleepRepository sleepRepository, UnsavedSleepListMapper entityMapper) {
         this.sleepRepository = sleepRepository;
         this.entityMapper = entityMapper;
-        this.fromCsv = fromCsv;
-        this.toCsv = toCsv;
     }
 
     @Transactional(readOnly = true)
@@ -92,22 +84,4 @@ public class SleepService {
                 .toList();
     }
 
-
-    @Transactional(readOnly = true)
-    public String retrieveCsv(String username) {
-        return toCsv.apply(sleepRepository.findAllByUsername(username));
-    }
-
-    @Transactional
-    public long saveCsv(String username, String csvData) {
-
-        LOG.info("Parsing data...");
-        List<SleepData> parsedData = fromCsv.apply(csvData);
-        var entityList = entityMapper.apply(username, parsedData);
-
-        LOG.info("Saving data... ");
-        int count = sleepRepository.saveAll(entityList).size();
-
-        return count;
-    }
 }
