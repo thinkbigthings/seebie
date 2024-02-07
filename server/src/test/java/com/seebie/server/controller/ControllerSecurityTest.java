@@ -2,6 +2,7 @@ package com.seebie.server.controller;
 
 import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
+import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
@@ -36,7 +37,8 @@ import static com.seebie.server.controller.ControllerValidationTest.testDataObj2
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -79,6 +81,9 @@ public class ControllerSecurityTest {
 	@MockBean
 	private ChallengeService challengeService;
 
+	@MockBean
+	private CsvToSleepData fromCsv;
+
 	private static final String USERNAME = "someuser";
 	private static final String ADMINNAME = "admin";
 
@@ -86,8 +91,11 @@ public class ControllerSecurityTest {
 	private static final SleepData sleepData = createRandomSleepData();
 	private static final PersonalInfo info = createRandomPersonalInfo();
 	private static final String password = "new_password";
-	private static final MockMultipartFile csvFile = createMultipart(createCsv(1));
 	private static MockMultipartFile jsonFile; // see setup method
+
+	private static final int goodCsvRows = 1;
+	private static final String goodCsvText = createCsv(goodCsvRows);
+	private static final MockMultipartFile csvFile = createMultipart(goodCsvText);
 
 	private static final String from = format(ZonedDateTime.now().minusDays(1));
 	private static final String to = format(ZonedDateTime.now());
@@ -107,7 +115,10 @@ public class ControllerSecurityTest {
 	@BeforeEach
 	public void setup() {
 
-		when(importExportService.saveCsv(anyString(), anyString())).thenReturn(0L);
+		when(fromCsv.apply(contains(goodCsvText))).thenReturn(List.of());
+		when(fromCsv.apply(contains(goodCsvText))).thenReturn(List.of(createRandomSleepData()));
+
+		when(importExportService.saveCsv(anyString(), anyList())).thenReturn(0L);
 		when(importExportService.retrieveCsv(anyString())).thenReturn("");
 	}
 

@@ -7,6 +7,10 @@ import java.util.function.Function;
 
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 
+/**
+ * Convert a SleepDetails object to a CSV row.
+ * Use SleepDetails not just SleepData because the details is what carries the duration in minutes.
+ */
 public class SleepDetailsToCsvRow implements Function<SleepDetails, List<String>> {
 
     @Override

@@ -1,10 +1,8 @@
 package com.seebie.server.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.dto.UserData;
-import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.repository.SleepRepository;
@@ -20,20 +18,14 @@ public class ImportExportService {
 
     private static Logger LOG = LoggerFactory.getLogger(ImportExportService.class);
 
-    // We should generally avoid anonymous inner classes, they reference the outer class and can cause memory leaks
-    // However this is never recreated, so it's not a problem here
-    private final static TypeReference<UserData> USER_DATA_TYPE = new TypeReference<>() {};
-
     private SleepRepository sleepRepository;
     private UnsavedSleepListMapper entityMapper;
 
-    private CsvToSleepData fromCsv;
     private SleepDetailsToCsv toCsv;
 
-    public ImportExportService(SleepRepository sleepRepository,  UnsavedSleepListMapper entityMapper, CsvToSleepData fromCsv, SleepDetailsToCsv toCsv) {
+    public ImportExportService(SleepRepository sleepRepository,  UnsavedSleepListMapper entityMapper, SleepDetailsToCsv toCsv) {
         this.sleepRepository = sleepRepository;
         this.entityMapper = entityMapper;
-        this.fromCsv = fromCsv;
         this.toCsv = toCsv;
     }
 
@@ -59,10 +51,8 @@ public class ImportExportService {
     }
 
     @Transactional
-    public long saveCsv(String username, String csvData) {
+    public long saveCsv(String username, List<SleepData> parsedData) {
 
-        LOG.info("Parsing data...");
-        List<SleepData> parsedData = fromCsv.apply(csvData);
         var entityList = entityMapper.apply(username, parsedData);
 
         LOG.info("Saving data... ");
@@ -70,4 +60,5 @@ public class ImportExportService {
 
         return count;
     }
+
 }

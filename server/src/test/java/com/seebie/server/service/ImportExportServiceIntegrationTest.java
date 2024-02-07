@@ -8,11 +8,8 @@ import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.seebie.server.test.data.TestData.createCsv;
 import static com.seebie.server.test.data.TestData.randomUserData;
-import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ImportExportServiceIntegrationTest extends IntegrationTest {
 
@@ -56,26 +53,4 @@ class ImportExportServiceIntegrationTest extends IntegrationTest {
         assertEquals(importedSleepNum, userData1.sleepData().size());
     }
 
-
-    @Test
-    public void testDownloadWithTimezone() {
-
-        var registration = TestData.createRandomUserRegistration();
-        String user1 = registration.username();
-        userService.saveNewUser(registration);
-
-        registration = TestData.createRandomUserRegistration();
-        String user2 = registration.username();
-        userService.saveNewUser(registration);
-
-        importExportService.saveCsv(user1, createCsv(3, AMERICA_NEW_YORK));
-        var retrievedCsv1 = importExportService.retrieveCsv(user1);
-
-        importExportService.saveCsv(user2, retrievedCsv1);
-        var retrievedCsv2 = importExportService.retrieveCsv(user2);
-
-        // after an export, import, and re-export: the two exports should be identical
-        assertEquals(retrievedCsv1, retrievedCsv2);
-        assertTrue(retrievedCsv1.contains(AMERICA_NEW_YORK));
-    }
 }

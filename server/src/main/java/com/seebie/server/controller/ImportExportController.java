@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seebie.server.dto.UploadResponse;
 import com.seebie.server.dto.UserData;
+import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.service.ImportExportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.StringReader;
 
-import static com.seebie.server.mapper.dtotoentity.CsvToSleepData.CSV_INPUT;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
@@ -31,11 +30,13 @@ public class ImportExportController {
 
     private final ImportExportService importExportService;
     private ObjectMapper jsonMapper;
+    private CsvToSleepData fromCsv;
 
     // if there's only one constructor, can omit Autowired and Inject
-    public ImportExportController(MappingJackson2HttpMessageConverter converter, ImportExportService importExportService) {
+    public ImportExportController(MappingJackson2HttpMessageConverter converter, ImportExportService importExportService, CsvToSleepData fromCsv) {
         this.jsonMapper = converter.getObjectMapper();
         this.importExportService = importExportService;
+        this.fromCsv = fromCsv;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
@@ -99,18 +100,14 @@ public class ImportExportController {
 
         String rawCsv = new String(file.getBytes(), UTF_8);
 
-        // validate first
-        try {
-            if(CSV_INPUT.parse(new StringReader(rawCsv)).stream().count() == 0) {
-                throw new IllegalArgumentException("No records were present");
-            }
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Could not parse CSV", e);
+        var parsedData = fromCsv.apply(rawCsv);
+        if(parsedData.isEmpty()) {
+            throw new IllegalArgumentException("No records were present");
         }
 
         LOG.info("Upload started...");
 
-        long numImported = importExportService.saveCsv(username, rawCsv);
+        long numImported = importExportService.saveCsv(username, parsedData);
 
         LOG.info("Imported " + numImported + " records.");
 

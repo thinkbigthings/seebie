@@ -28,10 +28,11 @@ public class CsvToSleepData implements Function<String, List<SleepData>> {
     public List<SleepData> apply(String rawCsv) {
 
         try {
-            return CSV_INPUT.parse(new StringReader(rawCsv))
+            var list = CSV_INPUT.parse(new StringReader(rawCsv))
                     .stream()
                     .map(this::fromCsvRow)
                     .toList();
+            return list;
         }
         catch (IOException | IllegalStateException e) {
             throw new IllegalArgumentException("Could not parse CSV input", e);
