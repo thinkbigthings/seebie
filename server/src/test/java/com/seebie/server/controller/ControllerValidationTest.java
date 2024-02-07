@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
+import com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
@@ -80,6 +81,9 @@ public class ControllerValidationTest {
 	@MockBean
 	private CsvToSleepData fromCsv;
 
+	@MockBean
+	private SleepDetailsToCsv toCsv;
+
 	private static final String USERNAME = "someuser";
 	private static final String ADMINNAME = "admin";
 
@@ -124,8 +128,8 @@ public class ControllerValidationTest {
 		when(fromCsv.apply(contains(badCsvText))).thenReturn(List.of());
 		when(fromCsv.apply(contains(goodCsvText))).thenReturn(List.of(createRandomSleepData()));
 
-		when(importExportService.saveCsv(anyString(), anyList())).thenReturn(0L);
-		when(importExportService.retrieveCsv(anyString())).thenReturn("");
+		when(importExportService.saveSleepData(anyString(), anyList())).thenReturn(0L);
+		when(importExportService.retrieveSleepDetails(anyString())).thenReturn(List.of());
 	}
 
 	/**

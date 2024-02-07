@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seebie.server.dto.UploadResponse;
 import com.seebie.server.dto.UserData;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
+import com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv;
 import com.seebie.server.service.ImportExportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +32,14 @@ public class ImportExportController {
     private final ImportExportService importExportService;
     private ObjectMapper jsonMapper;
     private CsvToSleepData fromCsv;
+    private SleepDetailsToCsv toCsv;
 
     // if there's only one constructor, can omit Autowired and Inject
-    public ImportExportController(MappingJackson2HttpMessageConverter converter, ImportExportService importExportService, CsvToSleepData fromCsv) {
+    public ImportExportController(MappingJackson2HttpMessageConverter converter, ImportExportService importExportService, CsvToSleepData fromCsv, SleepDetailsToCsv toCsv) {
         this.jsonMapper = converter.getObjectMapper();
         this.importExportService = importExportService;
         this.fromCsv = fromCsv;
+        this.toCsv = toCsv;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
@@ -85,7 +88,7 @@ public class ImportExportController {
         String filename = "seebie-data-" + username + ".csv";
         String headerValue = "attachment; filename=" + filename;
 
-        String csv = importExportService.retrieveCsv(username);
+        String csv = toCsv.apply(importExportService.retrieveSleepDetails(username));
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -98,6 +101,8 @@ public class ImportExportController {
     @ResponseBody
     public UploadResponse uploadSleepData(@PathVariable String username, @RequestParam("file") MultipartFile file) throws IOException {
 
+        LOG.info("Upload started...");
+
         String rawCsv = new String(file.getBytes(), UTF_8);
 
         var parsedData = fromCsv.apply(rawCsv);
@@ -105,11 +110,10 @@ public class ImportExportController {
             throw new IllegalArgumentException("No records were present");
         }
 
-        LOG.info("Upload started...");
 
-        long numImported = importExportService.saveCsv(username, parsedData);
+        long numImported = importExportService.saveSleepData(username, parsedData);
 
-        LOG.info("Imported " + numImported + " records.");
+        LOG.info(STR."Imported \{numImported} records.");
 
         return new UploadResponse(numImported, username);
     }

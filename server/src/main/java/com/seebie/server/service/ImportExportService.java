@@ -3,7 +3,6 @@ package com.seebie.server.service;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.dto.UserData;
-import com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.repository.SleepRepository;
 import org.slf4j.Logger;
@@ -21,12 +20,9 @@ public class ImportExportService {
     private SleepRepository sleepRepository;
     private UnsavedSleepListMapper entityMapper;
 
-    private SleepDetailsToCsv toCsv;
-
-    public ImportExportService(SleepRepository sleepRepository,  UnsavedSleepListMapper entityMapper, SleepDetailsToCsv toCsv) {
+    public ImportExportService(SleepRepository sleepRepository,  UnsavedSleepListMapper entityMapper) {
         this.sleepRepository = sleepRepository;
         this.entityMapper = entityMapper;
-        this.toCsv = toCsv;
     }
 
     @Transactional(readOnly = true)
@@ -46,16 +42,14 @@ public class ImportExportService {
     }
 
     @Transactional(readOnly = true)
-    public String retrieveCsv(String username) {
-        return toCsv.apply(sleepRepository.findAllByUsername(username));
+    public List<SleepDetails> retrieveSleepDetails(String username) {
+        return sleepRepository.findAllByUsername(username);
     }
 
     @Transactional
-    public long saveCsv(String username, List<SleepData> parsedData) {
+    public long saveSleepData(String username, List<SleepData> parsedData) {
 
         var entityList = entityMapper.apply(username, parsedData);
-
-        LOG.info("Saving data... ");
         int count = sleepRepository.saveAll(entityList).size();
 
         return count;
