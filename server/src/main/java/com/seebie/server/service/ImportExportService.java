@@ -1,10 +1,12 @@
 package com.seebie.server.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.dto.UserData;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.repository.SleepRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,10 +15,7 @@ import java.util.List;
 @Service
 public class ImportExportService {
 
-
-    // We should generally avoid anonymous inner classes, they reference the outer class and can cause memory leaks
-    // However this is never recreated, so it's not a problem here
-    private final static TypeReference<UserData> USER_DATA_TYPE = new TypeReference<>() {};
+    private static Logger LOG = LoggerFactory.getLogger(ImportExportService.class);
 
     private SleepRepository sleepRepository;
     private UnsavedSleepListMapper entityMapper;
@@ -42,5 +41,18 @@ public class ImportExportService {
         return sleepRepository.saveAll(sleepEntities).size();
     }
 
+    @Transactional(readOnly = true)
+    public List<SleepDetails> retrieveSleepDetails(String username) {
+        return sleepRepository.findAllByUsername(username);
+    }
+
+    @Transactional
+    public long saveSleepData(String username, List<SleepData> parsedData) {
+
+        var entityList = entityMapper.apply(username, parsedData);
+        int count = sleepRepository.saveAll(entityList).size();
+
+        return count;
+    }
 
 }

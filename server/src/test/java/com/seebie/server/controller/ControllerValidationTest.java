@@ -4,6 +4,8 @@ package com.seebie.server.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
+import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
+import com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
@@ -40,7 +42,7 @@ import static com.seebie.server.test.data.Request.*;
 import static com.seebie.server.test.data.TestData.*;
 import static java.time.ZonedDateTime.now;
 import static org.junit.jupiter.params.provider.Arguments.of;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,6 +78,12 @@ public class ControllerValidationTest {
 	@MockBean
 	private ChallengeService challengeService;
 
+	@MockBean
+	private CsvToSleepData fromCsv;
+
+	@MockBean
+	private SleepDetailsToCsv toCsv;
+
 	private static final String USERNAME = "someuser";
 	private static final String ADMINNAME = "admin";
 
@@ -96,8 +104,11 @@ public class ControllerValidationTest {
 	private static final HistogramRequest validHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(fromDate, toDate))));
 	private static final HistogramRequest invalidHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(toDate, fromDate))));
 
-	private static final MockMultipartFile badCsv = createMultipart("text");
-	private static final MockMultipartFile goodCsv = createMultipart(createCsv(1));
+	private static final String badCsvText = "text";
+	private static final int goodCsvRows = 1;
+	private static final String goodCsvText = createCsv(goodCsvRows);
+	private static final MockMultipartFile badCsv = createMultipart(badCsvText);
+	private static final MockMultipartFile goodCsv = createMultipart(goodCsvText);
 
 	private static MockMultipartFile badJson = createMultipart("{[ text");
 	private static MockMultipartFile goodJson; // see setup method
@@ -114,8 +125,11 @@ public class ControllerValidationTest {
 	@BeforeEach
 	public void setup() {
 
-		when(sleepService.saveCsv(anyString(), anyString())).thenReturn(0L);
-		when(sleepService.retrieveCsv(anyString())).thenReturn("");
+		when(fromCsv.apply(contains(badCsvText))).thenReturn(List.of());
+		when(fromCsv.apply(contains(goodCsvText))).thenReturn(List.of(createRandomSleepData()));
+
+		when(importExportService.saveSleepData(anyString(), anyList())).thenReturn(0L);
+		when(importExportService.retrieveSleepDetails(anyString())).thenReturn(List.of());
 	}
 
 	/**
@@ -171,9 +185,8 @@ public class ControllerValidationTest {
 
 				of(post(STR."/api/user/\{USERNAME}/import/json", badJson), 400),
 				of(post(STR."/api/user/\{USERNAME}/import/json", goodJson), 200),
-
-				of(post(STR."/api/user/\{USERNAME}/sleep/upload", badCsv), 400),
-				of(post(STR."/api/user/\{USERNAME}/sleep/upload", goodCsv), 200),
+				of(post(STR."/api/user/\{USERNAME}/import/csv", badCsv), 400),
+				of(post(STR."/api/user/\{USERNAME}/import/csv", goodCsv), 200),
 
 				of(post(STR."/api/user/\{USERNAME}/challenge", invalidChallenge), 400),
 				of(post(STR."/api/user/\{USERNAME}/challenge", validChallenge), 200),
