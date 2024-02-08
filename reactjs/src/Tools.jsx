@@ -65,27 +65,23 @@ function Tools() {
 
             <NavHeader title="Tools" />
 
-            <hr />
-
-            <Container className="mx-0 px-0 my-5">
+            <Container className="mx-0 px-0 py-2 border-top border-light-subtle">
                 <h4 className="mb-3">Export</h4>
-                <label className="d-block mb-3">You have {numSleepRecords} sleep records that you can download to CSV</label>
+                <label className="d-block mb-3">You have {numSleepRecords} sleep records that you can download</label>
                 <a href={downloadCsv}>
-                    <Button variant="secondary">
+                    <Button className="mb-3" variant="secondary">
                         <FontAwesomeIcon className="app-highlight me-2" icon={faDownload} />
                         Download
                     </Button>
                 </a>
             </Container>
 
-            <hr />
-
-            <Container className="mx-0 px-0 my-5">
+            <Container className="mx-0 px-0 py-2 border-top border-light-subtle">
                 <h4 className="mb-3">Import</h4>
 
                 <Form>
                     <Form.Group controlId="formFile">
-                        <Form.Label>Select CSV file with sleep data to upload</Form.Label>
+                        <Form.Label>Select file with sleep data to upload</Form.Label>
                         <Form.Control
                             type="file"
                             name="file"
@@ -94,8 +90,8 @@ function Tools() {
                             isInvalid={uploadInvalid}
                         />
                         <Form.Control.Feedback type="invalid"
-                                               className={"mh-24px d-block " + ((uploadInvalid) ? 'visible' : 'invisible')}>
-                            Please select a CSV file.
+                                               className={"d-block " + ((uploadInvalid) ? 'visible' : 'invisible')}>
+                            Please select a file.
                         </Form.Control.Feedback>
                     </Form.Group>
 
