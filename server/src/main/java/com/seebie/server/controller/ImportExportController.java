@@ -81,7 +81,7 @@ public class ImportExportController {
 
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
-    @RequestMapping(value="/user/{username}/sleep/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @RequestMapping(value="/user/{username}/export/csv", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<byte[]> downloadSleepData(@PathVariable String username) {
 
@@ -97,7 +97,7 @@ public class ImportExportController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
-    @RequestMapping(value="/user/{username}/sleep/upload", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value="/user/{username}/import/csv", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public UploadResponse uploadSleepData(@PathVariable String username, @RequestParam("file") MultipartFile file) throws IOException {
 

@@ -185,9 +185,8 @@ public class ControllerValidationTest {
 
 				of(post(STR."/api/user/\{USERNAME}/import/json", badJson), 400),
 				of(post(STR."/api/user/\{USERNAME}/import/json", goodJson), 200),
-
-				of(post(STR."/api/user/\{USERNAME}/sleep/upload", badCsv), 400),
-				of(post(STR."/api/user/\{USERNAME}/sleep/upload", goodCsv), 200),
+				of(post(STR."/api/user/\{USERNAME}/import/csv", badCsv), 400),
+				of(post(STR."/api/user/\{USERNAME}/import/csv", goodCsv), 200),
 
 				of(post(STR."/api/user/\{USERNAME}/challenge", invalidChallenge), 400),
 				of(post(STR."/api/user/\{USERNAME}/challenge", validChallenge), 200),

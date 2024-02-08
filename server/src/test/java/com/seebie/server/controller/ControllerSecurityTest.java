@@ -162,19 +162,19 @@ public class ControllerSecurityTest {
 
 		test.get(STR."/api/user/\{USERNAME}/sleep/chart", chartParams, 401, 200, 200);
 		test.post(STR."/api/user/\{USERNAME}/sleep/histogram", histogramRequest, 401, 200, 200);
-		test.get(STR."/api/user/\{USERNAME}/sleep/download", 401, 200, 200);
-		test.post(STR."/api/user/\{USERNAME}/sleep/upload", csvFile, 401, 200, 200);
 
 		test.get(STR."/api/user/\{ADMINNAME}/sleep/chart", chartParams, 401, 403, 200);
 		test.post(STR."/api/user/\{ADMINNAME}/sleep/histogram", histogramRequest, 401, 403, 200);
-		test.get(STR."/api/user/\{ADMINNAME}/sleep/download", 401, 403, 200);
-		test.post(STR."/api/user/\{ADMINNAME}/sleep/upload", csvFile, 401, 403, 200);
 
 		test.post(STR."/api/user/\{USERNAME}/import/json", jsonFile, 401, 200, 200);
 		test.get(STR."/api/user/\{USERNAME}/export/json", 401, 200, 200);
+		test.get(STR."/api/user/\{USERNAME}/export/csv", 401, 200, 200);
+		test.post(STR."/api/user/\{USERNAME}/import/csv", csvFile, 401, 200, 200);
 
 		test.post(STR."/api/user/\{ADMINNAME}/import/json", jsonFile, 401, 403, 200);
 		test.get(STR."/api/user/\{ADMINNAME}/export/json", 401, 403, 200);
+		test.get(STR."/api/user/\{ADMINNAME}/export/csv", 401, 403, 200);
+		test.post(STR."/api/user/\{ADMINNAME}/import/csv", csvFile, 401, 403, 200);
 
 		test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 401, 200, 200);
 		test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 401, 200, 200);
