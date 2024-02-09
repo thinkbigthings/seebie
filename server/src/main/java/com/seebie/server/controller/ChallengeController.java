@@ -30,7 +30,7 @@ public class ChallengeController {
     @RequestMapping(value="/user/{username}/challenge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public void createChallenge(@PathVariable String username, @Valid @RequestBody Challenge challenge) {
-        challengeService.saveNewChallenge(username, challenge);
+        challengeService.saveNew(username, challenge);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")

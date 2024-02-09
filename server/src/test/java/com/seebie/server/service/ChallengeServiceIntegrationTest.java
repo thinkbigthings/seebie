@@ -45,7 +45,7 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
         var start = end.minusDays(7);
 
         var originalChallenge = new Challenge("Title", "", start, end);
-        var savedChallenge = challengeService.saveNewChallenge(username, originalChallenge);
+        var savedChallenge = challengeService.saveNew(username, originalChallenge);
 
         // test retrieve
         Challenge found = challengeService.retrieve(username, savedChallenge.id());
@@ -70,7 +70,7 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
         assertEquals(0, completed.size());
 
         // set up test data
-        var challenge = challengeService.saveNewChallenge(username, createRandomChallenge(-14, 7));
+        var challenge = challengeService.saveNew(username, createRandomChallenge(-14, 7));
         completed = challengeService.getChallenges(username, today).completed();
         assertEquals(1, completed.size());
 
@@ -89,9 +89,9 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
 
         var challenge = createRandomChallenge(-1, 14);
 
-        challengeService.saveNewChallenge(username, challenge);
+        challengeService.saveNew(username, challenge);
 
-        var exception = assertThrows(DataIntegrityViolationException.class, () -> challengeService.saveNewChallenge(username, challenge));
+        var exception = assertThrows(DataIntegrityViolationException.class, () -> challengeService.saveNew(username, challenge));
         assertEquals("challenge_user_id_name_key", ((ConstraintViolationException)exception.getCause()).getConstraintName());
     }
 
@@ -103,7 +103,7 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
         // test with the start and stop times switched
         var badData = new Challenge("title", "", LocalDate.now(), LocalDate.now().minusDays(7L));
 
-        var exception = assertThrows(DataIntegrityViolationException.class, () -> challengeService.saveNewChallenge(username, badData));
+        var exception = assertThrows(DataIntegrityViolationException.class, () -> challengeService.saveNew(username, badData));
         assertEquals("stop_after_start", ((ConstraintViolationException)exception.getCause()).getConstraintName());
     }
 
@@ -117,8 +117,8 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
 
         // if the constraint is working, this is the happy path: name can be used across users
         // but in the UI it is a unique identifier, so it should be unique per user
-        challengeService.saveNewChallenge(username1, challenge);
-        challengeService.saveNewChallenge(username2, challenge);
+        challengeService.saveNew(username1, challenge);
+        challengeService.saveNew(username2, challenge);
     }
 
     private String saveNewUser() {
