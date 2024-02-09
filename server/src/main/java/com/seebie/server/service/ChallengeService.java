@@ -3,8 +3,7 @@ package com.seebie.server.service;
 import com.seebie.server.dto.Challenge;
 import com.seebie.server.dto.ChallengeDetails;
 import com.seebie.server.dto.ChallengeList;
-import com.seebie.server.dto.SleepDetails;
-import com.seebie.server.mapper.dtotoentity.UnsavedChallengeMapper;
+import com.seebie.server.mapper.dtotoentity.UnsavedChallengeListMapper;
 import com.seebie.server.repository.ChallengeRepository;
 import com.seebie.server.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,22 +24,21 @@ public class ChallengeService {
 
     private UserRepository userRepo;
     private ChallengeRepository challengeRepo;
-    private UnsavedChallengeMapper toEntity = new UnsavedChallengeMapper();
+    private UnsavedChallengeListMapper toEntity;
 
-    public ChallengeService(UserRepository userRepo, ChallengeRepository challengeRepo) {
+    public ChallengeService(UserRepository userRepo, ChallengeRepository challengeRepo, UnsavedChallengeListMapper toEntity) {
         this.userRepo = userRepo;
         this.challengeRepo = challengeRepo;
+        this.toEntity = toEntity;
     }
 
     @Transactional
-    public ChallengeDetails saveNewChallenge(String username, Challenge challenge) {
+    public ChallengeDetails saveNew(String username, Challenge challenge) {
 
-        var saved = userRepo.findByUsername(username)
-                .map(user -> toEntity.apply(user, challenge))
-                .map(challengeRepo::save)
-                .orElseThrow(() -> new EntityNotFoundException(STR."No user found: \{username}"));
-
-        return new ChallengeDetails(saved.getId(), saved.getName(), saved.getDescription(), saved.getStart(), saved.getFinish());
+        // The computed value for timeAsleep isn't calculated until the transaction is closed
+        // so the entity does not have the correct value here.
+        var entity = challengeRepo.save(toEntity.toUnsavedEntity(username, challenge));
+        return new ChallengeDetails(entity.getId(), entity.getName(), entity.getDescription(), entity.getStart(), entity.getFinish());
     }
 
     @Transactional

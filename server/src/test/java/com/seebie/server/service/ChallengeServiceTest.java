@@ -1,6 +1,7 @@
 package com.seebie.server.service;
 
 import com.seebie.server.dto.ChallengeDetails;
+import com.seebie.server.mapper.dtotoentity.UnsavedChallengeListMapper;
 import com.seebie.server.repository.ChallengeRepository;
 import com.seebie.server.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,12 +18,13 @@ public class ChallengeServiceTest {
 
     private UserRepository userRepo = Mockito.mock(UserRepository.class);
     private ChallengeRepository challengeRepository = Mockito.mock(ChallengeRepository.class);
+    private UnsavedChallengeListMapper challengeListMapper = Mockito.mock(UnsavedChallengeListMapper.class);
 
     private ChallengeService service;
 
     @BeforeEach
     public void setup() {
-        service = new ChallengeService(userRepo, challengeRepository);
+        service = new ChallengeService(userRepo, challengeRepository, challengeListMapper);
     }
 
     @Test

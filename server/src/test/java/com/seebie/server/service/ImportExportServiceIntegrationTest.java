@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.seebie.server.test.data.TestData.randomUserData;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ImportExportServiceIntegrationTest extends IntegrationTest {
 
@@ -50,6 +50,8 @@ class ImportExportServiceIntegrationTest extends IntegrationTest {
 
         // after an export, import, and re-export: the two exports should be identical
         assertEquals(userData1, userData2);
+        assertFalse(userData1.sleepData().isEmpty());
+        assertFalse(userData1.challengeData().isEmpty());
         assertEquals(importedSleepNum, userData1.sleepData().size());
     }
 

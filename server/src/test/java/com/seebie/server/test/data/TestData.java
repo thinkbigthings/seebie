@@ -55,6 +55,22 @@ public class TestData {
                 start, finish);
     }
 
+    public static List<Challenge> createRandomChallenges() {
+
+        var current = createRandomChallenge(-1, 14);
+        var completed = List.of(createRandomChallenge(-16, 14),
+                createRandomChallenge(-31, 14),
+                createRandomChallenge(-46, 14));
+        var upcoming = List.of(createRandomChallenge(15, 14),
+                createRandomChallenge(30, 14));
+
+        var dtos = new ArrayList<Challenge>();
+        dtos.addAll(completed);
+        dtos.addAll(upcoming);
+        dtos.add(current);
+        return dtos;
+    }
+
     public static MockMultipartFile createMultipart(String content) {
         return new MockMultipartFile("file","export.csv", TEXT_PLAIN_VALUE, content.getBytes());
     }
@@ -90,7 +106,7 @@ public class TestData {
     }
 
     public static UserData randomUserData() {
-        return new UserData(createRandomSleepData(1, AMERICA_NEW_YORK), List.of());
+        return new UserData(createRandomSleepData(1, AMERICA_NEW_YORK), createRandomChallenges());
     }
 
     /**
