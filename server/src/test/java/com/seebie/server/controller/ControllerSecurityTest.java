@@ -9,9 +9,6 @@ import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.data.MvcRequestMapper;
-import com.seebie.server.test.data.Request;
-import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,9 +29,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import javax.sql.DataSource;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.function.Function;
 
-import static com.seebie.server.controller.ControllerValidationTest.testDataObj2Str;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
@@ -112,9 +107,7 @@ public class ControllerSecurityTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-	private static Function<Request, RequestBuilder> toRequest;
-
-	private static TestData.RequestResponseBuilder test = new RequestResponseBuilder();
+	private static RoleArgumentsBuilder test;
 
 	@BeforeEach
 	public void setup() {
@@ -134,7 +127,7 @@ public class ControllerSecurityTest {
 		jsonFile = createMultipart(converter.getObjectMapper().writeValueAsString(randomUserData()));
 
 		// so we get the mapper as configured for the app
-		toRequest = new MvcRequestMapper(testDataObj2Str(converter.getObjectMapper()));
+		test = new RoleArgumentsBuilder(converter.getObjectMapper());
 
 		test.post("/api/registration", registration, 401, 403, 200);
 		test.get("/api/login", 401, 200, 200);
@@ -190,21 +183,22 @@ public class ControllerSecurityTest {
 	}
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
-		return test.build(RequestResponseBuilder.Role.UNAUTHENTICATED);
+		return test.getArguments(RoleArgumentsBuilder.Role.UNAUTHENTICATED);
 	}
 
 	private static List<Arguments> provideUserTestParameters() {
-		return test.build(RequestResponseBuilder.Role.USER);
+		return test.getArguments(RoleArgumentsBuilder.Role.USER);
 	}
+
 	private static List<Arguments> provideAdminTestParameters() {
-		return test.build(RequestResponseBuilder.Role.ADMIN);
+		return test.getArguments(RoleArgumentsBuilder.Role.ADMIN);
 	}
 
 
 	@ParameterizedTest
 	@MethodSource("provideUnauthenticatedTestParameters")
 	@DisplayName("Unauthenticated Access")
-	void testUnauthenticatedSecurity(Request testData, int expectedStatus) throws Exception {
+	void testUnauthenticatedSecurity(RequestBuilder testData, int expectedStatus) throws Exception {
 		test(testData, expectedStatus);
 	}
 
@@ -212,7 +206,7 @@ public class ControllerSecurityTest {
 	@MethodSource("provideAdminTestParameters")
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
-	void testAdminSecurity(Request testData, int expectedStatus) throws Exception {
+	void testAdminSecurity(RequestBuilder testData, int expectedStatus) throws Exception {
 		test(testData, expectedStatus);
 	}
 
@@ -220,12 +214,12 @@ public class ControllerSecurityTest {
 	@MethodSource("provideUserTestParameters")
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
-	void testUserSecurity(Request testData, int expectedStatus) throws Exception {
+	void testUserSecurity(RequestBuilder testData, int expectedStatus) throws Exception {
 		test(testData, expectedStatus);
 	}
 
-	private void test(Request testData, int expectedStatus) throws Exception {
-		mockMvc.perform(toRequest.apply(testData))
+	private void test(RequestBuilder testData, int expectedStatus) throws Exception {
+		mockMvc.perform(testData)
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));
 	}

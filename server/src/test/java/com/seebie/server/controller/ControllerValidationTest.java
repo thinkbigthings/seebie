@@ -11,8 +11,6 @@ import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.data.MvcRequestMapper;
-import com.seebie.server.test.data.Request;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,12 +36,11 @@ import java.util.function.Function;
 
 import static com.seebie.server.Functional.uncheck;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
-import static com.seebie.server.test.data.Request.*;
 import static com.seebie.server.test.data.TestData.*;
 import static java.time.ZonedDateTime.now;
-import static org.junit.jupiter.params.provider.Arguments.of;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -120,7 +117,9 @@ public class ControllerValidationTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-	private static Function<Request, RequestBuilder> toRequest;
+	private static RoleArgumentsBuilder test;
+	private static ArgumentsBuilder user;
+	private static ArgumentsBuilder admin;
 
 	@BeforeEach
 	public void setup() {
@@ -151,56 +150,58 @@ public class ControllerValidationTest {
 	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) throws Exception {
 
 		// so we get the mapper as configured for the app
-		toRequest = new MvcRequestMapper(testDataObj2Str(converter.getObjectMapper()));
+		test = new RoleArgumentsBuilder(converter.getObjectMapper());
 
 		goodJson = createMultipart(converter.getObjectMapper().writeValueAsString(randomUserData()));
+
+		user = new ArgumentsBuilder(converter.getObjectMapper());
+		admin = new ArgumentsBuilder(converter.getObjectMapper());
 	}
 
 	private static List<Arguments> provideAdminTestParameters() {
 		return List.of(
-				of(post("/api/registration", registration), 200),
-				of(post("/api/registration", invalidRegistration), 400)
+			admin.args(POST, "/api/registration", registration, 200),
+			admin.args(POST, "/api/registration", invalidRegistration, 400)
 		);
 	}
 
 	private static List<Arguments> provideUserTestParameters() {
-
 		return List.of(
+			user.args(PUT, STR."/api/user/\{USERNAME}/personalInfo", info, 200),
+			user.args(PUT, STR."/api/user/\{USERNAME}/personalInfo", invalidInfo, 400),
 
-				of(put(STR."/api/user/\{USERNAME}/personalInfo", info), 200),
-				of(put(STR."/api/user/\{USERNAME}/personalInfo", invalidInfo), 400),
+			user.args(POST, STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
+			user.args(POST, STR."/api/user/\{USERNAME}/sleep", invalidSleepData, 400),
 
-				of(post(STR."/api/user/\{USERNAME}/sleep", sleepData), 200),
-				of(post(STR."/api/user/\{USERNAME}/sleep", invalidSleepData), 400),
+			user.args(PUT, STR."/api/user/\{USERNAME}/sleep/1", sleepData, 200),
+			user.args(PUT, STR."/api/user/\{USERNAME}/sleep/1", invalidSleepData, 400),
 
-				of(put(STR."/api/user/\{USERNAME}/sleep/1", sleepData), 200),
-				of(put(STR."/api/user/\{USERNAME}/sleep/1", invalidSleepData), 400),
+			user.args(GET, STR."/api/user/\{USERNAME}/sleep/chart", "", new String[]{"from", from, "to", to}, 200),
+			user.args(GET, STR."/api/user/\{USERNAME}/sleep/chart", "", new String[]{"from", "",   "to", ""}, 400),
+			user.args(GET, STR."/api/user/\{USERNAME}/sleep/chart", "", new String[]{"from", to,   "to", from}, 400),
 
-				of(get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", from, "to", to}),   200),
-				of(get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", "",   "to", ""}),   400),
-				of(get(STR."/api/user/\{USERNAME}/sleep/chart", new String[]{"from", to,   "to", from}), 400),
+			user.args(POST, STR."/api/user/\{USERNAME}/sleep/histogram", validHistReq,   200),
+			user.args(POST, STR."/api/user/\{USERNAME}/sleep/histogram", invalidHistReq,   400),
 
-				of(post(STR."/api/user/\{USERNAME}/sleep/histogram", validHistReq),   200),
-				of(post(STR."/api/user/\{USERNAME}/sleep/histogram", invalidHistReq),   400),
+			user.args(POST, STR."/api/user/\{USERNAME}/import/json", badJson, 400),
+			user.args(POST, STR."/api/user/\{USERNAME}/import/json", goodJson, 200),
+			user.args(POST, STR."/api/user/\{USERNAME}/import/csv", badCsv, 400),
+			user.args(POST, STR."/api/user/\{USERNAME}/import/csv", goodCsv, 200),
 
-				of(post(STR."/api/user/\{USERNAME}/import/json", badJson), 400),
-				of(post(STR."/api/user/\{USERNAME}/import/json", goodJson), 200),
-				of(post(STR."/api/user/\{USERNAME}/import/csv", badCsv), 400),
-				of(post(STR."/api/user/\{USERNAME}/import/csv", goodCsv), 200),
+			user.args(POST, STR."/api/user/\{USERNAME}/challenge", invalidChallenge, 400),
+			user.args(POST, STR."/api/user/\{USERNAME}/challenge", validChallenge, 200),
 
-				of(post(STR."/api/user/\{USERNAME}/challenge", invalidChallenge), 400),
-				of(post(STR."/api/user/\{USERNAME}/challenge", validChallenge), 200),
-
-				of(put(STR."/api/user/\{USERNAME}/challenge/1", invalidChallenge), 400),
-				of(put(STR."/api/user/\{USERNAME}/challenge/1", validChallenge), 200)
+			user.args(PUT, STR."/api/user/\{USERNAME}/challenge/1", invalidChallenge, 400),
+			user.args(PUT, STR."/api/user/\{USERNAME}/challenge/1", validChallenge, 200)
 		);
+
 	}
 
 	@ParameterizedTest
 	@MethodSource("provideAdminTestParameters")
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
-	void testAdminValidation(Request testData, int expectedStatus) throws Exception {
+	void testAdminValidation(RequestBuilder testData, int expectedStatus) throws Exception {
 		test(testData, expectedStatus);
 	}
 
@@ -208,12 +209,12 @@ public class ControllerValidationTest {
 	@MethodSource("provideUserTestParameters")
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
-	void testUserValidation(Request testData, int expectedStatus) throws Exception {
+	void testUserValidation(RequestBuilder testData, int expectedStatus) throws Exception {
 		test(testData, expectedStatus);
 	}
 
-	private void test(Request testData, int expectedStatus) throws Exception {
-		mockMvc.perform(toRequest.apply(testData))
+	private void test(RequestBuilder testData, int expectedStatus) throws Exception {
+		mockMvc.perform(testData)
 				.andDo(print())
 				.andExpect(status().is(expectedStatus));
 	}
