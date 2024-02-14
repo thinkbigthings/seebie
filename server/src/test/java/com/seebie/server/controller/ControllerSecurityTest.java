@@ -9,6 +9,7 @@ import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
+import com.seebie.server.test.data.RoleArgumentsBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
