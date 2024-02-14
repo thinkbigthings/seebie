@@ -1,33 +1,23 @@
 package com.seebie.server.test.data;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seebie.server.dto.*;
 import com.seebie.server.mapper.entitytodto.SleepDetailsToCsvRow;
 import net.datafaker.Faker;
-import org.junit.jupiter.params.provider.Arguments;
-import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.function.Function;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
-import static com.seebie.server.Functional.uncheck;
 import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.joining;
-import static org.springframework.http.HttpMethod.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
-import static org.springframework.util.CollectionUtils.unmodifiableMultiValueMap;
 import static org.springframework.util.MimeTypeUtils.TEXT_PLAIN_VALUE;
 
 public class TestData {
@@ -177,123 +167,6 @@ public class TestData {
         return new SleepData(data.notes(), data.minutesAwake(),
                 data.startTime().plus(amountToAdd),
                 data.stopTime().plus(amountToAdd), data.zoneId());
-    }
-
-    /**
-     * This class assembles all the information necessary for an HTTP request and bundles it with an expected http
-     * response code so that they can be used in a parameterized WebMvcTest
-     */
-    public static class ArgumentsBuilder {
-
-        private Function<Object, String> bodyMapper;
-
-        public ArgumentsBuilder(ObjectMapper mapper) {
-            // If the test data is a string, presume it is already in the correct format and return directly.
-            // Because if you pass a string "" to the object mapper, it doesn't return the string, it returns """".
-            this.bodyMapper = uncheck( obj -> obj instanceof String testData
-                    ? testData
-                    : mapper.writerFor(obj.getClass()).writeValueAsString(obj)
-            );
-        }
-
-        public RequestBuilder toMvcRequest(HttpMethod method, String urlPath, Object reqBody) {
-            return toMvcRequest(method, urlPath, reqBody, new String[0]);
-        }
-
-        public RequestBuilder toMvcRequest(HttpMethod method, String urlPath, Object reqBody, String[] reqParams) {
-            var params = toParams(reqParams);
-            var builder = reqBody instanceof MockMultipartFile multipartFile
-                    ? multipart(urlPath).file(multipartFile)
-                    : request(method, urlPath).content(bodyMapper.apply(reqBody)).params(params).contentType(APPLICATION_JSON);
-            return builder.secure(true);
-        }
-
-        public Arguments args(HttpMethod method, String urlPath, Object reqBody, int expectedResponse) {
-            return args(method, urlPath, reqBody, new String[0], expectedResponse);
-        }
-
-        public Arguments args(HttpMethod method, String urlPath, Object reqBody, String[] reqParams, int expectedResponse) {
-            var request = toMvcRequest(method, urlPath, reqBody, reqParams);
-            return Arguments.of(request, expectedResponse);
-        }
-
-        /**
-         * Works the same as HttpRequest.headers()
-         * Do not need to url encode the parameters.
-         *
-         * @param newReqParams
-         * @return
-         */
-        public static MultiValueMap<String, String> toParams(String... newReqParams) {
-            if(newReqParams.length % 2 != 0) {
-                throw new IllegalArgumentException("Number of args must be even");
-            }
-            var newParams = new LinkedMultiValueMap<String, String>();
-            for (int i = 0; i < newReqParams.length; i += 2) {
-                newParams.add(newReqParams[i], newReqParams[i + 1]);
-            }
-            return unmodifiableMultiValueMap(newParams);
-        }
-    }
-
-
-    /**
-     * This class is a convenience for creating a set of arguments for a set of roles.
-     * It is used to create a list of arguments for each role, so that they can be used in a parameterized WebMvcTest
-     * The advantage of this is that it allows you to test the same endpoint with different roles in the same test
-     * and ensures that the same tests are run for each role.
-     */
-    public static class RoleArgumentsBuilder {
-
-        public enum Role {
-            USER, ADMIN, UNAUTHENTICATED
-        }
-
-        private List<Arguments> unauthenticated = new ArrayList<>();
-        private List<Arguments> user = new ArrayList<>();
-        private List<Arguments> admin = new ArrayList<>();
-
-        private ArgumentsBuilder builder;
-
-        public RoleArgumentsBuilder(ObjectMapper mapper) {
-            this.builder = new ArgumentsBuilder(mapper);
-        }
-
-        public List<Arguments> getArguments(Role role) {
-            return switch(role) {
-                case USER -> this.user;
-                case UNAUTHENTICATED -> this.unauthenticated;
-                case ADMIN -> this.admin;
-            };
-        }
-
-        // set of convenience methods to account for all roles at once
-
-        public void post(String urlPath, Object reqBody, int unauthenticated, int user, int admin) {
-            addArgs(builder.toMvcRequest(POST, urlPath, reqBody), unauthenticated, user, admin);
-        }
-
-        public void put(String urlPath, Object reqBody, int unauthenticated, int user, int admin) {
-            addArgs(builder.toMvcRequest(HttpMethod.PUT, urlPath, reqBody), unauthenticated, user, admin);
-        }
-
-        public void get(String urlPath, String[] requestParams, int unauthenticated, int user, int admin) {
-            addArgs(builder.toMvcRequest(GET, urlPath, "", requestParams), unauthenticated, user, admin);
-        }
-
-        public void get(String urlPath, int unauthenticated, int user, int admin) {
-            addArgs(builder.toMvcRequest(GET, urlPath, ""), unauthenticated, user, admin);
-        }
-
-        public void delete(String urlPath, int unauthenticated, int user, int admin) {
-            addArgs(builder.toMvcRequest(HttpMethod.DELETE, urlPath, ""), unauthenticated, user, admin);
-        }
-
-        private void addArgs(RequestBuilder request, int unauthenticated, int user, int admin) {
-            this.unauthenticated.add(Arguments.of(request, unauthenticated));
-            this.user.add(Arguments.of(request, user));
-            this.admin.add(Arguments.of(request, admin));
-        }
     }
 
 }
