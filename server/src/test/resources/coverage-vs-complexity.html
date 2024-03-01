@@ -7,28 +7,28 @@
 </head>
 <body>
 
-    <!-- This div centers the chart and sets its width -->
-    <div style="width: 70%; margin: 0 auto;">
+<!-- This div centers the chart and sets its width -->
+<div style="width: 70%; margin: 0 auto;">
 
-        <h1>Complexity vs Coverage</h1>
-        <p>
-            This scatter plot shows the relationship between complexity and coverage for each class in the project,
-            similar to that provided by
-            <a href="https://openclover.org/doc/manual/latest/general--understanding-reports-dashboard-widgets.html">Clover</a>
-            Hover over the bubbles to see the package and class name.
-        </p>
-        <p>
-            Why is this useful?
-            Ideally, we want to increase test coverage and reduce complexity,
-            so put your attention on the bubbles towards the top-left corner,
-            and work your way down towards the bottom-right.
-            This plot gives us ideas to explore.
-            Note that this plot uses instruction coverage as opposed to line or branch coverage.
-        </p>
+    <h1>Complexity vs Coverage</h1>
+    <p>
+        This scatter plot shows the relationship between complexity and coverage for each class in the project,
+        similar to that provided by
+        <a href="https://openclover.org/doc/manual/latest/general--understanding-reports-dashboard-widgets.html">Clover</a>
+        Hover over the bubbles to see the package and class name.
+    </p>
+    <p>
+        Why is this useful?
+        This plot gives us ideas to explore. Ideally, we want to increase test coverage and reduce complexity,
+        so put your attention on the bubbles towards the top and left,
+        and work your way towards the bottom right corner.
 
-        <canvas id="scatterChart"></canvas>
+        Note that this plot uses instruction coverage as opposed to line or branch coverage.
+    </p>
 
-    </div>
+    <canvas id="scatterChart"></canvas>
+
+</div>
 
 <script>
     // Function to load CSV data
@@ -51,11 +51,13 @@
             x: 100 * row.INSTRUCTION_COVERED/(row.INSTRUCTION_COVERED + row.INSTRUCTION_MISSED),
             y: row.COMPLEXITY_COVERED + row.COMPLEXITY_MISSED,
             package: row.PACKAGE,
-            classFile: row.CLASS
+            classFile: row.CLASS,
+            r: Math.max(3, 1.2 * Math.sqrt(row.LINE_COVERED + row.LINE_MISSED)),
+            loc: row.LINE_COVERED + row.LINE_MISSED
         }));
 
         new Chart(document.getElementById('scatterChart'), {
-            type: 'scatter',
+            type: 'bubble',
             data: {
                 datasets: [{
                     label: 'Complexity vs Coverage',
@@ -84,7 +86,7 @@
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                var label = context.dataset.label || '';
+                                let label = context.dataset.label || '';
                                 if (label) {
                                     label += ': ';
                                 }
@@ -94,8 +96,8 @@
                                 return label;
                             },
                             afterLabel: function(context) {
-                                const {package, classFile} = context.raw; // Accessing the additional information
-                                return [`Package: ${package}`, `Class: ${classFile}`]; // Displaying package and class in the tooltip
+                                const {package, classFile, loc} = context.raw; // Accessing the additional information
+                                return [`Package: ${package}`, `Class: ${classFile}`, `LOC: ${loc}`]; // Displaying package, class and size in the tooltip
                             }
                         }
                     }
