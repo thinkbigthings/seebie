@@ -78,28 +78,43 @@ jacoco {
     toolVersion = "0.8.10"
 }
 
+jacocoTestCoverageVerification {
+
+    // Include both unit test and integration test execution data
+    executionData fileTree(layout.buildDirectory).include("/jacoco/**/jacocoTest.exec")
+
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.90
+            }
+        }
+    }
+
+}
+
+
 jacocoTestReport {
 
     reports {
         xml.required = false
-        csv.required = false
+        csv.required = true
         html.required = true
-        html.outputLocation = layout.buildDirectory.file("reports/jacoco/html").get().asFile
     }
 
     // so we can get test data from both tests and integration tests
     getExecutionData().from(fileTree(layout.buildDirectory).include("/jacoco/**/jacocoTest.exec"))
 
-    // ignore code that's not a good fit for unit testing
-    // e.g. getters and setters in JPA entities
-    afterEvaluate {
-        classDirectories.from(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: [
-                    "**/entity/*"
-            ])
-        }))
-    }
 }
+
+// this copies the html file for the coverage complexity plot
+task copyCoverageReport(type: Copy) {
+    from 'build/resources/test/coverage-vs-complexity.html'
+    into 'build/reports/jacoco/test/'
+}
+copyCoverageReport.mustRunAfter jacocoTestReport
+copyCoverageReport.dependsOn jacocoTestReport
+build.dependsOn copyCoverageReport
 
 // integration test by tags,
 // inspired by https://stackoverflow.com/questions/40891867/junit5-tag-specific-gradle-task
@@ -136,6 +151,15 @@ def integrationTest = tasks.register("integrationTest", Test) {
     finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
+
+// break the build if coverage is not met
+build.dependsOn jacocoTestCoverageVerification
+
+// ensure outputs of all tests (including integration tests) are included in the jacoco rules verification
+jacocoTestCoverageVerification.dependsOn integrationTest
+jacocoTestCoverageVerification.dependsOn test
+
+
 tasks.named("check") {
     dependsOn integrationTest
 }
@@ -151,7 +175,7 @@ task copyWebApp {
     }
 }
 
-bootJar.dependsOn('copyWebApp')
+bootJar.dependsOn copyWebApp
 
 
 task genKey(type:Exec) {
@@ -169,10 +193,10 @@ task genKey(type:Exec) {
 
 }
 
-genKey.dependsOn('compileJava')
-bootJar.dependsOn('genKey')
-bootRun.dependsOn('genKey')
-bootTestRun.dependsOn('genKey')
+genKey.dependsOn compileJava
+bootJar.dependsOn genKey
+bootRun.dependsOn genKey
+bootTestRun.dependsOn genKey
 
 tasks.named('bootRun', org.springframework.boot.gradle.tasks.run.BootRun) {
     args = [

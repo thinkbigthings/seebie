@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scatter Plot from CSV</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0"></script> <!-- For parsing CSV -->
+</head>
+<body>
+
+<!-- This div centers the chart and sets its width -->
+<div style="width: 70%; margin: 0 auto;">
+
+    <h1>Complexity vs Coverage</h1>
+    <p>
+        This scatter plot shows the relationship between complexity and coverage for each class in the project,
+        similar to that provided by
+        <a href="https://openclover.org/doc/manual/latest/general--understanding-reports-dashboard-widgets.html">Clover</a>
+        Hover over the bubbles to see the package and class name.
+    </p>
+    <p>
+        Why is this useful?
+        This plot gives us ideas to explore. Ideally, we want to increase test coverage and reduce complexity,
+        so put your attention on the bubbles towards the top and left,
+        and work your way towards the bottom right corner.
+
+        Note that this plot uses instruction coverage as opposed to line or branch coverage.
+    </p>
+
+    <canvas id="scatterChart"></canvas>
+
+</div>
+
+<script>
+    // Function to load CSV data
+    function loadCSV(filePath) {
+        return new Promise((resolve, reject) => {
+            Papa.parse(filePath, {
+                download: true,
+                header: true, // Assumes first row is headers
+                dynamicTyping: true, // Converts numeric fields to numbers
+                complete: results => resolve(results.data),
+                error: error => reject(error)
+            });
+        });
+    }
+
+    // Function to plot chart
+    async function plotFromCSV() {
+        const data = await loadCSV('jacocoTestReport.csv');
+        const scatterData = data.map(row => ({
+            x: 100 * row.INSTRUCTION_COVERED/(row.INSTRUCTION_COVERED + row.INSTRUCTION_MISSED),
+            y: row.COMPLEXITY_COVERED + row.COMPLEXITY_MISSED,
+            package: row.PACKAGE,
+            classFile: row.CLASS,
+            r: Math.max(3, 1.2 * Math.sqrt(row.LINE_COVERED + row.LINE_MISSED)),
+            loc: row.LINE_COVERED + row.LINE_MISSED
+        }));
+
+        new Chart(document.getElementById('scatterChart'), {
+            type: 'bubble',
+            data: {
+                datasets: [{
+                    label: 'Complexity vs Coverage',
+                    data: scatterData,
+                    backgroundColor: 'blue'
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Coverage'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Complexity'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                // Round the 'Coverage' value to two decimal places
+                                const coverageRounded = context.parsed.x.toFixed(2); // Adjust the number 2 to your desired number of decimal places
+                                label += `Coverage: ${coverageRounded}%, Complexity: ${context.parsed.y}`;
+                                return label;
+                            },
+                            afterLabel: function(context) {
+                                const {package, classFile, loc} = context.raw; // Accessing the additional information
+                                return [`Package: ${package}`, `Class: ${classFile}`, `LOC: ${loc}`]; // Displaying package, class and size in the tooltip
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Load and plot the CSV upon page load
+    plotFromCSV();
+</script>
+</body>
+</html>
