@@ -109,8 +109,8 @@ jacocoTestReport {
 
 // this copies the html file for the coverage complexity plot
 task copyCoverageReport(type: Copy) {
-    from 'build/resources/test/coverage-vs-complexity.html'
-    into 'build/reports/jacoco/test/'
+    from layout.buildDirectory.dir("resources/test/reports")
+    into layout.buildDirectory.dir("reports")
 }
 copyCoverageReport.mustRunAfter jacocoTestReport
 copyCoverageReport.dependsOn jacocoTestReport
