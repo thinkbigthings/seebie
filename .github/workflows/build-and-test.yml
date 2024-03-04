@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   compile-and-test:
@@ -51,7 +52,6 @@ jobs:
       - name: Upload Project Page
         uses: actions/upload-pages-artifact@v3
         with:
-          artifact-name: Upload Project Page
           path: server/build/reports
 
   deploy-project-page:
