@@ -136,8 +136,9 @@ def integrationTest = tasks.register("integrationTest", Test) {
         includeTags "integration"
     }
 
-    // To show standard out and error streams
-    testLogging.showStandardStreams = true
+    // To show standard out and error streams, uncomment this line
+    // (you'll see ALL the SQL the runs, which is a lot)
+    // testLogging.showStandardStreams = true
 
     // To log the events of tests being started, passed, failed, or skipped
     testLogging {
