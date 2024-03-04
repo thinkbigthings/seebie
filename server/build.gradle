@@ -4,13 +4,13 @@ plugins {
     id 'jacoco' // core plugin provided by gradle
     id 'org.flywaydb.flyway' version '9.8.3'
     id "com.gorylenko.gradle-git-properties" version "2.4.1"
+    id 'base' // core plugin provided by gradle
 }
 
 
 apply plugin: 'java' // core plugin provided by gradle
 
 group = 'com.seebie'
-version = '1.0-SNAPSHOT'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -176,6 +176,13 @@ task copyWebApp {
 }
 
 bootJar.dependsOn copyWebApp
+
+task pageBundle(type: Tar) {
+    archiveBaseName.set('github-pages') // if the version were set, it would be appended to the filename
+    destinationDirectory.set(layout.buildDirectory.dir("."))
+    from('build/reports')
+    compression = Compression.GZIP \
+}
 
 
 task genKey(type:Exec) {

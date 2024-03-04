@@ -46,4 +46,4 @@ jobs:
         if: ${{ inputs.upload-artifact }}
         with:
           name: Build Artifacts
-          path: server/build/libs/server-1.0-SNAPSHOT.jar
+          path: server/build/libs/server.jar
