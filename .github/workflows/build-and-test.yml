@@ -39,7 +39,7 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v3
         with:
-          arguments: ${{ inputs.gradle-args }} build
+          arguments: ${{ inputs.gradle-args }} build pageBundle
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
