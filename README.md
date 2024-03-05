@@ -4,19 +4,19 @@
 
 ## Overview
 
-This is an app that helps you to get better sleep.
-The core functionality is a sleep diary that allows you to track your sleep 
-and see how it correlates with other factors in your life.
-Seeing how your sleep is affected by things like exercise, caffeine, alcohol, and
-sleeping conditions can help you make better decisions about your sleep.
+This is a sleep diary app that lets you track your sleep but also
+correlates it with other factors in your life.
+Seeing how your sleep is affected by things like caffeine, alcohol,
+sleeping conditions, etc., can help you make better decisions about your sleep habits.
 
 
-## Getting started as a developer
+## Getting started
 
-Do the Quickstart below to get the app running locally. 
-From there, the [wiki](https://github.com/thinkbigthings/seebie/wiki) 
-is the best place to continue as a developer.
-
+1. Do the Quickstart below to get the app running locally.
+2. From there, the [wiki](https://github.com/thinkbigthings/seebie/wiki) 
+has all the developer documentation.
+3. Finally, see the [project page](https://thinkbigthings.github.io/seebie) for build information
+like test reports, code coverage, and more.
 
 ## Quickstart
 
