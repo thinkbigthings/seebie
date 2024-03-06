@@ -53,7 +53,7 @@ jobs:
       # Debugging
       - name: List Report Files
         run: |
-          ls -alrt server/build/reports
+          ls -alrt server/build
 
       - name: Upload Project Page
         uses: actions/upload-pages-artifact@v3
