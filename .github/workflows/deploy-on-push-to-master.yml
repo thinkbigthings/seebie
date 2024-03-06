@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: read
+  id-token: write
+  pages: write
 
 jobs:
 
@@ -15,7 +17,14 @@ jobs:
       with:
         upload-artifact: true
         # tests were run on PR, so skip them here
-        gradle-args: -x test -x integrationTest
+        # gradle-args: -x test -x integrationTest
+
+  deploy-project-page:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
 
   deploy:
     needs: build
@@ -56,6 +65,6 @@ jobs:
           justlogin: true
 
       - name: Deploy to Staging
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v3
         with:
           arguments: -Papp=stage deployHeroku
