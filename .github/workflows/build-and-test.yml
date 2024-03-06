@@ -52,7 +52,6 @@ jobs:
 
       - name: Upload Project Page
         uses: actions/upload-pages-artifact@v3
-        if: ${{ inputs.upload-artifact }}
         with:
           path: server/build/reports
 
@@ -62,4 +61,3 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
-        if: ${{ inputs.upload-artifact }}
