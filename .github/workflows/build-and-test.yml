@@ -50,13 +50,15 @@ jobs:
           name: Build Artifacts
           path: server/build/libs/server.jar
 
-      # Debugging
-      - name: List Report Files
-        run: |
-          ls -alrt server/build
-
       - name: Upload Project Page
         uses: actions/upload-pages-artifact@v3
         if: ${{ inputs.upload-artifact }}
         with:
           path: server/build/reports
+
+  deploy-project-page:
+    needs: compile-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
