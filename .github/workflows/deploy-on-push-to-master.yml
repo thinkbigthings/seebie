@@ -19,6 +19,13 @@ jobs:
         # tests were run on PR, so skip them here
         gradle-args: -x test -x integrationTest
 
+  deploy-project-page:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
