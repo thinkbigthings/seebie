@@ -14,6 +14,8 @@ on:
 
 permissions:
   contents: read
+  id-token: write
+  pages: write
 
 jobs:
   compile-and-test:
@@ -46,4 +48,10 @@ jobs:
         if: ${{ inputs.upload-artifact }}
         with:
           name: Build Artifacts
-          path: server/build/libs/server-1.0-SNAPSHOT.jar
+          path: server/build/libs/server.jar
+
+      - name: Upload Project Page
+        uses: actions/upload-pages-artifact@v3
+        if: ${{ inputs.upload-artifact }}
+        with:
+          path: server/build/reports
