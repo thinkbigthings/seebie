@@ -50,6 +50,11 @@ jobs:
           name: Build Artifacts
           path: server/build/libs/server.jar
 
+      # Debugging
+      - name: List Report Files
+        run: |
+          ls -alrt server/build/reports
+
       - name: Upload Project Page
         uses: actions/upload-pages-artifact@v3
         if: ${{ inputs.upload-artifact }}
