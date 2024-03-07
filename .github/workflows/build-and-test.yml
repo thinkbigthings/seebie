@@ -39,7 +39,7 @@ jobs:
           cache: gradle
 
       - name: Build with Gradle
-        uses: gradle/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v3
         with:
           arguments: build
 #          arguments: ${{ inputs.gradle-args }} build
