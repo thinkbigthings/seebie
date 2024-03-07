@@ -17,7 +17,7 @@ jobs:
       with:
         upload-artifact: true
         # tests were run on PR, so skip them here
-        gradle-args: -x test -x integrationTest
+        # gradle-args: -x test -x integrationTest
 
   deploy:
     needs: build
