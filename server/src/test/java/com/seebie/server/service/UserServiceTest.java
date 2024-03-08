@@ -31,7 +31,7 @@ public class UserServiceTest {
     private PasswordEncoder pwEncoder = Mockito.mock(PasswordEncoder.class);
 
     private String savedUsername = "saveduser";
-    private User savedUser = new User(savedUsername, savedUsername);
+    private User savedUser = new User(savedUsername, savedUsername, "email", "encryptedpw");
     private Notification notification = new Notification(savedUser);
     private String strongPasswordHash = "strongencryptedpasswordhere";
 

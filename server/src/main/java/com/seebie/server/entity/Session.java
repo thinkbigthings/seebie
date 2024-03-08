@@ -29,15 +29,4 @@ public class Session implements Serializable {
 
     }
 
-    public String getPrimaryId() {
-        return primaryId;
-    }
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public String getPrincipalName() {
-        return principalName;
-    }
 }
