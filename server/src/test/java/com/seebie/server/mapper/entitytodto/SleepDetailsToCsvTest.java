@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SleepDetailsToCsvTest {
 
-    private SleepDetailsToCsvRow detailsToCsv = new SleepDetailsToCsvRow();
+    private SleepDetailsToCsvRow detailsToCsvRow = new SleepDetailsToCsvRow();
 
     private int count(String toSearch, String toFind) {
         int index = toSearch.indexOf(toFind);
@@ -42,7 +42,7 @@ public class SleepDetailsToCsvTest {
 
         var data = new SleepData(newlineNotes, 0, now(), now(), AMERICA_NEW_YORK);
 
-        List<String> csvRow = detailsToCsv.apply(toSleepDetails(data));
+        List<String> csvRow = detailsToCsvRow.apply(toSleepDetails(data));
         assertEquals(8, count(csvRow.get(5), "\n"));
 
         assertEquals(HEADER.values().length, csvRow.size());
@@ -54,7 +54,7 @@ public class SleepDetailsToCsvTest {
         String notesWithQuotes = "This is a note \"with quotes\" in it.";
         var data = new SleepData(notesWithQuotes, 0, now(), now(), AMERICA_NEW_YORK);
 
-        List<String> csvRow = detailsToCsv.apply(toSleepDetails(data));
+        List<String> csvRow = detailsToCsvRow.apply(toSleepDetails(data));
         assertEquals(HEADER.values().length, csvRow.size());
 
         String csvNotes = csvRow.get(5);
