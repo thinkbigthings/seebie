@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.headerRow;
+import static com.seebie.server.mapper.entitytodto.SleepDetailsToCsv.headerRow;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.joining;
