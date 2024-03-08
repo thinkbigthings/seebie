@@ -90,6 +90,15 @@ jacocoTestCoverageVerification {
         }
     }
 
+    // NOTE keep all jacoco tasks in sync with regards to excluded classes
+    // see also https://github.com/jacoco/jacoco/issues/1491
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/Application.class'
+            ])
+        }))
+    }
 }
 
 
@@ -101,9 +110,18 @@ jacocoTestReport {
         html.required = true
     }
 
-    // so we can get test data from both tests and integration tests
+    // so we can get test data from both the unit tests and the integration tests
     getExecutionData().from(fileTree(layout.buildDirectory).include("/jacoco/**/jacocoTest.exec"))
 
+    // NOTE keep all jacoco tasks in sync with regards to excluded classes
+    // see also https://github.com/jacoco/jacoco/issues/1491
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/Application.class'
+            ])
+        }))
+    }
 }
 
 // this copies the html file for the coverage complexity plot
