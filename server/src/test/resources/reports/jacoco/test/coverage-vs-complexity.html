@@ -22,8 +22,6 @@
         This plot gives us ideas to explore. Ideally, we want to increase test coverage and reduce complexity,
         so put your attention on the bubbles towards the top and left,
         and work your way towards the bottom right corner.
-
-        Note that this plot uses instruction coverage as opposed to line or branch coverage.
     </p>
 
     <canvas id="scatterChart"></canvas>
@@ -89,17 +87,13 @@
                         callbacks: {
                             label: function(context) {
                                 let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                // Round the 'Coverage' value to two decimal places
-                                const coverageRounded = context.parsed.x.toFixed(2); // Adjust the number 2 to your desired number of decimal places
-                                label += `Coverage: ${coverageRounded}%, Complexity: ${context.parsed.y}`;
                                 return label;
                             },
                             afterLabel: function(context) {
-                                const {package, classFile, loc} = context.raw; // Accessing the additional information
-                                return [`Package: ${package}`, `Class: ${classFile}`, `LOC: ${loc}`]; // Displaying package, class and size in the tooltip
+                                const coverageRounded = context.parsed.x.toFixed(2);
+                                const detail = `Coverage: ${coverageRounded}%, Complexity: ${context.parsed.y}`;
+                                const {package, classFile, loc} = context.raw;
+                                return [`${package}.${classFile}`, detail, `NCLOC: ${loc}`];
                             }
                         }
                     }
