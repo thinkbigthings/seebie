@@ -85,7 +85,22 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = 0.90
+                minimum = 0.92 // coverage required overall
+            }
+        }
+        rule {
+            element = 'CLASS'
+
+            limit {
+                counter = 'COMPLEXITY'
+                value = 'TOTALCOUNT'
+                maximum = 18 // max complexity allowed per class
+            }
+
+            limit {
+                counter = 'INSTRUCTION'
+                value = 'COVEREDRATIO'
+                minimum = 0.75 // coverage required per class
             }
         }
     }
