@@ -1,11 +1,10 @@
 package com.seebie.server.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
-import com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv;
+import com.seebie.server.mapper.entitytodto.SleepDetailsToCsv;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
@@ -34,9 +33,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import javax.sql.DataSource;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.function.Function;
 
-import static com.seebie.server.Functional.uncheck;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
 import static java.time.ZonedDateTime.now;
@@ -131,21 +128,6 @@ public class ControllerValidationTest {
 
 		when(importExportService.saveSleepData(anyString(), anyList())).thenReturn(0L);
 		when(importExportService.retrieveSleepDetails(anyString())).thenReturn(List.of());
-	}
-
-	/**
-	 * If the test data is a string, presume it is already in the correct format and return directly.
-	 * Because if you pass a string "" to the object mapper, it doesn't return the string, it returns """".
-	 *
-	 * @param mapper
-	 * @return
-	 */
-	public static Function<Object, String> testDataObj2Str(ObjectMapper mapper) {
-		return uncheck(
-				(Object obj) -> obj instanceof String testData
-					? testData
-					: mapper.writerFor(obj.getClass()).writeValueAsString(obj)
-		);
 	}
 
 	@BeforeAll

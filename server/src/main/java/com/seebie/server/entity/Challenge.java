@@ -67,40 +67,16 @@ public class Challenge implements Serializable {
         return name;
     }
 
-    public void setName(String notes) {
-        this.name = notes;
+    public String getDescription() {
+        return description;
     }
 
     public LocalDate getStart() {
         return start;
     }
 
-    public void setStart(LocalDate start) {
-        this.start = start;
-    }
-
     public LocalDate getFinish() {
         return finish;
-    }
-
-    public void setFinish(LocalDate finish) {
-        this.finish = finish;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
 }

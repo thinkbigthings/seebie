@@ -20,7 +20,7 @@ public class AppUserDetailsServiceTest {
 
     private UserRepository userRepo = Mockito.mock(UserRepository.class);
     private String savedUsername = TestData.createRandomUserRegistration().username();
-    private User savedUser = new User(savedUsername, savedUsername);
+    private User savedUser = new User(savedUsername, savedUsername, "email", "encryptedpw");
 
     @BeforeEach
     public void setup() {
@@ -33,6 +33,8 @@ public class AppUserDetailsServiceTest {
     @Test
     public void testUserHasNoRoles() {
 
+        savedUser.getRoles().clear();
+
         assertTrue(savedUser.getRoles().isEmpty());
         assertThrows(UsernameNotFoundException.class, () -> service.loadUserByUsername(savedUsername));
     }
@@ -40,9 +42,7 @@ public class AppUserDetailsServiceTest {
     @Test
     public void testUserHasRoles() {
 
-        savedUser.getRoles().add(Role.USER);
         assertFalse(savedUser.getRoles().isEmpty());
-
         assertDoesNotThrow(() -> service.loadUserByUsername(savedUsername));
     }
 }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seebie.server.dto.UploadResponse;
 import com.seebie.server.dto.UserData;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
-import com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv;
+import com.seebie.server.mapper.entitytodto.SleepDetailsToCsv;
 import com.seebie.server.service.ImportExportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

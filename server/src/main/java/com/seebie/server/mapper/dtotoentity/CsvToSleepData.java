@@ -7,12 +7,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.parse;
-import static com.seebie.server.mapper.dtotoentity.SleepDetailsToCsv.HEADER;
+import static com.seebie.server.mapper.entitytodto.SleepDetailsToCsv.HEADER;
 
 @Component
 public class CsvToSleepData implements Function<String, List<SleepData>> {

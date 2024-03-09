@@ -4,7 +4,6 @@ import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.UserSummary;
 import com.seebie.server.entity.Notification;
-import com.seebie.server.entity.Role;
 import com.seebie.server.entity.User;
 import com.seebie.server.mapper.entitytodto.UserMapper;
 import com.seebie.server.repository.NotificationRepository;
@@ -57,9 +56,7 @@ public class UserService {
         }
 
         var user = notification.getUser();
-        user.setEmail(userData.email());
-        user.setDisplayName(userData.displayName());
-        user.setNotificationsEnabled(userData.notificationsEnabled());
+        user.setUserData(userData.email(), userData.displayName(), userData.notificationsEnabled());
 
         return toUserRecord.apply(user);
     }
@@ -101,14 +98,8 @@ public class UserService {
 
     public User fromRegistration(RegistrationRequest registration) {
 
-        var user = new User(registration.username(), registration.username());
-
-        user.setDisplayName(registration.username());
-        user.setEmail(registration.email());
-        user.setRegistrationTime(Instant.now());
-        user.setEnabled(true);
-        user.setPassword(passwordEncoder.encode(registration.plainTextPassword()));
-        user.getRoles().add(Role.USER);
+        var encryptedPassword = passwordEncoder.encode(registration.plainTextPassword());
+        var user = new User(registration.username(), registration.username(), registration.email(), encryptedPassword);
 
         return user;
     }

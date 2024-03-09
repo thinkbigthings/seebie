@@ -1,7 +1,6 @@
-package com.seebie.server.mapper.dtotoentity;
+package com.seebie.server.mapper.entitytodto;
 
 import com.seebie.server.dto.SleepDetails;
-import com.seebie.server.mapper.entitytodto.SleepDetailsToCsvRow;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
@@ -36,9 +35,6 @@ public class SleepDetailsToCsv implements Function<List<SleepDetails>, String> {
 
     private SleepDetailsToCsvRow toCsvRow = new SleepDetailsToCsvRow();
 
-    public SleepDetailsToCsv() {
-
-    }
 
     @Override
     public String apply(List<SleepDetails> data) {

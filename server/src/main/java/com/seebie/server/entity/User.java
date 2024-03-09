@@ -59,21 +59,25 @@ public class User implements Serializable {
         // no arg constructor is required by JPA
     }
 
-    public User(String name, String display) {
-        username = name;
-        displayName = display;
+    public User(String name, String displayName, String email, String encryptedPassword) {
+        this.username = name;
+        this.displayName = displayName;
+        this.email = email;
+        this.password = encryptedPassword;
+
+        this.enabled = true;
+        this.registrationTime = Instant.now();
+        this.roles.add(Role.USER);
     }
 
-    public Long getId() {
-        return id;
+    public void setUserData(String email, String displayName, boolean notificationsEnabled) {
+        this.email = email;
+        this.displayName = displayName;
+        this.notificationsEnabled = notificationsEnabled;
     }
 
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {
@@ -88,36 +92,16 @@ public class User implements Serializable {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getDisplayName() {
         return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
 
     public boolean isEnabled() {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public Set<Role> getRoles() {
         return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public void addRole(Role role) {
-        roles.add(role);
     }
 
     public Instant getRegistrationTime() {
@@ -136,7 +120,4 @@ public class User implements Serializable {
         return notificationsEnabled;
     }
 
-    public void setNotificationsEnabled(boolean notificationsEnabled) {
-        this.notificationsEnabled = notificationsEnabled;
-    }
 }

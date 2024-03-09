@@ -5,6 +5,9 @@ import java.time.temporal.ChronoUnit;
 
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
+/**
+ * Keeping parsers and formatters in one place helps to ensure that the format is consistent.
+ */
 public class ZonedDateTimeConverter {
 
     public static String format(ZonedDateTime dateTime) {
