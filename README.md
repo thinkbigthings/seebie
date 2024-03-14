@@ -1,4 +1,12 @@
-![deployment pic](https://github.com/thinkbigthings/seebie/actions/workflows/deploy-on-push-to-master.yml/badge.svg)
+![deployment pic](https://github.com/thinkbigthings/seebie/actions/workflows/deploy-on-push-to-master.yml/badge.svg?style=for-the-badge)
+
+![Java](https://img.shields.io/badge/java-21-blue?style=for-the-badge&logo=openjdk&logoColor=orange)
+![Tech](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+![Tech](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![Tech](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![Tech](https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&logo=Gradle&logoColor=white)
+![Tech](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
+![Tech](https://img.shields.io/badge/heroku-%23430098.svg?style=for-the-badge&logo=heroku&logoColor=white)
 
 # Seebie - Sleep Hygiene Tool
 

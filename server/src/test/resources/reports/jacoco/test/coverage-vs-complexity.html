@@ -15,7 +15,6 @@
         This scatter plot shows the relationship between complexity and coverage for each class in the project,
         similar to that provided by
         <a href="https://openclover.org/doc/manual/latest/general--understanding-reports-dashboard-widgets.html">Clover</a>
-        Hover over the bubbles to see the package and class name.
     </p>
     <p>
         Why is this useful?
@@ -50,8 +49,7 @@
             y: row.COMPLEXITY_COVERED + row.COMPLEXITY_MISSED,
             package: row.PACKAGE,
             classFile: row.CLASS,
-            r: Math.max(3, 1.2 * Math.sqrt(row.LINE_COVERED + row.LINE_MISSED)),
-            loc: row.LINE_COVERED + row.LINE_MISSED
+            r: Math.max(3, 1.2 * Math.sqrt(row.LINE_COVERED + row.LINE_MISSED))
         }));
 
         new Chart(document.getElementById('scatterChart'), {
@@ -92,8 +90,8 @@
                             afterLabel: function(context) {
                                 const coverageRounded = context.parsed.x.toFixed(2);
                                 const detail = `Coverage: ${coverageRounded}%, Complexity: ${context.parsed.y}`;
-                                const {package, classFile, loc} = context.raw;
-                                return [`${package}.${classFile}`, detail, `NCLOC: ${loc}`];
+                                const {package, classFile} = context.raw;
+                                return ['', `${package}.${classFile}`, detail];
                             }
                         }
                     }
