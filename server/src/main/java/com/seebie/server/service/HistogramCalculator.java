@@ -91,8 +91,7 @@ public class HistogramCalculator {
 
         return allBins.stream()
                 .map(b -> (double) histogram.getOrDefault(b, 0L) / (double) totalObservations)
-                .map(d -> Math.round(d * 100))
-                .map(Long::intValue)
+                .map(d -> Long.valueOf(Math.round(d * 100)).intValue())
                 .toList();
     }
 
