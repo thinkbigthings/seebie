@@ -64,7 +64,7 @@ public class HistogramCalculator {
      * @param allBins
      * @return
      */
-    public List<Integer> buildUnifiedBins(final int binSize, Collection<Integer> allBins) {
+    private List<Integer> buildUnifiedBins(final int binSize, Collection<Integer> allBins) {
 
         if(allBins.isEmpty()) {
             return List.of();
