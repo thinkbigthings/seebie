@@ -4,6 +4,7 @@ import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.mapper.entitytodto.SleepDetailsToCsv;
+import com.seebie.server.security.WebSecurityBeanProvider;
 import com.seebie.server.security.WebSecurityConfig;
 import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
@@ -60,7 +61,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
 })
 @EnableConfigurationProperties(value = {AppProperties.class})
-@Import(WebSecurityConfig.class)
+@Import({WebSecurityConfig.class, WebSecurityBeanProvider.class})
 public class ControllerSecurityTest {
 
 	@MockBean

@@ -228,6 +228,14 @@ bootJar.dependsOn genKey
 bootRun.dependsOn genKey
 bootTestRun.dependsOn genKey
 
+// https://stackoverflow.com/questions/52636622/how-to-accept-gradle-tos-for-build-scan-automatically-and-still-manage-to-ru
+if (hasProperty('buildScan')) {
+    buildScan {
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
+    }
+}
+
 tasks.named('bootRun', org.springframework.boot.gradle.tasks.run.BootRun) {
     args = [
             '--app.security.rememberMe.key=dev-only',

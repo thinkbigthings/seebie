@@ -3,6 +3,7 @@ package com.seebie.server.service;
 import com.seebie.server.dto.HistogramNormalized;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -64,14 +65,14 @@ public class HistogramCalculator {
      * @param allBins
      * @return
      */
-    public List<Integer> buildUnifiedBins(final int binSize, Collection<Integer> allBins) {
+    private List<Integer> buildUnifiedBins(final int binSize, Collection<Integer> allBins) {
 
         if(allBins.isEmpty()) {
             return List.of();
         }
 
-        var minBin = allBins.stream().min(Integer::compareTo).orElseThrow();
-        var maxBin = allBins.stream().max(Integer::compareTo).orElseThrow();
+        var minBin = Collections.min(allBins);
+        var maxBin = Collections.max(allBins);
 
         return iterate(minBin, b -> b <= maxBin, b -> b + binSize).boxed().toList();
     }
@@ -87,12 +88,11 @@ public class HistogramCalculator {
      */
     private List<Integer> normalizeToBins(List<Integer> allBins, Map<Integer, Long> histogram) {
 
-        var totalObservations = histogram.values().stream().reduce(0L, (a, b) -> a + b);
+        var totalObservations = (double)histogram.values().stream().reduce(0L, (a, b) -> a + b);
 
         return allBins.stream()
-                .map(b -> (double) histogram.getOrDefault(b, 0L) / (double) totalObservations)
-                .map(d -> Math.round(d * 100))
-                .map(Long::intValue)
+                .map(b -> (double) histogram.getOrDefault(b, 0L) / totalObservations)
+                .map(d -> Long.valueOf(Math.round(d * 100)).intValue())
                 .toList();
     }
 

@@ -1,31 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Scatter Plot from CSV</title>
+    <title>Complexity vs Coverage</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0"></script> <!-- For parsing CSV -->
+    <style>
+        /* Additional custom styles if needed */
+        body {
+            padding-top: 20px;
+        }
+        .container {
+            max-width: 800px;
+        }
+        .chart-container {
+            width: 100%;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body>
 
-<!-- This div centers the chart and sets its width -->
-<div style="width: 70%; margin: 0 auto;">
+<div class="container text-center">
+    <h1 class="mb-4">Complexity vs Coverage</h1>
 
-    <h1>Complexity vs Coverage</h1>
-    <p>
+    <p class="text-left">
         This scatter plot shows the relationship between complexity and coverage for each class in the project,
         similar to that provided by
-        <a href="https://openclover.org/doc/manual/latest/general--understanding-reports-dashboard-widgets.html">Clover</a>
-        Hover over the bubbles to see the package and class name.
+        <a href="https://openclover.org/doc/manual/latest/general--understanding-reports-dashboard-widgets.html" class="text-primary">Clover</a>.
+        We expect classes that are more complex to be better covered.
     </p>
-    <p>
-        Why is this useful?
-        This plot gives us ideas to explore. Ideally, we want to increase test coverage and reduce complexity,
-        so put your attention on the bubbles towards the top and left,
-        and work your way towards the bottom right corner.
+    <p class="text-left">
+        Why is this useful? This gives us ideas to explore.
+        Ideally, we want to increase test coverage and reduce complexity.
+        So put your attention on the classes towards the top and left of the chart which are more complex and less covered,
+        reduce their complexity and / or increase their coverage, and "push" them towards the bottom right corner
+        where classes are simpler and better covered.
     </p>
 
-    <canvas id="scatterChart"></canvas>
-
+    <div class="chart-container">
+        <canvas id="scatterChart"></canvas>
+    </div>
 </div>
 
 <script>
@@ -45,14 +61,30 @@
     // Function to plot chart
     async function plotFromCSV() {
         const data = await loadCSV('jacocoTestReport.csv');
-        const scatterData = data.map(row => ({
+
+        // Step 1: Map the CSV data, the lines value will be added together so the radius of the bubble can be calculated
+        const initialScatterData = data.map(row => ({
             x: 100 * row.INSTRUCTION_COVERED/(row.INSTRUCTION_COVERED + row.INSTRUCTION_MISSED),
             y: row.COMPLEXITY_COVERED + row.COMPLEXITY_MISSED,
             package: row.PACKAGE,
             classFile: row.CLASS,
-            r: Math.max(3, 1.2 * Math.sqrt(row.LINE_COVERED + row.LINE_MISSED)),
-            loc: row.LINE_COVERED + row.LINE_MISSED
+            lines: (row.LINE_COVERED + row.LINE_MISSED),
         }));
+
+        // Step 2: Accumulate sums of 'r' for each unique 'x' and 'y', all bubbles at the same point will be added together
+        // so the bubble looks like the appropriate size for the amount of code that is actually there
+        const rSums = {};
+        initialScatterData.forEach(item => {
+            const xyKey = `${item.x}-${item.y}`; // Create a unique key for each x-y pair
+            rSums[xyKey] = (rSums[xyKey] || 0) + item.lines; // Sum the 'r' values
+        });
+
+        // Step 3: Update the 'r' values in the original mapped data
+        const scatterData = initialScatterData.map(item => {
+            const xyKey = `${item.x}-${item.y}`;
+            const radius = Math.max(3, 1.2 * Math.sqrt(rSums[xyKey]))
+            return { ...item, r: radius}; // Assign the summed lines value back to each item
+        });
 
         new Chart(document.getElementById('scatterChart'), {
             type: 'bubble',
@@ -92,8 +124,8 @@
                             afterLabel: function(context) {
                                 const coverageRounded = context.parsed.x.toFixed(2);
                                 const detail = `Coverage: ${coverageRounded}%, Complexity: ${context.parsed.y}`;
-                                const {package, classFile, loc} = context.raw;
-                                return [`${package}.${classFile}`, detail, `NCLOC: ${loc}`];
+                                const {package, classFile} = context.raw;
+                                return [`${package}.${classFile}`, detail, ''];
                             }
                         }
                     }
@@ -104,6 +136,7 @@
 
     // Load and plot the CSV upon page load
     plotFromCSV();
+
 </script>
 </body>
 </html>

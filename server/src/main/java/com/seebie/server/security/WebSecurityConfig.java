@@ -1,6 +1,5 @@
 package com.seebie.server.security;
 
-import com.seebie.server.AppProperties;
 import com.seebie.server.entity.Role;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -11,21 +10,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.RememberMeServices;
-import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.savedrequest.NullRequestCache;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 @Configuration
@@ -37,13 +29,8 @@ public class WebSecurityConfig {
     public static final String SESSION_COOKIE = "SESSION";
     public static final String REMEMBER_ME_COOKIE = "remember-me";
 
-    private AppProperties.Security.RememberMe rememberMeConfig;
 
-    public WebSecurityConfig(AppProperties app) {
-        rememberMeConfig = app.security().rememberMe();
-    }
-
-    // This can be replaced with a simpler API call as of Spring Security 6.1.0
+    // TODO This can be replaced with a simpler API call as of Spring Security 6.1.0
     // See https://github.com/spring-projects/spring-security/issues/12031
     private static class BasicAuthPostProcessor implements ObjectPostProcessor<BasicAuthenticationFilter> {
         @Override
@@ -51,11 +38,6 @@ public class WebSecurityConfig {
             filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
             return filter;
         }
-    }
-
-    @Bean
-    public PasswordEncoder createPasswordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
@@ -88,31 +70,9 @@ public class WebSecurityConfig {
                     .deleteCookies(SESSION_COOKIE, REMEMBER_ME_COOKIE)
             )
             .rememberMe(config -> config
-                    .rememberMeServices(rememberMeServices)
-                    .key(rememberMeConfig.key())
-                    .tokenValiditySeconds(rememberMeConfig.tokenValiditySeconds()));
+                    .rememberMeServices(rememberMeServices));
 
         return http.build();
-    }
-
-    @Bean
-    public PersistentTokenRepository persistentTokenRepository(DataSource dataSource) {
-        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
-        tokenRepository.setDataSource(dataSource);
-        return tokenRepository;
-    }
-
-    @Bean
-    public RememberMeServices rememberMeServices(PersistentTokenRepository persistentTokenRepo, UserDetailsService userDetailsService) {
-
-        var rememberMe = new PersistentTokenBasedRememberMeServices(rememberMeConfig.key(), userDetailsService, persistentTokenRepo);
-
-        rememberMe.setParameter(REMEMBER_ME_COOKIE);
-        rememberMe.setTokenValiditySeconds(rememberMeConfig.tokenValiditySeconds());
-        rememberMe.setCookieName(REMEMBER_ME_COOKIE);
-        rememberMe.setUseSecureCookie(true);
-
-        return rememberMe;
     }
 
 }

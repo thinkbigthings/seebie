@@ -1,26 +1,41 @@
 <!DOCTYPE html>
 <html>
-<!--<body style="background-color: #aeb1e8; font-size: 13pt;">-->
+<head>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        /* Additional custom styles if needed */
+        body {
+            padding-top: 20px;
+        }
+        .container {
+            max-width: 800px;
+        }
+    </style>
+</head>
 <body>
 
-<h1>Seebie Reports</h1>
+<div class="container text-center">
+    <h1 class="mb-4">Build Reports</h1>
 
-<table>
-    <tr>
+    <p class="lead text-left">
+        These reports are from the latest build of master and correspond to what is currently deployed to production.
+        Other useful reports that could eventually be added here include
+        <a href="https://www.sonarsource.com/" >SonarQube</a>,
+        <a href="https://scans.gradle.com/" >Gradle Build Scan</a>, and more.
+    </p>
+
+    <div class="list-group">
         <!-- path matches configuration in build.gradle -->
-        <td><a href="jacoco/test/html/index.html">Test Coverage Report</a></td>
-    </tr>
-    <tr>
-        <td><a href="jacoco/test/coverage-vs-complexity.html">Complexity vs Coverage Report</a></td>
-    </tr>
-    <tr>
-        <td><a href="tests/test/index.html">Unit Test Report</a></td>
-    </tr>
-    <tr>
-        <td><a href="tests/integrationTest/index.html">Integration Test Report</a></td>
-    </tr>
+        <a href="jacoco/test/html/index.html" class="list-group-item list-group-item-action">Test Coverage Report</a>
+        <!-- copied from src/main/resources/reports/jacoco/test/coverage-vs-complexity.html -->
+        <a href="jacoco/test/coverage-vs-complexity.html" class="list-group-item list-group-item-action">Complexity vs Coverage Report</a>
+        <a href="tests/test/index.html" class="list-group-item list-group-item-action">Unit Test Report</a>
+        <a href="tests/integrationTest/index.html" class="list-group-item list-group-item-action">Integration Test Report</a>
+    </div>
 
-</table>
+</div>
 
 </body>
 </html>
