@@ -22,36 +22,37 @@ public class HistogramCalculator {
      * @param multiDataSets
      * @return
      */
-    public HistogramNormalized buildNormalizedHistogram(final int binSize, List<List<Integer>> multiDataSets) {
+    public HistogramNormalized buildNormalizedHistogram(final int binSize, List<FilterResult> multiDataSets) {
 
         var multiHistograms = multiDataSets.stream()
-                .map(data -> buildHistogram(binSize, data))
+                .map(result -> buildHistogram(binSize, result))
                 .toList();
 
-        // build a merged set of bins that can account for all the data sets
-        var bins = buildUnifiedBins(binSize, multiHistograms.stream().flatMap(s -> s.keySet().stream()).toList());
+        // build a filled-in set of bins that can account for all the data sets
+        var allBins = multiHistograms.stream().flatMap(s -> s.keySet().stream()).toList();
+        var unifiedBins = buildUnifiedBins(binSize, allBins);
 
         var stackedNormalizedHist = multiHistograms.stream()
-                .map(histData -> normalizeToBins(bins, histData))
+                .map(histData -> normalizeToBins(unifiedBins, histData))
                 .toList();
 
-        return new HistogramNormalized(bins, stackedNormalizedHist);
+        return new HistogramNormalized(unifiedBins, stackedNormalizedHist);
     }
 
     /**
      * Build a histogram of the data.
      * The histogram is a map of bin lower bound to count of values in that bin.
      * The bin size is specified by the binSize parameter.
-     * The bin lower bound is the value divided by the bin size, rounded down, times the bin size.
-     * The bin upper bound is the bin lower bound plus the bin size.
-     * The bin is a closed interval at the bottom and open at the top.
+     * A bin lower bound is the value divided by the bin size, rounded down, times the bin size.
+     * A bin upper bound is the bin lower bound plus the bin size.
+     * A bin is a closed interval at the bottom and open at the top.
      *
      * @param binSize
      * @param values
      * @return
      */
-    private Map<Integer, Long> buildHistogram(int binSize, List<Integer> values) {
-        return values.stream()
+    private Map<Integer, Long> buildHistogram(int binSize, FilterResult values) {
+        return values.durationMinutes().stream()
                 .map(i -> i / binSize)
                 .collect(groupingBy(i -> i * binSize, counting()));
     }

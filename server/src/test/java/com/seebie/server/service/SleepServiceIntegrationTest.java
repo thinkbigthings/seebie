@@ -183,10 +183,10 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         var from = data.getFirst().stopTime().minusDays(20);
 
         var range = new DateRange(from, to);
-        var histData = sleepService.listSleepAmounts(username, new FilterList(List.of(range, range, range)));
+        var histData = sleepService.listSleepAmounts(username, List.of(range, range, range));
 
         assertEquals(3, histData.size());
-        histData.forEach(d -> assertEquals(listCount, d.size()));
+        histData.forEach(d -> assertEquals(listCount, d.durationMinutes().size()));
 
     }
 
