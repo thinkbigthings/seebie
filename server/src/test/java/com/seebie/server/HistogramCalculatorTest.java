@@ -34,8 +34,8 @@ public class HistogramCalculatorTest {
 
         assertEquals(2, result.bins().size());
         assertEquals(List.of(60, 120), result.bins());
-        assertEquals(List.of(33, 67), result.dataSets().get(0));
-        assertEquals(List.of(0,0), result.dataSets().get(1));
+        assertEquals(List.of(33L, 67L), result.dataSets().get(0));
+        assertEquals(List.of(0L,0L), result.dataSets().get(1));
     }
 
     @Test

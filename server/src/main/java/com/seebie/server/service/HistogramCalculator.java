@@ -87,13 +87,13 @@ public class HistogramCalculator {
      *
      * @return a list of normalized values for each bin in the allBins parameter
      */
-    private List<Integer> normalizeToBins(List<Integer> allBins, Map<Integer, Long> histogram) {
+    private List<Long> normalizeToBins(List<Integer> allBins, Map<Integer, Long> histogram) {
 
         var totalObservations = (double)histogram.values().stream().reduce(0L, (a, b) -> a + b);
 
         return allBins.stream()
                 .map(b -> (double) histogram.getOrDefault(b, 0L) / totalObservations)
-                .map(d -> Long.valueOf(Math.round(d * 100)).intValue())
+                .map(d -> Math.round(d * 100))
                 .toList();
     }
 
