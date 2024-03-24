@@ -80,7 +80,7 @@ public class SleepController {
 
         LOG.info("Requesting histogram data with " + request);
 
-        var dataSets = sleepService.listSleepAmounts(username, request.filters());
+        var dataSets = sleepService.listSleepAmounts(username, request.filters().dataFilters());
         var stackedHistogram = histogramCalculator.buildNormalizedHistogram(request.binSize(), dataSets);
 
         return stackedHistogram;

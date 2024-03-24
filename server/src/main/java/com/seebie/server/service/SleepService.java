@@ -4,8 +4,6 @@ import com.seebie.server.dto.*;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.mapper.entitytodto.SleepMapper;
 import com.seebie.server.repository.SleepRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -76,11 +74,10 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public List<List<Integer>> listSleepAmounts(String username, FilterList filters) {
+    public List<FilterResult> listSleepAmounts(String username, List<DateRange> filters) {
 
-        // alternatively, look into database "group by" with Postgres / JPQL
-        return filters.dataFilters().stream()
-                .map(dateRange -> sleepRepository.loadDurations(username, dateRange.from(), dateRange.to()))
+        return filters.stream()
+                .map(dateRange -> new FilterResult(dateRange, sleepRepository.loadDurations(username, dateRange.from(), dateRange.to())))
                 .toList();
     }
 

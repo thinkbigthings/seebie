@@ -51,7 +51,7 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             AND s.stopTime <= :to
             ORDER BY s.stopTime ASC
             """)
-    List<Integer> loadDurations(String username, ZonedDateTime from, ZonedDateTime to);
+    List<Long> loadDurations(String username, ZonedDateTime from, ZonedDateTime to);
 
     @Query("""
             SELECT new com.seebie.server.dto.SleepDetails(s.id, s.minutesAsleep, s.notes, s.minutesAwake, s.startTime, s.stopTime, s.zoneId)

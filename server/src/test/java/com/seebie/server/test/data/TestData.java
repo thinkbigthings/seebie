@@ -16,6 +16,7 @@ import java.util.Random;
 
 import static com.seebie.server.mapper.entitytodto.SleepDetailsToCsv.headerRow;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
+import static java.time.LocalDate.now;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.joining;
 import static org.springframework.util.MimeTypeUtils.TEXT_PLAIN_VALUE;
@@ -49,7 +50,7 @@ public class TestData {
      */
     public static Challenge createRandomChallenge(int daysOffsetStart, int lengthDays) {
 
-        var start = LocalDate.now().plusDays(daysOffsetStart);
+        var start = now().plusDays(daysOffsetStart);
         var finish = start.plusDays(lengthDays);
 
         return new Challenge(STR."\{faker.starTrek().location()} \{randomUUID()}",
@@ -105,6 +106,11 @@ public class TestData {
         csvString.append(body);
 
         return csvString.toString();
+    }
+
+    public static DateRange create30DayRange(int daysBackEnding) {
+        var ending = ZonedDateTime.now().minusDays(daysBackEnding);
+        return new DateRange(ending.minusDays(30), ending);
     }
 
     public static UserData randomUserData() {

@@ -39,6 +39,10 @@
         where classes are simpler and better covered.
     </p>
 
+    <p class="text-left">
+        Hover or click on a bubble to see details about the class.
+    </p>
+
     <div class="chart-container">
         <canvas id="scatterChart"></canvas>
     </div>
@@ -108,6 +112,9 @@
                         }
                     },
                     y: {
+                        comment: 'Y axis goes to the maximum allowed by the jacoco rule',
+                        min: 0,
+                        max: 18,
                         title: {
                             display: true,
                             text: 'Complexity'

@@ -51,7 +51,7 @@ public class UserService {
 
         // If user turns notifications on, set last notification time to current time,
         // so they are notified at the next appropriate time.
-        if(userData.notificationsEnabled()) {
+        if( ! notification.getUser().isEnabled() && userData.notificationsEnabled()) {
             notification.withLastSent(Instant.now());
         }
 
@@ -70,7 +70,9 @@ public class UserService {
             throw new IllegalArgumentException("Username already exists " + registration.username());
         }
 
-        var unsavedUser = fromRegistration(registration);
+        var encryptedPassword = passwordEncoder.encode(registration.plainTextPassword());
+        var unsavedUser = new User(registration.username(), registration.username(), registration.email(), encryptedPassword);
+
         notificationRepo.save(new Notification(unsavedUser));
     }
 
@@ -94,14 +96,6 @@ public class UserService {
         // The web session isn't saved until the db is flushed at the end.
         // That's why we use withLoggedIn
         return getUser(name).withIsLoggedIn(true);
-    }
-
-    public User fromRegistration(RegistrationRequest registration) {
-
-        var encryptedPassword = passwordEncoder.encode(registration.plainTextPassword());
-        var user = new User(registration.username(), registration.username(), registration.email(), encryptedPassword);
-
-        return user;
     }
 
 }
