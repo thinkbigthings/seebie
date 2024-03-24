@@ -27,6 +27,7 @@ public class HistogramCalculator {
         LongSummaryStatistics stats = multiDataSets.stream()
                 .flatMap(s -> s.durationMinutes().stream())
                 .collect(summarizingLong(i->i));
+
         Long lowestBin =  (stats.getMin() / binSize) * binSize; // get the lowest bin that is a multiple of binSize
         List<Long> unifiedBins = iterate(lowestBin, b -> b <= stats.getMax(), b -> b + binSize)
                 .boxed()
