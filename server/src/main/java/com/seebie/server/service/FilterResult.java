@@ -4,4 +4,4 @@ import com.seebie.server.dto.DateRange;
 
 import java.util.List;
 
-public record FilterResult(DateRange range, List<Integer> durationMinutes) {}
+public record FilterResult(DateRange range, List<Long> durationMinutes) {}

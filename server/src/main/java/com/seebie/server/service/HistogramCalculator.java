@@ -2,14 +2,12 @@ package com.seebie.server.service;
 
 import com.seebie.server.dto.HistogramNormalized;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static java.util.stream.Collectors.counting;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.IntStream.iterate;
+import static java.lang.Math.round;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.*;
+import static java.util.stream.LongStream.iterate;
 
 public class HistogramCalculator {
 
@@ -22,18 +20,21 @@ public class HistogramCalculator {
      * @param multiDataSets
      * @return
      */
-    public HistogramNormalized buildNormalizedHistogram(final int binSize, List<FilterResult> multiDataSets) {
-
-        var multiHistograms = multiDataSets.stream()
-                .map(result -> buildHistogram(binSize, result))
-                .toList();
+    public HistogramNormalized buildNormalizedHistogram(final int binSize, final List<FilterResult> multiDataSets) {
 
         // build a filled-in set of bins that can account for all the data sets
-        var allBins = multiHistograms.stream().flatMap(s -> s.keySet().stream()).toList();
-        var unifiedBins = buildUnifiedBins(binSize, allBins);
+        // if there was no data in any of the sets, the bin list will be the empty set
+        LongSummaryStatistics stats = multiDataSets.stream()
+                .flatMap(s -> s.durationMinutes().stream())
+                .collect(summarizingLong(i->i));
+        Long lowestBin =  (stats.getMin() / binSize) * binSize; // get the lowest bin that is a multiple of binSize
+        List<Long> unifiedBins = iterate(lowestBin, b -> b <= stats.getMax(), b -> b + binSize)
+                .boxed()
+                .toList();
 
-        var stackedNormalizedHist = multiHistograms.stream()
-                .map(histData -> normalizeToBins(unifiedBins, histData))
+        var stackedNormalizedHist = multiDataSets.stream()
+                .map(durations -> buildHistogram(unifiedBins, durations))
+                .map(histogram -> normalizeValues(histogram))
                 .toList();
 
         return new HistogramNormalized(unifiedBins, stackedNormalizedHist);
@@ -46,54 +47,27 @@ public class HistogramCalculator {
      * A bin lower bound is the value divided by the bin size, rounded down, times the bin size.
      * A bin upper bound is the bin lower bound plus the bin size.
      * A bin is a closed interval at the bottom and open at the top.
-     *
-     * @param binSize
-     * @param values
-     * @return
      */
-    private Map<Integer, Long> buildHistogram(int binSize, FilterResult values) {
-        return values.durationMinutes().stream()
-                .map(i -> i / binSize)
-                .collect(groupingBy(i -> i * binSize, counting()));
+    private Map<Long, Long> buildHistogram(List<Long> binLowerBounds, FilterResult values) {
+
+        var histogram = new TreeMap<Long, Long>();
+        binLowerBounds.forEach(lower -> histogram.put(lower, 0L));
+
+        var foundValues = values.durationMinutes().stream()
+                .map(value -> histogram.floorKey(value))
+                .collect(groupingBy(identity(), counting()));
+
+        histogram.putAll(foundValues);
+
+        return histogram;
     }
 
-    /**
-     * Build a set of bins that covers all the values.
-     * The bin size is specified by the binSize parameter.
-     * The bins are built from the minimum value to the maximum value, inclusive.
-     *
-     * @param binSize
-     * @param allBins
-     * @return
-     */
-    private List<Integer> buildUnifiedBins(final int binSize, Collection<Integer> allBins) {
+    private List<Long> normalizeValues(Map<Long, Long> histogram) {
 
-        if(allBins.isEmpty()) {
-            return List.of();
-        }
+        var totalObservations = histogram.values().stream().mapToDouble(Double::valueOf).sum();
 
-        var minBin = Collections.min(allBins);
-        var maxBin = Collections.max(allBins);
-
-        return iterate(minBin, b -> b <= maxBin, b -> b + binSize).boxed().toList();
-    }
-
-    /**
-     * Normalize the histogram values to a percentage of the total observations.
-     * If there is a bin with no observations, it will be included in the result with a value of 0.
-     *
-     * @param allBins a complete set of bins which may be larger than the set of bins in the given histogram.
-     * @param histogram the histogram to normalize
-     *
-     * @return a list of normalized values for each bin in the allBins parameter
-     */
-    private List<Long> normalizeToBins(List<Integer> allBins, Map<Integer, Long> histogram) {
-
-        var totalObservations = (double)histogram.values().stream().reduce(0L, (a, b) -> a + b);
-
-        return allBins.stream()
-                .map(b -> (double) histogram.getOrDefault(b, 0L) / totalObservations)
-                .map(d -> Math.round(d * 100))
+        return histogram.values().stream()
+                .map(value -> round(100 * value / totalObservations))
                 .toList();
     }
 
