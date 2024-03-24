@@ -22,8 +22,8 @@ public class HistogramCalculator {
      */
     public HistogramNormalized buildNormalizedHistogram(final int binSize, final List<FilterResult> multiDataSets) {
 
-        // build a filled-in set of bins that can account for all the data sets
-        // if there was no data in any of the sets, the bin list will be the empty set
+        // build a complete set of bins that can account for all the data sets
+        // if there was no data in any of the incoming data sets, the bin list will be the empty set
         LongSummaryStatistics stats = multiDataSets.stream()
                 .flatMap(s -> s.durationMinutes().stream())
                 .collect(summarizingLong(i->i));
@@ -43,7 +43,6 @@ public class HistogramCalculator {
     /**
      * Build a histogram of the data.
      * The histogram is a map of bin lower bound to count of values in that bin.
-     * The bin size is specified by the binSize parameter.
      * A bin lower bound is the value divided by the bin size, rounded down, times the bin size.
      * A bin upper bound is the bin lower bound plus the bin size.
      * A bin is a closed interval at the bottom and open at the top.
