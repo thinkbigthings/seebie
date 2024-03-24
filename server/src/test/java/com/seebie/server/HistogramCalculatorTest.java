@@ -24,6 +24,7 @@ public class HistogramCalculatorTest {
         var result = calculator.buildNormalizedHistogram(60, List.of());
 
         assertEquals(0, result.bins().size());
+        assertEquals(0, result.dataSets().size());
     }
 
     @Test
