@@ -5,6 +5,7 @@ import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.client.RestClientFactory;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -35,31 +36,15 @@ public class ActuatorSecurityTest extends IntegrationTest {
 
     protected static Logger LOG = LoggerFactory.getLogger(ActuatorSecurityTest.class);
 
-    private static RestClientFactory clientFactory;
+    private RestClientFactory clientFactory;
 
-    private static RestClient unAuthClient;
-    private static RestClient adminClient;
-    private static RestClient userClient;
-
-    @BeforeAll
-    public static void setup(@Autowired RestClient.Builder builder, @Autowired UserService userService) {
-
-        // no /api prefix for actuator endpoints
-
-        // we get the rest client builder as configured for the app, including mappers
-        clientFactory = new RestClientFactory(builder, baseUribuilder.builder().build());
-
-        adminClient = clientFactory.login("admin", "admin");
-
-        var userRegistration = TestData.createRandomUserRegistration();
-        userService.saveNewUser(userRegistration);
-        userClient = clientFactory.login(userRegistration.username(), userRegistration.plainTextPassword());
-
-        unAuthClient = clientFactory.noLogin();
-    }
+    private RestClient unAuthClient;
+    private RestClient adminClient;
+    private RestClient userClient;
 
     private static final MultiValueMap<String,String> NO_PARAM = new LinkedMultiValueMap<>();
     private static final MultiValueMap<String, String> USER_PARAM = new LinkedMultiValueMap<>(Map.of("username", List.of("admin")));
+
     private static List<Arguments> provideUnauthenticatedTestParameters() {
 
         return List.of(
@@ -89,6 +74,28 @@ public class ActuatorSecurityTest extends IntegrationTest {
                 of(GET, "/actuator/info", NO_PARAM, 403),
                 of(GET, "/actuator/sessions", USER_PARAM, 403)
         );
+    }
+
+    /**
+     * If these are static properties and assigned with @BeforeAll, the setup is a little faster,
+     * but a session might time out before all the tests are run, leading to flaky tests as the
+     * timeouts get shorter. So it's really safest to use a separate security context for each test.
+     */
+    @BeforeEach
+    public void setup(@Autowired RestClient.Builder builder, @Autowired UserService userService) {
+
+        // no /api prefix for actuator endpoints
+
+        // we get the rest client builder as configured for the app, including mappers
+        clientFactory = new RestClientFactory(builder, baseUribuilder.builder().build());
+
+        adminClient = clientFactory.login("admin", "admin");
+
+        var userRegistration = TestData.createRandomUserRegistration();
+        userService.saveNewUser(userRegistration);
+        userClient = clientFactory.login(userRegistration.username(), userRegistration.plainTextPassword());
+
+        unAuthClient = clientFactory.noLogin();
     }
 
     @ParameterizedTest
