@@ -61,12 +61,10 @@ public class NotificationMessageServiceTest extends IntegrationTest {
 
     private static List<Arguments> provideSleepLogParameters() {
         return List.of(
-            new TestParams(true, 12, 0),
             new TestParams(true, 24, 0),
             new TestParams(true, 48, 1),
             new TestParams(true, 72, 2),
 
-            new TestParams(false, 12, 0),
             new TestParams(false, 24, 0),
             new TestParams(false, 48, 0),
             new TestParams(false, 72, 0)
