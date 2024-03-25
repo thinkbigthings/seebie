@@ -1,5 +1,6 @@
 package com.seebie.server.test.data;
 
+import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
 import com.seebie.server.mapper.entitytodto.SleepDetailsToCsvRow;
 import net.datafaker.Faker;
@@ -16,6 +17,8 @@ import java.util.Random;
 
 import static com.seebie.server.mapper.entitytodto.SleepDetailsToCsv.headerRow;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
+import static java.time.Duration.ofDays;
+import static java.time.Duration.ofMinutes;
 import static java.time.LocalDate.now;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.joining;
@@ -175,4 +178,14 @@ public class TestData {
                 data.stopTime().plus(amountToAdd), data.zoneId());
     }
 
+    /**
+     * Spring Configuration only allows for one constructor,
+     * we can use a record creation method to provide default values.
+     */
+    public static AppProperties newAppProperties(int rememberMeTokenValidityDays) {
+        return new AppProperties(1,
+                new AppProperties.Security(new AppProperties.Security.RememberMe(ofDays(rememberMeTokenValidityDays), randomUUID().toString())),
+                new AppProperties.Notification(true, new AppProperties.Notification.TriggerAfter(ofMinutes(1), ofMinutes(1)))
+        );
+    }
 }

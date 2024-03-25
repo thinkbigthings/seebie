@@ -4,7 +4,6 @@ import com.seebie.server.service.UserService;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.client.RestClientFactory;
 import com.seebie.server.test.data.TestData;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,7 @@ public class SessionSecurityTest extends IntegrationTest {
     private static Duration sessionTimeout;
     private static Duration rememberMeTimeout;
 
-    private static RestClientFactory clientFactory;
+    private RestClientFactory clientFactory;
 
     private String testUserName;
     private String testUserPassword;
@@ -54,8 +53,13 @@ public class SessionSecurityTest extends IntegrationTest {
         testUserInfoUri = apiUriBuilder.path("/user/").path(userRegistration.username()).build();
     }
 
-    @BeforeAll
-    public static void setup(@Autowired Environment env, @Autowired RestClient.Builder builder) {
+    /**
+     * If these are static properties (factory and clients) and assigned with @BeforeAll, the setup is a little faster,
+     * but a session might time out before all the tests are run, leading to flaky tests as the
+     * timeouts get shorter. So it's really safest to use a separate security context for each test.
+     */
+    @BeforeEach
+    public void setup(@Autowired Environment env, @Autowired RestClient.Builder builder) {
 
         var apiUriBuilder = baseUribuilder.builder().path("/api");
 

@@ -33,15 +33,5 @@ public record AppProperties(@Positive Integer apiVersion, @NotNull Security secu
             throw new IllegalArgumentException("rememberMeTokenValidity must be less than 90 days");
         }
     }
-    /**
-     * Spring Configuration only allows for one constructor,
-     * we can use a record creation method to provide default values.
-     */
-    public static AppProperties newAppProperties(int rememberMeTokenValidityDays) {
-        return new AppProperties(1,
-                    new Security(new Security.RememberMe(ofDays(rememberMeTokenValidityDays), randomUUID().toString())),
-                    new Notification(true, new Notification.TriggerAfter(ofMinutes(1), ofMinutes(1)))
-        );
-    }
 
 }

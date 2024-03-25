@@ -21,9 +21,6 @@ public class AppMetadataContributor implements InfoContributor  {
     @Override
     public void contribute(Info.Builder builder) {
 
-        var count = Map.of("user", String.valueOf(userRepository.count()));
-        var version = Map.of("apiVersion", apiVersion);
-
-        builder.withDetail("app", Map.of("count", count, "version", version));
+        builder.withDetail("app", Map.of("userCount", userRepository.count(), "apiVersion", apiVersion));
     }
 }

@@ -9,6 +9,10 @@ plugins {
 
 apply plugin: 'java' // core plugin provided by gradle
 
+gitProperties {
+    keys = ['git.commit.id', 'git.commit.message.short', 'git.branch', 'git.commit.time']
+}
+
 group = 'com.seebie'
 
 java {
