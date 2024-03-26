@@ -31,12 +31,15 @@ jobs:
           cache: 'npm'
           cache-dependency-path: reactjs/package-lock.json
 
+      # When using setup-gradle they recommend to avoid using other mechanisms to save and restore Gradle User Home
+      # Specifically:
+      #    Avoid using actions/cache configured to cache the Gradle User Home
+      #    Avoid using actions/setup-java with the cache: gradle option
       - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'zulu'
-          cache: gradle
 
       - name: Build with Gradle
         uses: gradle/actions/setup-gradle@v3
