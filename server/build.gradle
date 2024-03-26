@@ -198,19 +198,17 @@ tasks.named("check") {
     dependsOn integrationTest
 }
 
-task copyWebApp {
+task copyWebApp(type: Copy) {
     description 'Copies built files from reactjs to server'
     dependsOn ':reactjs:build'
-    doLast {
-        copy {
-            from(project(":reactjs").buildDir)
-            into(project(":server").buildDir.toPath().resolve('resources/main/static'))
-        }
-    }
+    from(project(":reactjs").buildDir)
+    into(project(":server").buildDir.toPath().resolve('resources/main/static'))
 }
 
-bootJar.dependsOn copyWebApp
 
+resolveMainClassName.dependsOn copyWebApp
+compileTestJava.dependsOn copyWebApp
+bootJar.dependsOn copyWebApp
 
 task genKey(type:Exec) {
 
