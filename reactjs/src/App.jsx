@@ -42,7 +42,6 @@ import {
 import {CreateSleepSession} from "./CreateSleepSession";
 import SleepList from "./SleepList";
 import {SleepChart} from "./SleepChart";
-import System from "./System";
 import Tools from "./Tools";
 import Challenge from "./Challenge";
 import Histogram from "./Histogram";
@@ -145,7 +144,6 @@ function AuthenticatedApp() {
                     <Route path="/users/:username/sleep/:sleepId/edit" element={<EditSleep />} />
                     <Route path="/users/:username/challenge/:challengeId/edit" element={<EditChallenge />} />
                     <Route path="/users/:username/tools" element={<Tools />} />
-                    <Route path="/system" element={<System />} />
                 </Routes>
             </Container>
 
@@ -157,7 +155,6 @@ function SideNav(props) {
 
     const {hasAdmin, username} = props;
     let usersNav = hasAdmin ? <NavItem name="Users" icon={faUsers} href="#/users" /> : "";
-    let systemNav = hasAdmin ? <NavItem name="System" icon={faServer} href="#/system" /> : "";
 
     return (
         <Nav defaultActiveKey="/home" className="flex-column col-sm-2">
@@ -167,7 +164,6 @@ function SideNav(props) {
             <NavItem name="Analysis" icon={faChartSimple} href={"#/users/"+username+"/histogram"} />
             <NavItem name="Tools" icon={faTools} href={"#/users/"+username+"/tools"} />
             {usersNav}
-            {systemNav}
         </Nav>
     );
 }

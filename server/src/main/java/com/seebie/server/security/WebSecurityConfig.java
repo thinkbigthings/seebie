@@ -49,7 +49,7 @@ public class WebSecurityConfig {
         http
             .requiresChannel(channel -> channel.anyRequest().requiresSecure())
             .authorizeHttpRequests(customizer -> customizer
-                    .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(Role.ADMIN.name())
+//                    .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(Role.ADMIN.name()) // restrict actuator to admin
                     .requestMatchers(openEndpoints).permitAll()
                     .anyRequest().authenticated())
             .httpBasic(basic -> basic.withObjectPostProcessor(new BasicAuthPostProcessor()))

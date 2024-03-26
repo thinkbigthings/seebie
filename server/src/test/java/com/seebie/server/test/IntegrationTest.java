@@ -26,8 +26,8 @@ import org.testcontainers.junit.jupiter.Container;
         "spring.main.lazy-initialization=true",
         "spring.flyway.enabled=true",
         "app.notification.scan.enabled=false",
-        "app.security.rememberMe.tokenValidity=6s", // small values for SessionSecurityTest
-        "spring.session.timeout=4s", // small values for SessionSecurityTest
+        "app.security.rememberMe.tokenValidity=2s", // small values for SessionSecurityTest
+        "spring.session.timeout=1s", // small values for SessionSecurityTest
         "app.security.rememberMe.key=test-only",
         "spring.mail.username=test-only"
         })

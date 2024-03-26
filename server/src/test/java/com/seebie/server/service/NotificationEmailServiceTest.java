@@ -8,8 +8,8 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Arrays;
 
-import static com.seebie.server.AppProperties.newAppProperties;
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
+import static com.seebie.server.test.data.TestData.newAppProperties;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NotificationEmailServiceTest {

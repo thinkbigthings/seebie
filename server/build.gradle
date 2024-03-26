@@ -9,6 +9,10 @@ plugins {
 
 apply plugin: 'java' // core plugin provided by gradle
 
+gitProperties {
+    keys = ['git.commit.id', 'git.commit.message.short', 'git.branch', 'git.commit.time']
+}
+
 group = 'com.seebie'
 
 java {
@@ -194,23 +198,23 @@ tasks.named("check") {
     dependsOn integrationTest
 }
 
-task copyWebApp {
+task copyWebApp(type: Copy) {
     description 'Copies built files from reactjs to server'
     dependsOn ':reactjs:build'
-    doLast {
-        copy {
-            from(project(":reactjs").buildDir)
-            into(project(":server").buildDir.toPath().resolve('resources/main/static'))
-        }
-    }
+    from(project(":reactjs").buildDir)
+    into(project(":server").buildDir.toPath().resolve('resources/main/static'))
 }
 
-bootJar.dependsOn copyWebApp
 
+resolveMainClassName.dependsOn copyWebApp
+compileTestJava.dependsOn copyWebApp
+bootJar.dependsOn copyWebApp
 
 task genKey(type:Exec) {
 
     var p12File = 'app.p12'
+    outputs.file(p12File)
+    inputs.property("commandLineArgs", commandLine)
 
     if( file(p12File).exists()) {
         commandLine 'keytool', '-list', '-storepass', 'password'
@@ -220,7 +224,6 @@ task genKey(type:Exec) {
                 '-storetype', 'PKCS12', '-keystore', p12File, '-storepass', 'password', '-keypass', 'password',
                 '-dname', 'cn=Unknown, ou=Unknown, o=Unknown, c=Unknown'
     }
-
 }
 
 genKey.dependsOn compileJava

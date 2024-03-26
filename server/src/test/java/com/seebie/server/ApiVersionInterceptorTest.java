@@ -5,7 +5,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static com.seebie.server.ApiVersionInterceptor.API_VERSION;
-import static com.seebie.server.AppProperties.newAppProperties;
+import static com.seebie.server.test.data.TestData.newAppProperties;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ApiVersionInterceptorTest {
