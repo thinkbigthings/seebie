@@ -2,3 +2,13 @@
 rootProject.name = 'seebie'
 
 include 'reactjs', 'server'
+
+buildCache {
+    local {
+        enabled = false
+    }
+
+    // You can also enable a remote cache
+    // so that you can share the cache between different machines
+
+}
