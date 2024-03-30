@@ -45,16 +45,16 @@ jobs:
           distribution: 'zulu'
           cache: gradle
 
-      - name: Download Artifact from Build
+      - name: Download Artifacts from Build
         uses: actions/download-artifact@v4
         with:
           name: Build Artifacts
-          path: server/build/libs
+          path: server/build
 
       # Debugging
       - name: List Downloaded Files
         run: |
-          ls -alrt server/build/libs
+          ls -alrt server/build
 
       - name: Login to Heroku
         uses: akhileshns/heroku-deploy@v3.13.15

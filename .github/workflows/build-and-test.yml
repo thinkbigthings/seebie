@@ -41,6 +41,14 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
 
+      - name: Setup Gradle to publish build scans
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          build-scan-publish: true
+          build-scan-terms-of-service-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-service-agree: "yes"
+
+
       - name: Build with Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
@@ -52,7 +60,7 @@ jobs:
         if: ${{ inputs.upload-artifact }}
         with:
           name: Build Artifacts
-          path: server/build/libs/server.jar
+          path: server/build
 
       - name: Upload Project Page
         uses: actions/upload-pages-artifact@v3
