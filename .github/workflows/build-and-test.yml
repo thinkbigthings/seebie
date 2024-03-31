@@ -31,12 +31,13 @@ jobs:
           cache: 'npm'
           cache-dependency-path: reactjs/package-lock.json
 
+      # read docs carefully: https://github.com/gradle/actions/tree/main/setup-gradle
+      # don't use cache-gradle from setup-java
       - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'zulu'
-          cache: gradle
 
       - name: Build with Gradle
         uses: gradle/actions/setup-gradle@v3
