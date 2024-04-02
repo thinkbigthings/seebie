@@ -24,7 +24,7 @@ public class NotificationMessageService {
     private final MailSender emailSender;
     private final NotificationRetrievalService notificationRetrievalService;
 
-    private AppProperties.Notification notification;
+    private AppProperties.Notification notificationConfig;
 
     private final SimpleMailMessage emailTemplate;
 
@@ -35,7 +35,7 @@ public class NotificationMessageService {
 
         this.notificationRetrievalService = notificationRetrievalService;
         this.emailSender = emailSender;
-        this.notification = appProperties.notification();
+        this.notificationConfig = appProperties.notification();
 
         emailTemplate = new SimpleMailMessage();
         emailTemplate.setFrom(fromEmail);
@@ -64,7 +64,7 @@ public class NotificationMessageService {
     @Scheduled(fixedDelayString="${app.notification.scanFrequencyMinutes}", timeUnit = TimeUnit.MINUTES)
     public void runOnSchedule() {
 
-        if( ! notification.enabled()) {
+        if( ! notificationConfig.enabled()) {
             LOG.info("Email notifications schedule was triggered but scan was disabled.");
             return;
         }
@@ -81,8 +81,8 @@ public class NotificationMessageService {
     }
 
     public List<NotificationRequired> findUsersToNotify(Instant now) {
-        var ifNotNotifiedSince = now.minus(notification.triggerAfter().lastNotified());
-        var ifNotLoggedSince = now.minus(notification.triggerAfter().sleepLog());
+        var ifNotNotifiedSince = now.minus(notificationConfig.triggerAfter().lastNotified());
+        var ifNotLoggedSince = now.minus(notificationConfig.triggerAfter().sleepLog());
         return notificationRetrievalService.getUsersToNotify(ifNotNotifiedSince, ifNotLoggedSince, now);
     }
 
