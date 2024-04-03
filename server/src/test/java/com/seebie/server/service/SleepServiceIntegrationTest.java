@@ -8,7 +8,6 @@ import com.seebie.server.repository.SleepRepository;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
 import org.hibernate.exception.ConstraintViolationException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Field;
 import java.time.ZoneId;

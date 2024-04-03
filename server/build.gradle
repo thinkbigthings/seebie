@@ -27,11 +27,6 @@ repositories {
     maven { url 'https://repo.spring.io/milestone' } // as needed
 }
 
-test {
-    useJUnitPlatform()
-}
-
-
 // use preview features
 tasks.withType(JavaCompile) {
     options.compilerArgs += "--enable-preview"
@@ -86,28 +81,28 @@ jacocoTestCoverageVerification {
     // Include both unit test and integration test execution data
     executionData fileTree(layout.buildDirectory).include("/jacoco/**/jacocoTest.exec")
 
-//    violationRules {
-//        rule {
-//            limit {
-//                minimum = 0.92 // coverage required overall
-//            }
-//        }
-//        rule {
-//            element = 'CLASS'
-//
-//            limit {
-//                counter = 'COMPLEXITY'
-//                value = 'TOTALCOUNT'
-//                maximum = 18 // max complexity allowed per class
-//            }
-//
-//            limit {
-//                counter = 'INSTRUCTION'
-//                value = 'COVEREDRATIO'
-//                minimum = 0.75 // coverage required per class
-//            }
-//        }
-//    }
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.92 // coverage required overall
+            }
+        }
+        rule {
+            element = 'CLASS'
+
+            limit {
+                counter = 'COMPLEXITY'
+                value = 'TOTALCOUNT'
+                maximum = 18 // max complexity allowed per class
+            }
+
+            limit {
+                counter = 'INSTRUCTION'
+                value = 'COVEREDRATIO'
+                minimum = 0.75 // coverage required per class
+            }
+        }
+    }
 
     // NOTE keep all jacoco tasks in sync with regards to excluded classes
     // see also https://github.com/jacoco/jacoco/issues/1491
@@ -160,7 +155,6 @@ test {
         destinationFile = layout.buildDirectory.file("jacoco/test/jacocoTest.exec").get().asFile
         classDumpDir = layout.buildDirectory.file("jacoco/test/classpathdumps").get().asFile
     }
-    finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
 def integrationTest = tasks.register("integrationTest", Test) {
@@ -181,13 +175,15 @@ def integrationTest = tasks.register("integrationTest", Test) {
         destinationFile = layout.buildDirectory.file("jacoco/integrationTest/jacocoTest.exec").get().asFile
         classDumpDir = layout.buildDirectory.file("jacoco/integrationTest/classpathdumps").get().asFile
     }
-
-    finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
 
 // break the build if coverage is not met
 build.dependsOn jacocoTestCoverageVerification
+
+build.dependsOn jacocoTestReport
+jacocoTestReport.dependsOn integrationTest
+jacocoTestReport.dependsOn test
 
 // ensure outputs of all tests (including integration tests) are included in the jacoco rules verification
 jacocoTestCoverageVerification.dependsOn integrationTest
