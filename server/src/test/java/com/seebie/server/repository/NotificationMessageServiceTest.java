@@ -8,6 +8,8 @@ import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -30,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *      select u.username, s.stop_time, n.last_sent from notification n, sleep_session s, app_user u
  *      where u.username='admin' and s.user_id=u.id and n.user_id=u.id order by s.stop_time desc limit 1;
  */
+@Execution(ExecutionMode.SAME_THREAD)
 public class NotificationMessageServiceTest extends IntegrationTest {
 
     @Autowired

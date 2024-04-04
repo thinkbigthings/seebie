@@ -143,9 +143,8 @@ task copyCoverageReport(type: Copy) {
     from layout.buildDirectory.dir("resources/test/reports")
     into layout.buildDirectory.dir("reports")
 }
-copyCoverageReport.mustRunAfter jacocoTestReport
 copyCoverageReport.dependsOn jacocoTestReport
-build.dependsOn copyCoverageReport
+check.dependsOn copyCoverageReport
 
 test {
     useJUnitPlatform {
@@ -179,9 +178,8 @@ def integrationTest = tasks.register("integrationTest", Test) {
 
 
 // break the build if coverage is not met
-build.dependsOn jacocoTestCoverageVerification
+check.dependsOn jacocoTestCoverageVerification
 
-build.dependsOn jacocoTestReport
 jacocoTestReport.dependsOn integrationTest
 jacocoTestReport.dependsOn test
 
@@ -222,7 +220,6 @@ task genKey(type:Exec) {
     }
 }
 
-genKey.dependsOn compileJava
 bootJar.dependsOn genKey
 bootRun.dependsOn genKey
 bootTestRun.dependsOn genKey
