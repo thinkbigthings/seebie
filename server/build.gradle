@@ -27,11 +27,6 @@ repositories {
     maven { url 'https://repo.spring.io/milestone' } // as needed
 }
 
-test {
-    useJUnitPlatform()
-}
-
-
 // use preview features
 tasks.withType(JavaCompile) {
     options.compilerArgs += "--enable-preview"
@@ -148,9 +143,8 @@ task copyCoverageReport(type: Copy) {
     from layout.buildDirectory.dir("resources/test/reports")
     into layout.buildDirectory.dir("reports")
 }
-copyCoverageReport.mustRunAfter jacocoTestReport
 copyCoverageReport.dependsOn jacocoTestReport
-build.dependsOn copyCoverageReport
+check.dependsOn copyCoverageReport
 
 test {
     useJUnitPlatform {
@@ -160,7 +154,6 @@ test {
         destinationFile = layout.buildDirectory.file("jacoco/test/jacocoTest.exec").get().asFile
         classDumpDir = layout.buildDirectory.file("jacoco/test/classpathdumps").get().asFile
     }
-    finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
 def integrationTest = tasks.register("integrationTest", Test) {
@@ -181,13 +174,14 @@ def integrationTest = tasks.register("integrationTest", Test) {
         destinationFile = layout.buildDirectory.file("jacoco/integrationTest/jacocoTest.exec").get().asFile
         classDumpDir = layout.buildDirectory.file("jacoco/integrationTest/classpathdumps").get().asFile
     }
-
-    finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
 
 // break the build if coverage is not met
-build.dependsOn jacocoTestCoverageVerification
+check.dependsOn jacocoTestCoverageVerification
+
+jacocoTestReport.dependsOn integrationTest
+jacocoTestReport.dependsOn test
 
 // ensure outputs of all tests (including integration tests) are included in the jacoco rules verification
 jacocoTestCoverageVerification.dependsOn integrationTest
@@ -226,7 +220,6 @@ task genKey(type:Exec) {
     }
 }
 
-genKey.dependsOn compileJava
 bootJar.dependsOn genKey
 bootRun.dependsOn genKey
 bootTestRun.dependsOn genKey
