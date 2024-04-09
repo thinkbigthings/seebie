@@ -19,8 +19,9 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
+    "build": "npm run check-types && vite build",
+    "serve": "vite preview",
+    "check-types": "tsc --noEmit"
   },
   "browserslist": {
     "production": [
@@ -36,7 +37,10 @@
   },
   "proxy": "https://localhost:9000",
   "devDependencies": {
+    "@types/react": "^18.2.75",
+    "@types/react-dom": "^18.2.24",
     "@vitejs/plugin-basic-ssl": "^1.0.1",
-    "react-router-dom": "^6.15.0"
+    "react-router-dom": "^6.15.0",
+    "typescript": "^5.4.4"
   }
 }
