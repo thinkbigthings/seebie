@@ -103,7 +103,19 @@ export const PREDEFINED_CHALLENGES = [
     }
 ];
 
-export const blankUser = {
+export interface User {
+    username: string;
+    roles: string[];
+    registrationTime: string;
+    personalInfo: {
+        displayName: string;
+        email: string;
+        notificationsEnabled: boolean;
+    };
+    isLoggedIn: boolean;
+}
+
+export const blankUser: User = {
     username: '',
     roles: [],
     registrationTime: '',

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {useState} from 'react';
 
 import Form from 'react-bootstrap/Form';
@@ -78,7 +77,7 @@ function UnauthenticatedApp() {
                         <FontAwesomeIcon className="app-highlight ms-2" icon={faMoon} />
                     </Navbar.Brand>
                     <Nav className="mr-auto" />
-                    <Form inline="true">
+                    <Form>
                         <Nav.Link href="#login">Login</Nav.Link>
                     </Form>
                 </Container>
@@ -122,7 +121,7 @@ function AuthenticatedApp() {
 
                     <CreateSleepSession username={currentUser.username} onSave={() => setCreatedCount(createdCount + 1)} />
 
-                    <NavDropdown className={"nav-link-colored"} title={loggedIn } align="end" flip="true" id="userDropdown">
+                    <NavDropdown className={"nav-link-colored"} title={loggedIn } align="end" id="userDropdown">
                         <NavDropdown.Item className={"nav-link-colored"} href={userUrl}>{<FontAwesomeIcon className="me-2" icon={faCog} />}Profile</NavDropdown.Item>
                         <NavDropdown.Divider />
                         <NavDropdown.Item className={"nav-link-colored"} onClick={onClickLogout}>{<FontAwesomeIcon className="me-2" icon={faSignOut} />}Logout</NavDropdown.Item>
@@ -152,6 +151,7 @@ function AuthenticatedApp() {
     );
 }
 
+// @ts-ignore
 function SideNav(props) {
 
     const {hasAdmin, username} = props;
@@ -169,6 +169,8 @@ function SideNav(props) {
     );
 }
 
+// @ts-ignore
+
 function NavItem(props) {
 
     const {name, href, icon} = props;
@@ -182,6 +184,8 @@ function NavItem(props) {
         </Nav.Link>
     );
 }
+
+// @ts-ignore
 
 function NavHeader(props) {
 
