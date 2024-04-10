@@ -48,6 +48,7 @@ import Histogram from "./Histogram";
 import EditChallenge from "./EditChallenge";
 import {CurrentUserProvider} from "./CurrentUserProvider";
 import {ErrorProvider} from "./ErrorProvider";
+import {IconDefinition} from "@fortawesome/fontawesome-svg-core";
 
 function App() {
 
@@ -151,8 +152,7 @@ function AuthenticatedApp() {
     );
 }
 
-// @ts-ignore
-function SideNav(props) {
+function SideNav(props: {hasAdmin:boolean, username:string}) {
 
     const {hasAdmin, username} = props;
     let usersNav = hasAdmin ? <NavItem name="Users" icon={faUsers} href="#/users" /> : "";
@@ -169,9 +169,7 @@ function SideNav(props) {
     );
 }
 
-// @ts-ignore
-
-function NavItem(props) {
+function NavItem(props: {name:string, href:string, icon:IconDefinition}) {
 
     const {name, href, icon} = props;
 
@@ -185,9 +183,7 @@ function NavItem(props) {
     );
 }
 
-// @ts-ignore
-
-function NavHeader(props) {
+function NavHeader(props: {title:string, children:React.ReactNode}) {
 
     const {title} = props;
 
