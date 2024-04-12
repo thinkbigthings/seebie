@@ -1,5 +1,4 @@
-// @ts-nocheck
-import React, {useState} from 'react';
+import React, {KeyboardEvent, useState} from 'react';
 
 import Button from "react-bootstrap/Button";
 
@@ -10,8 +9,12 @@ import {useNavigate} from 'react-router-dom';
 import {GET} from "./utility/BasicHeaders";
 import Container from "react-bootstrap/Container";
 
+interface Credentials{
+    username: string;
+    password: string;
+}
 
-function getWithCreds(url, credentials) {
+function getWithCreds(url: string, credentials: Credentials) {
 
     const encoded = btoa(credentials.username + ":" + credentials.password);
 
@@ -34,9 +37,9 @@ function Login() {
     const {throwOnHttpError} = useHttpError();
 
     // call the callback function if the enter key was pressed in the event
-    function callOnEnter(event, callback) {
+    function callOnEnter(event: KeyboardEvent) {
         if(event.key === 'Enter') {
-            callback();
+            onClickLogin();
         }
     }
 
@@ -63,7 +66,7 @@ function Login() {
                 const clientApiVersion = VITE_API_VERSION;
                 const serverApiVersion = response.headers.get(VERSION_HEADER);
                 if(clientApiVersion !== serverApiVersion) {
-                    window.location.reload(true);
+                    window.location.reload();
                 }
             })
             .catch(error => {
@@ -89,7 +92,7 @@ function Login() {
                     <input type="password" className="form-control" id="inputPassword" placeholder="Password"
                                value={password}
                                onChange={e => setPassword(e.target.value)}
-                               onKeyPress={e => callOnEnter(e, onClickLogin)}
+                               onKeyPress={e => callOnEnter(e)}
                     />
             </Container>
             <Container className="ps-0 mb-3">
@@ -98,7 +101,7 @@ function Login() {
                            placeholder="Remember Me"
                            checked={rememberMe}
                            onChange={e => setRememberMe(e.target.checked)}
-                           onKeyPress={e => callOnEnter(e, onClickLogin)}
+                           onKeyPress={e => callOnEnter(e)}
                     />
             </Container>
 

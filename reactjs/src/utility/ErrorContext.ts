@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 
 const recoveryActions = {
@@ -13,7 +12,7 @@ const noErrors = {
     recoveryAction: recoveryActions.NONE
 }
 
-const ErrorContext = React.createContext([noErrors, (error) => {}]);
+const ErrorContext = React.createContext([noErrors, () => {}]);
 ErrorContext.displayName = 'ErrorContext';
 
 export {ErrorContext, noErrors, recoveryActions};

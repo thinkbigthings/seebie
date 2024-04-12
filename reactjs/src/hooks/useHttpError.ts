@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {recoveryActions} from "../utility/ErrorContext";
 import {VITE_API_VERSION, VERSION_HEADER} from "../utility/Constants";
 import useError from "./useError";
@@ -7,7 +6,7 @@ const useHttpError = () => {
 
     const {addError} = useError();
 
-    const throwOnHttpError = httpResponse => {
+    const throwOnHttpError = (httpResponse: Response) => {
 
         if (httpResponse.status === 200) {
             return httpResponse;
