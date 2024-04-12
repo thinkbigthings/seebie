@@ -1,4 +1,3 @@
-// @ts-nocheck
 
 const VERSION_HEADER = 'X-Version';
 
@@ -103,31 +102,7 @@ export const PREDEFINED_CHALLENGES = [
     }
 ];
 
-export interface User {
-    username: string;
-    roles: string[];
-    registrationTime: string;
-    personalInfo: {
-        displayName: string;
-        email: string;
-        notificationsEnabled: boolean;
-    };
-    isLoggedIn: boolean;
-}
-
-export const blankUser: User = {
-    username: '',
-    roles: [],
-    registrationTime: '',
-    personalInfo: {
-        displayName: '',
-        email: '',
-        notificationsEnabled: false
-    },
-    isLoggedIn: false,
-}
-
-export const createRange = (lastNDays) => {
+export const createRange = (lastNDays: number) => {
 
     let today = new Date();
     today.setHours(23, 59, 59);

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {useEffect, useState} from 'react';
 
 import {UserForm} from './UserForm.jsx';
@@ -15,7 +14,7 @@ import {faKey} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./utility/BasicHeaders";
 import {NavHeader} from "./App";
 import {useNavigate, useParams} from "react-router-dom";
-import {blankUser} from "./utility/Constants";
+import {blankUser, PersonalInfo} from "./utility/CurrentUserContext.ts";
 
 
 function EditUser() {
@@ -39,26 +38,20 @@ function EditUser() {
             .then(() => setLoaded(true))
     }, [setData, userEndpoint, username]);
 
-
-    // update user info stuff
-
     const put = useApiPut();
-    const onSave = (personalInfo) => {
+    const onSave = (personalInfo: PersonalInfo) => {
         put(userInfoEndpoint, personalInfo).then(() => navigate(-1));
     }
-
-
-    // password reset stuff
 
     const [showResetPassword, setShowResetPassword] = useState(false);
     const {currentUser, onLogin} = useCurrentUser();
     const post = useApiPost();
 
-    const onResetPassword = (plainTextPassword) => {
+    const onResetPassword = (plainTextPassword: string) => {
         post(updatePasswordEndpoint, plainTextPassword)
             .then(result => {
                 if(currentUser.username === username) {
-                    onLogin({...currentUser, password: plainTextPassword});
+                    onLogin({...currentUser});
                 }
                 setShowResetPassword(false);
             });

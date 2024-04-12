@@ -1,14 +1,13 @@
-// @ts-nocheck
-import {blankUser} from "./utility/Constants";
+import {blankUser, User} from "./utility/CurrentUserContext.ts";
 import React, {useState} from "react";
 import {CurrentUserContext} from "./utility/CurrentUserContext";
 
-const CurrentUserProvider = (props) => {
+const CurrentUserProvider = (props: {children:React.ReactNode}) => {
 
-    // code for pre-loading the user's information if we have their token in
+    // code for preloading the user's information if we have their token in
     // localStorage goes here
     const currentUserStr = localStorage.getItem('currentUser');
-    const user = currentUserStr !== null
+    const user: User = currentUserStr !== null
         ? JSON.parse(currentUserStr)
         : blankUser;
 

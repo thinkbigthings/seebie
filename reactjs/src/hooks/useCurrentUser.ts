@@ -1,13 +1,12 @@
-// @ts-nocheck
 import {useContext} from 'react';
-import { CurrentUserContext } from "../utility/CurrentUserContext";
-import {blankUser} from "../utility/Constants";
+import {CurrentUserContext, User} from "../utility/CurrentUserContext";
+import {blankUser} from "../utility/CurrentUserContext.ts";
 
 const useCurrentUser = () => {
 
     const [currentUser, setCurrentUser] = useContext(CurrentUserContext);
 
-    function onLogin(newUserData) {
+    function onLogin(newUserData: User) {
         localStorage.setItem('currentUser', JSON.stringify(newUserData));
         setCurrentUser(newUserData);
     }
@@ -19,7 +18,7 @@ const useCurrentUser = () => {
 
     const hasAdmin = () => hasRole('ADMIN');
 
-    function hasRole(roleName) {
+    function hasRole(roleName: string) {
         return currentUser.roles.find(role => role === roleName) !== undefined;
     }
 
