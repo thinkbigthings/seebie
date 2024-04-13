@@ -1,13 +1,12 @@
 import {basicHeader} from "../utility/BasicHeaders";
 import useHttpError from "./useHttpError";
-import {AnyObject} from "../utility/Constants.ts";
 
 const useApiPut = () => {
 
     const requestHeaders = basicHeader(true);
     const {throwOnHttpError} = useHttpError();
 
-    function put(url: string, body: AnyObject) {
+    function put(url: string, body: Record<string, any>) {
 
         const requestMeta = {
             headers: requestHeaders,

@@ -1,9 +1,8 @@
 import {GET} from "../utility/BasicHeaders";
 import {useCallback, useEffect, useState} from "react";
-import {AnyObject} from "../utility/Constants.ts";
 
 interface PageData {
-    content: AnyObject[];
+    content: Record<string, unknown>[];
     first: boolean;
     last: boolean;
     totalElements: number;

@@ -14,8 +14,6 @@ export const HISTOGRAM_BIN_SIZE_OPTIONS = [
     {value: 15, text: '15 minutes'},
 ];
 
-export type AnyObject = Record<string, unknown>;
-
 export const HISTOGRAM_OPTIONS = {
     plugins: {
         legend: {
