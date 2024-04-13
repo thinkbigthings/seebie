@@ -1,18 +1,36 @@
 import React from 'react';
 
-const recoveryActions = {
-    NONE: 'none',
-    LOGIN: 'login',
-    RELOAD: 'reload'
+enum RecoveryActions {
+    NONE,
+    LOGIN,
+    RELOAD
 }
 
-const noErrors = {
+interface ErrorStatus {
+    message: string;
+    hasError: boolean;
+    recoveryAction: RecoveryActions;
+}
+
+const NO_ERROR: ErrorStatus = {
     message: '',
     hasError: false,
-    recoveryAction: recoveryActions.NONE
+    recoveryAction: RecoveryActions.NONE
 }
 
-const ErrorContext = React.createContext([noErrors, () => {}]);
+interface ErrorStateHookData {
+    errorStatus: ErrorStatus;
+    setErrorStatus: (status: ErrorStatus) => void;
+}
+
+const NO_ERROR_STATUS: ErrorStateHookData = {
+    errorStatus: NO_ERROR,
+    setErrorStatus: (status: ErrorStatus) => {}
+}
+
+const ErrorContext = React.createContext(NO_ERROR_STATUS);
 ErrorContext.displayName = 'ErrorContext';
 
-export {ErrorContext, noErrors, recoveryActions};
+export {ErrorContext, NO_ERROR, NO_ERROR_STATUS, RecoveryActions};
+export type { ErrorStatus, ErrorStateHookData };
+

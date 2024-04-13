@@ -1,18 +1,16 @@
-// @ts-nocheck
 import { useContext } from 'react';
-import {ErrorContext, noErrors, recoveryActions} from "../utility/ErrorContext";
+import {ErrorContext, ErrorStatus, NO_ERROR, RecoveryActions} from "../utility/ErrorContext";
 
 const useError = () => {
 
-    const [error, setError] = useContext(ErrorContext);
+    const error = useContext(ErrorContext);
 
-    function addError(message, action) {
-        const recovery = action !== undefined ? action : recoveryActions.NONE;
-        setError({message, hasError: true, recoveryAction: recovery});
+    function addError(message: string, action: RecoveryActions) {
+        error.setErrorStatus({message, hasError: true, recoveryAction: action});
     }
 
     function clearError() {
-        setError(noErrors);
+        error.setErrorStatus(NO_ERROR);
     }
 
     return {

@@ -1,13 +1,18 @@
-// @ts-nocheck
+
 import React, {useState} from "react";
-import {ErrorContext, noErrors} from "./utility/ErrorContext";
+import {ErrorContext, NO_ERROR_STATUS, ErrorStateHookData} from "./utility/ErrorContext";
 
-const ErrorProvider = (props) => {
+const ErrorProvider = (props: {children:React.ReactNode}) => {
 
-    const [error, setError] = useState(noErrors);
+    const [error, setError] = useState(NO_ERROR_STATUS.errorStatus);
+
+    let errorStatusState: ErrorStateHookData = {
+        errorStatus: error,
+        setErrorStatus: setError
+    };
 
     return (
-        <ErrorContext.Provider value={[error, setError]}>
+        <ErrorContext.Provider value={errorStatusState}>
             {props.children}
         </ErrorContext.Provider>
     );

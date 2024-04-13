@@ -9,7 +9,7 @@ import {useNavigate} from 'react-router-dom';
 import {GET} from "./utility/BasicHeaders";
 import Container from "react-bootstrap/Container";
 
-interface Credentials{
+interface Credentials {
     username: string;
     password: string;
 }

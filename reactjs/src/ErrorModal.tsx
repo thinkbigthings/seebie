@@ -6,7 +6,7 @@ import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 
 import useError from "./hooks/useError";
-import {recoveryActions} from "./utility/ErrorContext";
+import {RecoveryActions} from "./utility/ErrorContext";
 import useCurrentUser from "./hooks/useCurrentUser";
 
 function ErrorModal(props) {
@@ -21,8 +21,8 @@ function ErrorModal(props) {
         window.location.reload(true)
     }
 
-    const displayLogin = error.recoveryAction === recoveryActions.LOGIN;
-    const displayReload = error.recoveryAction === recoveryActions.RELOAD;
+    const displayLogin = error.recoveryAction === RecoveryActions.LOGIN;
+    const displayReload = error.recoveryAction === RecoveryActions.RELOAD;
     const displayLoginStyle = displayLogin ? '' : 'd-none';
     const displayReloadStyle = displayReload ? '' : 'd-none';
 
