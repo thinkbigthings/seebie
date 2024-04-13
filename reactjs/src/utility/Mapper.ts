@@ -43,7 +43,7 @@ const withExactTime = (challengeDetail) => {
     };
 };
 
-const fromChallengeDto = (challenge) => {
+const fromChallengeDto = (challenge: ChallengeDto) :ChallengeFormData => {
     return {
         name: challenge.name,
         description: challenge.description,
@@ -52,7 +52,21 @@ const fromChallengeDto = (challenge) => {
     }
 }
 
-const toChallengeDto = (challenge) => {
+interface ChallengeFormData {
+    name: string,
+    description: string,
+    localStartTime: Date,
+    localEndTime: Date
+}
+
+interface ChallengeDto {
+    name: string,
+    description: string,
+    start: string,
+    finish: string
+}
+
+const toChallengeDto = (challenge: ChallengeFormData) :ChallengeDto => {
     return {
         name: challenge.name,
         description: challenge.description,
