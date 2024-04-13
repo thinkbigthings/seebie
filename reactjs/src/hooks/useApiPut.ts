@@ -1,22 +1,18 @@
-// @ts-nocheck
-
 import {basicHeader} from "../utility/BasicHeaders";
 import useHttpError from "./useHttpError";
-
+import {AnyObject} from "../utility/Constants.ts";
 
 const useApiPut = () => {
 
     const requestHeaders = basicHeader(true);
     const {throwOnHttpError} = useHttpError();
 
-    function put(url, body) {
-
-        const bodyString = typeof body === 'string' ? body : JSON.stringify(body);
+    function put(url: string, body: AnyObject) {
 
         const requestMeta = {
             headers: requestHeaders,
             method: 'PUT',
-            body: bodyString
+            body: JSON.stringify(body)
         };
 
         return fetch(url, requestMeta)

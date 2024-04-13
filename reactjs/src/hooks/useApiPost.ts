@@ -1,7 +1,6 @@
-// @ts-nocheck
-
 import {basicHeader} from "../utility/BasicHeaders";
 import useHttpError from "./useHttpError";
+import {AnyObject} from "../utility/Constants.ts";
 
 
 const useApiPost = () => {
@@ -9,14 +8,12 @@ const useApiPost = () => {
     const requestHeaders = basicHeader();
     const {throwOnHttpError} = useHttpError();
 
-    function post(url, body) {
-
-        const bodyString = typeof body === 'string' ? body : JSON.stringify(body);
+    function post(url: string, body: AnyObject) {
 
         const requestMeta = {
             headers: requestHeaders,
             method: 'POST',
-            body: bodyString
+            body: JSON.stringify(body)
         };
 
         return fetch(url, requestMeta)

@@ -1,15 +1,12 @@
-// @ts-nocheck
-
 import {basicHeader} from "../utility/BasicHeaders";
 import useHttpError from "./useHttpError";
-
 
 const useApiDelete = () => {
 
     const requestHeaders = basicHeader();
     const {throwOnHttpError} = useHttpError();
 
-    function callDelete(url) {
+    function callDelete(url: string) {
 
         const requestMeta = {
             headers: requestHeaders,

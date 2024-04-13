@@ -1,4 +1,4 @@
-import {VITE_API_VERSION, VERSION_HEADER} from "./Constants";
+import {VITE_API_VERSION, VERSION_HEADER, AnyObject} from "./Constants";
 
 const GET = {
     headers: basicHeader(false),
@@ -25,7 +25,7 @@ function basicHeader(hasRequestBody=true) {
 }
 
 // takes only an object. If you pass in a string, it gets double-quoted from stringify
-const fetchPost = (url: string, body: Record<string, unknown>) => {
+const fetchPost = (url: string, body: AnyObject) => {
 
     const bodyString = JSON.stringify(body);
     const requestHeaders = basicHeader();

@@ -1,8 +1,21 @@
-// @ts-nocheck
 import {GET} from "../utility/BasicHeaders";
 import {useCallback, useEffect, useState} from "react";
+import {AnyObject} from "../utility/Constants.ts";
 
-const initialPage = {
+interface PageData {
+    content: AnyObject[];
+    first: boolean;
+    last: boolean;
+    totalElements: number;
+    pageable: {
+        offset: number;
+        pageNumber: number;
+        pageSize: number;
+    };
+    numberOfElements: number;
+}
+
+const initialPage: PageData = {
     content: [],
     first: true,
     last: true,
@@ -15,7 +28,7 @@ const initialPage = {
     numberOfElements: 0,
 }
 
-const toPagingLabel = (pageData) => {
+const toPagingLabel = (pageData: PageData) => {
     const firstElementInPage = pageData.pageable.offset + 1;
     const lastElementInPage = pageData.pageable.offset + pageData.numberOfElements;
     const pagingLabel = firstElementInPage + "-" + lastElementInPage + " of " + pageData.totalElements;
@@ -23,7 +36,7 @@ const toPagingLabel = (pageData) => {
 }
 
 // This is for paging
-const useApiGet = (initialUrl, customPageSize, reloadCount) => {
+const useApiGet = (initialUrl: string, customPageSize: number, reloadCount: number) => {
 
     let customizedPage = structuredClone(initialPage);
     customizedPage.pageable.pageSize = customPageSize;
@@ -36,7 +49,7 @@ const useApiGet = (initialUrl, customPageSize, reloadCount) => {
     // TODO maybe this should be in a callback hook?
     // const {throwOnHttpError} = useHttpError();
 
-    const movePage = useCallback((amount) => {
+    const movePage = useCallback((amount: number) => {
         let pageable = structuredClone(data.pageable);
         pageable.pageNumber = pageable.pageNumber + amount;
         setUrl(initialUrl + '?page=' + pageable.pageNumber + '&size=' + pageable.pageSize)
@@ -51,7 +64,7 @@ const useApiGet = (initialUrl, customPageSize, reloadCount) => {
 
     // reload count is kind of a synthetic property to trigger state changes which triggers fetch updates
     // reload count is controlled from outside, so the parent controls re-rendering
-    // this is important when we want to reload from something changing (like creating new data)
+    // this is important when we want to reload from something changing (like creating new data that affects the list)
     useEffect(() => {
         fetch(url, GET)
             // .then(throwOnHttpError)
