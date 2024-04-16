@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {useEffect, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
@@ -7,12 +6,11 @@ import {GET} from "./utility/BasicHeaders";
 import {Tab, Tabs} from "react-bootstrap";
 import {emptyChallengeList} from "./utility/Constants";
 import CollapsibleChallenge from "./component/CollapsibleChallenge";
-import {mapChallengeDetails, withExactTime} from "./utility/Mapper";
 import useApiDelete from "./hooks/useApiDelete";
 import CreateChallenge from "./CreateChallenge";
 
 
-function Challenge(props) {
+function Challenge() {
 
     const {username} = useParams();
     const callDelete = useApiDelete();
@@ -27,12 +25,11 @@ function Challenge(props) {
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
             .then((response) => response.json())
-            .then(challengeList => mapChallengeDetails(challengeList, withExactTime))
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, [createdCount, deletedCount]);
 
-    const deleteChallenge = (challengeId) => {
+    const deleteChallenge = (challengeId: number) => {
         const endpoint = `/api/user/${username}/challenge/${challengeId}`;
         callDelete(endpoint).then(() => setDeletedCount(deletedCount + 1));
     }

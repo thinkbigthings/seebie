@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {useEffect, useState} from 'react';
 
 import { Chart, registerables } from 'chart.js'
@@ -16,13 +15,24 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
-import {mapChallengeDetails, toSelectableChallenges, withExactTime} from "./utility/Mapper";
+import {
+    ChallengeFormData,
+    extractChallenges, fromChallengeDtoList,
+    toSelectableChallenges
+} from "./utility/Mapper";
 import {createRange, HISTOGRAM_BIN_SIZE_OPTIONS, HISTOGRAM_COLORS, HISTOGRAM_OPTIONS} from "./utility/Constants";
 
 Chart.register(...registerables)
 
+// This comes from the server, the record is List<Long> bins, List<List<Long>> dataSets
+// the double array here is such that the first index corresponds to the "outer" list of dataSets
+interface HistogramData {
+    bins: number[],
+    dataSets: number[][]
+}
+
 // the resulting object goes into the chartData datasets array
-const createDataset = (displayInfo, data) => {
+const createDataset = (displayInfo: PageSettingFilters, data: number[]) => {
     return {
             fill: true,
             data: data,
@@ -32,7 +42,7 @@ const createDataset = (displayInfo, data) => {
         };
 }
 
-const pageSettingsToRequest = (pageSettings) => {
+const pageSettingsToRequest = (pageSettings: PageSettings) => {
 
     const newDataFilters = pageSettings.filters.map( (filter) => { return {
             from: SleepDataManager.toIsoString(filter.challenge.exactStart),
@@ -51,14 +61,31 @@ const pageSettingsToRequest = (pageSettings) => {
 
 const last30days = createRange(30);
 
-const defaultChallenge = {
+const defaultChallenge: ChallengeFormData = {
     name: "Last 30 Days",
     description: "Last 30 Days",
+    localStartTime: last30days.from,
+    localEndTime: last30days.to,
     exactStart: last30days.from,
     exactFinish: last30days.to
 }
 
-const defaultPageSettings = {
+interface PageSettingFilters {
+    challenge: ChallengeFormData,
+    color: string
+}
+
+interface PageSettings {
+    binSize: number,
+    filters: PageSettingFilters[],
+}
+
+interface BarData {
+    labels: number[],
+    datasets: any[]
+}
+
+const defaultPageSettings: PageSettings = {
     binSize: 60,
     filters: [
         {
@@ -66,10 +93,9 @@ const defaultPageSettings = {
             color: HISTOGRAM_COLORS[0]
         }
     ],
-    availableFilters: []
 }
 
-function Histogram(props) {
+function Histogram(props: {createdCount:number}) {
 
     // TODO createdCount should be named "sleepLoggedCountSinceAppLoad" or something
     // this is so the page is updated when the user logs sleep
@@ -83,19 +109,19 @@ function Histogram(props) {
 
     let [pageSettings, setPageSettings] = useState(defaultPageSettings);
 
-    const [availableChallenges, setAvailableChallenges] = useState([defaultChallenge]);
+    const [availableChallenges, setAvailableChallenges] = useState<ChallengeFormData[]>([defaultChallenge]);
     const [showSelectChallenge, setShowSelectChallenge] = useState(false);
 
-    let[barData, setBarData] = useState({ labels: [], datasets: [] });
+    let[barData, setBarData] = useState({ labels: [], datasets: [] } as BarData);
 
-    const onSelectChallenge = event => {
+    const onSelectChallenge = (event: React.ChangeEvent<HTMLSelectElement>) => {
 
         let usedColors = pageSettings.filters.map(filter => filter.color);
         let selectableColors = HISTOGRAM_COLORS.filter(color => ! usedColors.includes(color));
         let color = selectableColors[0];
 
         // event target value is the challenge name, option value has to be a string not an object, so need to find it
-        const challenge = availableChallenges.find(saved => saved.name === event.target.value);
+        const challenge = availableChallenges.find(saved => saved.name === event.target.value)!;
 
         let newPageSettings = structuredClone(pageSettings);
         newPageSettings.filters.push({ challenge, color });
@@ -104,29 +130,30 @@ function Histogram(props) {
         setPageSettings(newPageSettings);
     }
 
+
     const availableChallengeFilters = availableChallenges.filter(challenge => ! isActiveFilter(challenge));
 
-    function isActiveFilter(searchChallenge) {
+    function isActiveFilter(searchChallenge: ChallengeFormData) {
         return pageSettings.filters.some(filter => filter.challenge.name === searchChallenge.name);
     }
 
-    function onRemoveFilter(i) {
+    function onRemoveFilter(i: number) {
         let newPageSettings = structuredClone(pageSettings);
         newPageSettings.filters.splice(i, 1);
         setPageSettings(newPageSettings);
     }
 
-    const updateBinSize = event => {
+    const updateBinSize = (event: React.ChangeEvent<HTMLSelectElement>) => {
         let newPageState = structuredClone(pageSettings);
-        newPageState.binSize = event.target.value;
+        newPageState.binSize = parseInt(event.target.value);
         setPageSettings(newPageState);
     };
 
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
             .then((response) => response.json())
-            .then(challengeList => mapChallengeDetails(challengeList, withExactTime))
-            .then(challengeList => mapChallengeDetails(challengeList, detail => detail.challenge))
+            .then(extractChallenges)
+            .then(fromChallengeDtoList)
             .then(challengeList => toSelectableChallenges(challengeList, defaultChallenge))
             .then(setAvailableChallenges)
             .catch(error => console.log(error));
@@ -134,7 +161,7 @@ function Histogram(props) {
 
     useEffect(() => {
         fetchPost(histogramEndpoint, pageSettingsToRequest(pageSettings))
-            .then(response => response.json())
+            .then(response => response.json() as Promise<HistogramData>)
             .then(histData => {
                 setBarData({
                     labels: histData.bins.map(bin => bin/60),

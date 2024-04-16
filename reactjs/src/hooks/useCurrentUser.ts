@@ -19,7 +19,7 @@ const useCurrentUser = () => {
     const hasAdmin = () => hasRole('ADMIN');
 
     function hasRole(roleName: string) {
-        return currentUser.roles.find(role => role === roleName) !== undefined;
+        return currentUser.roles.some(role => role === roleName);
     }
 
     return {

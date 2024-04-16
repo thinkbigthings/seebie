@@ -11,7 +11,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import WarningButton from "./component/WarningButton";
 import ChallengeForm from "./ChallengeForm";
 import {emptyChallengeList, emptyEditableChallenge} from "./utility/Constants";
-import {fromChallengeDto, mapChallengeDetails, toChallengeDto, withExactTime} from "./utility/Mapper";
+import {extractChallenges, fromChallengeDto, fromChallengeDtoList, toChallengeDto} from "./utility/Mapper";
 
 const removeDetailsWithId = (challengeList, challengeId) => {
     return {
@@ -53,8 +53,9 @@ function EditChallenge() {
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
             .then((response) => response.json())
-            .then(challengeList => mapChallengeDetails(challengeList, withExactTime))
             .then(challengeList => removeDetailsWithId(challengeList, numericChallengeId))
+            .then(extractChallenges)
+            .then(fromChallengeDtoList)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, [challengeEndpointTz]);

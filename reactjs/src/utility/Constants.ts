@@ -1,3 +1,4 @@
+import {ChallengeDetailDto, ChallengeList} from "./Mapper.ts";
 
 const VERSION_HEADER = 'X-Version';
 
@@ -50,7 +51,7 @@ export const emptyEditableChallenge = () => {
     };
 }
 
-export const emptyChallengeList = {
+export const emptyChallengeList: ChallengeList<ChallengeDetailDto> = {
     current: [],
     upcoming: [],
     completed: []
