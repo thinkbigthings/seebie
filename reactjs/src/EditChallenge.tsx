@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {useEffect, useState} from 'react';
 
 import Container from "react-bootstrap/Container";
@@ -11,9 +10,12 @@ import {useNavigate, useParams} from "react-router-dom";
 import WarningButton from "./component/WarningButton";
 import ChallengeForm from "./ChallengeForm";
 import {emptyChallengeList, emptyEditableChallenge} from "./utility/Constants";
-import {fromChallengeDto, mapChallengeDetails, toChallengeDto, withExactTime} from "./utility/Mapper";
+import {
+    ChallengeDetailDto, ChallengeList,
+    toLocalChallengeData, toChallengeDto, toLocalChallengeDataList, ChallengeDto, toChallengeDetailDto
+} from "./utility/Mapper";
 
-const removeDetailsWithId = (challengeList, challengeId) => {
+const removeChallengesWithId = (challengeList: ChallengeList<ChallengeDetailDto>, challengeId: number) => {
     return {
         current: challengeList.current.filter(details => details.id !== challengeId),
         upcoming: challengeList.upcoming.filter(details => details.id !== challengeId),
@@ -27,7 +29,12 @@ function EditChallenge() {
     const navigate = useNavigate();
 
     const {username, challengeId} = useParams();
-    const numericChallengeId = +challengeId; // Converts string to number
+
+    if (challengeId === undefined) {
+        throw new Error("Challenge ID is required.");
+    }
+
+    const numericChallengeId = parseInt(challengeId);
 
     const challengeEndpoint = `/api/user/${username}/challenge/${challengeId}`;
     const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -44,17 +51,18 @@ function EditChallenge() {
 
     useEffect(() => {
         fetch(challengeEndpoint, GET)
-            .then(response => response.json())
-            .then(fromChallengeDto)
+            .then(response => response.json() as Promise<ChallengeDto>)
+            .then(challenge => toChallengeDetailDto(challenge, numericChallengeId))
+            .then(toLocalChallengeData)
             .then(setEditableChallenge)
             .then(() => setLoaded(true))
     }, [setEditableChallenge, challengeEndpoint]);
 
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
-            .then((response) => response.json())
-            .then(challengeList => mapChallengeDetails(challengeList, withExactTime))
-            .then(challengeList => removeDetailsWithId(challengeList, numericChallengeId))
+            .then((response) => response.json() as Promise<ChallengeList<ChallengeDetailDto>>)
+            .then(challengeList => removeChallengesWithId(challengeList, numericChallengeId))
+            .then(toLocalChallengeDataList)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, [challengeEndpointTz]);

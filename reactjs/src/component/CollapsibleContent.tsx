@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {useState} from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import Container from "react-bootstrap/Container";
@@ -8,7 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDown} from "@fortawesome/free-solid-svg-icons";
 
 
-function CollapsibleContent(props) {
+function CollapsibleContent(props:{title: string, children: React.ReactNode}) {
 
     const {title} = props;
 

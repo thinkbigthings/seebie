@@ -1,9 +1,38 @@
-// @ts-nocheck
-
 import SleepDataManager from "./SleepDataManager";
 
-// incoming list contains challenge not challengeDetails
-const toSelectableChallenges = (challengeList, defaultChallenge) => {
+// this is the representation used internally by the front end
+// if id===0 then it is unsaved
+interface ChallengeData {
+    id: number,
+    name: string,
+    description: string,
+    localStartTime: Date,
+    localEndTime: Date
+    exactStart: Date,
+    exactFinish: Date
+}
+
+// this is what we send back and forth with the server
+interface ChallengeDto {
+    name: string,
+    description: string,
+    start: string,
+    finish: string
+}
+
+// this is what we send back and forth with the server
+interface ChallengeDetailDto {
+    id: number,
+    challenge: ChallengeDto
+}
+
+interface ChallengeList<T> {
+    current: T[];
+    upcoming: T[];
+    completed: T[];
+}
+
+const toSelectableChallenges = (challengeList: ChallengeList<ChallengeData>, defaultChallenge: ChallengeData) => {
 
     let selectableChallenges = [...challengeList.current, ...challengeList.completed];
 
@@ -16,57 +45,42 @@ const toSelectableChallenges = (challengeList, defaultChallenge) => {
     return selectableChallenges;
 }
 
-const mapChallengeDetails = (challengeList, mapFunction) => {
-
-    let newChallengeList = {};
-
-    newChallengeList.current = challengeList.current.map(mapFunction);
-    newChallengeList.upcoming = challengeList.upcoming.map(mapFunction);
-    newChallengeList.completed = challengeList.completed.map(mapFunction);
-
-    return newChallengeList;
+const toLocalChallengeDataList = (challengeList: ChallengeList<ChallengeDetailDto>) : ChallengeList<ChallengeData> => {
+    return {
+        current: challengeList.current.map(toLocalChallengeData),
+        upcoming: challengeList.upcoming.map(toLocalChallengeData),
+        completed: challengeList.completed.map(toLocalChallengeData)
+    };
 }
 
-const withExactTime = (challengeDetail) => {
-    let exactStart = new Date(challengeDetail.challenge.start);
-    let exactFinish = new Date(challengeDetail.challenge.finish);
+const toChallengeDetailDto = (dto:ChallengeDto, id:number): ChallengeDetailDto => {
+    return {
+        id: id,
+        challenge: dto
+    }
+}
+
+const toLocalChallengeData = (challengeDetails: ChallengeDetailDto): ChallengeData => {
+
+    const challenge: ChallengeDto = challengeDetails.challenge;
+
+    let exactStart = new Date(challenge.start);
+    let exactFinish = new Date(challenge.finish);
     exactStart.setHours(0, 0, 0);
     exactFinish.setHours(23, 59, 59);
 
     return {
-        ...challengeDetail,
-        challenge: {
-            ...challengeDetail.challenge,
-            exactStart: exactStart,
-            exactFinish: exactFinish
-        }
-    };
-};
-
-const fromChallengeDto = (challenge: ChallengeDto) :ChallengeFormData => {
-    return {
+        id: challengeDetails.id,
         name: challenge.name,
         description: challenge.description,
         localStartTime: new Date(challenge.start),
-        localEndTime: new Date(challenge.finish)
+        localEndTime: new Date(challenge.finish),
+        exactStart: exactStart,
+        exactFinish: exactFinish
     }
 }
 
-interface ChallengeFormData {
-    name: string,
-    description: string,
-    localStartTime: Date,
-    localEndTime: Date
-}
-
-interface ChallengeDto {
-    name: string,
-    description: string,
-    start: string,
-    finish: string
-}
-
-const toChallengeDto = (challenge: ChallengeFormData) :ChallengeDto => {
+const toChallengeDto = (challenge: ChallengeData): ChallengeDto => {
     return {
         name: challenge.name,
         description: challenge.description,
@@ -75,4 +89,5 @@ const toChallengeDto = (challenge: ChallengeFormData) :ChallengeDto => {
     }
 }
 
-export {withExactTime, toSelectableChallenges, toChallengeDto, fromChallengeDto, mapChallengeDetails}
+export {toSelectableChallenges, toChallengeDto, toLocalChallengeData, toLocalChallengeDataList, toChallengeDetailDto}
+export type {ChallengeDto, ChallengeDetailDto, ChallengeData, ChallengeList}

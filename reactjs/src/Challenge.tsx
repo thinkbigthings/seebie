@@ -1,18 +1,17 @@
-// @ts-nocheck
 import React, {useEffect, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import {useParams} from "react-router-dom";
 import {GET} from "./utility/BasicHeaders";
 import {Tab, Tabs} from "react-bootstrap";
-import {emptyChallengeList} from "./utility/Constants";
+import { emptyChallengeList} from "./utility/Constants";
 import CollapsibleChallenge from "./component/CollapsibleChallenge";
-import {mapChallengeDetails, withExactTime} from "./utility/Mapper";
 import useApiDelete from "./hooks/useApiDelete";
 import CreateChallenge from "./CreateChallenge";
+import {ChallengeDetailDto, ChallengeList, toLocalChallengeDataList} from "./utility/Mapper.ts";
 
 
-function Challenge(props) {
+function Challenge() {
 
     const {username} = useParams();
     const callDelete = useApiDelete();
@@ -26,13 +25,13 @@ function Challenge(props) {
 
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
-            .then((response) => response.json())
-            .then(challengeList => mapChallengeDetails(challengeList, withExactTime))
+            .then((response) => response.json() as Promise<ChallengeList<ChallengeDetailDto>>)
+            .then(toLocalChallengeDataList)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, [createdCount, deletedCount]);
 
-    const deleteChallenge = (challengeId) => {
+    const deleteChallenge = (challengeId: number) => {
         const endpoint = `/api/user/${username}/challenge/${challengeId}`;
         callDelete(endpoint).then(() => setDeletedCount(deletedCount + 1));
     }
@@ -50,28 +49,25 @@ function Challenge(props) {
                 <Tabs defaultActiveKey="current" id="challenge-tabs">
                     <Tab eventKey="current" title="Current">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
-                            {savedChallenges.current.map((challengeDetails, index) =>
-                                <CollapsibleChallenge key={index} challenge={challengeDetails.challenge}
-                                                      challengeId = {challengeDetails.id}
-                                                      onDelete={() => deleteChallenge(challengeDetails.id)} />
+                            {savedChallenges.current.map((challenge, index) =>
+                                <CollapsibleChallenge key={index} challenge={challenge}
+                                                      onDelete={() => deleteChallenge(challenge.id)} />
                             )}
                         </Container>
                     </Tab>
                     <Tab eventKey="completed" title="Completed">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
-                            {savedChallenges.completed.map((challengeDetails, index) =>
-                                <CollapsibleChallenge key={index} challenge={challengeDetails.challenge}
-                                                      challengeId = {challengeDetails.id}
-                                                      onDelete={() => deleteChallenge(challengeDetails.id)} />
+                            {savedChallenges.completed.map((challenge, index) =>
+                                <CollapsibleChallenge key={index} challenge={challenge}
+                                                      onDelete={() => deleteChallenge(challenge.id)} />
                             )}
                         </Container>
                     </Tab>
                     <Tab eventKey="upcoming" title="Future">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
-                            {savedChallenges.upcoming.map((challengeDetails, index) =>
-                                <CollapsibleChallenge key={index} challenge={challengeDetails.challenge}
-                                                      challengeId = {challengeDetails.id}
-                                                      onDelete={() => deleteChallenge(challengeDetails.id)} />
+                            {savedChallenges.upcoming.map((challenge, index) =>
+                                <CollapsibleChallenge key={index} challenge={challenge}
+                                                      onDelete={() => deleteChallenge(challenge.id)} />
                             )}
                         </Container>
                     </Tab>

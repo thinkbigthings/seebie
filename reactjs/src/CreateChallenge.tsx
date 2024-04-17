@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {useState} from 'react';
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
@@ -9,14 +8,12 @@ import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import useApiPost from "./hooks/useApiPost";
 import CollapsibleContent from "./component/CollapsibleContent";
-import {emptyEditableChallenge, PREDEFINED_CHALLENGES} from "./utility/Constants";
+import {emptyEditableChallenge, NameDescription, PREDEFINED_CHALLENGES} from "./utility/Constants";
 import SuccessModal from "./component/SuccessModal";
-import {toChallengeDto} from "./utility/Mapper";
+import {ChallengeData, ChallengeList, toChallengeDto} from "./utility/Mapper";
 import ChallengeForm from "./ChallengeForm";
 
-
-
-function CreateChallenge(props) {
+function CreateChallenge(props: {onCreated:()=>void, savedChallenges:ChallengeList<ChallengeData>}) {
 
     const {onCreated, savedChallenges} = props;
 
@@ -48,7 +45,7 @@ function CreateChallenge(props) {
         setDataValid(true);
     }
 
-    const onSelectChallenge = (selectedChallenge) => {
+    const onSelectChallenge = (selectedChallenge: NameDescription) => {
         let updatedChallenge = {...editableChallenge};
         updatedChallenge.name = selectedChallenge.name;
         updatedChallenge.description = selectedChallenge.description;

@@ -1,3 +1,4 @@
+import {ChallengeDetailDto, ChallengeData, ChallengeList} from "./Mapper.ts";
 
 const VERSION_HEADER = 'X-Version';
 
@@ -39,24 +40,40 @@ export const HISTOGRAM_OPTIONS = {
     }
 }
 
-export const emptyEditableChallenge = () => {
-    const suggestedEndDate = new Date();
-    suggestedEndDate.setDate(suggestedEndDate.getDate() + 14);
+export const emptyEditableChallenge = ():ChallengeData => {
+
+    const start = new Date();
+    const finish = new Date();
+    finish.setDate(start.getDate() + 14);
+
+    let exactStart = new Date(start);
+    let exactFinish = new Date(finish);
+    exactStart.setHours(0, 0, 0);
+    exactFinish.setHours(23, 59, 59);
+
     return {
+        id: 0,
         name: "",
         description: "",
-        localStartTime: new Date(),
-        localEndTime: suggestedEndDate
+        localStartTime: start,
+        localEndTime: finish,
+        exactStart,
+        exactFinish
     };
 }
 
-export const emptyChallengeList = {
+export const emptyChallengeList: ChallengeList<ChallengeData> = {
     current: [],
     upcoming: [],
     completed: []
 };
 
-export const PREDEFINED_CHALLENGES = [
+export interface NameDescription {
+    name: string,
+    description: string
+}
+
+export const PREDEFINED_CHALLENGES:NameDescription[] = [
     {
         name: "Consistent bedtime",
         description: "Go to bed at the same time every day even on weekends"
