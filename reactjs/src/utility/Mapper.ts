@@ -1,7 +1,9 @@
 import SleepDataManager from "./SleepDataManager";
 
 // this is the representation used internally by the front end
+// if id===0 then it is unsaved
 interface ChallengeData {
+    id: number,
     name: string,
     description: string,
     localStartTime: Date,
@@ -18,6 +20,7 @@ interface ChallengeDto {
     finish: string
 }
 
+// this is what we send back and forth with the server
 interface ChallengeDetailDto {
     id: number,
     challenge: ChallengeDto
@@ -42,23 +45,17 @@ const toSelectableChallenges = (challengeList: ChallengeList<ChallengeData>, def
     return selectableChallenges;
 }
 
-const extractChallenges = (challengeList: ChallengeList<ChallengeDetailDto>) : ChallengeList<ChallengeDto> => {
+const toLocalChallengeDataList = (challengeList: ChallengeList<ChallengeDetailDto>) : ChallengeList<ChallengeData> => {
     return {
-        current: challengeList.current.map(details => details.challenge),
-        upcoming: challengeList.upcoming.map(details => details.challenge),
-        completed: challengeList.completed.map(details => details.challenge)
+        current: challengeList.current.map(toLocalChallengeData),
+        upcoming: challengeList.upcoming.map(toLocalChallengeData),
+        completed: challengeList.completed.map(toLocalChallengeData)
     };
 }
 
-const toInternalChallengeDataList = (challengeList: ChallengeList<ChallengeDto>) : ChallengeList<ChallengeData> => {
-    return {
-        current: challengeList.current.map(toInternalChallengeData),
-        upcoming: challengeList.upcoming.map(toInternalChallengeData),
-        completed: challengeList.completed.map(toInternalChallengeData)
-    };
-}
+const toLocalChallengeData = (challengeDetails: ChallengeDetailDto): ChallengeData => {
 
-const toInternalChallengeData = (challenge: ChallengeDto): ChallengeData => {
+    const challenge: ChallengeDto = challengeDetails.challenge;
 
     let exactStart = new Date(challenge.start);
     let exactFinish = new Date(challenge.finish);
@@ -66,6 +63,7 @@ const toInternalChallengeData = (challenge: ChallengeDto): ChallengeData => {
     exactFinish.setHours(23, 59, 59);
 
     return {
+        id: challengeDetails.id,
         name: challenge.name,
         description: challenge.description,
         localStartTime: new Date(challenge.start),
@@ -84,5 +82,5 @@ const toChallengeDto = (challenge: ChallengeData): ChallengeDto => {
     }
 }
 
-export {toSelectableChallenges, toChallengeDto, toInternalChallengeData, extractChallenges, toInternalChallengeDataList}
+export {toSelectableChallenges, toChallengeDto, toLocalChallengeData, toLocalChallengeDataList}
 export type {ChallengeDto, ChallengeDetailDto, ChallengeData, ChallengeList}

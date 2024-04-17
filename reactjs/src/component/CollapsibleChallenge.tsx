@@ -24,9 +24,9 @@ const localeOptions:Intl.DateTimeFormatOptions = {
 
 const locale = "en-US";
 
-function CollapsibleChallenge(props:{challenge:ChallengeData, challengeId:number, onDelete:()=>void}) {
+function CollapsibleChallenge(props:{challenge:ChallengeData, onDelete:()=>void}) {
 
-    const {challenge, challengeId, onDelete} = props;
+    const {challenge, onDelete} = props;
 
     const {username} = useParams();
 
@@ -52,7 +52,7 @@ function CollapsibleChallenge(props:{challenge:ChallengeData, challengeId:number
                 : <span />
             }
             <div className="d-flex justify-content-end">
-                <Link to={`/users/${username}/challenge/${challengeId}/edit` } >
+                <Link to={`/users/${username}/challenge/${challenge.id}/edit` } >
                     <Button variant={"secondary"} className="me-2" >
                         <FontAwesomeIcon className="me-2" icon={faEdit} />Edit
                     </Button>

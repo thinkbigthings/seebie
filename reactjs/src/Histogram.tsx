@@ -17,7 +17,7 @@ import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import {
     ChallengeData,
-    extractChallenges, toInternalChallengeDataList,
+    toLocalChallengeDataList,
     toSelectableChallenges
 } from "./utility/Mapper";
 import {createRange, HISTOGRAM_BIN_SIZE_OPTIONS, HISTOGRAM_COLORS, HISTOGRAM_OPTIONS} from "./utility/Constants";
@@ -62,6 +62,7 @@ const pageSettingsToRequest = (pageSettings: PageSettings) => {
 const last30days = createRange(30);
 
 const defaultChallenge: ChallengeData = {
+    id: 0,
     name: "Last 30 Days",
     description: "Last 30 Days",
     localStartTime: last30days.from,
@@ -152,8 +153,7 @@ function Histogram(props: {createdCount:number}) {
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
             .then((response) => response.json())
-            .then(extractChallenges)
-            .then(toInternalChallengeDataList)
+            .then(toLocalChallengeDataList)
             .then(challengeList => toSelectableChallenges(challengeList, defaultChallenge))
             .then(setAvailableChallenges)
             .catch(error => console.log(error));

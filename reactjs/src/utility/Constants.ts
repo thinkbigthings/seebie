@@ -52,6 +52,7 @@ export const emptyEditableChallenge = ():ChallengeData => {
     exactFinish.setHours(23, 59, 59);
 
     return {
+        id: 0,
         name: "",
         description: "",
         localStartTime: start,
@@ -60,12 +61,6 @@ export const emptyEditableChallenge = ():ChallengeData => {
         exactFinish
     };
 }
-
-export const emptyChallengeDtoList: ChallengeList<ChallengeDetailDto> = {
-    current: [],
-    upcoming: [],
-    completed: []
-};
 
 export const emptyChallengeList: ChallengeList<ChallengeData> = {
     current: [],

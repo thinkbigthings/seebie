@@ -13,11 +13,11 @@ import {emptyChallengeList, emptyEditableChallenge} from "./utility/Constants";
 import {
     ChallengeDetailDto,
     ChallengeList,
-    toInternalChallengeData,
-    toChallengeDto, extractChallenges, toInternalChallengeDataList
+    toLocalChallengeData,
+    toChallengeDto, toLocalChallengeDataList
 } from "./utility/Mapper";
 
-const removeDetailsWithId = (challengeList: ChallengeList<ChallengeDetailDto>, challengeId: number) => {
+const removeChallengesWithId = (challengeList: ChallengeList<ChallengeDetailDto>, challengeId: number) => {
     return {
         current: challengeList.current.filter(details => details.id !== challengeId),
         upcoming: challengeList.upcoming.filter(details => details.id !== challengeId),
@@ -54,7 +54,7 @@ function EditChallenge() {
     useEffect(() => {
         fetch(challengeEndpoint, GET)
             .then(response => response.json())
-            .then(toInternalChallengeData)
+            .then(toLocalChallengeData)
             .then(setEditableChallenge)
             .then(() => setLoaded(true))
     }, [setEditableChallenge, challengeEndpoint]);
@@ -62,9 +62,8 @@ function EditChallenge() {
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
             .then((response) => response.json())
-            .then(challengeList => removeDetailsWithId(challengeList, numericChallengeId))
-            .then(extractChallenges)
-            .then(toInternalChallengeDataList)
+            .then(challengeList => removeChallengesWithId(challengeList, numericChallengeId))
+            .then(toLocalChallengeDataList)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, [challengeEndpointTz]);
