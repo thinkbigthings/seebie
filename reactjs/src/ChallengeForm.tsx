@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {useEffect, useState} from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import Container from "react-bootstrap/Container";
@@ -8,8 +7,14 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import {ChallengeData, ChallengeList} from "./utility/Mapper.ts";
 
-function ChallengeForm(props) {
+function ChallengeForm(props:{
+                            setEditableChallenge:React.Dispatch<React.SetStateAction<ChallengeData>>
+                            editableChallenge:ChallengeData,
+                            setDataValid:React.Dispatch<React.SetStateAction<boolean>>,
+                            savedChallenges:ChallengeList<ChallengeData>}
+                        ) {
 
     const {setEditableChallenge, editableChallenge, setDataValid, savedChallenges} = props;
 
@@ -25,18 +30,23 @@ function ChallengeForm(props) {
     const [nameTouched, setNameTouched] = useState(false);
 
 
-    const validateChallenge = (challenge) => {
+    const validateChallenge = (challenge: ChallengeData) => {
 
         // name validation to consider if the user has interacted with the field
         const nameValid = nameTouched
             ? (challenge.name !== '' && challenge.name.trim() === challenge.name)
             : true;
         const dateOrderValid = challenge.localStartTime < challenge.localEndTime;
-        const allSavedChallengeDetails = savedChallenges.upcoming.concat(savedChallenges.completed).concat(savedChallenges.current);
-        const nameUnique = !allSavedChallengeDetails.some(challengeDetails => challengeDetails.challenge.name === challenge.name);
-        const datesOverlap = allSavedChallengeDetails.map(details => details.challenge).some(c => {
-            return (challenge.localStartTime >= c.exactStart && challenge.localStartTime <= c.exactFinish)
-                || (challenge.localEndTime >= c.exactStart && challenge.localEndTime <= c.exactFinish);
+        const allSavedChallenges = savedChallenges.upcoming.concat(savedChallenges.completed).concat(savedChallenges.current);
+        const nameUnique = !allSavedChallenges.some(saved => saved.name === challenge.name);
+
+
+        // TODO make an overlap method for ChallengeFormData and ChallengeDetailDto
+        // Is the exactStart and exactFinish updated if the form data is updated? Should it really be on the dto after coming from the server?
+
+        const datesOverlap = allSavedChallenges.some(saved => {
+            return (challenge.localStartTime >= saved.exactStart && challenge.localStartTime <= saved.exactFinish)
+                || (challenge.localEndTime >= saved.exactStart && challenge.localEndTime <= saved.exactFinish);
         });
 
         setDateOrderValid(dateOrderValid);
@@ -54,12 +64,8 @@ function ChallengeForm(props) {
         validateChallenge(editableChallenge);
     }, [editableChallenge]);
 
-    const updateChallenge = (updateValues) => {
-        // Set nameTouched to true if the name field is being updated
-        if (updateValues.name !== undefined) {
-            setNameTouched(true);
-        }
-        const updatedChallenge = {...editableChallenge, ...updateValues};
+    const updateChallenge = (updateValues: {name:string} | {description:string} | {localStartTime:Date} | {localEndTime:Date} ) => {
+        const updatedChallenge:ChallengeData = {...editableChallenge, ...updateValues};
         setEditableChallenge(updatedChallenge);
         validateChallenge(updatedChallenge);
     }
@@ -80,7 +86,10 @@ function ChallengeForm(props) {
                        id="challengeName"
                        placeholder=""
                        value={editableChallenge.name}
-                       onChange={e => updateChallenge({name: e.target.value})}
+                       onChange={e => {
+                           setNameTouched(true);
+                           updateChallenge({name: e.target.value})}
+                       }
                        isInvalid={!nameValid || !nameUnique}
                    />
                </Container>
@@ -89,7 +98,7 @@ function ChallengeForm(props) {
                    Can't be empty or have space at the ends
                </Form.Control.Feedback>
                <Container className="ps-0 mb-3 pe-0">
-                   <textarea rows="6" className="form-control" id="description" placeholder="Description"
+                   <textarea rows={6} className="form-control" id="description" placeholder="Description"
                              value={editableChallenge.description}
                              onChange={e => updateChallenge({description: e.target.value})}/>
                </Container>
@@ -102,7 +111,7 @@ function ChallengeForm(props) {
                        <Col md={6} className={"col-8 "}>
                            <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
                                        id="startDate" dateFormat="MMMM d, yyyy"
-                                       onChange={date => updateChallenge({localStartTime: date})}
+                                       onChange={date => {if(date) updateChallenge({localStartTime: date})}}
                                        selected={editableChallenge.localStartTime}/>
                        </Col>
                    </Row>
@@ -113,7 +122,7 @@ function ChallengeForm(props) {
                        <Col md={6} className={"col-8 "}>
                            <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
                                        id="startDate" dateFormat="MMMM d, yyyy"
-                                       onChange={date => updateChallenge({localEndTime: date})}
+                                       onChange={date => {if(date) updateChallenge({localEndTime: date})}}
                                        selected={editableChallenge.localEndTime}/>
                        </Col>
                    </Row>

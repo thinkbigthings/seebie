@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {useEffect, useState} from 'react';
 
 import Container from "react-bootstrap/Container";
@@ -11,9 +10,14 @@ import {useNavigate, useParams} from "react-router-dom";
 import WarningButton from "./component/WarningButton";
 import ChallengeForm from "./ChallengeForm";
 import {emptyChallengeList, emptyEditableChallenge} from "./utility/Constants";
-import {extractChallenges, fromChallengeDto, fromChallengeDtoList, toChallengeDto} from "./utility/Mapper";
+import {
+    ChallengeDetailDto,
+    ChallengeList,
+    toInternalChallengeData,
+    toChallengeDto, extractChallenges, toInternalChallengeDataList
+} from "./utility/Mapper";
 
-const removeDetailsWithId = (challengeList, challengeId) => {
+const removeDetailsWithId = (challengeList: ChallengeList<ChallengeDetailDto>, challengeId: number) => {
     return {
         current: challengeList.current.filter(details => details.id !== challengeId),
         upcoming: challengeList.upcoming.filter(details => details.id !== challengeId),
@@ -27,7 +31,12 @@ function EditChallenge() {
     const navigate = useNavigate();
 
     const {username, challengeId} = useParams();
-    const numericChallengeId = +challengeId; // Converts string to number
+
+    if (challengeId === undefined) {
+        throw new Error("Challenge ID is required.");
+    }
+
+    const numericChallengeId = parseInt(challengeId);
 
     const challengeEndpoint = `/api/user/${username}/challenge/${challengeId}`;
     const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -45,7 +54,7 @@ function EditChallenge() {
     useEffect(() => {
         fetch(challengeEndpoint, GET)
             .then(response => response.json())
-            .then(fromChallengeDto)
+            .then(toInternalChallengeData)
             .then(setEditableChallenge)
             .then(() => setLoaded(true))
     }, [setEditableChallenge, challengeEndpoint]);
@@ -55,7 +64,7 @@ function EditChallenge() {
             .then((response) => response.json())
             .then(challengeList => removeDetailsWithId(challengeList, numericChallengeId))
             .then(extractChallenges)
-            .then(fromChallengeDtoList)
+            .then(toInternalChallengeDataList)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, [challengeEndpointTz]);

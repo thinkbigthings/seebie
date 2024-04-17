@@ -16,8 +16,8 @@ import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import {
-    ChallengeFormData,
-    extractChallenges, fromChallengeDtoList,
+    ChallengeData,
+    extractChallenges, toInternalChallengeDataList,
     toSelectableChallenges
 } from "./utility/Mapper";
 import {createRange, HISTOGRAM_BIN_SIZE_OPTIONS, HISTOGRAM_COLORS, HISTOGRAM_OPTIONS} from "./utility/Constants";
@@ -61,7 +61,7 @@ const pageSettingsToRequest = (pageSettings: PageSettings) => {
 
 const last30days = createRange(30);
 
-const defaultChallenge: ChallengeFormData = {
+const defaultChallenge: ChallengeData = {
     name: "Last 30 Days",
     description: "Last 30 Days",
     localStartTime: last30days.from,
@@ -71,7 +71,7 @@ const defaultChallenge: ChallengeFormData = {
 }
 
 interface PageSettingFilters {
-    challenge: ChallengeFormData,
+    challenge: ChallengeData,
     color: string
 }
 
@@ -109,7 +109,7 @@ function Histogram(props: {createdCount:number}) {
 
     let [pageSettings, setPageSettings] = useState(defaultPageSettings);
 
-    const [availableChallenges, setAvailableChallenges] = useState<ChallengeFormData[]>([defaultChallenge]);
+    const [availableChallenges, setAvailableChallenges] = useState<ChallengeData[]>([defaultChallenge]);
     const [showSelectChallenge, setShowSelectChallenge] = useState(false);
 
     let[barData, setBarData] = useState({ labels: [], datasets: [] } as BarData);
@@ -133,7 +133,7 @@ function Histogram(props: {createdCount:number}) {
 
     const availableChallengeFilters = availableChallenges.filter(challenge => ! isActiveFilter(challenge));
 
-    function isActiveFilter(searchChallenge: ChallengeFormData) {
+    function isActiveFilter(searchChallenge: ChallengeData) {
         return pageSettings.filters.some(filter => filter.challenge.name === searchChallenge.name);
     }
 
@@ -153,7 +153,7 @@ function Histogram(props: {createdCount:number}) {
         fetch(challengeEndpointTz, GET)
             .then((response) => response.json())
             .then(extractChallenges)
-            .then(fromChallengeDtoList)
+            .then(toInternalChallengeDataList)
             .then(challengeList => toSelectableChallenges(challengeList, defaultChallenge))
             .then(setAvailableChallenges)
             .catch(error => console.log(error));

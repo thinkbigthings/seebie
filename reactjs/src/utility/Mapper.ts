@@ -1,7 +1,7 @@
 import SleepDataManager from "./SleepDataManager";
-import ChallengeForm from "../ChallengeForm.tsx";
 
-interface ChallengeFormData {
+// this is the representation used internally by the front end
+interface ChallengeData {
     name: string,
     description: string,
     localStartTime: Date,
@@ -10,6 +10,7 @@ interface ChallengeFormData {
     exactFinish: Date
 }
 
+// this is what we send back and forth with the server
 interface ChallengeDto {
     name: string,
     description: string,
@@ -28,7 +29,7 @@ interface ChallengeList<T> {
     completed: T[];
 }
 
-const toSelectableChallenges = (challengeList: ChallengeList<ChallengeFormData>, defaultChallenge: ChallengeFormData) => {
+const toSelectableChallenges = (challengeList: ChallengeList<ChallengeData>, defaultChallenge: ChallengeData) => {
 
     let selectableChallenges = [...challengeList.current, ...challengeList.completed];
 
@@ -49,15 +50,15 @@ const extractChallenges = (challengeList: ChallengeList<ChallengeDetailDto>) : C
     };
 }
 
-const fromChallengeDtoList = (challengeList: ChallengeList<ChallengeDto>) : ChallengeList<ChallengeFormData> => {
+const toInternalChallengeDataList = (challengeList: ChallengeList<ChallengeDto>) : ChallengeList<ChallengeData> => {
     return {
-        current: challengeList.current.map(fromChallengeDto),
-        upcoming: challengeList.upcoming.map(fromChallengeDto),
-        completed: challengeList.completed.map(fromChallengeDto)
+        current: challengeList.current.map(toInternalChallengeData),
+        upcoming: challengeList.upcoming.map(toInternalChallengeData),
+        completed: challengeList.completed.map(toInternalChallengeData)
     };
 }
 
-const fromChallengeDto = (challenge: ChallengeDto): ChallengeFormData => {
+const toInternalChallengeData = (challenge: ChallengeDto): ChallengeData => {
 
     let exactStart = new Date(challenge.start);
     let exactFinish = new Date(challenge.finish);
@@ -74,7 +75,7 @@ const fromChallengeDto = (challenge: ChallengeDto): ChallengeFormData => {
     }
 }
 
-const toChallengeDto = (challenge: ChallengeFormData): ChallengeDto => {
+const toChallengeDto = (challenge: ChallengeData): ChallengeDto => {
     return {
         name: challenge.name,
         description: challenge.description,
@@ -83,5 +84,5 @@ const toChallengeDto = (challenge: ChallengeFormData): ChallengeDto => {
     }
 }
 
-export {toSelectableChallenges, toChallengeDto, fromChallengeDto, extractChallenges, fromChallengeDtoList}
-export type {ChallengeDto, ChallengeDetailDto, ChallengeFormData, ChallengeList}
+export {toSelectableChallenges, toChallengeDto, toInternalChallengeData, extractChallenges, toInternalChallengeDataList}
+export type {ChallengeDto, ChallengeDetailDto, ChallengeData, ChallengeList}

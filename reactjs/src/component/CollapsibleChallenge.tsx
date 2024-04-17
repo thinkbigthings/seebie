@@ -1,22 +1,22 @@
-// @ts-nocheck
 import CollapsibleContent from "./CollapsibleContent";
 import React from "react";
 import WarningButton from "./WarningButton";
 import {Link, useParams} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faChartSimple, faEdit} from "@fortawesome/free-solid-svg-icons";
+import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
+import {ChallengeData} from "../utility/Mapper.ts";
 
-function calculateProgress(start, now, end) {
+function calculateProgress(start:Date, now:Date, end:Date) {
 
-    const totalDuration = end - start;
-    const durationFromStartToNow = now - start;
+    const totalDuration = end.getTime() - start.getTime();
+    const durationFromStartToNow = now.getTime() - start.getTime();
     const effectiveDuration = Math.min(durationFromStartToNow, totalDuration);
 
     return Math.round((effectiveDuration / totalDuration) * 100);
 }
 
-const localeOptions = {
+const localeOptions:Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'short',
     day: 'numeric'
@@ -24,14 +24,14 @@ const localeOptions = {
 
 const locale = "en-US";
 
-function CollapsibleChallenge(props) {
+function CollapsibleChallenge(props:{challenge:ChallengeData, challengeId:number, onDelete:()=>void}) {
 
     const {challenge, challengeId, onDelete} = props;
 
     const {username} = useParams();
 
-    const startDate = new Date(challenge.start);
-    const finishDate = new Date(challenge.finish);
+    const startDate = challenge.localStartTime;
+    const finishDate = challenge.localEndTime;
     const now = new Date();
 
     const inProgress = startDate < now && now < finishDate;
@@ -46,7 +46,7 @@ function CollapsibleChallenge(props) {
             <div className={"fw-bold"}>{formattedStart} --- {formattedFinish}</div>
             {inProgress
                 ? <div className="progress my-2" role="progressbar" style={{height: "25px"}}
-                           aria-label="Basic example" aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100">
+                           aria-label="Basic example" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
                         <div className="progress-bar btn-secondary" style={{width: progress + "%"}}>{progress + "%"}</div>
                   </div>
                 : <span />
