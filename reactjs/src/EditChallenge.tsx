@@ -12,7 +12,7 @@ import ChallengeForm from "./ChallengeForm";
 import {emptyChallengeList, emptyEditableChallenge} from "./utility/Constants";
 import {
     ChallengeDetailDto, ChallengeList,
-    toLocalChallengeData, toChallengeDto, toLocalChallengeDataList
+    toLocalChallengeData, toChallengeDto, toLocalChallengeDataList, ChallengeDto, toChallengeDetailDto
 } from "./utility/Mapper";
 
 const removeChallengesWithId = (challengeList: ChallengeList<ChallengeDetailDto>, challengeId: number) => {
@@ -51,7 +51,8 @@ function EditChallenge() {
 
     useEffect(() => {
         fetch(challengeEndpoint, GET)
-            .then(response => response.json())
+            .then(response => response.json() as Promise<ChallengeDto>)
+            .then(challenge => toChallengeDetailDto(challenge, numericChallengeId))
             .then(toLocalChallengeData)
             .then(setEditableChallenge)
             .then(() => setLoaded(true))
@@ -59,7 +60,7 @@ function EditChallenge() {
 
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
-            .then((response) => response.json())
+            .then((response) => response.json() as Promise<ChallengeList<ChallengeDetailDto>>)
             .then(challengeList => removeChallengesWithId(challengeList, numericChallengeId))
             .then(toLocalChallengeDataList)
             .then(setSavedChallenges)

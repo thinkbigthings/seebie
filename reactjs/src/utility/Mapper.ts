@@ -53,6 +53,13 @@ const toLocalChallengeDataList = (challengeList: ChallengeList<ChallengeDetailDt
     };
 }
 
+const toChallengeDetailDto = (dto:ChallengeDto, id:number): ChallengeDetailDto => {
+    return {
+        id: id,
+        challenge: dto
+    }
+}
+
 const toLocalChallengeData = (challengeDetails: ChallengeDetailDto): ChallengeData => {
 
     const challenge: ChallengeDto = challengeDetails.challenge;
@@ -82,5 +89,5 @@ const toChallengeDto = (challenge: ChallengeData): ChallengeDto => {
     }
 }
 
-export {toSelectableChallenges, toChallengeDto, toLocalChallengeData, toLocalChallengeDataList}
+export {toSelectableChallenges, toChallengeDto, toLocalChallengeData, toLocalChallengeDataList, toChallengeDetailDto}
 export type {ChallengeDto, ChallengeDetailDto, ChallengeData, ChallengeList}
