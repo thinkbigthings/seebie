@@ -1,11 +1,10 @@
-// @ts-nocheck
 import React, {useState} from 'react';
 import {Button, Modal} from 'react-bootstrap';
 import Alert from "react-bootstrap/Alert";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 
-const WarningButton = (props) => {
+const WarningButton = (props:{buttonText:string, onConfirm:()=>void, children:React.ReactNode}) => {
 
     const {buttonText, onConfirm} = props;
 

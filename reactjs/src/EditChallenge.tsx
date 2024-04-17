@@ -11,10 +11,8 @@ import WarningButton from "./component/WarningButton";
 import ChallengeForm from "./ChallengeForm";
 import {emptyChallengeList, emptyEditableChallenge} from "./utility/Constants";
 import {
-    ChallengeDetailDto,
-    ChallengeList,
-    toLocalChallengeData,
-    toChallengeDto, toLocalChallengeDataList
+    ChallengeDetailDto, ChallengeList,
+    toLocalChallengeData, toChallengeDto, toLocalChallengeDataList
 } from "./utility/Mapper";
 
 const removeChallengesWithId = (challengeList: ChallengeList<ChallengeDetailDto>, challengeId: number) => {

@@ -1,10 +1,9 @@
-// @ts-nocheck
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 
 
-function SuccessModal(props) {
+function SuccessModal(props: {title: string, showing: boolean, handleClose: () => void, children: React.ReactNode}) {
 
     const {title, showing, handleClose} = props;
 
