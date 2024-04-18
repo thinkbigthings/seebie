@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {useEffect, useState} from 'react';
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -11,9 +10,9 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./utility/BasicHeaders";
 import {emptyChallengeList} from "./utility/Constants";
 import CollapsibleContent from "./component/CollapsibleContent";
-import {toSleepDto} from "./utility/Mapper.ts";
+import {ChallengeDetailDto, ChallengeList, toLocalChallengeDataList, toSleepDto} from "./utility/Mapper.ts";
 
-function CreateSleepSession(props) {
+function CreateSleepSession(props :{onSave: () => void, username:string}) {
 
     const {onSave, username} = props;
 
@@ -39,7 +38,8 @@ function CreateSleepSession(props) {
     // load current challenges
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
-            .then((response) => response.json())
+            .then((response) => response.json() as Promise<ChallengeList<ChallengeDetailDto>>)
+            .then(toLocalChallengeDataList)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, [openCount]);
@@ -73,7 +73,7 @@ function CreateSleepSession(props) {
                         ? <span />
                         : <CollapsibleContent title={"Challenge in progress"}>
                             <ul>
-                                {savedChallenges.current.map(c => c.challenge).map(c =>
+                                {savedChallenges.current.map(c =>
                                     <li key={c.name}>{c.name}</li>)
                                 }
                             </ul>

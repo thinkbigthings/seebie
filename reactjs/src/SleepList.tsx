@@ -31,8 +31,6 @@ function SleepList(props:{createdCount: number}) {
 
     const {data, pagingControls} = useApiGet<SleepDetailDto>(sleepUrl, 7, createdCount);
 
-    console.log(data)
-
     const pagingControlVisibility = data.totalElements > 0 ? "visible" : "invisible";
 
     return (
