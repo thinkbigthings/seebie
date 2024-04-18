@@ -5,12 +5,13 @@ import Button from "react-bootstrap/Button";
 import useApiPost from "./hooks/useApiPost";
 import 'react-datepicker/dist/react-datepicker.css';
 import {SleepForm} from "./SleepForm";
-import SleepDataManager from "./utility/SleepDataManager";
+import {createInitSleepData} from "./utility/SleepDataManager";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./utility/BasicHeaders";
 import {emptyChallengeList} from "./utility/Constants";
 import CollapsibleContent from "./component/CollapsibleContent";
+import {toSleepDto} from "./utility/Mapper.ts";
 
 function CreateSleepSession(props) {
 
@@ -21,7 +22,7 @@ function CreateSleepSession(props) {
     const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
     const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
 
-    const [sleepData, setSleepData] = useState(SleepDataManager.createInitSleepData());
+    const [sleepData, setSleepData] = useState(createInitSleepData());
     const [dataValid, setDataValid] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [openCount, setOpenCount] = useState(1);
@@ -30,7 +31,7 @@ function CreateSleepSession(props) {
     const post = useApiPost();
 
     const saveData = () => {
-        post(sleepUrl, SleepDataManager.format(sleepData))
+        post(sleepUrl, JSON.stringify(toSleepDto(sleepData)))
             .then(closeModal)
             .then(onSave);
     }
@@ -51,7 +52,7 @@ function CreateSleepSession(props) {
     }
 
     const closeModal = () => {
-        setSleepData(SleepDataManager.createInitSleepData());
+        setSleepData(createInitSleepData());
         setShowModal(false);
     }
 

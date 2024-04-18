@@ -5,9 +5,9 @@ import Container from "react-bootstrap/Container";
 import DatePickerButton from "./component/DatePickerButton";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import SleepDataManager from "./utility/SleepDataManager";
 import InfoModalButton from "./component/InfoModalButton";
 import Form from "react-bootstrap/Form";
+import {toIsoString} from "./utility/SleepDataManager.ts";
 
 function isNumericString(value) {
     return /^\d+$/.test(value);
@@ -24,8 +24,8 @@ function SleepForm(props) {
         let updatedSleep = {...sleepData, ...updateValues};
 
         // use the local time without the offset for display purposes
-        let localStartTime = SleepDataManager.toIsoString(updatedSleep.localStartTime).substring(0, 19);
-        let localStopTime = SleepDataManager.toIsoString(updatedSleep.localStopTime).substring(0, 19);
+        let localStartTime = toIsoString(updatedSleep.localStartTime).substring(0, 19);
+        let localStopTime = toIsoString(updatedSleep.localStopTime).substring(0, 19);
         updatedSleep.startTime = localStartTime + sleepData.startTime.substring(19);
         updatedSleep.stopTime = localStopTime + sleepData.stopTime.substring(19);
 

@@ -39,7 +39,7 @@ public class SleepService {
         // The computed value for timeAsleep isn't calculated until the transaction is closed
         // so the entity does not have the correct value here.
         var entity = sleepRepository.save(entityMapper.toUnsavedEntity(username, dto));
-        return new SleepDetails(entity.getId(), entity.getMinutesAsleep(), sleepMapper.apply(entity));
+        return sleepMapper.apply(entity);
     }
 
     @Transactional
@@ -61,7 +61,7 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public SleepData retrieve(String username, Long sleepId) {
+    public SleepDetails retrieve(String username, Long sleepId) {
 
         return sleepRepository.findBy(username, sleepId)
                 .map(sleepMapper)

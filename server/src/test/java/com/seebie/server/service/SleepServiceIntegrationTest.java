@@ -115,15 +115,15 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         var savedSleep = sleepService.saveNew(username, originalSleep);
 
         // test retrieve
-        SleepData found = sleepService.retrieve(username, savedSleep.id());
+        SleepDetails found = sleepService.retrieve(username, savedSleep.id());
 
-        assertEquals(originalSleep, found);
+        assertEquals(originalSleep, found.sleepData());
 
         // test update
         var updatedSleep = new SleepData("new notes", 10, start, end, "America/Phoenix");
         sleepService.update(username, savedSleep.id(), updatedSleep);
         found = sleepService.retrieve(username, savedSleep.id());
-        assertEquals(updatedSleep, found);
+        assertEquals(updatedSleep, found.sleepData());
     }
 
     @Test

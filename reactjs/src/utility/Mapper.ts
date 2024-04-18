@@ -1,4 +1,5 @@
-import SleepDataManager from "./SleepDataManager";
+import {toIsoLocalDate, toIsoString} from "./SleepDataManager";
+import {SleepData, SleepDetailDto, SleepDto} from "../types/sleep.types.ts";
 
 // this is the representation used internally by the front end
 // if id===0 then it is unsaved
@@ -84,10 +85,41 @@ const toChallengeDto = (challenge: ChallengeData): ChallengeDto => {
     return {
         name: challenge.name,
         description: challenge.description,
-        start: SleepDataManager.toIsoLocalDate(challenge.localStartTime),
-        finish: SleepDataManager.toIsoLocalDate(challenge.localEndTime)
+        start: toIsoLocalDate(challenge.localStartTime),
+        finish: toIsoLocalDate(challenge.localEndTime)
     }
 }
 
-export {toSelectableChallenges, toChallengeDto, toLocalChallengeData, toLocalChallengeDataList, toChallengeDetailDto}
+const toLocalSleepData = (details: SleepDetailDto): SleepData => {
+    return {
+        id: details.id,
+        notes: details.sleepData.notes,
+        minutesAwake: details.sleepData.minutesAwake,
+        minutesAsleep: details.minutesAsleep,
+        startTime: details.sleepData.startTime,
+        stopTime: details.sleepData.stopTime,
+        zoneId: details.sleepData.zoneId,
+        // keep the local time without the offset for display purposes
+        localStartTime: new Date(Date.parse(details.sleepData.startTime.substring(0, 19))),
+        localStopTime:  new Date(Date.parse(details.sleepData.stopTime.substring(0, 19))),
+    }
+}
+
+const toSleepDto = (sleep: SleepData): SleepDto => {
+
+    // use the local time without the offset for display purposes
+    let localStartTime = toIsoString(sleep.localStartTime).substring(0, 19);
+    let localStopTime = toIsoString(sleep.localStopTime).substring(0, 19);
+
+    return {
+        notes: sleep.notes,
+        minutesAwake: sleep.minutesAwake,
+        startTime: localStartTime + sleep.startTime.substring(19),
+        stopTime: localStopTime + sleep.stopTime.substring(19),
+        zoneId: sleep.zoneId
+    }
+}
+
+export {toSelectableChallenges, toChallengeDto, toLocalChallengeData, toLocalChallengeDataList, toChallengeDetailDto
+    , toLocalSleepData, toSleepDto}
 export type {ChallengeDto, ChallengeDetailDto, ChallengeData, ChallengeList}

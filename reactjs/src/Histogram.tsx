@@ -7,7 +7,6 @@ import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Form from 'react-bootstrap/Form';
-import SleepDataManager from "./utility/SleepDataManager";
 import {NavHeader} from "./App";
 import {fetchPost, GET} from "./utility/BasicHeaders";
 import Button from "react-bootstrap/Button";
@@ -21,6 +20,7 @@ import {
     toSelectableChallenges
 } from "./utility/Mapper";
 import {createRange, HISTOGRAM_BIN_SIZE_OPTIONS, HISTOGRAM_COLORS, HISTOGRAM_OPTIONS} from "./utility/Constants";
+import {toIsoString} from "./utility/SleepDataManager.ts";
 
 Chart.register(...registerables)
 
@@ -45,8 +45,8 @@ const createDataset = (displayInfo: PageSettingFilters, data: number[]) => {
 const pageSettingsToRequest = (pageSettings: PageSettings) => {
 
     const newDataFilters = pageSettings.filters.map( (filter) => { return {
-            from: SleepDataManager.toIsoString(filter.challenge.exactStart),
-            to: SleepDataManager.toIsoString(filter.challenge.exactFinish)
+            from: toIsoString(filter.challenge.exactStart),
+            to: toIsoString(filter.challenge.exactFinish)
         }}
     );
 
