@@ -1,15 +1,11 @@
-// @ts-nocheck
 import React, {useState} from 'react';
 
 import { Link } from 'react-router-dom';
-
 import ButtonGroup  from 'react-bootstrap/ButtonGroup';
 import Button       from "react-bootstrap/Button";
 import Container    from 'react-bootstrap/Container';
-
 import {useApiGet, toPagingLabel} from './hooks/useApiGet.js';
 import CreateUser from "./CreateUser";
-
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faCaretLeft,
@@ -21,12 +17,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Table from "react-bootstrap/Table";
 import {NavHeader} from "./App";
+import {UserSummary} from "./types/user.types.ts";
 
 
 function UserList() {
 
     const [reloadCount, setReloadCount] = useState(0);
-    const [data, pagingControls] = useApiGet('/api/user', 10, reloadCount);
+    const {data, pagingControls} = useApiGet<UserSummary>('/api/user', 10, reloadCount);
 
     const visibility = data.totalElements > 0 ? "visible" : "invisible";
 
@@ -50,7 +47,6 @@ function UserList() {
                     {data.content.map(user =>
                         <tr key={user.username}>
                             <td>
-
                                 <Link to={ "/users/" + user.username + "/edit" } >
                                     {user.displayName}
                                 </Link>

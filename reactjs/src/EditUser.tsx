@@ -14,7 +14,8 @@ import {faKey} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./utility/BasicHeaders";
 import {NavHeader} from "./App";
 import {useNavigate, useParams} from "react-router-dom";
-import {blankUser, PersonalInfo} from "./utility/CurrentUserContext.ts";
+import {blankUser} from "./utility/CurrentUserContext.ts";
+import {PersonalInfo} from "./types/user.types.ts";
 
 
 function EditUser() {

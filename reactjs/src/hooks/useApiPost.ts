@@ -1,6 +1,7 @@
 import {basicHeader} from "../utility/BasicHeaders";
 import useHttpError from "./useHttpError";
 import {ChallengeDto} from "../utility/Mapper.ts";
+import {RegistrationRequest} from "../types/user.types.ts";
 
 
 const useApiPost = () => {
@@ -8,7 +9,7 @@ const useApiPost = () => {
     const requestHeaders = basicHeader();
     const {throwOnHttpError} = useHttpError();
 
-    function post(url: string, body: Record<string, unknown> | string | ChallengeDto) {
+    function post(url: string, body: Record<string, unknown> | string | ChallengeDto | RegistrationRequest) {
 
         const serializedData = typeof body === "string" ? body : JSON.stringify(body);
 
