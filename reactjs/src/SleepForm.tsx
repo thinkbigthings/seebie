@@ -1,5 +1,4 @@
-// @ts-nocheck
-import React from 'react';
+import React, {useState} from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import Container from "react-bootstrap/Container";
 import DatePickerButton from "./component/DatePickerButton";
@@ -8,30 +7,62 @@ import Row from "react-bootstrap/Row";
 import InfoModalButton from "./component/InfoModalButton";
 import Form from "react-bootstrap/Form";
 import {toIsoString} from "./utility/SleepDataManager.ts";
+import {SleepData} from "./types/sleep.types.ts";
 
-function isNumericString(value) {
+function isNumericString(value:string) {
     return /^\d+$/.test(value);
 }
 
-function SleepForm(props) {
+interface SleepFormFields {
+    notes: string,
+    minutesAwake: string,
+    localStartTime: Date,
+    localStopTime: Date
+}
+
+const toForm = (sleep:SleepData):SleepFormFields => {
+    return {
+        notes: sleep.notes,
+        minutesAwake: sleep.minutesAwake.toString(),
+        localStartTime: sleep.localStartTime,
+        localStopTime: sleep.localStopTime
+    }
+}
+
+function SleepForm(props:{setSleepData: (sleep:SleepData) => void, sleepData:SleepData, setDataValid: (valid:boolean) => void} ) {
 
     const {setSleepData, sleepData, setDataValid} = props;
 
+    const [formFields, setFormFields] = useState(toForm(sleepData));
+
     const [minutesAwakeValidity, setMinutesAwakeValidity] = React.useState(true);
 
-    const updateSleepSession = (updateValues) => {
+    const updateSleepSession = (updateValues: {notes:string} | {minutesAwake:string} | {localStartTime:Date} | {localStopTime:Date} ) => {
 
-        let updatedSleep = {...sleepData, ...updateValues};
+        let updatedFormFields: SleepFormFields = {...formFields, ...updateValues};
 
         // use the local time without the offset for display purposes
-        let localStartTime = toIsoString(updatedSleep.localStartTime).substring(0, 19);
-        let localStopTime = toIsoString(updatedSleep.localStopTime).substring(0, 19);
-        updatedSleep.startTime = localStartTime + sleepData.startTime.substring(19);
-        updatedSleep.stopTime = localStopTime + sleepData.stopTime.substring(19);
+        let localStartTime = toIsoString(updatedFormFields.localStartTime).substring(0, 19);
+        let localStopTime = toIsoString(updatedFormFields.localStopTime).substring(0, 19);
+        let updatedLocalStartTime = localStartTime + sleepData.startTime.substring(19);
+        let updatedLocalStopTime = localStopTime + sleepData.stopTime.substring(19);
 
-        setMinutesAwakeValidity(isNumericString(updatedSleep.minutesAwake));
-        setDataValid(isNumericString(updatedSleep.minutesAwake));
-        setSleepData(updatedSleep);
+        let formIsValid = isNumericString(updatedFormFields.minutesAwake);
+
+        setMinutesAwakeValidity(formIsValid); // shows the validation message
+        setDataValid(formIsValid); // can enable or disable containing component's save button
+        if(formIsValid) {
+            setSleepData({
+                ...sleepData,
+                notes: updatedFormFields.notes,
+                minutesAwake: parseInt(updatedFormFields.minutesAwake),
+                localStartTime: updatedFormFields.localStartTime,
+                localStopTime: updatedFormFields.localStopTime,
+                startTime: updatedLocalStartTime,
+                stopTime: updatedLocalStopTime
+            });
+        }
+        setFormFields(updatedFormFields);
     }
 
     return (
@@ -41,8 +72,8 @@ function SleepForm(props) {
                     <label htmlFor="dateStart" >Went to Bed</label>
                 </Col>
                 <Col md={6} className={"col-8 "}>
-                    <DatePickerButton selected={sleepData.localStartTime}
-                                      onChange={ date => updateSleepSession({localStartTime : date })} />
+                    <DatePickerButton selected={formFields.localStartTime}
+                                      onChange={ (date:Date) => updateSleepSession({localStartTime : date })} />
                 </Col>
             </Row>
             <Row className={"pb-2"}>
@@ -50,8 +81,8 @@ function SleepForm(props) {
                     <label htmlFor="dateEnd" >Got Up</label>
                 </Col>
                 <Col md={6} className={"col-8 "}>
-                    <DatePickerButton selected={sleepData.localStopTime}
-                                  onChange={ date => updateSleepSession({localStopTime : date })} />
+                    <DatePickerButton selected={formFields.localStopTime}
+                                  onChange={ (date:Date) => updateSleepSession({localStopTime : date })} />
                 </Col>
             </Row>
             <Row>
@@ -62,7 +93,7 @@ function SleepForm(props) {
                     <Form.Control
                         type="text"
                         placeholder="Minutes Awake"
-                        value={sleepData.minutesAwake}
+                        value={formFields.minutesAwake}
                         name="minutesAwakeField"
                         onChange={e => updateSleepSession({minutesAwake: e.target.value})}
                         isValid={minutesAwakeValidity}
@@ -81,8 +112,8 @@ function SleepForm(props) {
             </Row>
             <Row className={"pb-2"}>
                 <Col md={6}>
-                    <textarea rows="8" className="form-control" id="notes" placeholder="Notes"
-                              value={sleepData.notes}
+                    <textarea rows={8} className="form-control" id="notes" placeholder="Notes"
+                              value={formFields.notes}
                               onChange={e => updateSleepSession({notes : e.target.value })} />
                 </Col>
             </Row>

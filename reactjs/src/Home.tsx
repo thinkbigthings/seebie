@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import CollapsibleContent from "./component/CollapsibleContent";
 import Container from "react-bootstrap/Container";
