@@ -1,7 +1,7 @@
-import {blankUser} from "./utility/CurrentUserContext.ts";
+import {blankUser} from "./utility/CurrentUserContext";
 import React, {useState} from "react";
 import {CurrentUserContext} from "./utility/CurrentUserContext";
-import {User} from "./types/user.types.ts";
+import {User} from "./types/user.types";
 
 const CurrentUserProvider = (props: {children:React.ReactNode}) => {
 

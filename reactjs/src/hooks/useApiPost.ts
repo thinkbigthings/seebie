@@ -1,7 +1,7 @@
 import {basicHeader} from "../utility/BasicHeaders";
 import useHttpError from "./useHttpError";
-import {ChallengeDto} from "../utility/Mapper.ts";
-import {RegistrationRequest} from "../types/user.types.ts";
+import {ChallengeDto} from "../utility/Mapper";
+import {RegistrationRequest} from "../types/user.types";
 
 
 const useApiPost = () => {

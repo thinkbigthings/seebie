@@ -1,4 +1,4 @@
-import {ChallengeDetailDto, ChallengeData, ChallengeList} from "./Mapper.ts";
+import {ChallengeDetailDto, ChallengeData, ChallengeList} from "./Mapper";
 
 const VERSION_HEADER = 'X-Version';
 

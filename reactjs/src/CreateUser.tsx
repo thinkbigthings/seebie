@@ -6,7 +6,7 @@ import Button from "react-bootstrap/Button";
 import useApiPost from "./hooks/useApiPost";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import {RegistrationRequest, UserFormFields} from "./types/user.types.ts";
+import {RegistrationRequest, UserFormFields} from "./types/user.types";
 
 
 const blankData: UserFormFields = {

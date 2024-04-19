@@ -3,7 +3,7 @@ import React, {useReducer} from 'react';
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import useCurrentUser from "./hooks/useCurrentUser";
-import {PersonalInfo, User} from "./types/user.types.ts";
+import {PersonalInfo, User} from "./types/user.types";
 
 enum ActionType {
     LOAD_USER,

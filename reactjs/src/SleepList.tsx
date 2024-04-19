@@ -8,8 +8,8 @@ import {toPagingLabel, useApiGet, PageData} from './hooks/useApiGet.js';
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import {NavHeader} from "./App";
-import {SleepDetailDto, SleepDto} from "./types/sleep.types.ts";
-import {toLocalSleepData} from "./utility/Mapper.ts";
+import {SleepDetailDto, SleepDto} from "./types/sleep.types";
+import {toLocalSleepData} from "./utility/Mapper";
 
 const minuteToHrMin = (minutes: number) => {
     const hr = Math.floor(minutes / 60);

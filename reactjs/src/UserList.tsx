@@ -17,7 +17,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Table from "react-bootstrap/Table";
 import {NavHeader} from "./App";
-import {UserSummary} from "./types/user.types.ts";
+import {UserSummary} from "./types/user.types";
 
 
 function UserList() {

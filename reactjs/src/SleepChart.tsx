@@ -18,7 +18,7 @@ import {NavHeader} from "./App";
 import DateRangePicker from "./component/DateRangePicker";
 import {useParams} from "react-router-dom";
 import {createRange} from "./utility/Constants";
-import {toIsoString} from "./utility/SleepDataManager.ts";
+import {toIsoString} from "./utility/SleepDataManager";
 
 
 ChartJS.register(

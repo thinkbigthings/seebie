@@ -6,8 +6,8 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import InfoModalButton from "./component/InfoModalButton";
 import Form from "react-bootstrap/Form";
-import {toIsoString} from "./utility/SleepDataManager.ts";
-import {SleepData} from "./types/sleep.types.ts";
+import {toIsoString} from "./utility/SleepDataManager";
+import {SleepData} from "./types/sleep.types";
 
 function isNumericString(value:string) {
     return /^\d+$/.test(value);

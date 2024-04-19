@@ -20,7 +20,7 @@ import {
     toSelectableChallenges
 } from "./utility/Mapper";
 import {createRange, HISTOGRAM_BIN_SIZE_OPTIONS, HISTOGRAM_COLORS, HISTOGRAM_OPTIONS} from "./utility/Constants";
-import {toIsoString} from "./utility/SleepDataManager.ts";
+import {toIsoString} from "./utility/SleepDataManager";
 
 Chart.register(...registerables)
 

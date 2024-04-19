@@ -1,6 +1,6 @@
 import {useContext} from 'react';
 import {CurrentUserContext, User} from "../utility/CurrentUserContext";
-import {blankUser} from "../utility/CurrentUserContext.ts";
+import {blankUser} from "../utility/CurrentUserContext";
 
 const useCurrentUser = () => {
 

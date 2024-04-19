@@ -1,5 +1,5 @@
 import {toIsoLocalDate, toIsoString} from "./SleepDataManager";
-import {SleepData, SleepDetailDto, SleepDto} from "../types/sleep.types.ts";
+import {SleepData, SleepDetailDto, SleepDto} from "../types/sleep.types";
 
 // this is the representation used internally by the front end
 // if id===0 then it is unsaved

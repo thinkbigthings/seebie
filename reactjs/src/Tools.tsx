@@ -9,7 +9,7 @@ import useHttpError from "./hooks/useHttpError";
 import {useApiGet} from "./hooks/useApiGet";
 import {useParams} from "react-router-dom";
 import SuccessModal from "./component/SuccessModal";
-import {SleepDetailDto} from "./types/sleep.types.ts";
+import {SleepDetailDto} from "./types/sleep.types";
 
 interface UploadResponse {
     numImported: number,
