@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
@@ -7,7 +6,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 
-function DateRangePicker(props) {
+function DateRangePicker(props:{ selectedStart:Date, onChangeStart:(date:Date)=>void, selectedEnd:Date, onChangeEnd:(date:Date)=>void }) {
 
     const {selectedStart, onChangeStart, selectedEnd, onChangeEnd} = props;
 

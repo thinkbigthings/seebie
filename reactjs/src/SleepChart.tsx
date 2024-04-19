@@ -1,9 +1,8 @@
-// @ts-nocheck
 import React, {useEffect, useState} from 'react';
 
 import {
     CategoryScale,
-    Chart as ChartJS,
+    Chart as ChartJS, type ChartOptions,
     Filler,
     Legend,
     LinearScale,
@@ -14,12 +13,12 @@ import {
 } from "chart.js";
 import {Line} from 'react-chartjs-2';
 import Container from "react-bootstrap/Container";
-import SleepDataManager from "./utility/SleepDataManager";
 import {GET} from "./utility/BasicHeaders";
 import {NavHeader} from "./App";
 import DateRangePicker from "./component/DateRangePicker";
 import {useParams} from "react-router-dom";
 import {createRange} from "./utility/Constants";
+import {toIsoString} from "./utility/SleepDataManager.ts";
 
 
 ChartJS.register(
@@ -33,7 +32,7 @@ ChartJS.register(
     Legend
 );
 
-const chartOptions ={
+const chartOptions: ChartOptions<'line'> = {
     scales: {
         y: {
             beginAtZero: true,
@@ -65,22 +64,26 @@ const initialChartData = {
     }]
 };
 
-const isDateRangeValid = (d1, d2)  => {
+const isDateRangeValid = (d1:Date, d2:Date)  => {
     let j1 = d1.toJSON().slice(0, 10);
     let j2 = d2.toJSON().slice(0, 10);
     return j1 < j2;
 }
 
-function SleepChart(props) {
+function SleepChart(props:{createdCount:number}) {
 
     const {username} = useParams();
+
+    if (username === undefined) {
+        throw new Error("Username is required in the url");
+    }
 
     const {createdCount} = props;
 
     let [range, setRange] = useState(createRange(30));
     let [chartData, setChartData] = useState(initialChartData);
 
-    function updateSearchRange(updateValues) {
+    function updateSearchRange(updateValues:{from:Date} | {to:Date}) {
         let updatedRange = {...range, ...updateValues};
         if( isDateRangeValid(updatedRange.from, updatedRange.to) ) {
             setRange(updatedRange);
@@ -88,8 +91,8 @@ function SleepChart(props) {
     }
 
     let requestParameters = '?'
-        + 'from='+encodeURIComponent(SleepDataManager.toIsoString(range.from)) + '&'
-        + 'to='+encodeURIComponent(SleepDataManager.toIsoString(range.to));
+        + 'from='+encodeURIComponent(toIsoString(range.from)) + '&'
+        + 'to='+encodeURIComponent(toIsoString(range.to));
 
     const sleepEndpoint = '/api/user/'+username+'/sleep/chart' + requestParameters;
 

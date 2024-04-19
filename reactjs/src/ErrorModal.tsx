@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 
 import Button from "react-bootstrap/Button";
@@ -9,7 +8,7 @@ import useError from "./hooks/useError";
 import {RecoveryActions} from "./utility/ErrorContext";
 import useCurrentUser from "./hooks/useCurrentUser";
 
-function ErrorModal(props) {
+function ErrorModal() {
 
     const { error, clearError } = useError();
     const {onLogout} = useCurrentUser();
@@ -18,16 +17,16 @@ function ErrorModal(props) {
         onLogout();
         clearError();
         window.location.replace('/#/login');
-        window.location.reload(true)
+        window.location.reload()
     }
 
-    const displayLogin = error.recoveryAction === RecoveryActions.LOGIN;
-    const displayReload = error.recoveryAction === RecoveryActions.RELOAD;
+    const displayLogin = error.errorStatus.recoveryAction === RecoveryActions.LOGIN;
+    const displayReload = error.errorStatus.recoveryAction === RecoveryActions.RELOAD;
     const displayLoginStyle = displayLogin ? '' : 'd-none';
     const displayReloadStyle = displayReload ? '' : 'd-none';
 
     return (
-        <Modal show={error.hasError} onHide={clearError} backdrop="static" centered>
+        <Modal show={error.errorStatus.hasError} onHide={clearError} backdrop="static" centered>
             <Modal.Header closeButton>
                 <Modal.Title>
                     Warning
@@ -35,7 +34,7 @@ function ErrorModal(props) {
             </Modal.Header>
             <Modal.Body>
                 <Alert variant='warning'>
-                    {error.message}
+                    {error.errorStatus.message}
                 </Alert></Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={clearError}>
@@ -44,7 +43,7 @@ function ErrorModal(props) {
                 <Button className={displayLoginStyle} variant="primary" onClick={ refreshLogin }>
                     Login
                 </Button>
-                <Button className={displayReloadStyle} variant="primary" onClick={ () => window.location.reload(true)}>
+                <Button className={displayReloadStyle} variant="primary" onClick={ () => window.location.reload()}>
                     Reload
                 </Button>
             </Modal.Footer>

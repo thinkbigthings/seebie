@@ -183,7 +183,7 @@ function NavItem(props: {name:string, href:string, icon:IconDefinition}) {
     );
 }
 
-function NavHeader(props: {title:string, children:React.ReactNode}) {
+function NavHeader(props: {title:string, children?:React.ReactNode}) {
 
     const {title} = props;
 

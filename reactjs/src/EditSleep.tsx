@@ -1,16 +1,17 @@
-// @ts-nocheck
 import React, {useEffect, useState} from 'react';
 
 import Container from "react-bootstrap/Container";
 import {SleepForm} from "./SleepForm";
 import useApiPut from "./hooks/useApiPut";
-import SleepDataManager from "./utility/SleepDataManager";
+import {createInitSleepData} from "./utility/SleepDataManager";
 import {GET} from "./utility/BasicHeaders";
 import Button from "react-bootstrap/Button";
 import useApiDelete from "./hooks/useApiDelete";
 import {NavHeader} from "./App";
 import {useNavigate, useParams} from "react-router-dom";
 import WarningButton from "./component/WarningButton";
+import {toLocalSleepData, toSleepDto} from "./utility/Mapper.ts";
+import {SleepDetailDto} from "./types/sleep.types.ts";
 
 function EditSleep() {
 
@@ -21,7 +22,7 @@ function EditSleep() {
     const sleepEndpoint = `/api/user/${username}/sleep/${sleepId}`;
 
     const [loaded, setLoaded] = useState(false);
-    const [sleepData, setSleepData] = useState(SleepDataManager.createInitSleepData());
+    const [sleepData, setSleepData] = useState(createInitSleepData());
     const [dataValid, setDataValid] = useState(true);
 
     const put = useApiPut();
@@ -29,14 +30,14 @@ function EditSleep() {
 
     useEffect(() => {
         fetch(sleepEndpoint, GET)
-            .then(response => response.json())
-            .then(SleepDataManager.parse)
+            .then(response => response.json() as Promise<SleepDetailDto>)
+            .then(toLocalSleepData)
             .then(setSleepData)
             .then(() => setLoaded(true))
     }, [setSleepData, sleepEndpoint]);
 
     const onSave = () => {
-        put(sleepEndpoint, sleepData).then(() => navigate(-1));
+        put(sleepEndpoint, toSleepDto(sleepData)).then(() => navigate(-1));
     }
 
     const deleteById = () => {

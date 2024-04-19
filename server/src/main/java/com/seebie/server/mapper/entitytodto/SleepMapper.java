@@ -1,18 +1,15 @@
 package com.seebie.server.mapper.entitytodto;
 
-import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.entity.SleepSession;
 
 import java.util.function.Function;
 
-public class SleepMapper implements Function<SleepSession, SleepData> {
+public class SleepMapper implements Function<SleepSession, SleepDetails> {
 
     @Override
-    public SleepData apply(SleepSession entity) {
-
-        var dto = new SleepData(entity.getNotes(), entity.getMinutesAwake(),
+    public SleepDetails apply(SleepSession entity) {
+        return new SleepDetails(entity.getId(), entity.getMinutesAsleep(), entity.getNotes(), entity.getMinutesAwake(),
                 entity.getStartTime(), entity.getStopTime(), entity.getZoneId().getId());
-
-        return dto;
     }
 }

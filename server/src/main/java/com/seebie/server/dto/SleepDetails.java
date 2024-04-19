@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.ZonedDateTime;
-import java.util.HashSet;
 
 public record SleepDetails(@NotNull Long id, @PositiveOrZero int minutesAsleep, SleepData sleepData) {
 

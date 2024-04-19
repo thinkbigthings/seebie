@@ -1,18 +1,18 @@
-// @ts-nocheck
 import React, {useEffect, useState} from 'react';
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import useApiPost from "./hooks/useApiPost";
 import 'react-datepicker/dist/react-datepicker.css';
 import {SleepForm} from "./SleepForm";
-import SleepDataManager from "./utility/SleepDataManager";
+import {createInitSleepData} from "./utility/SleepDataManager";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./utility/BasicHeaders";
 import {emptyChallengeList} from "./utility/Constants";
 import CollapsibleContent from "./component/CollapsibleContent";
+import {ChallengeDetailDto, ChallengeList, toLocalChallengeDataList, toSleepDto} from "./utility/Mapper.ts";
 
-function CreateSleepSession(props) {
+function CreateSleepSession(props :{onSave: () => void, username:string}) {
 
     const {onSave, username} = props;
 
@@ -21,7 +21,7 @@ function CreateSleepSession(props) {
     const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
     const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
 
-    const [sleepData, setSleepData] = useState(SleepDataManager.createInitSleepData());
+    const [sleepData, setSleepData] = useState(createInitSleepData());
     const [dataValid, setDataValid] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [openCount, setOpenCount] = useState(1);
@@ -30,7 +30,7 @@ function CreateSleepSession(props) {
     const post = useApiPost();
 
     const saveData = () => {
-        post(sleepUrl, SleepDataManager.format(sleepData))
+        post(sleepUrl, JSON.stringify(toSleepDto(sleepData)))
             .then(closeModal)
             .then(onSave);
     }
@@ -38,7 +38,8 @@ function CreateSleepSession(props) {
     // load current challenges
     useEffect(() => {
         fetch(challengeEndpointTz, GET)
-            .then((response) => response.json())
+            .then((response) => response.json() as Promise<ChallengeList<ChallengeDetailDto>>)
+            .then(toLocalChallengeDataList)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, [openCount]);
@@ -51,7 +52,7 @@ function CreateSleepSession(props) {
     }
 
     const closeModal = () => {
-        setSleepData(SleepDataManager.createInitSleepData());
+        setSleepData(createInitSleepData());
         setShowModal(false);
     }
 
@@ -72,7 +73,7 @@ function CreateSleepSession(props) {
                         ? <span />
                         : <CollapsibleContent title={"Challenge in progress"}>
                             <ul>
-                                {savedChallenges.current.map(c => c.challenge).map(c =>
+                                {savedChallenges.current.map(c =>
                                     <li key={c.name}>{c.name}</li>)
                                 }
                             </ul>

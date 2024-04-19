@@ -1,12 +1,13 @@
-// @ts-nocheck
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import {faQuestion} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-const InfoModalButton = ({ titleText, modalText }) => {
+const InfoModalButton = (props:{ titleText:string, modalText:string }) => {
 
-  const [show, setShow] = useState(false);
+    const {titleText, modalText} = props;
+
+    const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {useState} from 'react';
 
 import Alert from "react-bootstrap/Alert";
@@ -6,9 +5,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
 
-// expected props: show, onHide, onConfirm
-// https://react-bootstrap.github.io/components/modal/
-function ResetPasswordModal(props) {
+function ResetPasswordModal(props:{show:boolean, onHide:()=>void, onConfirm:(password:string) => void}) {
 
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,7 +17,7 @@ function ResetPasswordModal(props) {
     }
 
     // call the callback function if the enter key was pressed in the event
-    function callOnEnter(event, callback) {
+    function callOnEnter(event:React.KeyboardEvent<HTMLInputElement>, callback:()=>void) {
         if(event.key === 'Enter') {
             callback();
         }
@@ -59,7 +56,7 @@ function ResetPasswordModal(props) {
                     <input type="password"  className="form-control" id="confirmPassword" placeholder="Confirm Password"
                            value={confirmPassword}
                            onChange={e => setConfirmPassword(e.target.value)}
-                           onKeyPress={e => callOnEnter(e, onConfirm) }/>
+                           onKeyUp={e => callOnEnter(e, onConfirm)} />
                 </div>
             </Modal.Body>
             <Modal.Footer>
