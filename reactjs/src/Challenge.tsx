@@ -8,7 +8,8 @@ import { emptyChallengeList} from "./utility/Constants";
 import CollapsibleChallenge from "./component/CollapsibleChallenge";
 import useApiDelete from "./hooks/useApiDelete";
 import CreateChallenge from "./CreateChallenge";
-import {ChallengeDetailDto, ChallengeList, toLocalChallengeDataList} from "./utility/Mapper";
+import {toLocalChallengeDataList} from "./utility/Mapper";
+import {ChallengeDetailDto, ChallengeList} from "./types/challenge.types";
 
 
 function Challenge() {

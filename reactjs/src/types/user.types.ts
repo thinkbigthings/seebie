@@ -31,4 +31,14 @@ interface UserSummary {
     displayName: string
 }
 
-export type { UserFormFields, RegistrationRequest, User, PersonalInfo, UserSummary };
+enum ActionType {
+    LOAD_USER,
+    UPDATE_USER
+}
+
+type Action =
+    | { type: ActionType.LOAD_USER; payload: User }
+    | { type: ActionType.UPDATE_USER; payload: Partial<PersonalInfo> };
+
+export { ActionType }
+export type { UserFormFields, RegistrationRequest, User, PersonalInfo, UserSummary, Action };

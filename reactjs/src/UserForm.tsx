@@ -3,16 +3,7 @@ import React, {useReducer} from 'react';
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import useCurrentUser from "./hooks/useCurrentUser";
-import {PersonalInfo, User} from "./types/user.types";
-
-enum ActionType {
-    LOAD_USER,
-    UPDATE_USER
-}
-
-type Action =
-    | { type: ActionType.LOAD_USER; payload: User }
-    | { type: ActionType.UPDATE_USER; payload: Partial<PersonalInfo> };
+import {Action, ActionType, PersonalInfo, User} from "./types/user.types";
 
 function UserForm(props:{onCancel: () => void, onSave: (personalInfo: PersonalInfo) => void, initData: User}) {
 

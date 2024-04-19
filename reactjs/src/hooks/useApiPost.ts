@@ -1,6 +1,6 @@
 import {basicHeader} from "../utility/BasicHeaders";
 import useHttpError from "./useHttpError";
-import {ChallengeDto} from "../utility/Mapper";
+import {ChallengeDto} from "../types/challenge.types";
 import {RegistrationRequest} from "../types/user.types";
 
 

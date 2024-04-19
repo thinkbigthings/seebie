@@ -10,7 +10,8 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./utility/BasicHeaders";
 import {emptyChallengeList} from "./utility/Constants";
 import CollapsibleContent from "./component/CollapsibleContent";
-import {ChallengeDetailDto, ChallengeList, toLocalChallengeDataList, toSleepDto} from "./utility/Mapper";
+import {toLocalChallengeDataList, toSleepDto} from "./utility/Mapper";
+import {ChallengeDetailDto, ChallengeList} from "./types/challenge.types";
 
 function CreateSleepSession(props :{onSave: () => void, username:string}) {
 

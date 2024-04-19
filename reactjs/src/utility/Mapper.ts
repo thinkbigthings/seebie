@@ -1,37 +1,6 @@
 import {toIsoLocalDate, toIsoString} from "./SleepDataManager";
 import {SleepData, SleepDetailDto, SleepDto} from "../types/sleep.types";
-
-// this is the representation used internally by the front end
-// if id===0 then it is unsaved
-interface ChallengeData {
-    id: number,
-    name: string,
-    description: string,
-    localStartTime: Date,
-    localEndTime: Date
-    exactStart: Date,
-    exactFinish: Date
-}
-
-// this is what we send back and forth with the server
-interface ChallengeDto {
-    name: string,
-    description: string,
-    start: string,
-    finish: string
-}
-
-// this is what we send back and forth with the server
-interface ChallengeDetailDto {
-    id: number,
-    challenge: ChallengeDto
-}
-
-interface ChallengeList<T> {
-    current: T[];
-    upcoming: T[];
-    completed: T[];
-}
+import {ChallengeDto, ChallengeDetailDto, ChallengeList, ChallengeData} from "../types/challenge.types";
 
 const toSelectableChallenges = (challengeList: ChallengeList<ChallengeData>, defaultChallenge: ChallengeData) => {
 
@@ -39,14 +8,14 @@ const toSelectableChallenges = (challengeList: ChallengeList<ChallengeData>, def
 
     // if user already has a challenge with the same name as the default challenge,
     // keep the user's challenge and don't provide the default challenge
-    if ( ! selectableChallenges.some(challenge => challenge.name === defaultChallenge.name)) {
+    if (!selectableChallenges.some(challenge => challenge.name === defaultChallenge.name)) {
         selectableChallenges.push(defaultChallenge);
     }
 
     return selectableChallenges;
 }
 
-const toLocalChallengeDataList = (challengeList: ChallengeList<ChallengeDetailDto>) : ChallengeList<ChallengeData> => {
+const toLocalChallengeDataList = (challengeList: ChallengeList<ChallengeDetailDto>): ChallengeList<ChallengeData> => {
     return {
         current: challengeList.current.map(toLocalChallengeData),
         upcoming: challengeList.upcoming.map(toLocalChallengeData),
@@ -54,7 +23,7 @@ const toLocalChallengeDataList = (challengeList: ChallengeList<ChallengeDetailDt
     };
 }
 
-const toChallengeDetailDto = (dto:ChallengeDto, id:number): ChallengeDetailDto => {
+const toChallengeDetailDto = (dto: ChallengeDto, id: number): ChallengeDetailDto => {
     return {
         id: id,
         challenge: dto
@@ -101,7 +70,7 @@ const toLocalSleepData = (details: SleepDetailDto): SleepData => {
         zoneId: details.sleepData.zoneId,
         // keep the local time without the offset for display purposes
         localStartTime: new Date(Date.parse(details.sleepData.startTime.substring(0, 19))),
-        localStopTime:  new Date(Date.parse(details.sleepData.stopTime.substring(0, 19))),
+        localStopTime: new Date(Date.parse(details.sleepData.stopTime.substring(0, 19))),
     }
 }
 
@@ -120,6 +89,7 @@ const toSleepDto = (sleep: SleepData): SleepDto => {
     }
 }
 
-export {toSelectableChallenges, toChallengeDto, toLocalChallengeData, toLocalChallengeDataList, toChallengeDetailDto
-    , toLocalSleepData, toSleepDto}
-export type {ChallengeDto, ChallengeDetailDto, ChallengeData, ChallengeList}
+export {
+    toSelectableChallenges, toChallengeDto, toLocalChallengeData, toLocalChallengeDataList, toChallengeDetailDto,
+    toLocalSleepData, toSleepDto
+}

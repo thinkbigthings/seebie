@@ -10,10 +10,8 @@ import {useNavigate, useParams} from "react-router-dom";
 import WarningButton from "./component/WarningButton";
 import ChallengeForm from "./ChallengeForm";
 import {emptyChallengeList, emptyEditableChallenge} from "./utility/Constants";
-import {
-    ChallengeDetailDto, ChallengeList,
-    toLocalChallengeData, toChallengeDto, toLocalChallengeDataList, ChallengeDto, toChallengeDetailDto
-} from "./utility/Mapper";
+import { toLocalChallengeData, toChallengeDto, toLocalChallengeDataList, toChallengeDetailDto} from "./utility/Mapper";
+import {ChallengeDetailDto, ChallengeDto, ChallengeList} from "./types/challenge.types";
 
 const removeChallengesWithId = (challengeList: ChallengeList<ChallengeDetailDto>, challengeId: number) => {
     return {
