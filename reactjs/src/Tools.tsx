@@ -31,8 +31,7 @@ function Tools() {
 
     const downloadUrl = csvSelected ? downloadCsv : downloadJson;
 
-//    const {data, pagingControls} = useApiGet<SleepDetailDto>(sleepUrl, 1, 0);
-    const [data] = useApiGet(sleepUrl, 1, 0);
+    const {data, pagingControls} = useApiGet<SleepDetailDto>(sleepUrl, 1, 0);
     const numSleepRecords = data.totalElements;
 
     const onFilePicked = (event) => {
