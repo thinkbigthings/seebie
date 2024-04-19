@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
@@ -10,6 +9,14 @@ import useHttpError from "./hooks/useHttpError";
 import {useApiGet} from "./hooks/useApiGet";
 import {useParams} from "react-router-dom";
 import SuccessModal from "./component/SuccessModal";
+import {SleepDetailDto} from "./types/sleep.types.ts";
+
+interface UploadResponse {
+    numImported: number,
+    username: string
+}
+
+const initialSelectedFile:File|null = null;
 
 function Tools() {
 
@@ -19,7 +26,7 @@ function Tools() {
     const [validateUploadFile, setValidateUploadFile] = useState(false);
     const [csvSelected, setCsvSelected] = React.useState(true);
     const [jsonSelected, setJsonSelected] = React.useState(false);
-    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(initialSelectedFile);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [uploadSuccessInfo, setUploadSuccessInfo] = useState({ numImported: 0, username: username });
 
@@ -34,16 +41,22 @@ function Tools() {
     const {data, pagingControls} = useApiGet<SleepDetailDto>(sleepUrl, 1, 0);
     const numSleepRecords = data.totalElements;
 
-    const onFilePicked = (event) => {
-        setSelectedFile(event.target.files[0]);
-        setValidateUploadFile(true); // don't start validating it until the user starts interacting with it
+    const onFilePicked = (event:React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+            setSelectedFile(event.target.files[0]);
+            setValidateUploadFile(true); // don't start validating it until the user starts interacting with it
+        } else {
+            // Optionally handle the case where no file is selected (e.g., reset state)
+            console.log("No file selected");
+            setSelectedFile(null);
+            setValidateUploadFile(false);
+        }
     };
 
-    const isUploadCsv = selectedFile && selectedFile.type === "text/csv";
-    const isUploadJson = selectedFile && selectedFile.type === "application/json";
+    const isUploadCsv = selectedFile ? selectedFile.type === "text/csv" : false;
+    const isUploadJson = selectedFile ? selectedFile.type === "application/json" : false;
     const uploadInvalid = validateUploadFile && (
         !(isUploadCsv || isUploadJson)
-        || selectedFile === undefined
         || selectedFile === null
     );
 
@@ -52,13 +65,18 @@ function Tools() {
         setJsonSelected(!jsonSelected);
     }
 
-    const onUploadSuccess = (uploadResponse) => {
+    const onUploadSuccess = (uploadResponse: UploadResponse) => {
         setUploadSuccessInfo(uploadResponse);
         setShowSuccessModal(true);
         setSelectedFile(null);
     };
 
     const handleSubmission = () => {
+
+        if(selectedFile === null) {
+            console.log("No file selected, so can't handle submission");
+            return;
+        }
 
         const formData = new FormData();
         formData.append('file', selectedFile);
