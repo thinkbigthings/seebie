@@ -29,4 +29,9 @@ interface SleepDetailDto {
     sleepData: SleepDto
 }
 
-export type { SleepData, SleepDto, SleepDetailDto }
+interface DateRange {
+    from: Date,
+    to: Date
+}
+
+export type { SleepData, SleepDto, SleepDetailDto, DateRange }

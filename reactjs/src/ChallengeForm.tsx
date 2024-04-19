@@ -64,7 +64,7 @@ function ChallengeForm(props:{
         validateChallenge(editableChallenge);
     }, [editableChallenge]);
 
-    const updateChallenge = (updateValues: {name:string} | {description:string} | {localStartTime:Date} | {localEndTime:Date} ) => {
+    const updateChallenge = (updateValues: Partial<ChallengeData> ) => {
         const updatedChallenge:ChallengeData = {...editableChallenge, ...updateValues};
         setEditableChallenge(updatedChallenge);
         validateChallenge(updatedChallenge);

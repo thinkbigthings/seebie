@@ -19,6 +19,7 @@ import DateRangePicker from "./component/DateRangePicker";
 import {useParams} from "react-router-dom";
 import {createRange} from "./utility/Constants";
 import {toIsoString} from "./utility/SleepDataManager";
+import {DateRange} from "./types/sleep.types";
 
 
 ChartJS.register(
@@ -83,7 +84,7 @@ function SleepChart(props:{createdCount:number}) {
     let [range, setRange] = useState(createRange(30));
     let [chartData, setChartData] = useState(initialChartData);
 
-    function updateSearchRange(updateValues:{from:Date} | {to:Date}) {
+    function updateSearchRange(updateValues:Partial<DateRange>) {
         let updatedRange = {...range, ...updateValues};
         if( isDateRangeValid(updatedRange.from, updatedRange.to) ) {
             setRange(updatedRange);

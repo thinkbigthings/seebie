@@ -37,7 +37,7 @@ function SleepForm(props:{setSleepData: (sleep:SleepData) => void, sleepData:Sle
 
     const [minutesAwakeValidity, setMinutesAwakeValidity] = React.useState(true);
 
-    const updateSleepSession = (updateValues: {notes:string} | {minutesAwake:string} | {localStartTime:Date} | {localStopTime:Date} ) => {
+    const updateSleepSession = (updateValues: Partial<SleepFormFields>) => {
 
         let updatedFormFields: SleepFormFields = {...formFields, ...updateValues};
 
