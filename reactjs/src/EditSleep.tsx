@@ -10,8 +10,8 @@ import useApiDelete from "./hooks/useApiDelete";
 import {NavHeader} from "./App";
 import {useNavigate, useParams} from "react-router-dom";
 import WarningButton from "./component/WarningButton";
-import {toLocalSleepData, toSleepDto} from "./utility/Mapper.ts";
-import {SleepDetailDto} from "./types/sleep.types.ts";
+import {toLocalSleepData, toSleepDto} from "./utility/Mapper";
+import {SleepDetailDto} from "./types/sleep.types";
 
 function EditSleep() {
 

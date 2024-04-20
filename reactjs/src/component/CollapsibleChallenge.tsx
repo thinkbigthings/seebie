@@ -5,7 +5,7 @@ import {Link, useParams} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
-import {ChallengeData} from "../utility/Mapper.ts";
+import {ChallengeData} from "../types/challenge.types";
 
 function calculateProgress(start:Date, now:Date, end:Date) {
 

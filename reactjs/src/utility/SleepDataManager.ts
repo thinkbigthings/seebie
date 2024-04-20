@@ -1,4 +1,4 @@
-import {SleepData} from "../types/sleep.types.ts";
+import {SleepData} from "../types/sleep.types";
 
 
 const toIsoLocalDate = (date: Date) => {

@@ -10,8 +10,9 @@ import useApiPost from "./hooks/useApiPost";
 import CollapsibleContent from "./component/CollapsibleContent";
 import {emptyEditableChallenge, NameDescription, PREDEFINED_CHALLENGES} from "./utility/Constants";
 import SuccessModal from "./component/SuccessModal";
-import {ChallengeData, ChallengeList, toChallengeDto} from "./utility/Mapper";
+import {toChallengeDto} from "./utility/Mapper";
 import ChallengeForm from "./ChallengeForm";
+import {ChallengeData, ChallengeList} from "./types/challenge.types";
 
 function CreateChallenge(props: {onCreated:()=>void, savedChallenges:ChallengeList<ChallengeData>}) {
 

@@ -15,12 +15,12 @@ import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import {
-    ChallengeData,
     toLocalChallengeDataList,
     toSelectableChallenges
 } from "./utility/Mapper";
 import {createRange, HISTOGRAM_BIN_SIZE_OPTIONS, HISTOGRAM_COLORS, HISTOGRAM_OPTIONS} from "./utility/Constants";
-import {toIsoString} from "./utility/SleepDataManager.ts";
+import {toIsoString} from "./utility/SleepDataManager";
+import {ChallengeData} from "./types/challenge.types";
 
 Chart.register(...registerables)
 

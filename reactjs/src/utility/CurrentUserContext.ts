@@ -1,20 +1,7 @@
 import React from 'react';
+import {User} from "../types/user.types";
 
 type CurrentUserContextType = [User, (user: User) => void];
-
-export interface PersonalInfo {
-    displayName: string;
-    email: string;
-    notificationsEnabled: boolean;
-}
-
-export interface User {
-    username: string;
-    roles: string[];
-    registrationTime: string;
-    personalInfo: PersonalInfo;
-    isLoggedIn: boolean;
-}
 
 const blankUser: User = {
     username: '',
@@ -32,3 +19,4 @@ const CurrentUserContext = React.createContext<CurrentUserContextType>([blankUse
 CurrentUserContext.displayName = 'CurrentUserContext';
 
 export { blankUser, CurrentUserContext };
+export type { User };

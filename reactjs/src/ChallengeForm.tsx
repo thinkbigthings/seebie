@@ -7,7 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {ChallengeData, ChallengeList} from "./utility/Mapper.ts";
+import {ChallengeData, ChallengeList} from "./types/challenge.types";
 
 function ChallengeForm(props:{
                             setEditableChallenge:React.Dispatch<React.SetStateAction<ChallengeData>>
@@ -64,7 +64,7 @@ function ChallengeForm(props:{
         validateChallenge(editableChallenge);
     }, [editableChallenge]);
 
-    const updateChallenge = (updateValues: {name:string} | {description:string} | {localStartTime:Date} | {localEndTime:Date} ) => {
+    const updateChallenge = (updateValues: Partial<ChallengeData> ) => {
         const updatedChallenge:ChallengeData = {...editableChallenge, ...updateValues};
         setEditableChallenge(updatedChallenge);
         validateChallenge(updatedChallenge);

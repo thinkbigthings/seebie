@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
@@ -10,16 +9,25 @@ import useHttpError from "./hooks/useHttpError";
 import {useApiGet} from "./hooks/useApiGet";
 import {useParams} from "react-router-dom";
 import SuccessModal from "./component/SuccessModal";
+import {SleepDetailDto} from "./types/sleep.types";
+
+interface UploadResponse {
+    numImported: number,
+    username: string
+}
+
+const initialSelectedFile:File|null = null;
 
 function Tools() {
 
     const { username } = useParams();
     const { throwOnHttpError } = useHttpError();
 
-    const [validateUploadFile, setValidateUploadFile] = useState(false);
+    const [fileKey, setFileKey] = useState(Date.now());
+    const [fileIsBeingSelected, setFileIsBeingSelected] = useState(false);
     const [csvSelected, setCsvSelected] = React.useState(true);
     const [jsonSelected, setJsonSelected] = React.useState(false);
-    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(initialSelectedFile);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [uploadSuccessInfo, setUploadSuccessInfo] = useState({ numImported: 0, username: username });
 
@@ -34,31 +42,39 @@ function Tools() {
     const {data, pagingControls} = useApiGet<SleepDetailDto>(sleepUrl, 1, 0);
     const numSleepRecords = data.totalElements;
 
-    const onFilePicked = (event) => {
-        setSelectedFile(event.target.files[0]);
-        setValidateUploadFile(true); // don't start validating it until the user starts interacting with it
+    const onFilePicked = (event:React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+            setSelectedFile(event.target.files[0]);
+            setFileIsBeingSelected(true);
+        } else {
+            setSelectedFile(null);
+            setFileIsBeingSelected(false);
+        }
     };
 
-    const isUploadCsv = selectedFile && selectedFile.type === "text/csv";
-    const isUploadJson = selectedFile && selectedFile.type === "application/json";
-    const uploadInvalid = validateUploadFile && (
-        !(isUploadCsv || isUploadJson)
-        || selectedFile === undefined
-        || selectedFile === null
-    );
+    const isUploadCsv = selectedFile ? selectedFile.type === "text/csv" : false;
+    const isUploadJson = selectedFile ? selectedFile.type === "application/json" : false;
+    const uploadInvalid = fileIsBeingSelected && !(isUploadCsv || isUploadJson);
 
     const swapDownloadTypeSelection = () => {
         setCsvSelected(!csvSelected);
         setJsonSelected(!jsonSelected);
     }
 
-    const onUploadSuccess = (uploadResponse) => {
+    const onUploadSuccess = (uploadResponse: UploadResponse) => {
+        setFileKey(Date.now());  // Changing the key will remount the input and reset its value
         setUploadSuccessInfo(uploadResponse);
         setShowSuccessModal(true);
         setSelectedFile(null);
+        setFileIsBeingSelected(false);
     };
 
     const handleSubmission = () => {
+
+        if(selectedFile === null) {
+            console.log("No file selected, so can't handle submission");
+            return;
+        }
 
         const formData = new FormData();
         formData.append('file', selectedFile);
@@ -123,6 +139,7 @@ function Tools() {
                     <Form.Group controlId="formFile">
                         <Form.Label>Select file with sleep data to upload</Form.Label>
                         <Form.Control
+                            key={fileKey}
                             type="file"
                             name="file"
                             onChange={onFilePicked}
@@ -135,7 +152,7 @@ function Tools() {
                         </Form.Control.Feedback>
                     </Form.Group>
 
-                    <Button variant="secondary" onClick={handleSubmission} disabled={!validateUploadFile || uploadInvalid}>
+                    <Button variant="secondary" onClick={handleSubmission} disabled={uploadInvalid}>
                         <FontAwesomeIcon className="app-highlight me-2" icon={faUpload}/>
                         Upload
                     </Button>

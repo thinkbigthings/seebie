@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, {useState} from 'react';
 
 import Modal from "react-bootstrap/Modal";
@@ -7,38 +6,39 @@ import Button from "react-bootstrap/Button";
 import useApiPost from "./hooks/useApiPost";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {RegistrationRequest, UserFormFields} from "./types/user.types";
 
-const blankData = {
+
+const blankData: UserFormFields = {
     username: '',
     email: '',
     password: '',
     confirmPassword: ''
 }
 
-function CreateUser(props) {
+function CreateUser(props: {onSave: () => void} ){
 
     const post = useApiPost();
     const [showCreateUser, setShowCreateUser] = useState(false);
     const [user, setUser] = useState(blankData);
 
-    const saveData = (userData) => {
+    const saveData = (userData:UserFormFields) => {
 
-        const registrationRequest = {
+        const registrationRequest: RegistrationRequest = {
             username: userData.username,
             plainTextPassword: userData.password,
             email: userData.email
         }
 
-        const requestBody = typeof registrationRequest === 'string' ? registrationRequest : JSON.stringify(registrationRequest);
-
-        post('/api/registration', requestBody)
+        post('/api/registration', registrationRequest)
             .then(result => setShowCreateUser(false))
             .then(props.onSave);
     }
 
 
-    function updateUser(updateValues) {
-        let updatedUser = {...user, ...updateValues};
+    function updateUser(updateValues:Partial<UserFormFields>) {
+
+        let updatedUser:UserFormFields = {...user, ...updateValues};
 
         // username should not need to be url encoded
         let valid = encodeURIComponent(updatedUser.username) === updatedUser.username;
@@ -55,7 +55,7 @@ function CreateUser(props) {
 
     function onConfirm() {
         setUser(blankData);
-        saveData({...user, displayName: user.username});
+        saveData(user);
     }
 
     const passwordReady = (user.password === user.confirmPassword && user.password !== '');

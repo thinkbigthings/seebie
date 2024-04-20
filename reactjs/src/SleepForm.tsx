@@ -6,8 +6,8 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import InfoModalButton from "./component/InfoModalButton";
 import Form from "react-bootstrap/Form";
-import {toIsoString} from "./utility/SleepDataManager.ts";
-import {SleepData} from "./types/sleep.types.ts";
+import {toIsoString} from "./utility/SleepDataManager";
+import {SleepData} from "./types/sleep.types";
 
 function isNumericString(value:string) {
     return /^\d+$/.test(value);
@@ -37,7 +37,7 @@ function SleepForm(props:{setSleepData: (sleep:SleepData) => void, sleepData:Sle
 
     const [minutesAwakeValidity, setMinutesAwakeValidity] = React.useState(true);
 
-    const updateSleepSession = (updateValues: {notes:string} | {minutesAwake:string} | {localStartTime:Date} | {localStopTime:Date} ) => {
+    const updateSleepSession = (updateValues: Partial<SleepFormFields>) => {
 
         let updatedFormFields: SleepFormFields = {...formFields, ...updateValues};
 

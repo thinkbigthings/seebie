@@ -1,4 +1,5 @@
-import {ChallengeDetailDto, ChallengeData, ChallengeList} from "./Mapper.ts";
+import {ChallengeData, ChallengeList} from "../types/challenge.types";
+import {DateRange} from "../types/sleep.types";
 
 const VERSION_HEADER = 'X-Version';
 
@@ -119,7 +120,7 @@ export const PREDEFINED_CHALLENGES:NameDescription[] = [
     }
 ];
 
-export const createRange = (lastNDays: number) => {
+export const createRange = (lastNDays: number): DateRange => {
 
     let today = new Date();
     today.setHours(23, 59, 59);
