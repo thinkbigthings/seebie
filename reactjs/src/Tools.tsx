@@ -23,7 +23,8 @@ function Tools() {
     const { username } = useParams();
     const { throwOnHttpError } = useHttpError();
 
-    const [validateUploadFile, setValidateUploadFile] = useState(false);
+    const [fileKey, setFileKey] = useState(Date.now());
+    const [fileIsBeingSelected, setFileIsBeingSelected] = useState(false);
     const [csvSelected, setCsvSelected] = React.useState(true);
     const [jsonSelected, setJsonSelected] = React.useState(false);
     const [selectedFile, setSelectedFile] = useState(initialSelectedFile);
@@ -44,21 +45,16 @@ function Tools() {
     const onFilePicked = (event:React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
             setSelectedFile(event.target.files[0]);
-            setValidateUploadFile(true); // don't start validating it until the user starts interacting with it
+            setFileIsBeingSelected(true);
         } else {
-            // Optionally handle the case where no file is selected (e.g., reset state)
-            console.log("No file selected");
             setSelectedFile(null);
-            setValidateUploadFile(false);
+            setFileIsBeingSelected(false);
         }
     };
 
     const isUploadCsv = selectedFile ? selectedFile.type === "text/csv" : false;
     const isUploadJson = selectedFile ? selectedFile.type === "application/json" : false;
-    const uploadInvalid = validateUploadFile && (
-        !(isUploadCsv || isUploadJson)
-        || selectedFile === null
-    );
+    const uploadInvalid = fileIsBeingSelected && !(isUploadCsv || isUploadJson);
 
     const swapDownloadTypeSelection = () => {
         setCsvSelected(!csvSelected);
@@ -66,9 +62,11 @@ function Tools() {
     }
 
     const onUploadSuccess = (uploadResponse: UploadResponse) => {
+        setFileKey(Date.now());  // Changing the key will remount the input and reset its value
         setUploadSuccessInfo(uploadResponse);
         setShowSuccessModal(true);
         setSelectedFile(null);
+        setFileIsBeingSelected(false);
     };
 
     const handleSubmission = () => {
@@ -141,6 +139,7 @@ function Tools() {
                     <Form.Group controlId="formFile">
                         <Form.Label>Select file with sleep data to upload</Form.Label>
                         <Form.Control
+                            key={fileKey}
                             type="file"
                             name="file"
                             onChange={onFilePicked}
@@ -153,7 +152,7 @@ function Tools() {
                         </Form.Control.Feedback>
                     </Form.Group>
 
-                    <Button variant="secondary" onClick={handleSubmission} disabled={!validateUploadFile || uploadInvalid}>
+                    <Button variant="secondary" onClick={handleSubmission} disabled={uploadInvalid}>
                         <FontAwesomeIcon className="app-highlight me-2" icon={faUpload}/>
                         Upload
                     </Button>
