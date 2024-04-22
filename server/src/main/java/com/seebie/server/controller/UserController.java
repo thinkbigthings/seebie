@@ -1,9 +1,6 @@
 package com.seebie.server.controller;
 
-import com.seebie.server.dto.PersonalInfo;
-import com.seebie.server.dto.RegistrationRequest;
-import com.seebie.server.dto.User;
-import com.seebie.server.dto.UserSummary;
+import com.seebie.server.dto.*;
 import com.seebie.server.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -76,9 +73,9 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/password/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void updatePassword(@RequestBody String newPassword, @PathVariable String username, @AuthenticationPrincipal UserDetails user) {
+    public void updatePassword(@Valid @RequestBody PasswordResetRequest resetRequest, @PathVariable String username) {
 
-        userService.updatePassword(username, newPassword);
+        userService.updatePassword(username, resetRequest.plainTextPassword());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
