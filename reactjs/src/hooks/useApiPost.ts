@@ -1,7 +1,8 @@
 import {basicHeader} from "../utility/BasicHeaders";
 import useHttpError from "./useHttpError";
 import {ChallengeDto} from "../types/challenge.types";
-import {RegistrationRequest} from "../types/user.types";
+import {PasswordResetRequest, RegistrationRequest} from "../types/user.types";
+import {SleepDto} from "../types/sleep.types.ts";
 
 
 const useApiPost = () => {
@@ -9,9 +10,9 @@ const useApiPost = () => {
     const requestHeaders = basicHeader();
     const {throwOnHttpError} = useHttpError();
 
-    function post(url: string, body: Record<string, unknown> | string | ChallengeDto | RegistrationRequest) {
+    function post(url: string, body: SleepDto | ChallengeDto | RegistrationRequest | PasswordResetRequest) {
 
-        const serializedData = typeof body === "string" ? body : JSON.stringify(body);
+        const serializedData = JSON.stringify(body);
 
         const requestMeta = {
             headers: requestHeaders,

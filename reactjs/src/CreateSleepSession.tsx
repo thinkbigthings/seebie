@@ -31,7 +31,7 @@ function CreateSleepSession(props :{onSave: () => void, username:string}) {
     const post = useApiPost();
 
     const saveData = () => {
-        post(sleepUrl, JSON.stringify(toSleepDto(sleepData)))
+        post(sleepUrl, toSleepDto(sleepData))
             .then(closeModal)
             .then(onSave);
     }

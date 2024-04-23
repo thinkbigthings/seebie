@@ -26,6 +26,10 @@ interface RegistrationRequest {
     email:string
 }
 
+interface PasswordResetRequest {
+    plainTextPassword:string,
+}
+
 interface UserSummary {
     username: string,
     displayName: string
@@ -41,4 +45,4 @@ type Action =
     | { type: ActionType.UPDATE_USER; payload: Partial<PersonalInfo> };
 
 export { ActionType }
-export type { UserFormFields, RegistrationRequest, User, PersonalInfo, UserSummary, Action };
+export type { UserFormFields, RegistrationRequest, PasswordResetRequest, User, PersonalInfo, UserSummary, Action };

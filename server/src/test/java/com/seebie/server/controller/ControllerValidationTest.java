@@ -89,6 +89,8 @@ public class ControllerValidationTest {
 	private static final RegistrationRequest registration = createRandomUserRegistration();
 	private static final SleepData sleepData = createRandomSleepData();
 	private static final PersonalInfo info = createRandomPersonalInfo();
+	private static final PasswordResetRequest pwReset = new PasswordResetRequest("new_password");
+	private static final PasswordResetRequest invalidPw = new PasswordResetRequest("");
 
 	private static final RegistrationRequest invalidRegistration = new RegistrationRequest("", null, null);
 	private static final SleepData invalidSleepData = createStandardSleepData(null, null);
@@ -156,6 +158,9 @@ public class ControllerValidationTest {
 		return List.of(
 			user.args(PUT, STR."/api/user/\{USERNAME}/personalInfo", info, 200),
 			user.args(PUT, STR."/api/user/\{USERNAME}/personalInfo", invalidInfo, 400),
+
+			user.args(POST, STR."/api/user/\{USERNAME}/password/update", pwReset, 200),
+			user.args(POST, STR."/api/user/\{USERNAME}/password/update", invalidPw, 400),
 
 			user.args(POST, STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
 			user.args(POST, STR."/api/user/\{USERNAME}/sleep", invalidSleepData, 400),

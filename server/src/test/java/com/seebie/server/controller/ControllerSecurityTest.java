@@ -93,7 +93,7 @@ public class ControllerSecurityTest {
 	private static final RegistrationRequest registration = createRandomUserRegistration();
 	private static final SleepData sleepData = createRandomSleepData();
 	private static final PersonalInfo info = createRandomPersonalInfo();
-	private static final String password = "new_password";
+	private static final PasswordResetRequest pwReset = new PasswordResetRequest("new_password");
 	private static MockMultipartFile jsonFile; // see setup method
 
 	private static final int goodCsvRows = 1;
@@ -138,11 +138,11 @@ public class ControllerSecurityTest {
 		test.get("/api/user", 401, 403, 200);
 
 		test.put(STR."/api/user/\{USERNAME}/personalInfo", info, 401, 200, 200);
-		test.post(STR."/api/user/\{USERNAME}/password/update", password, 401, 200, 200);
+		test.post(STR."/api/user/\{USERNAME}/password/update", pwReset, 401, 200, 200);
 		test.get(STR."/api/user/\{USERNAME}", 401, 200, 200);
 
 		test.put(STR."/api/user/\{ADMINNAME}/personalInfo", info, 401, 403, 200);
-		test.post(STR."/api/user/\{ADMINNAME}/password/update", password, 401, 403, 200);
+		test.post(STR."/api/user/\{ADMINNAME}/password/update", pwReset, 401, 403, 200);
 		test.get(STR."/api/user/\{ADMINNAME}", 401, 403, 200);
 
 		test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 401, 200, 200);

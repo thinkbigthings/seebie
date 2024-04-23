@@ -15,7 +15,7 @@ import {GET} from "./utility/BasicHeaders";
 import {NavHeader} from "./App";
 import {useNavigate, useParams} from "react-router-dom";
 import {blankUser} from "./utility/CurrentUserContext";
-import {PersonalInfo} from "./types/user.types";
+import {PersonalInfo, PasswordResetRequest} from "./types/user.types";
 
 
 function EditUser() {
@@ -49,7 +49,7 @@ function EditUser() {
     const post = useApiPost();
 
     const onResetPassword = (plainTextPassword: string) => {
-        post(updatePasswordEndpoint, plainTextPassword)
+        post(updatePasswordEndpoint, {plainTextPassword})
             .then(result => {
                 if(currentUser.username === username) {
                     onLogin({...currentUser});

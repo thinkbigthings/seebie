@@ -1,9 +1,6 @@
 package com.seebie.server.controller;
 
-import com.seebie.server.dto.PersonalInfo;
-import com.seebie.server.dto.RegistrationRequest;
-import com.seebie.server.dto.User;
-import com.seebie.server.dto.UserSummary;
+import com.seebie.server.dto.*;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.client.ParsablePage;
@@ -86,10 +83,10 @@ public class EndToEndIntegrationTest extends IntegrationTest {
         RestClient user = clientFactory.login(testUserName, testUserPassword);
         PersonalInfo info = user.get().uri(testUserUrl).retrieve().body(User.class).personalInfo();
 
-        String newPassword = testUserPassword + "1";
-        user.post().uri(testUserUpdatePasswordUrl).body(newPassword).retrieve();
+        PasswordResetRequest pwReset = new PasswordResetRequest(testUserPassword + "1");
+        user.post().uri(testUserUpdatePasswordUrl).body(pwReset).retrieve();
 
-        user = clientFactory.login(testUserName, newPassword);
+        user = clientFactory.login(testUserName, pwReset.plainTextPassword());
         PersonalInfo info2 = user.get().uri(testUserUrl).retrieve().body(User.class).personalInfo();
 
         assertEquals(info, info2);
