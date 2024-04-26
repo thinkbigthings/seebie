@@ -13,6 +13,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Duration;
 
+import static com.seebie.server.security.WebSecurityConfig.API_LOGIN;
+
 public class RestClientFactory {
 
     private final RestClient.Builder restClientBuilder;
@@ -38,7 +40,7 @@ public class RestClientFactory {
 
             var basicAuth = basicAuth(username, plainTextPassword);
 
-            fromHttpClient(basicAuth).get().uri("/api/login").retrieve().body(String.class);
+            fromHttpClient(basicAuth).get().uri(API_LOGIN).retrieve().body(String.class);
 
             // subsequent calls should use session and/or remember me token
             // remove the authorizor, otherwise it still adds the basic auth headers

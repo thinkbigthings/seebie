@@ -43,14 +43,11 @@ public class UserController {
 
     // This url doesn't actually do anything special,
     // it just provides a convenient endpoint which can be used to go through the authentication process
-    // The url "/logout" is configured by spring security, so it's not mapped in this controller
+    // and get the user's details.
+    // The logout endpoint is defined in the security configuration
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value="/login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public User login(Authentication auth) {
-
-        // login/logout logging should use the same object, so we can link login events with logout events
-        LOG.info("Logged in auth: " + auth);
-
         return userService.loginUser(auth.getName());
     }
 

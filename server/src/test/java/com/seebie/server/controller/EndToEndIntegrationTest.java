@@ -61,7 +61,7 @@ public class EndToEndIntegrationTest extends IntegrationTest {
         testUserUpdatePasswordUrl = userUriBuilder.pathSegment("password", "update").build();
     }
 
-    @Test()
+    @Test
     @DisplayName("Admin list users")
     public void adminListUsers() {
 

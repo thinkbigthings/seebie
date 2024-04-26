@@ -3,6 +3,7 @@ package com.seebie.server.security;
 import com.seebie.server.AppProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.event.LoggerListener;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +23,20 @@ public class WebSecurityBeanProvider {
 
     public WebSecurityBeanProvider(AppProperties app) {
         rememberMeConfig = app.security().rememberMe();
+    }
+
+    /**
+     * This is a bean that listens for all authentication events and logs them.
+     *
+     * Alternatively, we could use the @EventListener annotation on a method in a @Component class
+     * to listen e.g. for AuthenticationSuccessEvent and other specific events.
+     * That approach also requires that an AuthenticationEventPublisher Bean be defined.
+     *
+     * @return
+     */
+    @Bean
+    public LoggerListener createLoggerListener() {
+        return new LoggerListener();
     }
 
     @Bean

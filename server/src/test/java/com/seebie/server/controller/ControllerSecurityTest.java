@@ -34,6 +34,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
+import static com.seebie.server.security.WebSecurityConfig.API_LOGIN;
 import static com.seebie.server.test.data.TestData.*;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static org.mockito.ArgumentMatchers.*;
@@ -134,7 +135,7 @@ public class ControllerSecurityTest {
 		test = new RoleArgumentsBuilder(converter.getObjectMapper());
 
 		test.post("/api/registration", registration, 401, 403, 200);
-		test.get("/api/login", 401, 200, 200);
+		test.get(API_LOGIN, 401, 200, 200);
 		test.get("/api/user", 401, 403, 200);
 
 		test.put(STR."/api/user/\{USERNAME}/personalInfo", info, 401, 200, 200);
