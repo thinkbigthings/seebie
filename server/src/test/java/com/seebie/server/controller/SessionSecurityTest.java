@@ -1,11 +1,14 @@
 package com.seebie.server.controller;
 
+import ch.qos.logback.classic.LoggerContext;
+import com.seebie.server.MemoryAppender;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.client.RestClientFactory;
 import com.seebie.server.test.data.TestData;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +23,7 @@ import java.util.Optional;
 
 import static com.seebie.server.security.WebSecurityConfig.REMEMBER_ME_COOKIE;
 import static com.seebie.server.security.WebSecurityConfig.SESSION_COOKIE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class SessionSecurityTest extends IntegrationTest {
@@ -38,10 +40,32 @@ public class SessionSecurityTest extends IntegrationTest {
     private String testUserPassword;
     private URI testUserInfoUri;
 
+    // logging of important security events happens is set up through configuration and not logged directly in the code,
+    // so we have integration tests for logging to ensure that the configuration was correct.
+    private static final MemoryAppender memoryAppender = new MemoryAppender();
+
+
+    @BeforeAll
+    public static void setupLogging() {
+        var loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        var rootLogger = loggerContext.getLogger(Logger.ROOT_LOGGER_NAME);
+        memoryAppender.setContext(loggerContext);
+        rootLogger.addAppender(memoryAppender);
+        memoryAppender.start();
+    }
+
+    @AfterAll
+    public static void teardownLogging() {
+        var loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        var rootLogger = loggerContext.getLogger(Logger.ROOT_LOGGER_NAME);
+        rootLogger.detachAppender(memoryAppender);
+        memoryAppender.stop();
+    }
+
     @BeforeEach
     public void setupTestUser(@Autowired UserService userService) {
 
-        // each test has its own test user so these could be run in parallel
+        // each test has its own test user so each test can be run in parallel
 
         var userRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(userRegistration);
@@ -121,6 +145,7 @@ public class SessionSecurityTest extends IntegrationTest {
 
         // Session cookie is set in first response, no cookie in second response
         var sessionAuth = clientFactory.removeBasicAuth(basicAuth);
+        var originalCookie = getCookie(response, SESSION_COOKIE);
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, false, false);
 
@@ -130,6 +155,10 @@ public class SessionSecurityTest extends IntegrationTest {
         // Result is a 401, Session is invalid, no session cookie is returned
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 401, false, false);
+
+        // Check that the log message was generated
+        var expiredCookie = originalCookie.getValue();
+        assertEquals(1, memoryAppender.search("Session expired or invalid", expiredCookie, testUserName).size());
     }
 
     @Test
@@ -148,7 +177,7 @@ public class SessionSecurityTest extends IntegrationTest {
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, false, false);
 
-        // Wait for session timeout but don't let remember-me timeout
+        // Wait for session timeout but don't let remember-me time out
         waitForExpiration(sessionTimeout);
 
         // Then attempt to access secured endpoint again
@@ -160,6 +189,10 @@ public class SessionSecurityTest extends IntegrationTest {
         // New session cookie is issued, new remember-me cookie is issued
         assertNotEquals(originalSessionCookie.getValue(), newSessionCookie.getValue());
         assertNotEquals(originalRememberMeCookie.getValue(), newRememberMeCookie.getValue());
+
+        // Check that the log message was generated
+        assertEquals(2, memoryAppender.search("Authentication event AuthenticationSuccessEvent", testUserName).size());
+        assertEquals(1, memoryAppender.search("Authentication event InteractiveAuthenticationSuccessEvent", testUserName).size());
     }
 
     @Test
@@ -188,6 +221,11 @@ public class SessionSecurityTest extends IntegrationTest {
         // once remember me cookie is cleared, any subsequent response will not try to set either cookie
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 401, false, false);
+
+        // Check that the log message was generated
+        assertEquals(1, memoryAppender.search("Authentication event AuthenticationSuccessEvent", testUserName).size());
+        assertEquals(2, memoryAppender.search("Session expired or invalid.", "SESSION", testUserName).size());
+        assertEquals(1, memoryAppender.search("Session expired or invalid.", "remember-me", testUserName).size());
     }
 
     private void waitForExpiration(Duration timeout) {
