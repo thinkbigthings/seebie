@@ -175,7 +175,7 @@ public class SessionSecurityTest extends IntegrationTest {
 
         // Login without remember-me
         var basicAuth = clientFactory.basicAuth(testUserName, testUserPassword);
-        var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginRememberMeFalseUri).retrieve().toEntity(String.class);
+        var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, SET, NOT_SET);
 
         response = clientFactory.fromHttpClient(basicAuth).get().uri(logoutUri).retrieve().toEntity(String.class);
