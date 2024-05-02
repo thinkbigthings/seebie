@@ -25,7 +25,6 @@ import java.util.Optional;
 
 import static com.seebie.server.security.WebSecurityConfig.REMEMBER_ME_COOKIE;
 import static com.seebie.server.security.WebSecurityConfig.SESSION_COOKIE;
-import static java.util.function.Predicate.not;
 import static org.junit.jupiter.api.Assertions.*;
 
 import static com.seebie.server.controller.SessionSecurityTest.CookieResponse.*;
@@ -35,6 +34,7 @@ public class SessionSecurityTest extends IntegrationTest {
     protected static URI loginRememberMeFalseUri;
     protected static URI loginRememberMeTrueUri;
     protected static URI loginUri;
+    protected static URI logoutUri;
 
     private static Duration sessionTimeout;
     private static Duration rememberMeTimeout;
@@ -102,6 +102,7 @@ public class SessionSecurityTest extends IntegrationTest {
         loginUri = loginBuilder.build();
         loginRememberMeFalseUri = loginBuilder.replaceQueryParam("remember-me", "false").build();
         loginRememberMeTrueUri =  loginBuilder.replaceQueryParam("remember-me", "true").build();
+        logoutUri = baseUribuilder.builder().path("/api").path("/logout").build();
 
         // See timeout values set in IntegrationTest, they configure the server so that we can time out here
         sessionTimeout = env.getProperty("spring.session.timeout", Duration.class);
@@ -151,15 +152,6 @@ public class SessionSecurityTest extends IntegrationTest {
     @Test
     public void testIncorrectPassword() throws IOException, InterruptedException {
 
-
-        /*
-        If I succeed in authentication, I get a response with a header like
-        "set-cookie" and value "SESSION=MTA0MGI1YTYtZWFmYi00NjUzLTgzZjItZDQ5NGM5YjE0OTMy; Path=/; Secure; HttpOnly; SameSite=Lax"
-        If I fail in authentication by sending a bad password, I get a response with a header like
-        "set-cookie" and value "remember-me=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:10 GMT; Path=/; Secure"
-        and I expected no remember-me cookie to be set at all, even an empty one. Why is it coming back at all?
-         */
-
         var badPassword = STR."\{testUserPassword}typo";
         var badCreds = Base64.getEncoder().encodeToString(STR."\{testUserName}:\{badPassword}".getBytes());
 
@@ -181,7 +173,16 @@ public class SessionSecurityTest extends IntegrationTest {
     @Test
     public void testLoginLogout() {
 
+        // Login without remember-me
+        var basicAuth = clientFactory.basicAuth(testUserName, testUserPassword);
+        var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginRememberMeFalseUri).retrieve().toEntity(String.class);
+        assertResponse(response, 200, SET, NOT_SET);
 
+        response = clientFactory.fromHttpClient(basicAuth).get().uri(logoutUri).retrieve().toEntity(String.class);
+        assertResponse(response, 204, CLEARED, CLEARED);
+
+        assertEquals(1, memoryAppender.search("AuthenticationSuccessEvent", testUserName).size());
+        assertEquals(1, memoryAppender.search("LogoutSuccessEvent", testUserName).size());
     }
 
     @Test
@@ -290,18 +291,15 @@ public class SessionSecurityTest extends IntegrationTest {
     }
 
     public void assertResponse(ResponseEntity<String> response, int expectedStatusCode, CookieResponse expectedSession, CookieResponse expectedRememberMe) {
-
         assertEquals(expectedStatusCode, response.getStatusCode().value());
+        assertEquals(expectedSession, getCookieResponse(response, SESSION_COOKIE));
+        assertEquals(expectedRememberMe, getCookieResponse(response, REMEMBER_ME_COOKIE));
+    }
 
-        var sessionCookieVal = findCookie(response, SESSION_COOKIE).map(HttpCookie::getValue);
-        var sessionCookieState = sessionCookieVal.isPresent() ? SET : NOT_SET;
-        sessionCookieState = sessionCookieState == SET && sessionCookieVal.filter(String::isEmpty).isPresent() ? CLEARED : sessionCookieState;
-        assertEquals(expectedSession, sessionCookieState);
-
-        var rememberMeCookieVal = findCookie(response, REMEMBER_ME_COOKIE).map(HttpCookie::getValue);
-        var rememberMeCookieState = rememberMeCookieVal.isPresent() ? SET : NOT_SET;
-        rememberMeCookieState = rememberMeCookieState == SET && rememberMeCookieVal.filter(String::isEmpty).isPresent() ? CLEARED : rememberMeCookieState;
-        assertEquals(expectedRememberMe, rememberMeCookieState);
+    private CookieResponse getCookieResponse(ResponseEntity<String> response, String cookieName) {
+        var cookieVal = findCookie(response, cookieName).map(HttpCookie::getValue);
+        var cookieState = cookieVal.isPresent() ? SET : NOT_SET;
+        return cookieState == SET && cookieVal.filter(String::isEmpty).isPresent() ? CLEARED : cookieState;
     }
 
     public Optional<HttpCookie> findCookie(ResponseEntity<String> response, String cookieName) {
@@ -311,5 +309,7 @@ public class SessionSecurityTest extends IntegrationTest {
                 .flatMap(List::stream)
                 .filter(c -> c.getName().equals(cookieName))
                 .findFirst();
+
+        // TODO expect exactly one result
     }
 }

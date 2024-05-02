@@ -46,7 +46,6 @@ public class WebSecurityConfig {
                     .anyRequest().authenticated())
             .exceptionHandling(customizer -> customizer
                 .authenticationEntryPoint(this::unauthenticatedAccess))
-//                .authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
             .httpBasic(basic -> basic
                     .securityContextRepository(new HttpSessionSecurityContextRepository()))
             .requestCache(cache -> cache
