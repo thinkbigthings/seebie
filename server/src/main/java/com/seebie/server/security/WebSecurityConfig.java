@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -43,6 +44,9 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(customizer -> customizer
                     .requestMatchers(openEndpoints).permitAll()
                     .anyRequest().authenticated())
+            .exceptionHandling(customizer -> customizer
+                .authenticationEntryPoint(this::unauthenticatedAccess))
+//                .authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
             .httpBasic(basic -> basic
                     .securityContextRepository(new HttpSessionSecurityContextRepository()))
             .requestCache(cache -> cache
@@ -64,10 +68,19 @@ public class WebSecurityConfig {
         return http.build();
     }
 
+     // Alternatively could implement AuthenticationEntryPoint and wrap BasicAuthenticationEntryPoint
+     // to delegate to it while adding custom logging.
+     private void unauthenticatedAccess(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().write("Unauthorized access attempt");
+        response.setHeader("WWW-Authenticate", "Basic realm=\"Access to secured area requires authentication\"");
+        LOG.warn(STR."\{authException} at \{request.getRequestURI()}");
+    }
+
     private void invalidSession(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write("Session expired or invalid");
-        LOG.info(STR."Session expired or invalid. Request cookie: \{request.getHeader(COOKIE)} accessing \{request.getRequestURI()}");
+        LOG.warn(STR."Session expired or invalid. Request cookie: \{request.getHeader(COOKIE)} accessing \{request.getRequestURI()}");
     }
 
 }
