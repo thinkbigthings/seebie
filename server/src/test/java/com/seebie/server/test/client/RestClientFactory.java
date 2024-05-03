@@ -13,6 +13,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Duration;
 
+import static com.seebie.server.security.WebSecurityConfig.API_LOGIN;
+
 public class RestClientFactory {
 
     private final RestClient.Builder restClientBuilder;
@@ -23,7 +25,7 @@ public class RestClientFactory {
 
         // would like to customize the builder at system startup time
         // with a RestClientCustomizer or ObjectProvider<RestClientCustomizer>
-        // but couldn't find out to wire it
+        // but couldn't find out how to wire it
 
         this.restClientBuilder = restClientBuilder.clone()
                 .defaultStatusHandler(status -> status.is4xxClientError(), (request,resp) -> {}) // don't throw exceptions on 4XX errors
@@ -38,7 +40,7 @@ public class RestClientFactory {
 
             var basicAuth = basicAuth(username, plainTextPassword);
 
-            fromHttpClient(basicAuth).get().uri("/api/login").retrieve().body(String.class);
+            fromHttpClient(basicAuth).get().uri(API_LOGIN).retrieve().body(String.class);
 
             // subsequent calls should use session and/or remember me token
             // remove the authorizor, otherwise it still adds the basic auth headers
@@ -51,7 +53,7 @@ public class RestClientFactory {
                 .build();
     }
 
-    private static HttpClient noAuth() {
+    public static HttpClient noAuth() {
         return baseBuilder().build();
     }
 
@@ -66,6 +68,7 @@ public class RestClientFactory {
         // it fails with "unable to find valid certification path to requested target"
         // so need to use an insecure truststore to work with self-signed certs
         return HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.NEVER)
                 .connectTimeout(Duration.ofSeconds(300))
                 .cookieHandler(new CookieManager())
                 .sslContext(insecureContext);

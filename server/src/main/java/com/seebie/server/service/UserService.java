@@ -93,8 +93,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public com.seebie.server.dto.User loginUser(String name) {
 
-        // The web session isn't saved until the db is flushed at the end.
-        // That's why we use withLoggedIn
+        // The web session isn't saved until the db is flushed at the end, so need to set logged in here
         return getUser(name).withIsLoggedIn(true);
     }
 
