@@ -31,8 +31,6 @@ public class WebSecurityBeanProvider {
      * Alternatively, we could use the @EventListener annotation on a method in a @Component class
      * to listen e.g. for AuthenticationSuccessEvent and other specific events.
      * That approach also requires that an AuthenticationEventPublisher Bean be defined.
-     *
-     * @return
      */
     @Bean
     public LoggerListener createLoggerListener() {

@@ -24,6 +24,10 @@ public class MemoryAppender extends ListAppender<ILoggingEvent> {
         this.list = new CopyOnWriteArrayList<>();
     }
 
+    /**
+     * @param strings varargs of strings to search for.
+     * @return a list of events such that each event contains all the string arguments.
+     */
     public List<ILoggingEvent> search(String... strings) {
         var searchList = Arrays.asList(strings);
         return this.list.stream()
