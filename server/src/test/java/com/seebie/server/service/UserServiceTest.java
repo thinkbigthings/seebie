@@ -18,8 +18,7 @@ import java.time.Instant;
 import java.util.Optional;
 
 import static java.util.Optional.of;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -51,15 +50,28 @@ public class UserServiceTest {
         when(userRepo.findByUsername(eq(savedUser.getUsername()))).thenReturn(of(savedUser));
         when(pwEncoder.encode(ArgumentMatchers.any(String.class))).thenReturn(strongPasswordHash);
         when(notificationRepo.findBy(eq(savedUser.getUsername()))).thenReturn(of(notification));
+    }
 
+    @Test
+    public void updateUserEnablesNotifications() {
+
+        var updateInfo = new PersonalInfo("update@email.com", savedUsername, false);
+        service.updateUser(savedUsername, updateInfo);
+        var lastSent = notification.getLastSent();
+
+        updateInfo = new PersonalInfo("update@email.com", savedUsername, true);
+        service.updateUser(savedUsername, updateInfo);
+        var newLastSent = notification.getLastSent();
+
+        assertTrue(newLastSent.isAfter(lastSent));
     }
 
     @Test
     public void updateUser() {
 
-        PersonalInfo updateInfo = new PersonalInfo("update@email.com", savedUsername+"1");
+        var updateInfo = new PersonalInfo("update@email.com", savedUsername+"1");
 
-        com.seebie.server.dto.User updatedUser = service.updateUser(savedUsername, updateInfo);
+        var updatedUser = service.updateUser(savedUsername, updateInfo);
 
         assertEquals(updateInfo, updatedUser.personalInfo());
     }
@@ -76,7 +88,7 @@ public class UserServiceTest {
     @Test
     public void getUser() {
 
-        com.seebie.server.dto.User foundUser = service.getUser(savedUsername);
+        var foundUser = service.getUser(savedUsername);
 
         assertEquals(savedUser.getUsername(), foundUser.username());
         assertEquals(savedUser.getDisplayName(), foundUser.personalInfo().displayName());

@@ -7,7 +7,6 @@ import net.datafaker.Faker;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -185,7 +184,7 @@ public class TestData {
     public static AppProperties newAppProperties(int rememberMeTokenValidityDays) {
         return new AppProperties(1,
                 new AppProperties.Security(new AppProperties.Security.RememberMe(ofDays(rememberMeTokenValidityDays), randomUUID().toString())),
-                new AppProperties.Notification(true, new AppProperties.Notification.TriggerAfter(ofMinutes(1), ofMinutes(1)))
+                new AppProperties.Notification(new AppProperties.Notification.TriggerAfter(ofMinutes(1), ofMinutes(1)))
         );
     }
 }

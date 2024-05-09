@@ -51,7 +51,8 @@ public class UserService {
 
         // If user turns notifications on, set last notification time to current time,
         // so they are notified at the next appropriate time.
-        if( ! notification.getUser().isEnabled() && userData.notificationsEnabled()) {
+        boolean userNotificationSwitchedOn = ! notification.getUser().isNotificationsEnabled() && userData.notificationsEnabled();
+        if( userNotificationSwitchedOn ) {
             notification.withLastSent(Instant.now());
         }
 
