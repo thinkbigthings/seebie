@@ -56,7 +56,7 @@ public class NotificationMessageServiceTest extends IntegrationTest {
     // What's the difference between wrapping the values here vs just having them already unwrapped in the test method?
     // Using a record allows us to name the parameters at the point of declaration instead of at the point of use.
     // It's easier to see which value is which in the IDE, and consolidates the number of arguments to the test method.
-    record TestParams(boolean notificationsEnabled, int sleepLogFrequencyHrs, int expectedNotificationCount) implements NotificationTestArgs { }
+    record TestParams(boolean usernotificationEnabled, int sleepLogFrequencyHrs, int expectedNotificationCount) implements NotificationTestArgs { }
 
     private static List<Arguments> provideSleepLogParameters() {
         return List.of(
@@ -79,7 +79,7 @@ public class NotificationMessageServiceTest extends IntegrationTest {
         int testDurationHours = 72;
 
         // create new user
-        String userPrefix = "notify-" + params.notificationsEnabled();
+        String userPrefix = "notify-" + params.usernotificationEnabled();
         RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration(userPrefix);
         userService.saveNewUser(testUserRegistration);
         String username = testUserRegistration.username();
@@ -87,7 +87,7 @@ public class NotificationMessageServiceTest extends IntegrationTest {
         // update notification settings
         var updatedInfo = userService.getUser(username)
                 .personalInfo()
-                .withNotificationEnabled(params.notificationsEnabled());
+                .withNotificationEnabled(params.usernotificationEnabled());
 
         userService.updateUser(username, updatedInfo);
 

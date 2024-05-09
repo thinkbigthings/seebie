@@ -36,4 +36,17 @@ public class NotificationEmailServiceTest {
         assertTrue(Arrays.stream(message.getTo()).anyMatch(email -> email.equals(user.email())));
     }
 
+    @Test
+    public void testEmailSending() {
+
+//        try {
+//            LOG.debug(STR."Email notification is going out to \{send.email()}");
+//            emailSender.send(createMessage(send));
+//        }
+//        catch(MailException me) {
+//            LOG.info(STR."Email notification failed to send for \{send.email()}");
+//            me.printStackTrace();
+//        }
+    }
+
 }
