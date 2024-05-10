@@ -48,7 +48,9 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value="/login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public User login(Authentication auth) {
-        return userService.loginUser(auth.getName());
+
+        // The web session isn't saved until the db is flushed at the end, so need to set logged in here
+        return userService.getUser(auth.getName()).withIsLoggedIn(true);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

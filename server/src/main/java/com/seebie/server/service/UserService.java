@@ -91,11 +91,4 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("no user found for " + username));
     }
 
-    @Transactional(readOnly = true)
-    public com.seebie.server.dto.User loginUser(String name) {
-
-        // The web session isn't saved until the db is flushed at the end, so need to set logged in here
-        return getUser(name).withIsLoggedIn(true);
-    }
-
 }

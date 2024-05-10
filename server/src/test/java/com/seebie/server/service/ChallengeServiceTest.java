@@ -1,22 +1,20 @@
 package com.seebie.server.service;
 
-import com.seebie.server.dto.ChallengeDetails;
 import com.seebie.server.mapper.dtotoentity.UnsavedChallengeListMapper;
 import com.seebie.server.repository.ChallengeRepository;
-import com.seebie.server.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 public class ChallengeServiceTest {
 
-    private UserRepository userRepo = Mockito.mock(UserRepository.class);
     private ChallengeRepository challengeRepository = Mockito.mock(ChallengeRepository.class);
     private UnsavedChallengeListMapper challengeListMapper = Mockito.mock(UnsavedChallengeListMapper.class);
 
@@ -24,41 +22,14 @@ public class ChallengeServiceTest {
 
     @BeforeEach
     public void setup() {
-        service = new ChallengeService(userRepo, challengeRepository, challengeListMapper);
+        service = new ChallengeService(challengeRepository, challengeListMapper);
+
+        when(challengeRepository.findByUsername(anyString(), anyLong())).thenReturn(Optional.empty());
     }
 
     @Test
-    public void testEmptyChallengeList() {
-
-        LocalDate today = LocalDate.now();
-
-        List<ChallengeDetails> challenges = List.of();
-
-        var sortedChallenges = service.sortChallenges(challenges, today);
-
-        assertEquals(0, sortedChallenges.current().size());
-        assertEquals(0, sortedChallenges.completed().size());
-        assertEquals(0, sortedChallenges.upcoming().size());
+    public void testRemoveMissingChallenge() {
+        assertThrows(EntityNotFoundException.class, () -> service.remove("username", 1L));
     }
 
-    @Test
-    public void testSortChallenges() {
-
-        LocalDate today = LocalDate.now();
-
-        var completedChallenge = new ChallengeDetails(1L, "Completed", "", today.minusDays(10), today.minusDays(5));
-        var currentChallenge = new ChallengeDetails(2L, "Current", "", today.minusDays(1), today.plusDays(1));
-        var upcomingChallenge = new ChallengeDetails(3L, "Upcoming", "", today.plusDays(5), today.plusDays(10));
-
-        var challenges = List.of(completedChallenge, currentChallenge, upcomingChallenge);
-
-        var sortedChallenges = service.sortChallenges(challenges, today);
-
-        assertTrue(sortedChallenges.completed().contains(completedChallenge), "Completed list should contain the completed challenge.");
-        assertTrue(sortedChallenges.current().contains(currentChallenge), "Current list should contain the current challenge.");
-        assertTrue(sortedChallenges.upcoming().contains(upcomingChallenge), "Upcoming list should contain the upcoming challenge.");
-        assertEquals(1, sortedChallenges.current().size());
-        assertEquals(1, sortedChallenges.completed().size());
-        assertEquals(1, sortedChallenges.upcoming().size());
-    }
 }
