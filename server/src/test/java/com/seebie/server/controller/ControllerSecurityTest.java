@@ -113,6 +113,8 @@ public class ControllerSecurityTest {
 	private MockMvc mockMvc;
 
 	private static RoleArgumentsBuilder test;
+    @Autowired
+    private UserService userService;
 
 	@BeforeEach
 	public void setup() {
@@ -121,6 +123,9 @@ public class ControllerSecurityTest {
 		when(fromCsv.apply(contains(goodCsvText))).thenReturn(List.of(createRandomSleepData()));
 
 		when(toCsv.apply(anyList())).thenReturn("");
+
+		when(userService.getUser(USERNAME)).thenReturn(createRandomUser(USERNAME));
+		when(userService.getUser(ADMINNAME)).thenReturn(createRandomUser(ADMINNAME));
 
 		when(importExportService.saveSleepData(anyString(), anyList())).thenReturn(0L);
 		when(importExportService.retrieveSleepDetails(anyString())).thenReturn(List.of());

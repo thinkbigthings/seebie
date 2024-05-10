@@ -1,12 +1,8 @@
 package com.seebie.server.service;
 
 import com.seebie.server.dto.ChallengeDetails;
-import com.seebie.server.mapper.dtotoentity.UnsavedChallengeListMapper;
-import com.seebie.server.repository.ChallengeRepository;
-import com.seebie.server.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.seebie.server.dto.ChallengeList;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,18 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ChallengeServiceTest {
-
-    private UserRepository userRepo = Mockito.mock(UserRepository.class);
-    private ChallengeRepository challengeRepository = Mockito.mock(ChallengeRepository.class);
-    private UnsavedChallengeListMapper challengeListMapper = Mockito.mock(UnsavedChallengeListMapper.class);
-
-    private ChallengeService service;
-
-    @BeforeEach
-    public void setup() {
-        service = new ChallengeService(userRepo, challengeRepository, challengeListMapper);
-    }
+public class ChallengeSortingTest {
 
     @Test
     public void testEmptyChallengeList() {
@@ -34,7 +19,7 @@ public class ChallengeServiceTest {
 
         List<ChallengeDetails> challenges = List.of();
 
-        var sortedChallenges = service.sortChallenges(challenges, today);
+        var sortedChallenges = ChallengeList.newChallengeList(challenges, today);
 
         assertEquals(0, sortedChallenges.current().size());
         assertEquals(0, sortedChallenges.completed().size());
@@ -52,7 +37,7 @@ public class ChallengeServiceTest {
 
         var challenges = List.of(completedChallenge, currentChallenge, upcomingChallenge);
 
-        var sortedChallenges = service.sortChallenges(challenges, today);
+        var sortedChallenges = ChallengeList.newChallengeList(challenges, today);
 
         assertTrue(sortedChallenges.completed().contains(completedChallenge), "Completed list should contain the completed challenge.");
         assertTrue(sortedChallenges.current().contains(currentChallenge), "Current list should contain the current challenge.");

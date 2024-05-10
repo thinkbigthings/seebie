@@ -7,12 +7,10 @@ import net.datafaker.Faker;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
+import java.util.*;
 
 import static com.seebie.server.mapper.entitytodto.SleepDetailsToCsv.headerRow;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
@@ -117,6 +115,10 @@ public class TestData {
 
     public static UserData randomUserData() {
         return new UserData(createRandomSleepData(1, AMERICA_NEW_YORK), createRandomChallenges());
+    }
+
+    public static User createRandomUser(String username) {
+        return new User(username, Instant.now().toString(), Set.of(), createRandomPersonalInfo(), false);
     }
 
     /**

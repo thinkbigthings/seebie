@@ -5,7 +5,6 @@ import com.seebie.server.dto.ChallengeDetails;
 import com.seebie.server.dto.ChallengeList;
 import com.seebie.server.mapper.dtotoentity.UnsavedChallengeListMapper;
 import com.seebie.server.repository.ChallengeRepository;
-import com.seebie.server.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,21 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.List;
 
-import static com.seebie.server.service.ChallengeService.ChallengeCategory.*;
-import static java.util.stream.Collectors.groupingBy;
-
+import static com.seebie.server.dto.ChallengeList.newChallengeList;
 
 @Service
 public class ChallengeService {
 
-    private UserRepository userRepo;
     private ChallengeRepository challengeRepo;
     private UnsavedChallengeListMapper toEntity;
 
-    public ChallengeService(UserRepository userRepo, ChallengeRepository challengeRepo, UnsavedChallengeListMapper toEntity) {
-        this.userRepo = userRepo;
+    public ChallengeService(ChallengeRepository challengeRepo, UnsavedChallengeListMapper toEntity) {
         this.challengeRepo = challengeRepo;
         this.toEntity = toEntity;
     }
@@ -66,32 +60,7 @@ public class ChallengeService {
 
     @Transactional(readOnly = true)
     public ChallengeList getChallenges(String username, LocalDate today) {
-        return sortChallenges(challengeRepo.findAllByUsername(username), today);
-    }
-
-    public ChallengeList sortChallenges(List<ChallengeDetails> challenges, LocalDate today) {
-
-        var groupedChallenges = challenges.stream().collect(groupingBy(c -> categorize(c.challenge(), today)));
-
-        List<ChallengeDetails> completed = groupedChallenges.getOrDefault(COMPLETED, List.of());
-        List<ChallengeDetails> upcoming = groupedChallenges.getOrDefault(UPCOMING, List.of());
-        List<ChallengeDetails> current = groupedChallenges.getOrDefault(CURRENT, List.of());
-
-        return new ChallengeList(current, completed, upcoming);
-    }
-
-    public enum ChallengeCategory {
-        COMPLETED, UPCOMING, CURRENT;
-    }
-
-    public ChallengeCategory categorize(Challenge challenge, LocalDate today) {
-        if (challenge.finish().isBefore(today)) {
-            return COMPLETED;
-        }
-        if (challenge.start().isAfter(today)) {
-            return UPCOMING;
-        }
-        return CURRENT;
+        return newChallengeList(challengeRepo.findAllByUsername(username), today);
     }
 
 }
