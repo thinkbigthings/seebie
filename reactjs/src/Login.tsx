@@ -82,6 +82,7 @@ function Login() {
             <Container className="ps-0 mb-3">
                     <label htmlFor="inputUsername" className="form-label">Username</label>
                     <input type="email" className="form-control" id="inputUsername" aria-describedby="emailHelp"
+                           autoFocus={true}
                            placeholder="Username"
                            value={username}
                            onChange={e => setUsername(e.target.value)}
