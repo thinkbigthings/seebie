@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import useApiPost from "./hooks/useApiPost";
@@ -25,7 +25,6 @@ function CreateSleepSession(props :{onSave: () => void, username:string}) {
     const [sleepData, setSleepData] = useState(createInitSleepData());
     const [dataValid, setDataValid] = useState(true);
     const [showModal, setShowModal] = useState(false);
-    const [openCount, setOpenCount] = useState(1);
     const [savedChallenges, setSavedChallenges] = useState(emptyChallengeList);
 
     const post = useApiPost();
@@ -36,19 +35,17 @@ function CreateSleepSession(props :{onSave: () => void, username:string}) {
             .then(onSave);
     }
 
-    // load current challenges
-    useEffect(() => {
+
+    const defaultTitle = "Log Sleep";
+
+    const openModal = () => {
+        // load current challenges
         fetch(challengeEndpointTz, GET)
             .then((response) => response.json() as Promise<ChallengeList<ChallengeDetailDto>>)
             .then(toLocalChallengeDataList)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
-    }, [openCount]);
 
-    const defaultTitle = "Log Sleep";
-
-    const openModal = () => {
-        setOpenCount(openCount + 1);
         setShowModal(true);
     }
 

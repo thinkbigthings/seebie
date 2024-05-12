@@ -24,6 +24,7 @@ function ErrorModal() {
     const displayReload = error.errorStatus.recoveryAction === RecoveryActions.RELOAD;
     const displayLoginStyle = displayLogin ? '' : 'd-none';
     const displayReloadStyle = displayReload ? '' : 'd-none';
+    const displayCancelStyle = displayLogin ? 'd-none' : '';
 
     return (
         <Modal show={error.errorStatus.hasError} onHide={clearError} backdrop="static" centered>
@@ -37,7 +38,7 @@ function ErrorModal() {
                     {error.errorStatus.message}
                 </Alert></Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={clearError}>
+                <Button className={displayCancelStyle} variant="secondary" onClick={clearError}>
                     Cancel
                 </Button>
                 <Button className={displayLoginStyle} variant="primary" onClick={ refreshLogin }>
