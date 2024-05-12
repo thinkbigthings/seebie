@@ -16,7 +16,7 @@ const useHttpError = () => {
             addError('There was an input error. Try again.', RecoveryActions.NONE);
         }
         if (httpResponse.status === 401) {
-            addError("Your session expired. Login to continue.", RecoveryActions.LOGIN);
+            addError("Authentication failed. Login to continue.", RecoveryActions.LOGIN);
         }
         if (httpResponse.status === 403) {
             addError('The action was forbidden. Contact your administrator for additional privileges.', RecoveryActions.NONE);

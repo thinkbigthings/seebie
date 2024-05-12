@@ -97,6 +97,7 @@ function AuthenticatedApp() {
     const {currentUser, hasAdmin, onLogout} = useCurrentUser();
 
     const userUrl = "#/users/"+currentUser.username+"/edit";
+    const loginUrl = "#/login";
 
     // Refresh data view if a sleep session is logged that affects the view
     let [createdCount, setCreatedCount] = useState(0);
@@ -125,7 +126,7 @@ function AuthenticatedApp() {
                     <NavDropdown className={"nav-link-colored"} title={loggedIn } align="end" id="userDropdown">
                         <NavDropdown.Item className={"nav-link-colored"} href={userUrl}>{<FontAwesomeIcon className="me-2" icon={faCog} />}Profile</NavDropdown.Item>
                         <NavDropdown.Divider />
-                        <NavDropdown.Item className={"nav-link-colored"} onClick={onClickLogout}>{<FontAwesomeIcon className="me-2" icon={faSignOut} />}Logout</NavDropdown.Item>
+                        <NavDropdown.Item className={"nav-link-colored"} href={loginUrl} onClick={onClickLogout}>{<FontAwesomeIcon className="me-2" icon={faSignOut} />}Logout</NavDropdown.Item>
                     </NavDropdown>
 
                 </Container>
