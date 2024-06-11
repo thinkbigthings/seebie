@@ -59,8 +59,7 @@ public class WebSecurityConfig {
             .logout(config -> config
                     .logoutUrl(API_LOGOUT)
                     .invalidateHttpSession(true)
-                    .clearAuthentication(true)
-                    .deleteCookies(SESSION_COOKIE, REMEMBER_ME_COOKIE))
+                    .clearAuthentication(true))
             .rememberMe(config -> config
                     .rememberMeServices(rememberMeServices));
 

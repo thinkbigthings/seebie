@@ -191,18 +191,14 @@ public class SessionSecurityTest extends IntegrationTest {
         var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, SET, NOT_SET);
 
+        // on login no remember-me token should have been created
         var persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
         assertEquals(0, persistentLogins.size());
-
-
-        // TODO why are multiple cookies of the same name returned? what does the browser do with that?
-        // if all SESSION and remember-me values are empty, maybe that's ok?
-        // note they are present but cleared, so maybe that's ok.
 
         response = clientFactory.fromHttpClient(basicAuth).get().uri(logoutUri).retrieve().toEntity(String.class);
         assertResponse(response, 204, CLEARED, CLEARED);
 
-        // testLoginLogout at the end should test that the token was cleared.
+        // on logout there was still no remember-me token
         persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
         assertEquals(0, persistentLogins.size());
 
@@ -216,26 +212,23 @@ public class SessionSecurityTest extends IntegrationTest {
 
         // Login without remember-me
         var basicAuth = clientFactory.basicAuth(testUserName, testUserPassword);
-        var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginUri).retrieve().toEntity(String.class);
-        assertResponse(response, 200, SET, NOT_SET);
+        var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginRememberMeTrueUri).retrieve().toEntity(String.class);
+        assertResponse(response, 200, SET, SET);
 
+        // on login a remember-me token should have been created
         var persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
         assertEquals(1, persistentLogins.size());
 
         response = clientFactory.fromHttpClient(basicAuth).get().uri(logoutUri).retrieve().toEntity(String.class);
         assertResponse(response, 204, CLEARED, CLEARED);
 
-        // testLoginLogout at the end should test that the token was cleared.
+        // on logout show that the remember-me token was removed from the server
         persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
         assertEquals(0, persistentLogins.size());
 
         assertEquals(1, memoryAppender.search("AuthenticationSuccessEvent", testUserName).size());
         assertEquals(1, memoryAppender.search("LogoutSuccessEvent", testUserName).size());
     }
-
-
-    // TODO tests should show that the remember me token is not cleared at the end EXCEPT testRememberMeCookieTimeout
-    // The test will fail, so: Clear expired tokens. PersistentTokenRepository could remove expired tokens on a schedule
 
     @Test
     public void testSessionCookieTimeoutWithoutRememberMe() {
@@ -251,12 +244,20 @@ public class SessionSecurityTest extends IntegrationTest {
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, NOT_SET, NOT_SET);
 
+        // on login a remember-me token should not have been created
+        var persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
+        assertEquals(0, persistentLogins.size());
+
         waitForExpiration(sessionTimeout);
 
         // Then attempt to access secured endpoint
         // Result is a 401, Session is invalid, no session cookie is returned
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 401, NOT_SET, NOT_SET);
+
+        // on logout show that the remember-me token should still not be there
+        persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
+        assertEquals(0, persistentLogins.size());
 
         // Check that the log message was generated
         var expiredCookie = originalCookie.getValue();
@@ -319,6 +320,11 @@ public class SessionSecurityTest extends IntegrationTest {
 
     @Test
     public void testRememberMeCookieTimeout() {
+
+
+        // TODO test clearing of the remember me token when it expires
+        // The test will fail, so: Clear expired tokens. PersistentTokenRepository could remove expired tokens on a schedule
+
 
         // Login with remember-me and access secured endpoint
         // Result is a 200, Session cookie is set and remember-me cookie is set
