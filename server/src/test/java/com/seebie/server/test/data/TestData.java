@@ -185,8 +185,10 @@ public class TestData {
      */
     public static AppProperties newAppProperties(int rememberMeTokenValidityDays) {
         return new AppProperties(1,
-                new AppProperties.Security(new AppProperties.Security.RememberMe(ofDays(rememberMeTokenValidityDays), randomUUID().toString())),
-                new AppProperties.Notification(new AppProperties.Notification.TriggerAfter(ofMinutes(1), ofMinutes(1)))
+                new AppProperties.Security(
+                        new AppProperties.Security.RememberMe(ofDays(rememberMeTokenValidityDays), randomUUID().toString(), 60)),
+                new AppProperties.Notification(
+                        new AppProperties.Notification.TriggerAfter(ofMinutes(1), ofMinutes(1)))
         );
     }
 }

@@ -2,8 +2,8 @@ package com.seebie.server.controller;
 
 import ch.qos.logback.classic.LoggerContext;
 import com.seebie.server.MemoryAppender;
-import com.seebie.server.entity.PersistentLogin;
 import com.seebie.server.repository.PersistentLoginRepository;
+import com.seebie.server.service.PersistentLoginSchedulingService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.client.RestClientFactory;
@@ -19,11 +19,11 @@ import org.springframework.web.client.RestClient;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.seebie.server.Functional.toExactlyOne;
 import static com.seebie.server.Functional.toOne;
@@ -45,6 +45,7 @@ public class SessionSecurityTest extends IntegrationTest {
 
     private RestClientFactory clientFactory;
     private static PersistentLoginRepository persistentLoginRepository;
+    private static PersistentLoginSchedulingService schedulingService;
 
     private String testUserName;
     private String testUserPassword;
@@ -55,12 +56,15 @@ public class SessionSecurityTest extends IntegrationTest {
     private static final MemoryAppender memoryAppender = new MemoryAppender();
 
     public enum CookieResponse {
-        SET, NOT_SET, CLEARED
+        SET, // cookie name and value are present
+        NOT_SET, // cookie name is not even present
+        CLEARED // cookie name is present but value is empty
     }
 
     @BeforeAll
-    public static void setupRepos(@Autowired PersistentLoginRepository persistentLoginRepo) {
+    public static void setupRepos(@Autowired PersistentLoginRepository persistentLoginRepo, @Autowired PersistentLoginSchedulingService reaper) {
         persistentLoginRepository = persistentLoginRepo;
+        schedulingService = reaper;
     }
 
     @BeforeAll
@@ -321,16 +325,15 @@ public class SessionSecurityTest extends IntegrationTest {
     @Test
     public void testRememberMeCookieTimeout() {
 
-
-        // TODO test clearing of the remember me token when it expires
-        // The test will fail, so: Clear expired tokens. PersistentTokenRepository could remove expired tokens on a schedule
-
-
         // Login with remember-me and access secured endpoint
         // Result is a 200, Session cookie is set and remember-me cookie is set
         var basicAuth = clientFactory.basicAuth(testUserName, testUserPassword);
         var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginRememberMeTrueUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, SET, SET);
+
+        // on login, a database record for the persistent login is created
+        var persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
+        assertEquals(1, persistentLogins.size());
 
         // subsequent requests should NOT have session cookie set, cookie is sent in subsequent requests
         var sessionAuth = clientFactory.removeBasicAuth(basicAuth);
@@ -340,7 +343,19 @@ public class SessionSecurityTest extends IntegrationTest {
         // Wait for remember-me timeout
         waitForExpiration(rememberMeTimeout);
 
-        // then attempt to access secured endpoint again
+        // after remember-me timeout, the remember-me token on the server is not deleted
+        persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
+        assertEquals(1, persistentLogins.size());
+
+        // for testing, we can indiscriminately delete all expired tokens, not just for this user
+        // expired tokens for other users are useless anyway (unless it affects cookies being returned as NOT_SET vs CLEARED)
+        schedulingService.callDeleteExpiredRememberMeTokens();
+
+        // the token shouldn't even be present in the database anymore
+        persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
+        assertEquals(0, persistentLogins.size());
+
+        // attempt to access secured endpoint again
         // Result is a 401, Session is invalid, no session cookie is returned, remember-me cookie is cleared
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 401, NOT_SET, CLEARED);

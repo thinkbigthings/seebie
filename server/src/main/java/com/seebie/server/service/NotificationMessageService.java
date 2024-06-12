@@ -58,9 +58,7 @@ public class NotificationMessageService {
      * between the end of the last invocation and the start of the next.
      * That way we avoid overlapping executions.
      */
-    // TODO From Javadocs: NOTE: With virtual threads, fixed rates and cron triggers are recommended over fixed delays.
-    //  Fixed-delay tasks operate on a single scheduler thread with SimpleAsyncTaskScheduler.
-    @Scheduled(fixedDelayString="${app.notification.scanFrequencyMinutes}", timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedRateString="${app.notification.scanFrequencyMinutes}", timeUnit = TimeUnit.MINUTES)
     public void runOnSchedule() {
 
         LOG.debug("Email notifications scan is starting...");
