@@ -10,14 +10,14 @@ import java.time.Duration;
 
 @Validated
 @ConfigurationProperties(prefix="app")
-public record AppProperties(@Positive Integer apiVersion, @NotNull Security security, @NotNull Notification notification) {
+public record AppProperties(@NotNull @Positive Integer apiVersion, @NotNull Security security, @NotNull Notification notification) {
 
     public record Notification(@NotNull TriggerAfter triggerAfter) {
         public record TriggerAfter(@NotNull Duration lastNotified, @NotNull Duration sleepLog) {}
     }
 
     public record Security(@NotNull RememberMe rememberMe) {
-        public record RememberMe(@NotNull Duration tokenValidity, @NotEmpty String key) {
+        public record RememberMe(@NotNull Duration tokenValidity, @NotEmpty String key, @NotNull @Positive int scanFrequencyMinutes) {
             public int tokenValiditySeconds() {
                 return (int) tokenValidity.toSeconds();
             }

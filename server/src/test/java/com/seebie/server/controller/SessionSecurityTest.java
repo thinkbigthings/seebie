@@ -2,6 +2,8 @@ package com.seebie.server.controller;
 
 import ch.qos.logback.classic.LoggerContext;
 import com.seebie.server.MemoryAppender;
+import com.seebie.server.repository.PersistentLoginRepository;
+import com.seebie.server.service.PersistentLoginSchedulingService;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.client.RestClientFactory;
@@ -14,7 +16,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
-import java.io.IOException;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.time.Duration;
@@ -23,6 +24,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
+import static com.seebie.server.Functional.toExactlyOne;
+import static com.seebie.server.Functional.toOne;
 import static com.seebie.server.security.WebSecurityConfig.REMEMBER_ME_COOKIE;
 import static com.seebie.server.security.WebSecurityConfig.SESSION_COOKIE;
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,6 +43,8 @@ public class SessionSecurityTest extends IntegrationTest {
     private static Duration rememberMeTimeout;
 
     private RestClientFactory clientFactory;
+    private static PersistentLoginRepository persistentLoginRepository;
+    private static PersistentLoginSchedulingService schedulingService;
 
     private String testUserName;
     private String testUserPassword;
@@ -50,7 +55,15 @@ public class SessionSecurityTest extends IntegrationTest {
     private static final MemoryAppender memoryAppender = new MemoryAppender();
 
     public enum CookieResponse {
-        SET, NOT_SET, CLEARED
+        SET, // cookie name and value are present
+        NOT_SET, // cookie name is not even present
+        CLEARED // cookie name is present but value is empty
+    }
+
+    @BeforeAll
+    public static void setupRepos(@Autowired PersistentLoginRepository persistentLoginRepo, @Autowired PersistentLoginSchedulingService reaper) {
+        persistentLoginRepository = persistentLoginRepo;
+        schedulingService = reaper;
     }
 
     @BeforeAll
@@ -138,7 +151,7 @@ public class SessionSecurityTest extends IntegrationTest {
     }
 
     @Test
-    public void testUnauthenticatedLoginCreatesNoRememberMe() {
+    public void testUnauthenticatedCallCreatesNoRememberMe() {
 
         // We don't return session tokens for unauthenticated calls, it is unnecessary.
         // Also, we don't want people to farm it for statistics on the cryptography of session tokens.
@@ -147,10 +160,12 @@ public class SessionSecurityTest extends IntegrationTest {
         var response = clientFactory.noLogin().get().uri(loginRememberMeTrueUri).retrieve().toEntity(String.class);
 
         assertResponse(response, 401, NOT_SET, NOT_SET);
+
+        assertEquals(0, persistentLoginRepository.countAllByUsername(testUserName));
     }
 
     @Test
-    public void testIncorrectPassword() throws IOException, InterruptedException {
+    public void testIncorrectPassword() {
 
         var badPassword = STR."\{testUserPassword}typo";
         var badCreds = Base64.getEncoder().encodeToString(STR."\{testUserName}:\{badPassword}".getBytes());
@@ -171,15 +186,43 @@ public class SessionSecurityTest extends IntegrationTest {
     }
 
     @Test
-    public void testLoginLogout() {
+    public void testLoginLogoutWithoutRememberMe() {
 
         // Login without remember-me
         var basicAuth = clientFactory.basicAuth(testUserName, testUserPassword);
         var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, SET, NOT_SET);
 
+        // on login no remember-me token should have been created
+        assertEquals(0, persistentLoginRepository.countAllByUsername(testUserName));
+
         response = clientFactory.fromHttpClient(basicAuth).get().uri(logoutUri).retrieve().toEntity(String.class);
         assertResponse(response, 204, CLEARED, CLEARED);
+
+        // on logout there was still no remember-me token
+        assertEquals(0, persistentLoginRepository.countAllByUsername(testUserName));
+
+        assertEquals(1, memoryAppender.search("AuthenticationSuccessEvent", testUserName).size());
+        assertEquals(1, memoryAppender.search("LogoutSuccessEvent", testUserName).size());
+    }
+
+
+    @Test
+    public void testLoginLogoutWithRememberMe() {
+
+        // Login without remember-me
+        var basicAuth = clientFactory.basicAuth(testUserName, testUserPassword);
+        var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginRememberMeTrueUri).retrieve().toEntity(String.class);
+        assertResponse(response, 200, SET, SET);
+
+        // on login a remember-me token should have been created
+        assertEquals(1, persistentLoginRepository.countAllByUsername(testUserName));
+
+        response = clientFactory.fromHttpClient(basicAuth).get().uri(logoutUri).retrieve().toEntity(String.class);
+        assertResponse(response, 204, CLEARED, CLEARED);
+
+        // on logout show that the remember-me token was removed from the server
+        assertEquals(0, persistentLoginRepository.countAllByUsername(testUserName));
 
         assertEquals(1, memoryAppender.search("AuthenticationSuccessEvent", testUserName).size());
         assertEquals(1, memoryAppender.search("LogoutSuccessEvent", testUserName).size());
@@ -199,6 +242,9 @@ public class SessionSecurityTest extends IntegrationTest {
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, NOT_SET, NOT_SET);
 
+        // on login a remember-me token should not have been created
+        assertEquals(0, persistentLoginRepository.countAllByUsername(testUserName));
+
         waitForExpiration(sessionTimeout);
 
         // Then attempt to access secured endpoint
@@ -206,13 +252,20 @@ public class SessionSecurityTest extends IntegrationTest {
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 401, NOT_SET, NOT_SET);
 
+        // on logout show that the remember-me token should still not be there
+        assertEquals(0, persistentLoginRepository.countAllByUsername(testUserName));
+
         // Check that the log message was generated
         var expiredCookie = originalCookie.getValue();
         assertEquals(1, memoryAppender.search("Session expired or invalid", expiredCookie, testUserName).size());
     }
 
     @Test
-    public void testSessionCookieTimeoutWithRememberMe() throws Exception {
+    public void testSessionCookieTimeoutWithRememberMe() {
+
+        // the user has no persistent login record before logging in
+        var beforeLogins = persistentLoginRepository.findAllByUsername(testUserName);
+        assertEquals(0, beforeLogins.size());
 
         // Login with remember-me and access secured endpoint
         // Result is a 200, Session cookie is set and remember-me cookie is set
@@ -221,6 +274,10 @@ public class SessionSecurityTest extends IntegrationTest {
         var originalSessionCookie = getCookie(response, SESSION_COOKIE);
         var originalRememberMeCookie = getCookie(response, REMEMBER_ME_COOKIE);
         assertResponse(response, 200, SET, SET);
+
+        // on login, a database record for the persistent login is created
+        var originalPersistentLogins = persistentLoginRepository.findAllByUsername(testUserName);
+        assertEquals(1, originalPersistentLogins.size());
 
         // subsequent requests should NOT have session cookie set, cookie is sent in subsequent requests
         var sessionAuth = clientFactory.removeBasicAuth(basicAuth);
@@ -240,19 +297,34 @@ public class SessionSecurityTest extends IntegrationTest {
         assertNotEquals(originalSessionCookie.getValue(), newSessionCookie.getValue());
         assertNotEquals(originalRememberMeCookie.getValue(), newRememberMeCookie.getValue());
 
+        // persistent login record with remember-me cookie is updated
+        var newPersistentLogins = persistentLoginRepository.findAllByUsername(testUserName);
+        assertEquals(1, newPersistentLogins.size());
+
+        // on refresh, the token in the existing database record is replaced and the lastUsed is updated
+        var originalPersistentLogin = originalPersistentLogins.stream().collect(toExactlyOne());
+        var newPersistentLogin = newPersistentLogins.stream().collect(toExactlyOne());
+        assertTrue(originalPersistentLogin.getLastUsed().isBefore(newPersistentLogin.getLastUsed()));
+        assertEquals(originalPersistentLogin.getSeries(), newPersistentLogin.getSeries());
+        assertEquals(originalPersistentLogin.getUsername(), newPersistentLogin.getUsername());
+        assertNotEquals(originalPersistentLogin.getToken(), newPersistentLogin.getToken());
+
         // Check that the log message was generated
         assertEquals(2, memoryAppender.search("Authentication event AuthenticationSuccessEvent", testUserName).size());
         assertEquals(1, memoryAppender.search("Authentication event InteractiveAuthenticationSuccessEvent", testUserName).size());
     }
 
     @Test
-    public void testRememberMeCookieTimeout() throws Exception {
+    public void testRememberMeCookieTimeout() {
 
         // Login with remember-me and access secured endpoint
         // Result is a 200, Session cookie is set and remember-me cookie is set
         var basicAuth = clientFactory.basicAuth(testUserName, testUserPassword);
         var response = clientFactory.fromHttpClient(basicAuth).get().uri(loginRememberMeTrueUri).retrieve().toEntity(String.class);
         assertResponse(response, 200, SET, SET);
+
+        // on login, a database record for the persistent login is created
+        assertEquals(1, persistentLoginRepository.countAllByUsername(testUserName));
 
         // subsequent requests should NOT have session cookie set, cookie is sent in subsequent requests
         var sessionAuth = clientFactory.removeBasicAuth(basicAuth);
@@ -262,7 +334,17 @@ public class SessionSecurityTest extends IntegrationTest {
         // Wait for remember-me timeout
         waitForExpiration(rememberMeTimeout);
 
-        // then attempt to access secured endpoint again
+        // after remember-me timeout, the remember-me token on the server is not deleted
+        assertEquals(1, persistentLoginRepository.countAllByUsername(testUserName));
+
+        // for testing, we can indiscriminately delete all expired tokens, not just for this user
+        // expired tokens for other users are useless anyway (unless it affects cookies being returned as NOT_SET vs CLEARED)
+        schedulingService.callDeleteExpiredRememberMeTokens();
+
+        // the token shouldn't even be present in the database anymore
+        assertEquals(0, persistentLoginRepository.countAllByUsername(testUserName));
+
+        // attempt to access secured endpoint again
         // Result is a 401, Session is invalid, no session cookie is returned, remember-me cookie is cleared
         response = clientFactory.fromHttpClient(sessionAuth).get().uri(testUserInfoUri).retrieve().toEntity(String.class);
         assertResponse(response, 401, NOT_SET, CLEARED);
@@ -286,11 +368,11 @@ public class SessionSecurityTest extends IntegrationTest {
         }
     }
 
-    public HttpCookie getCookie(ResponseEntity<String> response, String cookieName) {
+    private HttpCookie getCookie(ResponseEntity<String> response, String cookieName) {
         return findCookie(response, cookieName).get();
     }
 
-    public void assertResponse(ResponseEntity<String> response, int expectedStatusCode, CookieResponse expectedSession, CookieResponse expectedRememberMe) {
+    private void assertResponse(ResponseEntity<String> response, int expectedStatusCode, CookieResponse expectedSession, CookieResponse expectedRememberMe) {
         assertEquals(expectedStatusCode, response.getStatusCode().value());
         assertEquals(expectedSession, getCookieResponse(response, SESSION_COOKIE));
         assertEquals(expectedRememberMe, getCookieResponse(response, REMEMBER_ME_COOKIE));
@@ -302,14 +384,12 @@ public class SessionSecurityTest extends IntegrationTest {
         return cookieState == SET && cookieVal.filter(String::isEmpty).isPresent() ? CLEARED : cookieState;
     }
 
-    public Optional<HttpCookie> findCookie(ResponseEntity<String> response, String cookieName) {
+    private Optional<HttpCookie> findCookie(ResponseEntity<String> response, String cookieName) {
         return response.getHeaders().getOrDefault("SET-COOKIE", new ArrayList<>())
                 .stream()
                 .map(HttpCookie::parse)
                 .flatMap(List::stream)
                 .filter(c -> c.getName().equals(cookieName))
-                .findFirst();
-
-        // TODO expect exactly one result
+                .collect(toOne());
     }
 }
