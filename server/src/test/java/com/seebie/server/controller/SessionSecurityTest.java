@@ -19,7 +19,6 @@ import org.springframework.web.client.RestClient;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -162,8 +161,7 @@ public class SessionSecurityTest extends IntegrationTest {
 
         assertResponse(response, 401, NOT_SET, NOT_SET);
 
-        var persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
-        assertEquals(0, persistentLogins.size());
+        assertEquals(0, persistentLoginRepository.countAllByUsername(testUserName));
     }
 
     @Test
@@ -196,15 +194,13 @@ public class SessionSecurityTest extends IntegrationTest {
         assertResponse(response, 200, SET, NOT_SET);
 
         // on login no remember-me token should have been created
-        var persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
-        assertEquals(0, persistentLogins.size());
+        assertEquals(0, persistentLoginRepository.countAllByUsername(testUserName));
 
         response = clientFactory.fromHttpClient(basicAuth).get().uri(logoutUri).retrieve().toEntity(String.class);
         assertResponse(response, 204, CLEARED, CLEARED);
 
         // on logout there was still no remember-me token
-        persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
-        assertEquals(0, persistentLogins.size());
+        assertEquals(0, persistentLoginRepository.countAllByUsername(testUserName));
 
         assertEquals(1, memoryAppender.search("AuthenticationSuccessEvent", testUserName).size());
         assertEquals(1, memoryAppender.search("LogoutSuccessEvent", testUserName).size());
@@ -220,15 +216,13 @@ public class SessionSecurityTest extends IntegrationTest {
         assertResponse(response, 200, SET, SET);
 
         // on login a remember-me token should have been created
-        var persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
-        assertEquals(1, persistentLogins.size());
+        assertEquals(1, persistentLoginRepository.countAllByUsername(testUserName));
 
         response = clientFactory.fromHttpClient(basicAuth).get().uri(logoutUri).retrieve().toEntity(String.class);
         assertResponse(response, 204, CLEARED, CLEARED);
 
         // on logout show that the remember-me token was removed from the server
-        persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
-        assertEquals(0, persistentLogins.size());
+        assertEquals(0, persistentLoginRepository.countAllByUsername(testUserName));
 
         assertEquals(1, memoryAppender.search("AuthenticationSuccessEvent", testUserName).size());
         assertEquals(1, memoryAppender.search("LogoutSuccessEvent", testUserName).size());
@@ -249,8 +243,7 @@ public class SessionSecurityTest extends IntegrationTest {
         assertResponse(response, 200, NOT_SET, NOT_SET);
 
         // on login a remember-me token should not have been created
-        var persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
-        assertEquals(0, persistentLogins.size());
+        assertEquals(0, persistentLoginRepository.countAllByUsername(testUserName));
 
         waitForExpiration(sessionTimeout);
 
@@ -260,8 +253,7 @@ public class SessionSecurityTest extends IntegrationTest {
         assertResponse(response, 401, NOT_SET, NOT_SET);
 
         // on logout show that the remember-me token should still not be there
-        persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
-        assertEquals(0, persistentLogins.size());
+        assertEquals(0, persistentLoginRepository.countAllByUsername(testUserName));
 
         // Check that the log message was generated
         var expiredCookie = originalCookie.getValue();
@@ -272,7 +264,7 @@ public class SessionSecurityTest extends IntegrationTest {
     public void testSessionCookieTimeoutWithRememberMe() {
 
         // the user has no persistent login record before logging in
-        var beforeLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
+        var beforeLogins = persistentLoginRepository.findAllByUsername(testUserName);
         assertEquals(0, beforeLogins.size());
 
         // Login with remember-me and access secured endpoint
@@ -284,7 +276,7 @@ public class SessionSecurityTest extends IntegrationTest {
         assertResponse(response, 200, SET, SET);
 
         // on login, a database record for the persistent login is created
-        var originalPersistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
+        var originalPersistentLogins = persistentLoginRepository.findAllByUsername(testUserName);
         assertEquals(1, originalPersistentLogins.size());
 
         // subsequent requests should NOT have session cookie set, cookie is sent in subsequent requests
@@ -306,16 +298,16 @@ public class SessionSecurityTest extends IntegrationTest {
         assertNotEquals(originalRememberMeCookie.getValue(), newRememberMeCookie.getValue());
 
         // persistent login record with remember-me cookie is updated
-        var newPersistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
+        var newPersistentLogins = persistentLoginRepository.findAllByUsername(testUserName);
         assertEquals(1, newPersistentLogins.size());
 
         // on refresh, the token in the existing database record is replaced and the lastUsed is updated
         var originalPersistentLogin = originalPersistentLogins.stream().collect(toExactlyOne());
         var newPersistentLogin = newPersistentLogins.stream().collect(toExactlyOne());
-        assertTrue(originalPersistentLogin.lastUsed().isBefore(newPersistentLogin.lastUsed()));
-        assertEquals(originalPersistentLogin.series(), newPersistentLogin.series());
-        assertEquals(originalPersistentLogin.username(), newPersistentLogin.username());
-        assertNotEquals(originalPersistentLogin.token(), newPersistentLogin.token());
+        assertTrue(originalPersistentLogin.getLastUsed().isBefore(newPersistentLogin.getLastUsed()));
+        assertEquals(originalPersistentLogin.getSeries(), newPersistentLogin.getSeries());
+        assertEquals(originalPersistentLogin.getUsername(), newPersistentLogin.getUsername());
+        assertNotEquals(originalPersistentLogin.getToken(), newPersistentLogin.getToken());
 
         // Check that the log message was generated
         assertEquals(2, memoryAppender.search("Authentication event AuthenticationSuccessEvent", testUserName).size());
@@ -332,8 +324,7 @@ public class SessionSecurityTest extends IntegrationTest {
         assertResponse(response, 200, SET, SET);
 
         // on login, a database record for the persistent login is created
-        var persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
-        assertEquals(1, persistentLogins.size());
+        assertEquals(1, persistentLoginRepository.countAllByUsername(testUserName));
 
         // subsequent requests should NOT have session cookie set, cookie is sent in subsequent requests
         var sessionAuth = clientFactory.removeBasicAuth(basicAuth);
@@ -344,16 +335,14 @@ public class SessionSecurityTest extends IntegrationTest {
         waitForExpiration(rememberMeTimeout);
 
         // after remember-me timeout, the remember-me token on the server is not deleted
-        persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
-        assertEquals(1, persistentLogins.size());
+        assertEquals(1, persistentLoginRepository.countAllByUsername(testUserName));
 
         // for testing, we can indiscriminately delete all expired tokens, not just for this user
         // expired tokens for other users are useless anyway (unless it affects cookies being returned as NOT_SET vs CLEARED)
         schedulingService.callDeleteExpiredRememberMeTokens();
 
         // the token shouldn't even be present in the database anymore
-        persistentLogins = persistentLoginRepository.findAllPersistentLogins(testUserName);
-        assertEquals(0, persistentLogins.size());
+        assertEquals(0, persistentLoginRepository.countAllByUsername(testUserName));
 
         // attempt to access secured endpoint again
         // Result is a 401, Session is invalid, no session cookie is returned, remember-me cookie is cleared

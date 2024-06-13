@@ -28,4 +28,19 @@ public class PersistentLogin implements Serializable {
 
     }
 
+    public String getSeries() {
+        return series;
+    }
+
+    public @NotNull String getToken() {
+        return token;
+    }
+
+    public @NotNull String getUsername() {
+        return username;
+    }
+
+    public @NotNull Instant getLastUsed() {
+        return lastUsed;
+    }
 }
