@@ -57,7 +57,7 @@ public class Functional {
                 Collectors.toList(),
                 list -> {
                     if (list.size() > 1) {
-                        throw new IllegalStateException(STR."Must have zero or one element, found \{list.size()}");
+                        throw new IllegalArgumentException(STR."Must have zero or one element, found \{list.size()}");
                     }
                     return list.size() == 1 ? Optional.of(list.get(0)) : Optional.empty();
                 }
@@ -82,8 +82,8 @@ public class Functional {
                 Collectors.toList(),
                 list -> {
                     if (list.size() != 1) {
-                        String m = STR."Must have exactly one element, found \{list}. \{join(", ", asList(messages))}";
-                        throw new IllegalStateException(m);
+                        String m = STR."Must have exactly one element, found \{list.size()}. \{join(", ", asList(messages))}";
+                        throw new IllegalArgumentException(m);
                     }
                     return list.get(0);
                 }
