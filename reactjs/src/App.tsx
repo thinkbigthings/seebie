@@ -137,7 +137,7 @@ function AuthenticatedApp() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/users/:username/sleep/list" element={<SleepList createdCount={createdCount} />} />
-                    <Route path="/login" element={<div />} />
+                    <Route path="/login" element={<Login />} />
                     <Route path="/users/:username/challenge" element={<Challenge />} />
                     <Route path="/users/:username/sleep/chart" element={<SleepChart createdCount={createdCount} />} />
                     <Route path="/users/:username/histogram" element={<Histogram createdCount = {createdCount} />} />
