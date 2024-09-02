@@ -13,7 +13,7 @@ return {
         basicSsl()
     ],
     server: {
-        open: true, // auto open the browser when vite server starts
+        open: '#/login', // auto open the login page when vite server starts, this could also just be set to true
             proxy: {
             // if you proxy '/' then it will proxy ws requests intended for the vite server which breaks HMR
             // note you might have to refresh the browser to see HMR changes
