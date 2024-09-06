@@ -1,4 +1,3 @@
-import {VITE_API_VERSION, VERSION_HEADER} from "./Constants";
 
 const GET = {
     headers: basicHeader(false),
@@ -13,8 +12,6 @@ function basicHeader(hasRequestBody=true) {
     let headers: HeadersInit = {
         'X-Requested-With': 'XMLHttpRequest',
     };
-
-    headers[VERSION_HEADER] = VITE_API_VERSION;
 
     // Content-Type indicates the request body type so should only be set for PUT and POST requests
     if(hasRequestBody) {

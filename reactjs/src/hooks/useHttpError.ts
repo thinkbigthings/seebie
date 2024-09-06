@@ -1,5 +1,4 @@
 import {RecoveryActions} from "../utility/ErrorContext";
-import {VITE_API_VERSION, VERSION_HEADER} from "../utility/Constants";
 import useError from "./useError";
 
 const useHttpError = () => {
@@ -28,11 +27,6 @@ const useHttpError = () => {
             addError('There was a server error. If the error continues contact your administrator.', RecoveryActions.NONE);
         }
 
-        // this should come back as a 406, but let's check the versions
-        const serverApiVersion = httpResponse.headers.get(VERSION_HEADER);
-        if (serverApiVersion !== null && serverApiVersion !== VITE_API_VERSION) {
-            addError('Your app is out of date. Try reloading the page.', RecoveryActions.RELOAD);
-        }
         throw Error('Received bad response ' + httpResponse.status);
     }
 

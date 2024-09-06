@@ -28,12 +28,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(createBody(FORBIDDEN, ex), new HttpHeaders(), FORBIDDEN);
     }
 
-    // there's no standard for what this return code should be, other options include 412 or plain 400
-    @ExceptionHandler(IncompatibleClientVersionException.class)
-    public ResponseEntity<Map<String,String>> handleIncompatibleClient(IncompatibleClientVersionException ex) {
-        return new ResponseEntity<>(createBody(NOT_ACCEPTABLE, ex), new HttpHeaders(), NOT_ACCEPTABLE);
-    }
-
 //    @ExceptionHandler(Exception.class)
 //    public ResponseEntity<Object> exception(Exception ex) {
 //        return new ResponseEntity<>(getBody(INTERNAL_SERVER_ERROR, ex, "Something Went Wrong"), new HttpHeaders(), INTERNAL_SERVER_ERROR);

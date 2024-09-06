@@ -2,7 +2,6 @@ import React, {KeyboardEvent, useState} from 'react';
 
 import Button from "react-bootstrap/Button";
 
-import {VITE_API_VERSION, VERSION_HEADER} from "./utility/Constants";
 import useCurrentUser from "./hooks/useCurrentUser";
 import useHttpError from "./hooks/useHttpError";
 import {useNavigate} from 'react-router-dom';
@@ -61,13 +60,6 @@ function Login() {
                 onLogin(response.user);
                 navigate("/");
 
-                // Check current client version and if out of date do a hard refresh.
-                // If someone logs out and attempts to log in later, this gives us a good boundary to update the client.
-                const clientApiVersion = VITE_API_VERSION;
-                const serverApiVersion = response.headers.get(VERSION_HEADER);
-                if(clientApiVersion !== serverApiVersion) {
-                    window.location.reload();
-                }
             })
             .catch(error => {
                 console.log(error);
