@@ -56,7 +56,7 @@ public class IntegrationTest {
     // Use @Container here, so it can be detected by @ImportTestcontainers
     @ServiceConnection
     @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.4");
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.2");
 
     static {
         postgres.withUrlParam("autosave", "conservative");
