@@ -28,14 +28,14 @@ public class HistogramCalculator {
                 .flatMap(s -> s.durationMinutes().stream())
                 .collect(summarizingLong(i->i));
 
-        Long lowestBin =  (stats.getMin() / binSize) * binSize; // get the lowest bin that is a multiple of binSize
+        long lowestBin =  (stats.getMin() / binSize) * binSize; // get the lowest bin that is a multiple of binSize
         List<Long> unifiedBins = iterate(lowestBin, b -> b <= stats.getMax(), b -> b + binSize)
                 .boxed()
                 .toList();
 
         var stackedNormalizedHist = multiDataSets.stream()
                 .map(durations -> buildHistogram(unifiedBins, durations))
-                .map(histogram -> normalizeValues(histogram))
+                .map(this::normalizeValues)
                 .toList();
 
         return new HistogramNormalized(unifiedBins, stackedNormalizedHist);
@@ -54,7 +54,7 @@ public class HistogramCalculator {
         binLowerBounds.forEach(lower -> histogram.put(lower, 0L));
 
         var foundValues = values.durationMinutes().stream()
-                .map(value -> histogram.floorKey(value))
+                .map(histogram::floorKey)
                 .collect(groupingBy(identity(), counting()));
 
         histogram.putAll(foundValues);

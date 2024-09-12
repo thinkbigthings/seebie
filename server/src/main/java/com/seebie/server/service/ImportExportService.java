@@ -8,8 +8,6 @@ import com.seebie.server.mapper.dtotoentity.UnsavedChallengeListMapper;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.repository.ChallengeRepository;
 import com.seebie.server.repository.SleepRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +15,6 @@ import java.util.List;
 
 @Service
 public class ImportExportService {
-
-    private static Logger LOG = LoggerFactory.getLogger(ImportExportService.class);
 
     private SleepRepository sleepRepository;
     private ChallengeRepository challengeRepository;
@@ -54,9 +50,7 @@ public class ImportExportService {
         var challengeEntities = toUnsavedChallengeEntity.apply(username, parsedData.challengeData());
 
         challengeRepository.saveAll(challengeEntities);
-        long numSleepEntities = sleepRepository.saveAll(sleepEntities).size();
-
-        return numSleepEntities;
+        return sleepRepository.saveAll(sleepEntities).size();
     }
 
     @Transactional(readOnly = true)
@@ -68,9 +62,7 @@ public class ImportExportService {
     public long saveSleepData(String username, List<SleepData> parsedData) {
 
         var entityList = toUnsavedSleepEntity.apply(username, parsedData);
-        int count = sleepRepository.saveAll(entityList).size();
-
-        return count;
+        return sleepRepository.saveAll(entityList).size();
     }
 
 }

@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.RememberMeServices;
@@ -54,8 +55,7 @@ public class WebSecurityConfig {
                     .invalidSessionStrategy(this::invalidSession)
                     .maximumSessions(1)
                     .maxSessionsPreventsLogin(true))
-            .csrf((csrf) -> csrf
-                    .disable())
+            .csrf(AbstractHttpConfigurer::disable)
             .logout(config -> config
                     .logoutUrl(API_LOGOUT)
                     .invalidateHttpSession(true)
