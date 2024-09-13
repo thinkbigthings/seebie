@@ -15,17 +15,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-
 
 @Service
 public class UserService {
 
-    private UserMapper toUserRecord = new UserMapper();
+    private final UserMapper toUserRecord = new UserMapper();
 
-    private UserRepository userRepo;
-    private NotificationRepository notificationRepo;
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepo;
+    private final NotificationRepository notificationRepo;
+    private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository repo, NotificationRepository notificationRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = repo;
@@ -46,18 +44,10 @@ public class UserService {
     @Transactional
     public com.seebie.server.dto.User updateUser(String username, PersonalInfo userData) {
 
-        var notification = notificationRepo.findBy(username)
-                .orElseThrow(() -> new EntityNotFoundException("No notification exists for " + username));
+        var user = userRepo.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("No user found: " + username) );
 
-        // If user turns notifications on, set last notification time to current time,
-        // so they are notified at the next appropriate time.
-        boolean userNotificationSwitchedOn = ! notification.getUser().isNotificationsEnabled() && userData.notificationsEnabled();
-        if( userNotificationSwitchedOn ) {
-            notification.withLastSent(Instant.now());
-        }
-
-        var user = notification.getUser();
-        user.setUserData(userData.email(), userData.displayName(), userData.notificationsEnabled());
+        user.withUserData(userData.email(), userData.displayName(), userData.notificationsEnabled());
 
         return toUserRecord.apply(user);
     }

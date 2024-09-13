@@ -27,7 +27,7 @@ public class NotificationRetrievalService {
 
     /**
      * Separate out the finding of people to send notifications, from the email sending logic.
-     * Transactional must be called from a separate class from the Scheduled method anyway.
+     * A @Transactional method must be called from a separate class from the Scheduled method anyway.
      *
      * This sets the last sent time of the Notification record,
      * that way another scan transaction (maybe by another node) that tries to read that record will ignore it.
