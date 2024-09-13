@@ -48,9 +48,6 @@ public class User implements Serializable {
     @Enumerated(EnumType.ORDINAL)
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(fetch=FetchType.LAZY, mappedBy = "user")
-    private Set<Session> sessions = new HashSet<>();
-
     // If we start using more user settings, this could be moved to a settings entity.
     @Basic
     private boolean notificationsEnabled = false;
@@ -110,10 +107,6 @@ public class User implements Serializable {
 
     public void setRegistrationTime(Instant registration) {
         this.registrationTime = registration;
-    }
-
-    public Set<Session> getSessions() {
-        return sessions;
     }
 
     public boolean isNotificationsEnabled() {

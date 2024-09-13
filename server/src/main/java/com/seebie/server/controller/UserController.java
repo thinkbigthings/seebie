@@ -50,7 +50,7 @@ public class UserController {
     public User login(Authentication auth) {
 
         // The web session isn't saved until the db is flushed at the end, so need to set logged in here
-        return userService.getUser(auth.getName()).withIsLoggedIn(true);
+        return userService.getUser(auth.getName());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

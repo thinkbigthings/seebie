@@ -118,7 +118,7 @@ public class TestData {
     }
 
     public static User createRandomUser(String username) {
-        return new User(username, Instant.now().toString(), Set.of(), createRandomPersonalInfo(), false);
+        return new User(username, Instant.now().toString(), Set.of(), createRandomPersonalInfo());
     }
 
     /**
