@@ -7,6 +7,7 @@ const useCurrentUser = () => {
     const [currentUser, setCurrentUser] = useContext(CurrentUserContext);
 
     function onLogin(newUserData: User) {
+        newUserData.isLoggedIn = true;
         localStorage.setItem('currentUser', JSON.stringify(newUserData));
         setCurrentUser(newUserData);
     }
