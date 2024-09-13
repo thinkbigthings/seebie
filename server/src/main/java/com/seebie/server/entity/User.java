@@ -67,10 +67,11 @@ public class User implements Serializable {
         this.roles.add(Role.USER);
     }
 
-    public void setUserData(String email, String displayName, boolean notificationsEnabled) {
+    public User withUserData(String email, String displayName, boolean notificationsEnabled) {
         this.email = email;
         this.displayName = displayName;
         this.notificationsEnabled = notificationsEnabled;
+        return this;
     }
 
     public String getUsername() {
@@ -103,10 +104,6 @@ public class User implements Serializable {
 
     public Instant getRegistrationTime() {
         return registrationTime;
-    }
-
-    public void setRegistrationTime(Instant registration) {
-        this.registrationTime = registration;
     }
 
     public boolean isNotificationsEnabled() {

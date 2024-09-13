@@ -17,10 +17,10 @@ import java.util.List;
 @Service
 public class SleepService {
 
-    private SleepRepository sleepRepository;
-    private UnsavedSleepListMapper entityMapper;
+    private final SleepRepository sleepRepository;
+    private final UnsavedSleepListMapper entityMapper;
 
-    private SleepMapper sleepMapper = new SleepMapper();
+    private final SleepMapper sleepMapper = new SleepMapper();
 
 
     public SleepService(SleepRepository sleepRepository, UnsavedSleepListMapper entityMapper) {
