@@ -38,6 +38,8 @@ import java.util.List;
 
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
+import static com.seebie.server.test.data.TestData.createRandomSleepData;
+import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static java.time.ZonedDateTime.now;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
@@ -94,6 +96,11 @@ public class ControllerValidationTest {
 
 	private static final RegistrationRequest invalidRegistration = new RegistrationRequest("", null, null);
 	private static final SleepData invalidSleepData = createStandardSleepData(null, null);
+
+	private static final ZonedDateTime stopTime = ZonedDateTime.now();
+	private static final ZonedDateTime startTime = stopTime.minusHours(8);
+	private static final SleepData badDurationSleepData = new SleepData("", 481, startTime, stopTime, AMERICA_NEW_YORK);
+
 	private static final PersonalInfo invalidInfo = new PersonalInfo(null, null);
 
 	private static final String from = format(now().minusDays(1));
@@ -164,9 +171,11 @@ public class ControllerValidationTest {
 
 			user.args(POST, STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
 			user.args(POST, STR."/api/user/\{USERNAME}/sleep", invalidSleepData, 400),
+			user.args(POST, STR."/api/user/\{USERNAME}/sleep", badDurationSleepData, 400),
 
 			user.args(PUT, STR."/api/user/\{USERNAME}/sleep/1", sleepData, 200),
 			user.args(PUT, STR."/api/user/\{USERNAME}/sleep/1", invalidSleepData, 400),
+			user.args(PUT, STR."/api/user/\{USERNAME}/sleep/1", badDurationSleepData, 400),
 
 			user.args(GET, STR."/api/user/\{USERNAME}/sleep/chart", "", new String[]{"from", from, "to", to}, 200),
 			user.args(GET, STR."/api/user/\{USERNAME}/sleep/chart", "", new String[]{"from", "",   "to", ""}, 400),

@@ -1,5 +1,6 @@
 package com.seebie.server.dto;
 
+import com.seebie.server.validation.ZoneIdConstraint;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 

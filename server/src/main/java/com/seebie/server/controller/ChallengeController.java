@@ -2,7 +2,7 @@ package com.seebie.server.controller;
 
 import com.seebie.server.dto.Challenge;
 import com.seebie.server.dto.ChallengeList;
-import com.seebie.server.dto.ZoneIdConstraint;
+import com.seebie.server.validation.ZoneIdConstraint;
 import com.seebie.server.service.ChallengeService;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
