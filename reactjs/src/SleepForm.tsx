@@ -47,11 +47,20 @@ function SleepForm(props:{setSleepData: (sleep:SleepData) => void, sleepData:Sle
         let updatedLocalStartTime = localStartTime + sleepData.startTime.substring(19);
         let updatedLocalStopTime = localStopTime + sleepData.stopTime.substring(19);
 
-        let formIsValid = isNumericString(updatedFormFields.minutesAwake);
+        let minutesAwakeNumeric = isNumericString(updatedFormFields.minutesAwake);
+        let minutesAwakeDurationValid = false;
+        if(minutesAwakeNumeric) {
+            let minutesInBed = (updatedFormFields.localStopTime.getTime() - updatedFormFields.localStartTime.getTime()) / 60000;
+            let minutesAwake = parseInt(updatedFormFields.minutesAwake);
+            if(minutesAwake <= minutesInBed) {
+                minutesAwakeDurationValid = true;
+            }
+        }
+        let isFormValid = minutesAwakeNumeric && minutesAwakeDurationValid;
 
-        setMinutesAwakeValidity(formIsValid); // shows the validation message
-        setDataValid(formIsValid); // can enable or disable containing component's save button
-        if(formIsValid) {
+        setMinutesAwakeValidity(isFormValid); // shows the validation message
+        setDataValid(isFormValid); // can enable or disable containing component's save button
+        if(isFormValid) {
             setSleepData({
                 ...sleepData,
                 notes: updatedFormFields.notes,
@@ -101,7 +110,7 @@ function SleepForm(props:{setSleepData: (sleep:SleepData) => void, sleepData:Sle
                     />
                     <Form.Control.Feedback type="invalid"
                                            className={"mh-24px d-block " + ((! minutesAwakeValidity) ? 'visible' : 'invisible')}>
-                        Minutes Awake must be a number.
+                        {"Must be a number less than minutes in bed"}
                     </Form.Control.Feedback>
                 </Col>
                 <Col md={1} className={"col-1"}>

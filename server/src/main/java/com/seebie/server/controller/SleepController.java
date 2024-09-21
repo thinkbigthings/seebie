@@ -3,6 +3,7 @@ package com.seebie.server.controller;
 import com.seebie.server.dto.*;
 import com.seebie.server.service.HistogramCalculator;
 import com.seebie.server.service.SleepService;
+import com.seebie.server.validation.ValidDurations;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void saveSleepSession(@Valid @RequestBody SleepData dto, @PathVariable String username) {
+    public void saveSleepSession(@Valid @ValidDurations @RequestBody SleepData dto, @PathVariable String username) {
 
         sleepService.saveNew(username, dto);
     }
@@ -96,7 +97,7 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/{sleepId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void updateSleepSession(@Valid @RequestBody SleepData sleepData, @PathVariable String username, @PathVariable Long sleepId) {
+    public void updateSleepSession(@Valid @ValidDurations @RequestBody SleepData sleepData, @PathVariable String username, @PathVariable Long sleepId) {
         sleepService.update(username, sleepId, sleepData);
     }
 

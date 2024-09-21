@@ -1,4 +1,4 @@
-package com.seebie.server.dto;
+package com.seebie.server.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
