@@ -5,7 +5,11 @@ on:
   pull_request:
     branches: [ "master" ]
     inputs:
-      upload-artifact: false
+      upload-artifact:
+        description: 'Upload artifact after build'
+        required: true
+        type: boolean
+        default: true
 
 permissions:
   contents: read
