@@ -14,5 +14,5 @@ jobs:
   build:
     uses: ./.github/workflows/build-and-test.yml
     with:
-      upload-artifact: false
+      upload-artifact: ${{ github.event_name == 'pull_request' }}
       # gradle-args: -x test -x integrationTest

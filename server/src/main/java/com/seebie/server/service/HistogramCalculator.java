@@ -50,7 +50,7 @@ public class HistogramCalculator {
      */
     private Map<Long, Long> buildHistogram(List<Long> binLowerBounds, FilterResult values) {
 
-        var histogram = new TreeMap<Long, Long>();
+        NavigableMap<Long, Long> histogram = new TreeMap<>();
         binLowerBounds.forEach(lower -> histogram.put(lower, 0L));
 
         var foundValues = values.durationMinutes().stream()
