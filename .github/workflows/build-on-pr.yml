@@ -4,6 +4,8 @@ name: Build On PR
 on:
   pull_request:
     branches: [ "master" ]
+    inputs:
+      upload-artifact: false
 
 permissions:
   contents: read
@@ -14,5 +16,5 @@ jobs:
   build:
     uses: ./.github/workflows/build-and-test.yml
     with:
-      upload-artifact: false
+      upload-artifact: ${{github.event.inputs.upload-artifact}}
       # gradle-args: -x test -x integrationTest
