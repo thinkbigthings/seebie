@@ -4,12 +4,6 @@ name: Build On PR
 on:
   pull_request:
     branches: [ "master" ]
-    inputs:
-      upload-artifact:
-        description: 'Upload artifact after build'
-        required: true
-        type: boolean
-        default: true
 
 permissions:
   contents: read
@@ -20,5 +14,5 @@ jobs:
   build:
     uses: ./.github/workflows/build-and-test.yml
     with:
-      upload-artifact: ${{github.event.inputs.upload-artifact}}
+      upload-artifact: ${{ github.event_name == 'pull_request' }}
       # gradle-args: -x test -x integrationTest
