@@ -2,21 +2,19 @@ package com.seebie.server;
 
 import com.seebie.server.dto.FilterList;
 import com.seebie.server.dto.HistogramRequest;
-import com.seebie.server.service.FilterResult;
 import com.seebie.server.service.HistogramCalculator;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.stream.LongStream;
 
-import static com.seebie.server.test.data.TestData.create30DayRange;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HistogramCalculatorTest {
 
     private HistogramCalculator calculator = new HistogramCalculator();
 
-    private FilterResult emptyResult = new FilterResult(create30DayRange(1), List.of());
+    private List<Long> emptyResult = List.of();
 
     @Test
     public void testNoFilterResults() {
@@ -39,7 +37,7 @@ public class HistogramCalculatorTest {
     @Test
     public void testFilterResultsPartial() {
 
-        var dataSet1 = new FilterResult(create30DayRange(0), List.of(60L, 120L, 120L));
+        var dataSet1 = List.of(60L, 120L, 120L);
         var dataSet2 = emptyResult;
 
         var result = calculator.buildNormalizedHistogram(60, List.of(dataSet1, dataSet2));
@@ -60,10 +58,7 @@ public class HistogramCalculatorTest {
         List<Long> durationMinutes1 = LongStream.range(4 * 60, 8 * 60).boxed().toList();
         List<Long> durationMinutes2 = LongStream.range(5 * 60, 7 * 60).boxed().toList();
 
-        var dataSet1 = new FilterResult(create30DayRange(0), durationMinutes1);
-        var dataSet2 = new FilterResult(create30DayRange(0), durationMinutes2);
-
-        var result = calculator.buildNormalizedHistogram(binSize, List.of(dataSet1, dataSet2));
+        var result = calculator.buildNormalizedHistogram(binSize, List.of(durationMinutes1, durationMinutes2));
 
         // check number of bins
         // check number of datasets should match number of filters

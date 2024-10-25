@@ -74,10 +74,10 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public List<FilterResult> listSleepAmounts(String username, List<DateRange> filters) {
+    public List<List<Long>> listSleepAmounts(String username, List<DateRange> filters) {
 
         return filters.stream()
-                .map(dateRange -> new FilterResult(dateRange, sleepRepository.loadDurations(username, dateRange.from(), dateRange.to())))
+                .map(dateRange -> sleepRepository.loadDurations(username, dateRange.from(), dateRange.to()))
                 .toList();
     }
 
