@@ -82,9 +82,7 @@ public class SleepController {
         LOG.info("Requesting histogram data with " + request);
 
         var dataSets = sleepService.listSleepAmounts(username, request.filters().dataFilters());
-        var stackedHistogram = histogramCalculator.buildNormalizedHistogram(request.binSize(), dataSets);
-
-        return stackedHistogram;
+        return histogramCalculator.buildNormalizedHistogram(request.binSize(), dataSets);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
