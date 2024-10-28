@@ -22,7 +22,7 @@ public class HistogramCalculatorTest {
         var result = calculator.buildNormalizedHistogram(60, List.of());
 
         assertEquals(0, result.bins().size());
-        assertEquals(0, result.dataSets().size());
+        assertEquals(0, result.histogramValues().size());
     }
 
     @Test
@@ -44,8 +44,8 @@ public class HistogramCalculatorTest {
 
         assertEquals(2, result.bins().size());
         assertEquals(List.of(60L, 120L), result.bins());
-        assertEquals(List.of(33L, 67L), result.dataSets().get(0));
-        assertEquals(List.of(0L,0L), result.dataSets().get(1));
+        assertEquals(List.of(33L, 67L), result.histogramValues().get(0));
+        assertEquals(List.of(0L,0L), result.histogramValues().get(1));
     }
 
     @Test
@@ -63,19 +63,19 @@ public class HistogramCalculatorTest {
         // check number of bins
         // check number of datasets should match number of filters
         assertEquals(16, result.bins().size());
-        assertEquals(2, result.dataSets().size());
+        assertEquals(2, result.histogramValues().size());
 
         // check number of histogram values should match number of bins
-        assertEquals(result.bins().size(), result.dataSets().get(0).size());
-        assertEquals(result.bins().size(), result.dataSets().get(1).size());
+        assertEquals(result.bins().size(), result.histogramValues().get(0).size());
+        assertEquals(result.bins().size(), result.histogramValues().get(1).size());
 
         // check actual histogram values for first dataset
-        result.dataSets().get(0).forEach(histValue -> assertEquals(6, histValue));
+        result.histogramValues().get(0).forEach(histValue -> assertEquals(6, histValue));
 
         // check actual histogram values for second dataset: first 4 and last 4 are zero, middle set are 13
-        result.dataSets().get(1).stream().limit(4).forEach(histValue -> assertEquals(0, histValue));
-        result.dataSets().get(1).reversed().stream().limit(4).forEach(histValue -> assertEquals(0, histValue));
-        result.dataSets().get(1).stream().skip(4).limit(8).forEach(histValue -> assertEquals(13, histValue));
+        result.histogramValues().get(1).stream().limit(4).forEach(histValue -> assertEquals(0, histValue));
+        result.histogramValues().get(1).reversed().stream().limit(4).forEach(histValue -> assertEquals(0, histValue));
+        result.histogramValues().get(1).stream().skip(4).limit(8).forEach(histValue -> assertEquals(13, histValue));
     }
 
 }
