@@ -77,12 +77,12 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/histogram", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public HistogramNormalized getHistogramData(@Valid @RequestBody HistogramRequest request, @PathVariable String username) {
+    public StackedHistograms getHistogramData(@Valid @RequestBody HistogramRequest request, @PathVariable String username) {
 
         LOG.info("Requesting histogram data with " + request);
 
-        var dataSets = sleepService.listSleepAmounts(username, request.filters().dataFilters());
-        return histogramCalculator.buildNormalizedHistogram(request.binSize(), dataSets);
+        var listsSleepAmounts = sleepService.listSleepAmounts(username, request.filters().dataFilters());
+        return histogramCalculator.buildNormalizedHistogram(request.binSize(), listsSleepAmounts);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")

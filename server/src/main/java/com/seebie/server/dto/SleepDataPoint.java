@@ -18,7 +18,7 @@ public record SleepDataPoint(@NotNull LocalDate x, @PositiveOrZero BigDecimal y)
 
     public SleepDataPoint(ZonedDateTime stopTime, int minutes, String zoneId) {
         this(stopTime.withZoneSameInstant(ZoneId.of(zoneId)).toLocalDate(),
-                new BigDecimal((double)minutes / 60).setScale(2, RoundingMode.HALF_UP));
+                BigDecimal.valueOf((double) minutes / 60).setScale(2, RoundingMode.HALF_UP));
     }
 
 }
