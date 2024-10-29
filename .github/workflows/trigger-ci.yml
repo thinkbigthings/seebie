@@ -15,4 +15,3 @@ jobs:
     uses: ./.github/workflows/build-and-test.yml
     with:
       upload-artifact: false
-      # gradle-args: -x test -x integrationTest
