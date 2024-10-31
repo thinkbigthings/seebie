@@ -60,7 +60,7 @@ jobs:
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "stage"
-          heroku_email: "thinkbigthings@gmail.com"
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
           justlogin: true
 
       - name: Deploy to Staging
