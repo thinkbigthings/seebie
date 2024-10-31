@@ -1,5 +1,5 @@
 
-name: Build and Deploy
+name: Start CD
 
 on:
   push:

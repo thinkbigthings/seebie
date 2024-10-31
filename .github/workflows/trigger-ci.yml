@@ -1,5 +1,5 @@
 
-name: Build On PR
+name: Start CI
 
 on:
   pull_request:
