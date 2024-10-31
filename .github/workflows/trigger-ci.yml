@@ -15,4 +15,4 @@ jobs:
   build:
     uses: ./.github/workflows/build-and-test.yml
     with:
-      upload-artifacts-for-deployment: false
+      save-artifacts-for-deployment: false

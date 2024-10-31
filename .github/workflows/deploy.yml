@@ -3,10 +3,6 @@ name: Build Pull Request
 
 on:
   workflow_call:
-    inputs:
-      upload-artifact:
-        required: true
-        type: boolean
 
 permissions:
   contents: read
