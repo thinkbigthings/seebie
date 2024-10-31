@@ -1,5 +1,5 @@
 
-name: Build Pull Request
+name: Deploy
 
 on:
   workflow_call:
