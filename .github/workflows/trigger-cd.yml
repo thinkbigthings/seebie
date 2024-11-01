@@ -1,5 +1,5 @@
 
-name: Start CD
+name: Deploy
 
 on:
   push:
