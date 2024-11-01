@@ -1,0 +1,72 @@
+
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      heroku-app-name:
+        required: true
+        type: string
+    secrets:
+      heroku-api-key:
+        required: true
+      heroku-email:
+        required: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write # required for github pages
+
+jobs:
+
+  deploy-project-page:
+
+    # this should have been uploaded in the build job and available to deploy here
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+
+  deploy-heroku:
+
+    runs-on: ubuntu-latest
+    steps:
+      # files from jobs are not available to other jobs
+      # heroku deployment needs the gradle files to be present so download that here
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # We upload to Heroku using the heroku gradle plugin
+      # so we need gradle and Java here
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'zulu'
+          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Download Artifact from Build
+        uses: actions/download-artifact@v4
+        with:
+          name: Build Artifacts
+          path: server/build/libs
+
+      # Debugging
+      - name: List Downloaded Files
+        run: |
+          ls -alrt server/build/libs
+
+      - name: Login to Heroku
+        uses: akhileshns/heroku-deploy@v3.13.15
+        with:
+          heroku_api_key: ${{secrets.heroku-api-key}}
+          heroku_app_name: ${{inputs.heroku-app-name}}
+          heroku_email: ${{secrets.heroku-email}}
+          justlogin: true
+
+      - name: Deploy to Heroku
+        run: ./gradlew -Papp=${{inputs.heroku-app-name}} deployHeroku

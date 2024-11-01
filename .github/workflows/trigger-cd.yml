@@ -1,0 +1,22 @@
+
+name: Deploy
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+    uses: ./.github/workflows/build-and-test.yml
+    with:
+      save-artifacts-for-deployment: true
+
+  deploy:
+    needs: build
+    uses: ./.github/workflows/deploy.yml
+    with:
+      heroku-app-name: ${{ vars.HEROKU_APP_NAME }}
+    secrets:
+      heroku-api-key: ${{ secrets.HEROKU_API_KEY }}
+      heroku-email: ${{ secrets.HEROKU_EMAIL }}

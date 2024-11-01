@@ -1,0 +1,13 @@
+
+name: Build and Test
+
+on:
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+    uses: ./.github/workflows/build-and-test.yml
+    with:
+      save-artifacts-for-deployment: false
