@@ -24,7 +24,7 @@ public class HistogramCalculator {
 
         // TODO put the bin calculator somewhere else (use gatherer later?)
         // Where should it go? Move it and other histogram work into the originating service?
-        // then watch the complexity go down
+        // then watch the complexity
 
         // TODO data type should be short, not long. Long is still signed.
         // run both ways and watch memory usage for large data sets
