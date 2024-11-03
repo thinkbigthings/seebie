@@ -23,7 +23,7 @@ public class HistogramCalculator {
     public StackedHistograms buildNormalizedHistogram(final int binSize, final List<List<Long>> multiDataSets) {
 
         // TODO put the bin calculator somewhere else (use gatherer later?)
-        // Where should it go? Move it and other histogram work into the originating service?
+        // Where should it go: Move it and other histogram work into the originating service?
         // then watch the complexity
 
         // TODO data type should be short, not long. Long is still signed.
