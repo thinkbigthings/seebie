@@ -24,11 +24,10 @@ import {ChallengeData} from "./types/challenge.types";
 
 Chart.register(...registerables)
 
-// This comes from the server, the record is List<Long> bins, List<List<Long>> dataSets
-// the double array here is such that the first index corresponds to the "outer" list of dataSets
-interface HistogramData {
+// NOTE this needs to be synchronized with server side StackedHistograms
+interface StackedHistograms {
     bins: number[],
-    dataSets: number[][]
+    histogramValues: number[][]
 }
 
 // the resulting object goes into the chartData datasets array
@@ -161,11 +160,11 @@ function Histogram(props: {createdCount:number}) {
 
     useEffect(() => {
         fetchPost(histogramEndpoint, pageSettingsToRequest(pageSettings))
-            .then(response => response.json() as Promise<HistogramData>)
+            .then(response => response.json() as Promise<StackedHistograms>)
             .then(histData => {
                 setBarData({
                     labels: histData.bins.map(bin => bin/60),
-                    datasets: histData.dataSets.map((data, i) => createDataset(pageSettings.filters[i], data))
+                    datasets: histData.histogramValues.map((data, i) => createDataset(pageSettings.filters[i], data))
                 });
             })
     }, [histogramEndpoint, createdCount, pageSettings]);
