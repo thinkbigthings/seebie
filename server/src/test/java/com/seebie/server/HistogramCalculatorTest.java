@@ -53,12 +53,10 @@ public class HistogramCalculatorTest {
 
         var req = new HistogramRequest(15, new FilterList(List.of()));
 
-        final int binSize = req.binSize();
-
         List<Long> durationMinutes1 = LongStream.range(4 * 60, 8 * 60).boxed().toList();
         List<Long> durationMinutes2 = LongStream.range(5 * 60, 7 * 60).boxed().toList();
 
-        var result = calculator.buildNormalizedHistogram(binSize, List.of(durationMinutes1, durationMinutes2));
+        var result = calculator.buildNormalizedHistogram(req.binSize(), List.of(durationMinutes1, durationMinutes2));
 
         // check number of bins
         // check number of datasets should match number of filters
