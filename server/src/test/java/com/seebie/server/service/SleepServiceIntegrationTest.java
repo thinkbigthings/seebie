@@ -184,7 +184,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         var histData = sleepService.listSleepAmounts(username, List.of(range, range, range));
 
         assertEquals(3, histData.size());
-        histData.forEach(d -> assertEquals(listCount, d.durationMinutes().size()));
+        histData.forEach(durations -> assertEquals(listCount, durations.size()));
 
     }
 

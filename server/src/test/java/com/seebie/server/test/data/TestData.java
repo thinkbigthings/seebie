@@ -108,11 +108,6 @@ public class TestData {
         return csvString.toString();
     }
 
-    public static DateRange create30DayRange(int daysBackEnding) {
-        var ending = ZonedDateTime.now().minusDays(daysBackEnding);
-        return new DateRange(ending.minusDays(30), ending);
-    }
-
     public static UserData randomUserData() {
         return new UserData(createRandomSleepData(1, AMERICA_NEW_YORK), createRandomChallenges());
     }

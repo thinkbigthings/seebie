@@ -1,6 +1,6 @@
 package com.seebie.server.service;
 
-import com.seebie.server.dto.HistogramNormalized;
+import com.seebie.server.dto.StackedHistograms;
 
 import java.util.*;
 
@@ -20,12 +20,12 @@ public class HistogramCalculator {
      * @param multiDataSets
      * @return
      */
-    public HistogramNormalized buildNormalizedHistogram(final int binSize, final List<FilterResult> multiDataSets) {
+    public StackedHistograms buildNormalizedHistogram(final int binSize, final List<List<Long>> multiDataSets) {
 
         // build a complete set of bins that can account for all the data sets
         // if there was no data in any of the incoming data sets, the bin list will be the empty set
         LongSummaryStatistics stats = multiDataSets.stream()
-                .flatMap(s -> s.durationMinutes().stream())
+                .flatMap(List::stream)
                 .collect(summarizingLong(i->i));
 
         long lowestBin =  (stats.getMin() / binSize) * binSize; // get the lowest bin that is a multiple of binSize
@@ -38,7 +38,7 @@ public class HistogramCalculator {
                 .map(this::normalizeValues)
                 .toList();
 
-        return new HistogramNormalized(unifiedBins, stackedNormalizedHist);
+        return new StackedHistograms(unifiedBins, stackedNormalizedHist);
     }
 
     /**
@@ -48,12 +48,12 @@ public class HistogramCalculator {
      * A bin upper bound is the bin lower bound plus the bin size.
      * A bin is a closed interval at the bottom and open at the top.
      */
-    private Map<Long, Long> buildHistogram(List<Long> binLowerBounds, FilterResult values) {
+    private Map<Long, Long> buildHistogram(List<Long> binLowerBounds, List<Long> durationMinutes) {
 
-        var histogram = new TreeMap<Long, Long>();
+        NavigableMap<Long, Long> histogram = new TreeMap<>();
         binLowerBounds.forEach(lower -> histogram.put(lower, 0L));
 
-        var foundValues = values.durationMinutes().stream()
+        var foundValues = durationMinutes.stream()
                 .map(histogram::floorKey)
                 .collect(groupingBy(identity(), counting()));
 
