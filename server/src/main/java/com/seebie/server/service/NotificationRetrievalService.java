@@ -61,7 +61,7 @@ public class NotificationRetrievalService {
     }
 
     public static String toLocale(Instant instant) {
-        return Objects.isNull(instant) ? "null" : format(instant.atZone(ZoneId.systemDefault()));
+        return format(instant.atZone(ZoneId.systemDefault()));
     }
 
 }

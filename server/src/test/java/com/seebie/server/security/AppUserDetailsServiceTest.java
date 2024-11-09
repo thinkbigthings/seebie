@@ -1,6 +1,5 @@
 package com.seebie.server.security;
 
-import com.seebie.server.entity.Role;
 import com.seebie.server.entity.User;
 import com.seebie.server.repository.UserRepository;
 import com.seebie.server.test.data.TestData;

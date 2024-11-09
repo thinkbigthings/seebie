@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.seebie.server.Functional.uncheck;
+import static com.seebie.server.function.Functional.uncheck;
 import static java.util.stream.Collectors.joining;
 
 @Component
