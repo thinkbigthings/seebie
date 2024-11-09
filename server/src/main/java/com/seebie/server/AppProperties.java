@@ -24,10 +24,4 @@ public record AppProperties(@NotNull @Positive Integer apiVersion, @NotNull Secu
         }
     }
 
-    public AppProperties {
-        if(security.rememberMe.tokenValidity.compareTo(Duration.ofDays(90)) > 0) {
-            throw new IllegalArgumentException("rememberMeTokenValidity must be less than 90 days");
-        }
-    }
-
 }
