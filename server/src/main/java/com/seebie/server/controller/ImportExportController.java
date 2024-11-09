@@ -63,15 +63,11 @@ public class ImportExportController {
     @ResponseBody
     public UploadResponse importUserData(@PathVariable String username, @RequestParam("file") MultipartFile file) throws IOException {
 
-        String rawJson = new String(file.getBytes(), UTF_8);
-
         LOG.info(STR."Import started for user \{username}");
 
-        var userData = parseJson(rawJson);
-        if(userData.sleepData().isEmpty()) {
-            throw new IllegalArgumentException("No sleep data found in the input json");
-        }
+        String rawJson = new String(file.getBytes(), UTF_8);
 
+        var userData = parseJson(rawJson);
         long numImported = importExportService.saveUserData(username, userData);
 
         LOG.info(STR."Imported \{numImported} records for \{username}");
@@ -106,11 +102,6 @@ public class ImportExportController {
         String rawCsv = new String(file.getBytes(), UTF_8);
 
         var parsedData = fromCsv.apply(rawCsv);
-        if(parsedData.isEmpty()) {
-            throw new IllegalArgumentException("No records were present");
-        }
-
-
         long numImported = importExportService.saveSleepData(username, parsedData);
 
         LOG.info(STR."Imported \{numImported} records.");

@@ -24,8 +24,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
-import static com.seebie.server.Functional.toExactlyOne;
-import static com.seebie.server.Functional.toOne;
+import static com.seebie.server.function.FunctionalFinders.toExactlyOne;
+import static com.seebie.server.function.FunctionalFinders.toOne;
 import static com.seebie.server.security.WebSecurityConfig.REMEMBER_ME_COOKIE;
 import static com.seebie.server.security.WebSecurityConfig.SESSION_COOKIE;
 import static org.junit.jupiter.api.Assertions.*;

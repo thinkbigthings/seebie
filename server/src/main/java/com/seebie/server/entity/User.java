@@ -36,7 +36,7 @@ public class User implements Serializable {
     private String displayName = "";
 
     @Basic
-    private boolean enabled = false;
+    private boolean enabled = true;
 
     @Basic
     @NotNull
@@ -62,7 +62,6 @@ public class User implements Serializable {
         this.email = email;
         this.password = encryptedPassword;
 
-        this.enabled = true;
         this.registrationTime = Instant.now();
         this.roles.add(Role.USER);
     }
@@ -92,10 +91,6 @@ public class User implements Serializable {
 
     public String getDisplayName() {
         return displayName;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
     }
 
     public Set<Role> getRoles() {

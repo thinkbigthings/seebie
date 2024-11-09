@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -23,8 +24,16 @@ public class CsvToSleepData implements Function<String, List<SleepData>> {
                                                                 .setHeader(HEADER.class)
                                                                 .build();
 
+    public static IllegalArgumentException missingHeader() {
+        return new IllegalArgumentException("CSV input does not contain all required columns");
+    }
+
     @Override
     public List<SleepData> apply(String rawCsv) {
+
+        if(HEADER.values().length != Arrays.stream(HEADER.values()).map(Enum::name).filter(rawCsv::contains).count()) {
+            throw missingHeader();
+        }
 
         try {
             var list = CSV_INPUT.parse(new StringReader(rawCsv))

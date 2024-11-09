@@ -4,8 +4,7 @@ import com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CsvToSleepDataTest {
 
@@ -14,6 +13,17 @@ public class CsvToSleepDataTest {
     @Test
     public void testConstructable() {
         assertDoesNotThrow(() -> new ZonedDateTimeConverter());
+    }
+
+    @Test
+    public void testMalformedCsv() {
+
+        String rawCsv = "test";
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            fromCsv.apply(rawCsv);
+        });
+
     }
 
     @Test

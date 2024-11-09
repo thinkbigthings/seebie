@@ -17,7 +17,7 @@ public class UserDetailsMapper implements Function<User, UserDetails> {
         return builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
-                .disabled( ! user.isEnabled())
+                .disabled(false)
                 .roles(toNames(user.getRoles()))
                 .accountExpired(false)
                 .accountLocked(false)

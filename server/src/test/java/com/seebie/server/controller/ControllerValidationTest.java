@@ -21,6 +21,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,6 +37,7 @@ import javax.sql.DataSource;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static com.seebie.server.mapper.dtotoentity.CsvToSleepData.missingHeader;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
 import static com.seebie.server.test.data.TestData.createRandomSleepData;
@@ -112,7 +114,7 @@ public class ControllerValidationTest {
 	private static final HistogramRequest validHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(fromDate, toDate))));
 	private static final HistogramRequest invalidHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(toDate, fromDate))));
 
-	private static final String badCsvText = "text";
+	private static final String badCsvText = "test";
 	private static final int goodCsvRows = 1;
 	private static final String goodCsvText = createCsv(goodCsvRows);
 	private static final MockMultipartFile badCsv = createMultipart(badCsvText);
@@ -135,7 +137,11 @@ public class ControllerValidationTest {
 	@BeforeEach
 	public void setup() {
 
-		when(fromCsv.apply(contains(badCsvText))).thenReturn(List.of());
+		when(fromCsv.apply(eq(badCsvText))).thenThrow(missingHeader());
+		when(fromCsv.apply(eq(goodCsvText))).thenReturn(List.of(createRandomSleepData()));
+
+		when(importExportService.saveSleepData(anyString(), anyList())).thenReturn(0L);
+		when(importExportService.retrieveSleepDetails(anyString())).thenReturn(List.of());
 		when(fromCsv.apply(contains(goodCsvText))).thenReturn(List.of(createRandomSleepData()));
 
 		when(importExportService.saveSleepData(anyString(), anyList())).thenReturn(0L);

@@ -10,7 +10,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.function.Function;
 
-import static com.seebie.server.Functional.uncheck;
+import static com.seebie.server.function.Functional.uncheck;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;

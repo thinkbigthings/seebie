@@ -87,8 +87,7 @@ public class NotificationMessageService {
             emailSender.send(message);
         }
         catch(MailException me) {
-            LOG.info(STR."Email notification failed to send for \{Arrays.asList(message.getTo())}");
-            me.printStackTrace();
+            LOG.error(STR."Email notification failed to send for \{Arrays.asList(message.getTo())}", me);
         }
     }
 
