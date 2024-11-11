@@ -30,7 +30,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
 import javax.sql.DataSource;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
@@ -104,6 +106,7 @@ public class ControllerSecurityTest {
 	private static final String from = format(ZonedDateTime.now().minusDays(1));
 	private static final String to = format(ZonedDateTime.now());
 
+	private static final String[] challengeParams = new String[]{"currentDate", LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)};
 	private static final String[] chartParams = new String[]{"from", from, "to", to};
 	private static final HistogramRequest histogramRequest = new HistogramRequest(1, new FilterList(List.of()));
 	private static final Challenge challenge = createRandomChallenge(0, 14);
@@ -180,13 +183,13 @@ public class ControllerSecurityTest {
 		test.post(STR."/api/user/\{ADMINNAME}/import/csv", csvFile, 401, 403, 200);
 
 		test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 401, 200, 200);
-		test.get(STR."/api/user/\{USERNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 401, 200, 200);
+		test.get(STR."/api/user/\{USERNAME}/challenge", challengeParams, 401, 200, 200);
 		test.get(STR."/api/user/\{USERNAME}/challenge" + "/1", 401, 200, 200);
 		test.put(STR."/api/user/\{USERNAME}/challenge" + "/1", challenge, 401, 200, 200);
 		test.delete(STR."/api/user/\{USERNAME}/challenge" + "/1", 401, 200, 200);
 
 		test.post(STR."/api/user/\{ADMINNAME}/challenge", challenge, 401, 403, 200);
-		test.get(STR."/api/user/\{ADMINNAME}/challenge", new String[]{"zoneId", AMERICA_NEW_YORK}, 401, 403, 200);
+		test.get(STR."/api/user/\{ADMINNAME}/challenge", challengeParams, 401, 403, 200);
 		test.get(STR."/api/user/\{ADMINNAME}/challenge" + "/1", 401, 403, 200);
 		test.put(STR."/api/user/\{ADMINNAME}/challenge" + "/1", challenge, 401, 403, 200);
 		test.delete(STR."/api/user/\{ADMINNAME}/challenge" + "/1", 401, 403, 200);

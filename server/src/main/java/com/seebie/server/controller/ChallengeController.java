@@ -2,7 +2,6 @@ package com.seebie.server.controller;
 
 import com.seebie.server.dto.Challenge;
 import com.seebie.server.dto.ChallengeList;
-import com.seebie.server.validation.ZoneIdConstraint;
 import com.seebie.server.service.ChallengeService;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
@@ -10,7 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
 // so we can use that for api-only requests only if the UI is served separately
@@ -47,12 +45,17 @@ public class ChallengeController {
         return challengeService.retrieve(username, challengeId);
     }
 
+    /**
+     *
+     * @param username The user's username is used to retrieve their challenges
+     * @param currentDate The user's current date is used to determine challenge completion status
+     * @return
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/challenge", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ChallengeList getChallenges(@PathVariable String username, @RequestParam @ZoneIdConstraint String zoneId) {
-        LocalDate today = LocalDate.now(ZoneId.of(zoneId));
-        return challengeService.getChallenges(username, today);
+    public ChallengeList getChallenges(@PathVariable String username, @RequestParam LocalDate currentDate) {
+        return challengeService.getChallenges(username, currentDate);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")

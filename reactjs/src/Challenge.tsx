@@ -10,6 +10,7 @@ import useApiDelete from "./hooks/useApiDelete";
 import CreateChallenge from "./CreateChallenge";
 import {toLocalChallengeDataList} from "./utility/Mapper";
 import {ChallengeDetailDto, ChallengeList} from "./types/challenge.types";
+import {toIsoLocalDate} from "./utility/SleepDataManager.ts";
 
 
 function Challenge() {
@@ -17,15 +18,15 @@ function Challenge() {
     const {username} = useParams();
     const callDelete = useApiDelete();
 
-    const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
-    const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
+    // the user's current date is used to determine challenge completion status
+    const challengeEndpoint = `/api/user/${username}/challenge?currentDate=${toIsoLocalDate(new Date())}`;
 
     const [createdCount, setCreatedCount] = useState(0);
     const [deletedCount, setDeletedCount] = useState(0);
     const [savedChallenges, setSavedChallenges] = useState(emptyChallengeList);
 
     useEffect(() => {
-        fetch(challengeEndpointTz, GET)
+        fetch(challengeEndpoint, GET)
             .then((response) => response.json() as Promise<ChallengeList<ChallengeDetailDto>>)
             .then(toLocalChallengeDataList)
             .then(setSavedChallenges)
