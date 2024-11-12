@@ -38,7 +38,6 @@ import java.util.List;
 import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.security.WebSecurityConfig.API_LOGIN;
 import static com.seebie.server.test.data.TestData.*;
-import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.when;
