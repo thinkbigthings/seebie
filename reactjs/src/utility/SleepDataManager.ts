@@ -1,13 +1,10 @@
 import {SleepData} from "../types/sleep.types";
 
+const pad = function(num: number) {
+    return (num < 10 ? '0' : '') + num;
+};
 
 const toIsoLocalDate = (date: Date) => {
-
-    const tzo = -date.getTimezoneOffset();
-    const dif = tzo >= 0 ? '+' : '-';
-    const pad = function(num: number) {
-        return (num < 10 ? '0' : '') + num;
-    };
 
     return date.getFullYear() +
         '-' + pad(date.getMonth() + 1) +
@@ -18,9 +15,6 @@ const toIsoString = (date: Date) => {
 
     const tzo = -date.getTimezoneOffset();
     const dif = tzo >= 0 ? '+' : '-';
-    const pad = function(num: number) {
-        return (num < 10 ? '0' : '') + num;
-    };
 
     return date.getFullYear() +
         '-' + pad(date.getMonth() + 1) +
