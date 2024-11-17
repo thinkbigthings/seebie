@@ -2,6 +2,9 @@ import {toIsoLocalDate, toIsoString} from "./SleepDataManager";
 import {SleepData, SleepDetailDto, SleepDto} from "../types/sleep.types";
 import {ChallengeDto, ChallengeDetailDto, ChallengeList, ChallengeData} from "../types/challenge.types";
 
+import {LocalDate} from "@js-joda/core"
+
+
 const toSelectableChallenges = (challengeList: ChallengeList<ChallengeData>, defaultChallenge: ChallengeData) => {
 
     let selectableChallenges = [...challengeList.current, ...challengeList.completed];
@@ -43,6 +46,8 @@ const toLocalChallengeData = (challengeDetails: ChallengeDetailDto): ChallengeDa
         id: challengeDetails.id,
         name: challenge.name,
         description: challenge.description,
+        start: LocalDate.parse(challenge.start),
+        finish: LocalDate.parse(challenge.finish),
         localStartTime: new Date(challenge.start),
         localEndTime: new Date(challenge.finish),
         exactStart: exactStart,

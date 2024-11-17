@@ -15,7 +15,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
             SELECT new com.seebie.server.dto.ChallengeDetails(e.id, e.name, e.description, e.start, e.finish)
             FROM Challenge e
             WHERE e.user.username=:username
-            ORDER BY e.finish ASC 
+            ORDER BY e.finish ASC
             """)
     List<ChallengeDetails> findAllByUsername(String username);
 
@@ -23,7 +23,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
             SELECT new com.seebie.server.dto.Challenge(e.name, e.description, e.start, e.finish)
             FROM Challenge e
             WHERE e.user.username=:username
-            AND e.id=:challengeId 
+            AND e.id=:challengeId
             """)
     Optional<com.seebie.server.dto.Challenge> findDtoBy(String username, Long challengeId);
 
