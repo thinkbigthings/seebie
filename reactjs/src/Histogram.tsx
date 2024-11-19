@@ -18,7 +18,13 @@ import {
     toLocalChallengeDataList,
     toSelectableChallenges
 } from "./utility/Mapper";
-import {createRange, HISTOGRAM_BIN_SIZE_OPTIONS, HISTOGRAM_COLORS, HISTOGRAM_OPTIONS} from "./utility/Constants";
+import {
+    createRange,
+    createRangeLocalDate,
+    HISTOGRAM_BIN_SIZE_OPTIONS,
+    HISTOGRAM_COLORS,
+    HISTOGRAM_OPTIONS
+} from "./utility/Constants";
 import {toIsoString} from "./utility/SleepDataManager";
 import {ChallengeData} from "./types/challenge.types";
 
@@ -59,11 +65,14 @@ const pageSettingsToRequest = (pageSettings: PageSettings) => {
 }
 
 const last30days = createRange(30);
+const last30LocalDays = createRangeLocalDate(30);
 
 const defaultChallenge: ChallengeData = {
     id: 0,
     name: "Last 30 Days",
     description: "Last 30 Days",
+    start: last30LocalDays.from,
+    finish: last30LocalDays.to,
     localStartTime: last30days.from,
     localEndTime: last30days.to,
     exactStart: last30days.from,
