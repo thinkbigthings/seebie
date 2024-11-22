@@ -21,16 +21,16 @@ public class ChallengeValidationTest {
         var start = LocalDate.now();
         var finish = start.plusDays(14);
         return List.of(
-            Arguments.of(new Challenge("noends", description, start, finish), 0),
-            Arguments.of(new Challenge("", description, start, finish), 1),
-            Arguments.of(new Challenge(" whitespace at front", description, start, finish), 1),
-            Arguments.of(new Challenge("whitespace at end ", description, start, finish), 1)
+            Arguments.of(new ChallengeDto("noends", description, start, finish), 0),
+            Arguments.of(new ChallengeDto("", description, start, finish), 1),
+            Arguments.of(new ChallengeDto(" whitespace at front", description, start, finish), 1),
+            Arguments.of(new ChallengeDto("whitespace at end ", description, start, finish), 1)
         );
     }
 
     @ParameterizedTest
     @MethodSource("provideSleepDataArguments")
-    public void testChallengeValidation(Challenge data, int numberViolations) {
+    public void testChallengeValidation(ChallengeDto data, int numberViolations) {
 
         var violations = validator.validate(data);
 

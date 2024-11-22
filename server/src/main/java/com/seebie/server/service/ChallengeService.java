@@ -1,7 +1,7 @@
 package com.seebie.server.service;
 
-import com.seebie.server.dto.Challenge;
-import com.seebie.server.dto.ChallengeDetails;
+import com.seebie.server.dto.ChallengeDto;
+import com.seebie.server.dto.ChallengeDetailDto;
 import com.seebie.server.dto.ChallengeList;
 import com.seebie.server.mapper.dtotoentity.UnsavedChallengeListMapper;
 import com.seebie.server.repository.ChallengeRepository;
@@ -27,16 +27,16 @@ public class ChallengeService {
     }
 
     @Transactional
-    public ChallengeDetails saveNew(String username, Challenge challenge) {
+    public ChallengeDetailDto saveNew(String username, ChallengeDto challenge) {
 
         // The computed value for timeAsleep isn't calculated until the transaction is closed
         // so the entity does not have the correct value here.
         var entity = challengeRepo.save(toEntity.toUnsavedEntity(username, challenge));
-        return new ChallengeDetails(entity.getId(), entity.getName(), entity.getDescription(), entity.getStart(), entity.getFinish());
+        return new ChallengeDetailDto(entity.getId(), entity.getName(), entity.getDescription(), entity.getStart(), entity.getFinish());
     }
 
     @Transactional
-    public void update(String username, Long challengeId, Challenge dto) {
+    public void update(String username, Long challengeId, ChallengeDto dto) {
 
         var entity = challengeRepo.findByUsername(username, challengeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Challenge not found"));
@@ -45,7 +45,7 @@ public class ChallengeService {
     }
 
     @Transactional(readOnly = true)
-    public Challenge retrieve(String username, Long challengeId) {
+    public ChallengeDto retrieve(String username, Long challengeId) {
         return challengeRepo.findDtoBy(username, challengeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Challenge not found"));
     }

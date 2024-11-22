@@ -1,4 +1,4 @@
-import {toIsoLocalDate, toIsoString} from "./SleepDataManager";
+import {toIsoString} from "./SleepDataManager";
 import {SleepData, SleepDetailDto, SleepDto} from "../types/sleep.types";
 import {ChallengeDto, ChallengeDetailDto, ChallengeList, ChallengeData} from "../types/challenge.types";
 
@@ -48,10 +48,6 @@ const toLocalChallengeData = (challengeDetails: ChallengeDetailDto): ChallengeDa
         description: challenge.description,
         start: LocalDate.parse(challenge.start),
         finish: LocalDate.parse(challenge.finish),
-        localStartTime: new Date(challenge.start),
-        localEndTime: new Date(challenge.finish),
-        exactStart: exactStart,
-        exactFinish: exactFinish
     }
 }
 
@@ -59,8 +55,8 @@ const toChallengeDto = (challenge: ChallengeData): ChallengeDto => {
     return {
         name: challenge.name,
         description: challenge.description,
-        start: toIsoLocalDate(challenge.localStartTime),
-        finish: toIsoLocalDate(challenge.localEndTime)
+        start: challenge.start.toString(),
+        finish: challenge.finish.toString()
     }
 }
 

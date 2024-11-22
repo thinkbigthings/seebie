@@ -34,6 +34,7 @@ function EditChallenge() {
 
     const numericChallengeId = parseInt(challengeId);
 
+    const allChallengesEndpoint = `/api/user/${username}/challenge`;
     const challengeEndpoint = `/api/user/${username}/challenge/${challengeId}`;
 
     const [loaded, setLoaded] = useState(false);
@@ -55,13 +56,13 @@ function EditChallenge() {
     }, [setEditableChallenge, challengeEndpoint]);
 
     useEffect(() => {
-        fetch(challengeEndpoint, GET)
+        fetch(allChallengesEndpoint, GET)
             .then((response) => response.json() as Promise<ChallengeList<ChallengeDetailDto>>)
             .then(challengeList => removeChallengesWithId(challengeList, numericChallengeId))
             .then(toLocalChallengeDataList)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
-    }, [challengeEndpoint]);
+    }, [allChallengesEndpoint]);
 
     const onSave = () => {
         put(challengeEndpoint, toChallengeDto(editableChallenge)).then(() => navigate(-1));

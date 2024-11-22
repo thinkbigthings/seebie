@@ -5,16 +5,16 @@ import java.util.List;
 
 import static java.util.stream.Collectors.groupingBy;
 
-public record ChallengeList(List<ChallengeDetails> current, List<ChallengeDetails> completed, List<ChallengeDetails> upcoming) {
+public record ChallengeList(List<ChallengeDetailDto> current, List<ChallengeDetailDto> completed, List<ChallengeDetailDto> upcoming) {
 
 
-    public static ChallengeList newChallengeList(List<ChallengeDetails> challenges, LocalDate today) {
+    public static ChallengeList newChallengeList(List<ChallengeDetailDto> challenges, LocalDate today) {
 
         var groupedChallenges = challenges.stream().collect(groupingBy(c -> categorize(c.challenge(), today)));
 
-        List<ChallengeDetails> completed = groupedChallenges.getOrDefault(ChallengeCategory.COMPLETED, List.of());
-        List<ChallengeDetails> upcoming = groupedChallenges.getOrDefault(ChallengeCategory.UPCOMING, List.of());
-        List<ChallengeDetails> current = groupedChallenges.getOrDefault(ChallengeCategory.CURRENT, List.of());
+        List<ChallengeDetailDto> completed = groupedChallenges.getOrDefault(ChallengeCategory.COMPLETED, List.of());
+        List<ChallengeDetailDto> upcoming = groupedChallenges.getOrDefault(ChallengeCategory.UPCOMING, List.of());
+        List<ChallengeDetailDto> current = groupedChallenges.getOrDefault(ChallengeCategory.CURRENT, List.of());
 
         return new ChallengeList(current, completed, upcoming);
     }
@@ -23,7 +23,7 @@ public record ChallengeList(List<ChallengeDetails> current, List<ChallengeDetail
         COMPLETED, UPCOMING, CURRENT;
     }
 
-    private static ChallengeCategory categorize(Challenge challenge, LocalDate today) {
+    private static ChallengeCategory categorize(ChallengeDto challenge, LocalDate today) {
         if (challenge.finish().isBefore(today)) {
             return ChallengeCategory.COMPLETED;
         }

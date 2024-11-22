@@ -6,11 +6,7 @@ interface ChallengeData {
     name: string,
     description: string,
     start: LocalDate,
-    finish: LocalDate,
-    localStartTime: Date,
-    localEndTime: Date
-    exactStart: Date,
-    exactFinish: Date
+    finish: LocalDate
 }
 
 // this is what we send back and forth with the server

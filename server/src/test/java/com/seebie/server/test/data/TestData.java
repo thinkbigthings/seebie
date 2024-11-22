@@ -48,17 +48,17 @@ public class TestData {
      * @param daysOffsetStart if negative, number of days to go back in time from today.
      * @return
      */
-    public static Challenge createRandomChallenge(int daysOffsetStart, int lengthDays) {
+    public static ChallengeDto createRandomChallenge(int daysOffsetStart, int lengthDays) {
 
         var start = now().plusDays(daysOffsetStart);
         var finish = start.plusDays(lengthDays);
 
-        return new Challenge(STR."\{faker.starTrek().location()} \{randomUUID()}",
+        return new ChallengeDto(STR."\{faker.starTrek().location()} \{randomUUID()}",
                 faker.lorem().paragraph(3),
                 start, finish);
     }
 
-    public static List<Challenge> createRandomChallenges() {
+    public static List<ChallengeDto> createRandomChallenges() {
 
         var current = createRandomChallenge(-1, 14);
         var completed = List.of(createRandomChallenge(-16, 14),
@@ -67,7 +67,7 @@ public class TestData {
         var upcoming = List.of(createRandomChallenge(15, 14),
                 createRandomChallenge(30, 14));
 
-        var dtos = new ArrayList<Challenge>();
+        var dtos = new ArrayList<ChallengeDto>();
         dtos.addAll(completed);
         dtos.addAll(upcoming);
         dtos.add(current);

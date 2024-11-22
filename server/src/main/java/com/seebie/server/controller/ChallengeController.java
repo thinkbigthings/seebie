@@ -1,6 +1,6 @@
 package com.seebie.server.controller;
 
-import com.seebie.server.dto.Challenge;
+import com.seebie.server.dto.ChallengeDto;
 import com.seebie.server.dto.ChallengeList;
 import com.seebie.server.service.ChallengeService;
 import jakarta.validation.Valid;
@@ -27,35 +27,34 @@ public class ChallengeController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/challenge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void createChallenge(@PathVariable String username, @Valid @RequestBody Challenge challenge) {
+    public void createChallenge(@PathVariable String username, @Valid @RequestBody ChallengeDto challenge) {
         challengeService.saveNew(username, challenge);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/challenge/{challengeId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void updateChallenge(@Valid @RequestBody Challenge challengeData, @PathVariable String username, @PathVariable Long challengeId) {
+    public void updateChallenge(@Valid @RequestBody ChallengeDto challengeData, @PathVariable String username, @PathVariable Long challengeId) {
         challengeService.update(username, challengeId, challengeData);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/challenge/{challengeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Challenge getChallenge(@PathVariable String username, @PathVariable Long challengeId) {
+    public ChallengeDto getChallenge(@PathVariable String username, @PathVariable Long challengeId) {
         return challengeService.retrieve(username, challengeId);
     }
 
     /**
      *
      * @param username The user's username is used to retrieve their challenges
-     * @param currentDate The user's current date is used to determine challenge completion status
      * @return
      */
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/challenge", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ChallengeList getChallenges(@PathVariable String username, @RequestParam LocalDate currentDate) {
-        return challengeService.getChallenges(username, currentDate);
+    public ChallengeList getChallenges(@PathVariable String username) {
+        return challengeService.getChallenges(username, LocalDate.now());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")

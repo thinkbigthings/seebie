@@ -8,6 +8,21 @@ import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {ChallengeData, ChallengeList} from "./types/challenge.types";
+import {LocalDate} from "@js-joda/core";
+
+const toLocalDate = (date: Date) => {
+    return LocalDate.of(date.getFullYear(), date.getMonth()+1, date.getDate());
+}
+
+const toDate = (date: LocalDate) => {
+    return new Date(date.year(), date.monthValue()-1, date.dayOfMonth());
+}
+
+// TODO use LocalDate.compareTo() <= 0 to use closed boundary
+const overlaps = (c1:ChallengeData, c2:ChallengeData) => {
+    return (c1.start.isAfter(c2.start) && c1.start.isBefore(c2.finish))
+        || (c1.finish.isAfter(c2.start) && c1.finish.isBefore(c2.finish));
+}
 
 function ChallengeForm(props:{
                             setEditableChallenge:React.Dispatch<React.SetStateAction<ChallengeData>>
@@ -36,18 +51,13 @@ function ChallengeForm(props:{
         const nameValid = nameTouched
             ? (challenge.name !== '' && challenge.name.trim() === challenge.name)
             : true;
-        const dateOrderValid = challenge.localStartTime < challenge.localEndTime;
+
+
+        const dateOrderValid = challenge.start.isBefore(challenge.finish);
         const allSavedChallenges = savedChallenges.upcoming.concat(savedChallenges.completed).concat(savedChallenges.current);
         const nameUnique = !allSavedChallenges.some(saved => saved.name === challenge.name);
 
-
-        // TODO make an overlap method for ChallengeFormData and ChallengeDetailDto
-        // Is the exactStart and exactFinish updated if the form data is updated? Should it really be on the dto after coming from the server?
-
-        const datesOverlap = allSavedChallenges.some(saved => {
-            return (challenge.localStartTime >= saved.exactStart && challenge.localStartTime <= saved.exactFinish)
-                || (challenge.localEndTime >= saved.exactStart && challenge.localEndTime <= saved.exactFinish);
-        });
+        const datesOverlap = allSavedChallenges.some(saved => overlaps(challenge, saved) );
 
         setDateOrderValid(dateOrderValid);
         setNameValid(nameValid);
@@ -111,8 +121,8 @@ function ChallengeForm(props:{
                        <Col md={6} className={"col-8 "}>
                            <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
                                        id="startDate" dateFormat="MMMM d, yyyy"
-                                       onChange={date => {if(date) updateChallenge({localStartTime: date})}}
-                                       selected={editableChallenge.localStartTime}/>
+                                       onChange={date => {if(date) updateChallenge({start: toLocalDate(date)})}}
+                                       selected={toDate(editableChallenge.start)}/>
                        </Col>
                    </Row>
                    <Row className={"pb-2"}>
@@ -122,8 +132,8 @@ function ChallengeForm(props:{
                        <Col md={6} className={"col-8 "}>
                            <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
                                        id="startDate" dateFormat="MMMM d, yyyy"
-                                       onChange={date => {if(date) updateChallenge({localEndTime: date})}}
-                                       selected={editableChallenge.localEndTime}/>
+                                       onChange={date => {if(date) updateChallenge({finish: toLocalDate(date)})}}
+                                       selected={toDate(editableChallenge.finish)}/>
                        </Col>
                    </Row>
                    <Row>

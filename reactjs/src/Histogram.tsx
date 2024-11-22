@@ -50,8 +50,8 @@ const createDataset = (displayInfo: PageSettingFilters, data: number[]) => {
 const pageSettingsToRequest = (pageSettings: PageSettings) => {
 
     const newDataFilters = pageSettings.filters.map( (filter) => { return {
-            from: toIsoString(filter.challenge.exactStart),
-            to: toIsoString(filter.challenge.exactFinish)
+            from: filter.challenge.start.toString(),
+            to: filter.challenge.finish.toString()
         }}
     );
 
@@ -64,7 +64,6 @@ const pageSettingsToRequest = (pageSettings: PageSettings) => {
 
 }
 
-const last30days = createRange(30);
 const last30LocalDays = createRangeLocalDate(30);
 
 const defaultChallenge: ChallengeData = {
@@ -73,10 +72,6 @@ const defaultChallenge: ChallengeData = {
     description: "Last 30 Days",
     start: last30LocalDays.from,
     finish: last30LocalDays.to,
-    localStartTime: last30days.from,
-    localEndTime: last30days.to,
-    exactStart: last30days.from,
-    exactFinish: last30days.to
 }
 
 interface PageSettingFilters {

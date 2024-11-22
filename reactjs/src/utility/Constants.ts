@@ -44,21 +44,12 @@ export const emptyEditableChallenge = ():ChallengeData => {
     const finish = new Date();
     finish.setDate(start.getDate() + 14);
 
-    let exactStart = new Date(start);
-    let exactFinish = new Date(finish);
-    exactStart.setHours(0, 0, 0);
-    exactFinish.setHours(23, 59, 59);
-
     return {
         id: 0,
         name: "",
         description: "",
         start: startLocalDate,
         finish: finishLocalDate,
-        localStartTime: start,
-        localEndTime: finish,
-        exactStart,
-        exactFinish
     };
 }
 
@@ -121,7 +112,7 @@ export const PREDEFINED_CHALLENGES:NameDescription[] = [
 
 export const createRangeLocalDate = (lastNDays: number): DateRangeLocalDate => {
     let today = LocalDate.now();
-    let lastMonth = today.minusDays(30);
+    let lastMonth = today.minusDays(lastNDays);
     return {from: lastMonth, to: today};
 }
 

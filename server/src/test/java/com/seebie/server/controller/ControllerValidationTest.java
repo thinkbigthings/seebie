@@ -21,7 +21,6 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -123,8 +122,8 @@ public class ControllerValidationTest {
 	private static MockMultipartFile badJson = createMultipart("{[ text");
 	private static MockMultipartFile goodJson; // see setup method
 
-	private static final Challenge invalidChallenge = new Challenge("", "", null, null);
-	private static final Challenge validChallenge = TestData.createRandomChallenge(0, 14);
+	private static final ChallengeDto invalidChallenge = new ChallengeDto("", "", null, null);
+	private static final ChallengeDto validChallenge = TestData.createRandomChallenge(0, 14);
 
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	@Autowired
