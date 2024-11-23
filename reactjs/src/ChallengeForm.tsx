@@ -10,7 +10,7 @@ import Col from "react-bootstrap/Col";
 import {ChallengeData} from "./types/challenge.types";
 import {toDate, toLocalDate} from "./utility/Mapper.ts";
 
-// TODO use LocalDate.compareTo() <= 0 to use closed boundary
+// TODO use LocalDate.compareTo() to use closed boundary
 const overlaps = (c1:ChallengeData, c2:ChallengeData) => {
     return (c1.start.isAfter(c2.start) && c1.start.isBefore(c2.finish))
         || (c1.finish.isAfter(c2.start) && c1.finish.isBefore(c2.finish));

@@ -9,11 +9,6 @@ const toLocalDate = (date: Date) => {
 }
 
 const toDate = (date: LocalDate) => {
-    // FIXME coming from histogram page: date is passed as an object with the fields of LocalDate
-    //  but not an actual LocalDate so the functions are not available
-    //  TODO run in the debugger, trace back from where this object was assigned
-    //  test histogram filters, ensure it does not show upcoming challenges?
-    console.log(date);
     return new Date(date.year(), date.monthValue()-1, date.dayOfMonth());
 }
 

@@ -19,7 +19,6 @@ import {
     toSelectableChallenges
 } from "./utility/Mapper";
 import {
-    createRange,
     createRangeLocalDate,
     HISTOGRAM_BIN_SIZE_OPTIONS,
     HISTOGRAM_COLORS,
@@ -99,6 +98,17 @@ const defaultPageSettings: PageSettings = {
     ],
 }
 
+const clone = (settings:PageSettings) => {
+    // copy to a new object: FYI structuredClone does not clone methods, the LocalDates are copied as data only
+    // LocalDate is immutable, so can just copy it back in here
+    let newPageSettings = structuredClone(settings);
+    newPageSettings.filters.forEach((filter, index) => {
+        filter.challenge.start = settings.filters[index].challenge.start;
+        filter.challenge.finish = settings.filters[index].challenge.finish;
+    });
+    return newPageSettings;
+}
+
 function Histogram(props: {createdCount:number}) {
 
     // TODO createdCount should be named "sleepLoggedCountSinceAppLoad" or something
@@ -126,7 +136,8 @@ function Histogram(props: {createdCount:number}) {
         // event target value is the challenge name, option value has to be a string not an object, so need to find it
         const challenge = availableChallenges.find(saved => saved.name === event.target.value)!;
 
-        let newPageSettings = structuredClone(pageSettings);
+        const newPageSettings = clone(pageSettings);
+
         newPageSettings.filters.push({ challenge, color });
 
         setShowSelectChallenge(false);
@@ -141,13 +152,13 @@ function Histogram(props: {createdCount:number}) {
     }
 
     function onRemoveFilter(i: number) {
-        let newPageSettings = structuredClone(pageSettings);
+        let newPageSettings = clone(pageSettings);
         newPageSettings.filters.splice(i, 1);
         setPageSettings(newPageSettings);
     }
 
     const updateBinSize = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        let newPageState = structuredClone(pageSettings);
+        let newPageState = clone(pageSettings);
         newPageState.binSize = parseInt(event.target.value);
         setPageSettings(newPageState);
     };
