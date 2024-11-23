@@ -4,6 +4,18 @@ import {ChallengeDto, ChallengeDetailDto, ChallengeList, ChallengeData} from "..
 
 import {LocalDate} from "@js-joda/core"
 
+const toLocalDate = (date: Date) => {
+    return LocalDate.of(date.getFullYear(), date.getMonth()+1, date.getDate());
+}
+
+const toDate = (date: LocalDate) => {
+    // FIXME coming from histogram page: date is passed as an object with the fields of LocalDate
+    //  but not an actual LocalDate so the functions are not available
+    //  TODO run in the debugger, trace back from where this object was assigned
+    //  test histogram filters, ensure it does not show upcoming challenges?
+    console.log(date);
+    return new Date(date.year(), date.monthValue()-1, date.dayOfMonth());
+}
 
 const toSelectableChallenges = (challengeList: ChallengeList<ChallengeData>, defaultChallenge: ChallengeData) => {
 
@@ -18,11 +30,42 @@ const toSelectableChallenges = (challengeList: ChallengeList<ChallengeData>, def
     return selectableChallenges;
 }
 
-const toLocalChallengeDataList = (challengeList: ChallengeList<ChallengeDetailDto>): ChallengeList<ChallengeData> => {
+function isInProgress(challenge: ChallengeData): boolean {
+    const now = LocalDate.now();
+    return challenge.finish.isAfter(now) && (challenge.start.isBefore(now) || challenge.start.equals(now));
+}
+
+function calculateProgress(challenge: ChallengeData): number {
+
+    const now = LocalDate.now();
+    const start = challenge.start;
+    const end = challenge.finish;
+
+    if(now.isAfter(end)) {
+        return 100;
+    }
+    if(now.isBefore(start)) {
+        return 0;
+    }
+
+    const startToNow = start.until(now).days();
+    const startToEnd = start.until(end).days();
+    return Math.round(startToNow * 100 / startToEnd);
+}
+
+const toLocalChallengeDataList = (challengeList: ChallengeDetailDto[]): ChallengeData[] => {
+    return challengeList.map(toLocalChallengeData);
+}
+
+
+const toChallengeList = (challengeList: ChallengeDetailDto[]): ChallengeList<ChallengeData> => {
+
+    const challengeData = challengeList.map(toLocalChallengeData);
+
     return {
-        current: challengeList.current.map(toLocalChallengeData),
-        upcoming: challengeList.upcoming.map(toLocalChallengeData),
-        completed: challengeList.completed.map(toLocalChallengeData)
+        current: challengeData.filter(isInProgress),
+        upcoming: challengeData.filter(c => calculateProgress(c) <= 0),
+        completed: challengeData.filter(c => calculateProgress(c) >= 100)
     };
 }
 
@@ -36,11 +79,6 @@ const toChallengeDetailDto = (dto: ChallengeDto, id: number): ChallengeDetailDto
 const toLocalChallengeData = (challengeDetails: ChallengeDetailDto): ChallengeData => {
 
     const challenge: ChallengeDto = challengeDetails.challenge;
-
-    let exactStart = new Date(challenge.start);
-    let exactFinish = new Date(challenge.finish);
-    exactStart.setHours(0, 0, 0);
-    exactFinish.setHours(23, 59, 59);
 
     return {
         id: challengeDetails.id,
@@ -92,5 +130,5 @@ const toSleepDto = (sleep: SleepData): SleepDto => {
 
 export {
     toSelectableChallenges, toChallengeDto, toLocalChallengeData, toLocalChallengeDataList, toChallengeDetailDto,
-    toLocalSleepData, toSleepDto
+    toLocalSleepData, toSleepDto, calculateProgress, toChallengeList, toLocalDate, toDate
 }

@@ -1,14 +1,14 @@
 package com.seebie.server.controller;
 
+import com.seebie.server.dto.ChallengeDetailDto;
 import com.seebie.server.dto.ChallengeDto;
-import com.seebie.server.dto.ChallengeList;
 import com.seebie.server.service.ChallengeService;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.util.List;
 
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
 // so we can use that for api-only requests only if the UI is served separately
@@ -53,8 +53,8 @@ public class ChallengeController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/challenge", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ChallengeList getChallenges(@PathVariable String username) {
-        return challengeService.getChallenges(username, LocalDate.now());
+    public List<ChallengeDetailDto> getChallenges(@PathVariable String username) {
+        return challengeService.getChallenges(username);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")

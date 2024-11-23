@@ -6,23 +6,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
 import {ChallengeData} from "../types/challenge.types";
-import {LocalDate} from "@js-joda/core";
+import {calculateProgress} from "../utility/Mapper.ts";
 
-function calculateProgress(start:LocalDate, end:LocalDate) {
-
-    const now = LocalDate.now();
-
-    if(now.isAfter(end)) {
-        return 100;
-    }
-    if(now.isBefore(start)) {
-        return 0;
-    }
-
-    const startToNow = start.until(now).days();
-    const startToEnd = start.until(end).days();
-    return Math.round(startToNow * 100 / startToEnd);
-}
 
 function CollapsibleChallenge(props:{challenge:ChallengeData, onDelete:()=>void}) {
 
@@ -30,7 +15,7 @@ function CollapsibleChallenge(props:{challenge:ChallengeData, onDelete:()=>void}
 
     const {username} = useParams();
 
-    const progress = calculateProgress(challenge.start, challenge.finish);
+    const progress = calculateProgress(challenge);
 
     return (
         <CollapsibleContent title={challenge.name}>

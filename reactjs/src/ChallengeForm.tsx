@@ -7,16 +7,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {ChallengeData, ChallengeList} from "./types/challenge.types";
-import {LocalDate} from "@js-joda/core";
-
-const toLocalDate = (date: Date) => {
-    return LocalDate.of(date.getFullYear(), date.getMonth()+1, date.getDate());
-}
-
-const toDate = (date: LocalDate) => {
-    return new Date(date.year(), date.monthValue()-1, date.dayOfMonth());
-}
+import {ChallengeData} from "./types/challenge.types";
+import {toDate, toLocalDate} from "./utility/Mapper.ts";
 
 // TODO use LocalDate.compareTo() <= 0 to use closed boundary
 const overlaps = (c1:ChallengeData, c2:ChallengeData) => {
@@ -28,7 +20,7 @@ function ChallengeForm(props:{
                             setEditableChallenge:React.Dispatch<React.SetStateAction<ChallengeData>>
                             editableChallenge:ChallengeData,
                             setDataValid:React.Dispatch<React.SetStateAction<boolean>>,
-                            savedChallenges:ChallengeList<ChallengeData>}
+                            savedChallenges:ChallengeData[]}
                         ) {
 
     const {setEditableChallenge, editableChallenge, setDataValid, savedChallenges} = props;
@@ -54,10 +46,8 @@ function ChallengeForm(props:{
 
 
         const dateOrderValid = challenge.start.isBefore(challenge.finish);
-        const allSavedChallenges = savedChallenges.upcoming.concat(savedChallenges.completed).concat(savedChallenges.current);
-        const nameUnique = !allSavedChallenges.some(saved => saved.name === challenge.name);
-
-        const datesOverlap = allSavedChallenges.some(saved => overlaps(challenge, saved) );
+        const nameUnique = !savedChallenges.some(saved => saved.name === challenge.name);
+        const datesOverlap = savedChallenges.some(saved => overlaps(challenge, saved) );
 
         setDateOrderValid(dateOrderValid);
         setNameValid(nameValid);

@@ -2,7 +2,6 @@ package com.seebie.server.service;
 
 import com.seebie.server.dto.ChallengeDto;
 import com.seebie.server.dto.ChallengeDetailDto;
-import com.seebie.server.dto.ChallengeList;
 import com.seebie.server.mapper.dtotoentity.UnsavedChallengeListMapper;
 import com.seebie.server.repository.ChallengeRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -11,9 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
-
-import static com.seebie.server.dto.ChallengeList.newChallengeList;
+import java.util.List;
 
 @Service
 public class ChallengeService {
@@ -59,8 +56,8 @@ public class ChallengeService {
     }
 
     @Transactional(readOnly = true)
-    public ChallengeList getChallenges(String username, LocalDate today) {
-        return newChallengeList(challengeRepo.findAllByUsername(username), today);
+    public List<ChallengeDetailDto> getChallenges(String username) {
+        return challengeRepo.findAllByUsername(username);
     }
 
 }

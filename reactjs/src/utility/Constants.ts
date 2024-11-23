@@ -1,4 +1,4 @@
-import {ChallengeData, ChallengeList} from "../types/challenge.types";
+import {ChallengeData, ChallengeDetailDto, ChallengeList} from "../types/challenge.types";
 import {DateRange, DateRangeLocalDate} from "../types/sleep.types";
 import {LocalDate} from "@js-joda/core";
 
@@ -52,6 +52,8 @@ export const emptyEditableChallenge = ():ChallengeData => {
         finish: finishLocalDate,
     };
 }
+
+export const emptyChallengeDataArray: ChallengeData[] = [];
 
 export const emptyChallengeList: ChallengeList<ChallengeData> = {
     current: [],

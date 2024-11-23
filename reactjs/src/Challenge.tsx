@@ -8,10 +8,8 @@ import { emptyChallengeList} from "./utility/Constants";
 import CollapsibleChallenge from "./component/CollapsibleChallenge";
 import useApiDelete from "./hooks/useApiDelete";
 import CreateChallenge from "./CreateChallenge";
-import {toLocalChallengeDataList} from "./utility/Mapper";
-import {ChallengeDetailDto, ChallengeList} from "./types/challenge.types";
-import {toIsoLocalDate} from "./utility/SleepDataManager.ts";
-
+import {toChallengeList} from "./utility/Mapper";
+import {ChallengeDetailDto} from "./types/challenge.types";
 
 function Challenge() {
 
@@ -19,7 +17,7 @@ function Challenge() {
     const callDelete = useApiDelete();
 
     // the user's current date is used to determine challenge completion status
-    const challengeEndpoint = `/api/user/${username}/challenge?currentDate=${toIsoLocalDate(new Date())}`;
+    const challengeEndpoint = `/api/user/${username}/challenge`;
 
     const [createdCount, setCreatedCount] = useState(0);
     const [deletedCount, setDeletedCount] = useState(0);
@@ -27,8 +25,8 @@ function Challenge() {
 
     useEffect(() => {
         fetch(challengeEndpoint, GET)
-            .then((response) => response.json() as Promise<ChallengeList<ChallengeDetailDto>>)
-            .then(toLocalChallengeDataList)
+            .then((response) => response.json() as Promise<ChallengeDetailDto[]>)
+            .then(toChallengeList)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, [createdCount, deletedCount]);
@@ -43,7 +41,7 @@ function Challenge() {
 
             <NavHeader title="Sleep Challenge">
                 <CreateChallenge onCreated={() => setCreatedCount(createdCount+1)}
-                                 savedChallenges={savedChallenges}
+                                 savedChallenges={[...savedChallenges.completed, ...savedChallenges.current, ...savedChallenges.upcoming]}
                 />
             </NavHeader>
 

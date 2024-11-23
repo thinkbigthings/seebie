@@ -15,7 +15,7 @@ import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import {
-    toLocalChallengeDataList,
+    toChallengeList, toDate,
     toSelectableChallenges
 } from "./utility/Mapper";
 import {
@@ -25,8 +25,8 @@ import {
     HISTOGRAM_COLORS,
     HISTOGRAM_OPTIONS
 } from "./utility/Constants";
-import {toIsoString} from "./utility/SleepDataManager";
 import {ChallengeData} from "./types/challenge.types";
+import {toIsoString} from "./utility/SleepDataManager.ts";
 
 Chart.register(...registerables)
 
@@ -50,8 +50,8 @@ const createDataset = (displayInfo: PageSettingFilters, data: number[]) => {
 const pageSettingsToRequest = (pageSettings: PageSettings) => {
 
     const newDataFilters = pageSettings.filters.map( (filter) => { return {
-            from: filter.challenge.start.toString(),
-            to: filter.challenge.finish.toString()
+            from: toIsoString(toDate(filter.challenge.start)),
+            to: toIsoString(toDate(filter.challenge.finish))
         }}
     );
 
@@ -107,8 +107,7 @@ function Histogram(props: {createdCount:number}) {
 
     const {username} = useParams();
 
-    const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
-    const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
+    const allChallengesEndpoint = `/api/user/${username}/challenge`;
     const histogramEndpoint = `/api/user/${username}/sleep/histogram`;
 
     let [pageSettings, setPageSettings] = useState(defaultPageSettings);
@@ -154,9 +153,9 @@ function Histogram(props: {createdCount:number}) {
     };
 
     useEffect(() => {
-        fetch(challengeEndpointTz, GET)
+        fetch(allChallengesEndpoint, GET)
             .then((response) => response.json())
-            .then(toLocalChallengeDataList)
+            .then(toChallengeList)
             .then(challengeList => toSelectableChallenges(challengeList, defaultChallenge))
             .then(setAvailableChallenges)
             .catch(error => console.log(error));

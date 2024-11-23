@@ -66,19 +66,19 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
         var today = LocalDate.now();
 
         // preconditions
-        List<ChallengeDetailDto> completed = challengeService.getChallenges(username, today).completed();
+        List<ChallengeDetailDto> completed = challengeService.getChallenges(username);
         assertEquals(0, completed.size());
 
         // set up test data
         var challenge = challengeService.saveNew(username, createRandomChallenge(-14, 7));
-        completed = challengeService.getChallenges(username, today).completed();
+        completed = challengeService.getChallenges(username);
         assertEquals(1, completed.size());
 
         // perform testable action
         challengeService.remove(username, challenge.id());
 
         // postconditions
-        completed = challengeService.getChallenges(username, today).completed();
+        completed = challengeService.getChallenges(username);
         assertEquals(0, completed.size());
     }
 
