@@ -28,19 +28,19 @@ const toSelectableChallenges = (challengeList: ChallengeList<ChallengeData>, def
 function calculateProgress(challenge: ChallengeData): number {
 
     const now = LocalDate.now();
-    const start = challenge.start;
-    const end = challenge.finish;
+    const { start, finish } = challenge;
 
-    if(now.isAfter(end)) {
+    if(now.isAfter(finish)) {
         return 100;
     }
     if(now.isBefore(start)) {
         return 0;
     }
 
-    const startToNow = start.until(now).days();
-    const startToEnd = start.until(end).days();
-    return Math.round(startToNow * 100 / startToEnd);
+    const totalDuration = start.until(finish).days();
+    const elapsedDuration = start.until(now).days();
+
+    return Math.round((elapsedDuration / totalDuration) * 100);
 }
 
 const toLocalChallengeDataList = (challengeList: ChallengeDetailDto[]): ChallengeData[] => {

@@ -10,10 +10,12 @@ import Col from "react-bootstrap/Col";
 import {ChallengeData} from "./types/challenge.types";
 import {toDate, toLocalDate} from "./utility/Mapper.ts";
 
-const overlaps = (c1:ChallengeData, c2:ChallengeData) => {
-    return (c1.start.isAfter(c2.start) && c1.start.isBefore(c2.finish))
-        || (c1.finish.isAfter(c2.start) && c1.finish.isBefore(c2.finish));
-}
+
+const overlaps = (c1: ChallengeData, c2: ChallengeData): boolean => {
+    // Two intervals [c1.start, c1.finish] and [c2.start, c2.finish] overlap if and only if they are not disjoint.
+	// Intervals are disjoint if c1.finish < c2.start or c1.start > c2.finish.
+    return ! ( c1.finish.isBefore(c2.start) || c1.start.isAfter(c2.finish) );
+};
 
 function ChallengeForm(props:{
                             setEditableChallenge:React.Dispatch<React.SetStateAction<ChallengeData>>
