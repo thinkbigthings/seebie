@@ -10,8 +10,8 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {GET} from "./utility/BasicHeaders";
 import {emptyChallengeList} from "./utility/Constants";
 import CollapsibleContent from "./component/CollapsibleContent";
-import {toLocalChallengeDataList, toSleepDto} from "./utility/Mapper";
-import {ChallengeDetailDto, ChallengeList} from "./types/challenge.types";
+import {toChallengeList, toSleepDto} from "./utility/Mapper";
+import {ChallengeDetailDto} from "./types/challenge.types";
 
 function CreateSleepSession(props :{onSave: () => void, username:string}) {
 
@@ -19,8 +19,7 @@ function CreateSleepSession(props :{onSave: () => void, username:string}) {
 
     const sleepUrl = `/api/user/${username}/sleep`;
 
-    const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
-    const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
+    const allChallengesEndpoint = `/api/user/${username}/challenge`;
 
     const [sleepData, setSleepData] = useState(createInitSleepData());
     const [dataValid, setDataValid] = useState(true);
@@ -35,14 +34,11 @@ function CreateSleepSession(props :{onSave: () => void, username:string}) {
             .then(onSave);
     }
 
-
-    const defaultTitle = "Log Sleep";
-
     const openModal = () => {
         // load current challenges
-        fetch(challengeEndpointTz, GET)
-            .then((response) => response.json() as Promise<ChallengeList<ChallengeDetailDto>>)
-            .then(toLocalChallengeDataList)
+        fetch(allChallengesEndpoint, GET)
+            .then((response) => response.json() as Promise<ChallengeDetailDto[]>)
+            .then(toChallengeList)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
 
@@ -63,7 +59,7 @@ function CreateSleepSession(props :{onSave: () => void, username:string}) {
             <Modal show={showModal} onHide={closeModal} >
                 <Modal.Header closeButton>
                     <Modal.Title className={"w-100"}>
-                        {defaultTitle}
+                        Log Sleep
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>

@@ -1,14 +1,12 @@
+import {LocalDate} from "@js-joda/core";
 
 // this is the representation used internally by the front end
-// if id===0 then it is unsaved
 interface ChallengeData {
-    id: number,
+    id: number, // if id===0 then it is unsaved
     name: string,
     description: string,
-    localStartTime: Date,
-    localEndTime: Date
-    exactStart: Date,
-    exactFinish: Date
+    start: LocalDate,
+    finish: LocalDate
 }
 
 // this is what we send back and forth with the server

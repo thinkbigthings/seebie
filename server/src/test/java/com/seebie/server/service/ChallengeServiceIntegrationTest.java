@@ -1,8 +1,8 @@
 package com.seebie.server.service;
 
 import com.seebie.server.controller.ChallengeController;
-import com.seebie.server.dto.Challenge;
-import com.seebie.server.dto.ChallengeDetails;
+import com.seebie.server.dto.ChallengeDto;
+import com.seebie.server.dto.ChallengeDetailDto;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.repository.ChallengeRepository;
 import com.seebie.server.test.IntegrationTest;
@@ -44,16 +44,16 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
         var end = LocalDate.now();
         var start = end.minusDays(7);
 
-        var originalChallenge = new Challenge("Title", "", start, end);
+        var originalChallenge = new ChallengeDto("Title", "", start, end);
         var savedChallenge = challengeService.saveNew(username, originalChallenge);
 
         // test retrieve
-        Challenge found = challengeService.retrieve(username, savedChallenge.id());
+        ChallengeDto found = challengeService.retrieve(username, savedChallenge.id());
 
         assertEquals(originalChallenge, found);
 
         // test update
-        var updated = new Challenge("New title", "stuff", start, end);
+        var updated = new ChallengeDto("New title", "stuff", start, end);
         challengeService.update(username, savedChallenge.id(), updated);
         found = challengeService.retrieve(username, savedChallenge.id());
         assertEquals(updated, found);
@@ -66,19 +66,19 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
         var today = LocalDate.now();
 
         // preconditions
-        List<ChallengeDetails> completed = challengeService.getChallenges(username, today).completed();
+        List<ChallengeDetailDto> completed = challengeService.getChallenges(username);
         assertEquals(0, completed.size());
 
         // set up test data
         var challenge = challengeService.saveNew(username, createRandomChallenge(-14, 7));
-        completed = challengeService.getChallenges(username, today).completed();
+        completed = challengeService.getChallenges(username);
         assertEquals(1, completed.size());
 
         // perform testable action
         challengeService.remove(username, challenge.id());
 
         // postconditions
-        completed = challengeService.getChallenges(username, today).completed();
+        completed = challengeService.getChallenges(username);
         assertEquals(0, completed.size());
     }
 
@@ -101,7 +101,7 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
         var username = saveNewUser();
 
         // test with the start and stop times switched
-        var badData = new Challenge("title", "", LocalDate.now(), LocalDate.now().minusDays(7L));
+        var badData = new ChallengeDto("title", "", LocalDate.now(), LocalDate.now().minusDays(7L));
 
         var exception = assertThrows(DataIntegrityViolationException.class, () -> challengeService.saveNew(username, badData));
         assertEquals("stop_after_start", ((ConstraintViolationException)exception.getCause()).getConstraintName());

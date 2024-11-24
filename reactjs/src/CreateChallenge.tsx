@@ -12,9 +12,9 @@ import {emptyEditableChallenge, NameDescription, PREDEFINED_CHALLENGES} from "./
 import SuccessModal from "./component/SuccessModal";
 import {toChallengeDto} from "./utility/Mapper";
 import ChallengeForm from "./ChallengeForm";
-import {ChallengeData, ChallengeList} from "./types/challenge.types";
+import {ChallengeData} from "./types/challenge.types";
 
-function CreateChallenge(props: {onCreated:()=>void, savedChallenges:ChallengeList<ChallengeData>}) {
+function CreateChallenge(props: {onCreated:()=>void, savedChallenges:ChallengeData[]}) {
 
     const {onCreated, savedChallenges} = props;
 

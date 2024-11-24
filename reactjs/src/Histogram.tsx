@@ -15,12 +15,17 @@ import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import {
-    toLocalChallengeDataList,
+    toChallengeList, toDate,
     toSelectableChallenges
 } from "./utility/Mapper";
-import {createRange, HISTOGRAM_BIN_SIZE_OPTIONS, HISTOGRAM_COLORS, HISTOGRAM_OPTIONS} from "./utility/Constants";
-import {toIsoString} from "./utility/SleepDataManager";
+import {
+    createRangeLocalDate,
+    HISTOGRAM_BIN_SIZE_OPTIONS,
+    HISTOGRAM_COLORS,
+    HISTOGRAM_OPTIONS
+} from "./utility/Constants";
 import {ChallengeData} from "./types/challenge.types";
+import {toIsoString} from "./utility/SleepDataManager.ts";
 
 Chart.register(...registerables)
 
@@ -44,8 +49,8 @@ const createDataset = (displayInfo: PageSettingFilters, data: number[]) => {
 const pageSettingsToRequest = (pageSettings: PageSettings) => {
 
     const newDataFilters = pageSettings.filters.map( (filter) => { return {
-            from: toIsoString(filter.challenge.exactStart),
-            to: toIsoString(filter.challenge.exactFinish)
+            from: toIsoString(toDate(filter.challenge.start)),
+            to: toIsoString(toDate(filter.challenge.finish))
         }}
     );
 
@@ -58,16 +63,14 @@ const pageSettingsToRequest = (pageSettings: PageSettings) => {
 
 }
 
-const last30days = createRange(30);
+const last30LocalDays = createRangeLocalDate(30);
 
 const defaultChallenge: ChallengeData = {
     id: 0,
     name: "Last 30 Days",
     description: "Last 30 Days",
-    localStartTime: last30days.from,
-    localEndTime: last30days.to,
-    exactStart: last30days.from,
-    exactFinish: last30days.to
+    start: last30LocalDays.from,
+    finish: last30LocalDays.to,
 }
 
 interface PageSettingFilters {
@@ -95,6 +98,17 @@ const defaultPageSettings: PageSettings = {
     ],
 }
 
+const clone = (settings:PageSettings) => {
+    // copy to a new object: FYI structuredClone does not clone methods, the LocalDates are copied as data only
+    // LocalDate is immutable, so can just copy it back in here
+    let newPageSettings = structuredClone(settings);
+    newPageSettings.filters.forEach((filter, index) => {
+        filter.challenge.start = settings.filters[index].challenge.start;
+        filter.challenge.finish = settings.filters[index].challenge.finish;
+    });
+    return newPageSettings;
+}
+
 function Histogram(props: {createdCount:number}) {
 
     // TODO createdCount should be named "sleepLoggedCountSinceAppLoad" or something
@@ -103,8 +117,7 @@ function Histogram(props: {createdCount:number}) {
 
     const {username} = useParams();
 
-    const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
-    const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
+    const allChallengesEndpoint = `/api/user/${username}/challenge`;
     const histogramEndpoint = `/api/user/${username}/sleep/histogram`;
 
     let [pageSettings, setPageSettings] = useState(defaultPageSettings);
@@ -123,7 +136,8 @@ function Histogram(props: {createdCount:number}) {
         // event target value is the challenge name, option value has to be a string not an object, so need to find it
         const challenge = availableChallenges.find(saved => saved.name === event.target.value)!;
 
-        let newPageSettings = structuredClone(pageSettings);
+        const newPageSettings = clone(pageSettings);
+
         newPageSettings.filters.push({ challenge, color });
 
         setShowSelectChallenge(false);
@@ -138,21 +152,21 @@ function Histogram(props: {createdCount:number}) {
     }
 
     function onRemoveFilter(i: number) {
-        let newPageSettings = structuredClone(pageSettings);
+        let newPageSettings = clone(pageSettings);
         newPageSettings.filters.splice(i, 1);
         setPageSettings(newPageSettings);
     }
 
     const updateBinSize = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        let newPageState = structuredClone(pageSettings);
+        let newPageState = clone(pageSettings);
         newPageState.binSize = parseInt(event.target.value);
         setPageSettings(newPageState);
     };
 
     useEffect(() => {
-        fetch(challengeEndpointTz, GET)
+        fetch(allChallengesEndpoint, GET)
             .then((response) => response.json())
-            .then(toLocalChallengeDataList)
+            .then(toChallengeList)
             .then(challengeList => toSelectableChallenges(challengeList, defaultChallenge))
             .then(setAvailableChallenges)
             .catch(error => console.log(error));

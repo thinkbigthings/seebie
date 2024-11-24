@@ -4,12 +4,12 @@ import {faCaretLeft, faCaretRight,} from "@fortawesome/free-solid-svg-icons";
 import Container from "react-bootstrap/Container";
 import Table from "react-bootstrap/Table";
 import {Link, useParams} from "react-router-dom";
-import {toPagingLabel, useApiGet, PageData} from './hooks/useApiGet.js';
+import {toPagingLabel, useApiGet} from './hooks/useApiGet.js';
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import {NavHeader} from "./App";
-import {SleepDetailDto, SleepDto} from "./types/sleep.types";
 import {toLocalSleepData} from "./utility/Mapper";
+import {SleepDetailDto} from "./types/sleep.types.ts";
 
 const minuteToHrMin = (minutes: number) => {
     const hr = Math.floor(minutes / 60);

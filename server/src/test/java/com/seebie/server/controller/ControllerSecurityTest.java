@@ -108,7 +108,7 @@ public class ControllerSecurityTest {
 	private static final String[] challengeParams = new String[]{"currentDate", LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)};
 	private static final String[] chartParams = new String[]{"from", from, "to", to};
 	private static final HistogramRequest histogramRequest = new HistogramRequest(1, new FilterList(List.of()));
-	private static final Challenge challenge = createRandomChallenge(0, 14);
+	private static final ChallengeDto challenge = createRandomChallenge(0, 14);
 
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	@Autowired

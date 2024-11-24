@@ -1,6 +1,6 @@
 package com.seebie.server.service;
 
-import com.seebie.server.dto.ChallengeDetails;
+import com.seebie.server.dto.ChallengeDetailDto;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.dto.UserData;
@@ -37,7 +37,7 @@ public class ImportExportService {
                 .toList();
 
         var challengeData = challengeRepository.findAllByUsername(username).stream()
-                .map(ChallengeDetails::challenge)
+                .map(ChallengeDetailDto::challenge)
                 .toList();
 
         return new UserData(sleepData, challengeData);

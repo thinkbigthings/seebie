@@ -1,6 +1,8 @@
 
 // this is the representation used internally by the front end
 // if id===0 then it is unsaved
+import {LocalDate} from "@js-joda/core";
+
 interface SleepData {
     id: number,
     notes: string,
@@ -34,4 +36,9 @@ interface DateRange {
     to: Date
 }
 
-export type { SleepData, SleepDto, SleepDetailDto, DateRange }
+interface DateRangeLocalDate {
+    from: LocalDate,
+    to: LocalDate
+}
+
+export type { SleepData, SleepDto, SleepDetailDto, DateRange, DateRangeLocalDate}

@@ -1,5 +1,6 @@
-import {ChallengeData, ChallengeList} from "../types/challenge.types";
-import {DateRange} from "../types/sleep.types";
+import {ChallengeData, ChallengeDetailDto, ChallengeList} from "../types/challenge.types";
+import {DateRange, DateRangeLocalDate} from "../types/sleep.types";
+import {LocalDate} from "@js-joda/core";
 
 export const HISTOGRAM_COLORS = ['#897b9c', '#596b7c', '#393b4c'];
 
@@ -36,25 +37,23 @@ export const HISTOGRAM_OPTIONS = {
 
 export const emptyEditableChallenge = ():ChallengeData => {
 
+    const startLocalDate = LocalDate.now();
+    const finishLocalDate = LocalDate.now().plusDays(14);
+
     const start = new Date();
     const finish = new Date();
     finish.setDate(start.getDate() + 14);
-
-    let exactStart = new Date(start);
-    let exactFinish = new Date(finish);
-    exactStart.setHours(0, 0, 0);
-    exactFinish.setHours(23, 59, 59);
 
     return {
         id: 0,
         name: "",
         description: "",
-        localStartTime: start,
-        localEndTime: finish,
-        exactStart,
-        exactFinish
+        start: startLocalDate,
+        finish: finishLocalDate,
     };
 }
+
+export const emptyChallengeDataArray: ChallengeData[] = [];
 
 export const emptyChallengeList: ChallengeList<ChallengeData> = {
     current: [],
@@ -112,6 +111,12 @@ export const PREDEFINED_CHALLENGES:NameDescription[] = [
         description: "Maintain current habits for next three months to make sure your sleep doesn't degrade over time"
     }
 ];
+
+export const createRangeLocalDate = (lastNDays: number): DateRangeLocalDate => {
+    let today = LocalDate.now();
+    let lastMonth = today.minusDays(lastNDays);
+    return {from: lastMonth, to: today};
+}
 
 export const createRange = (lastNDays: number): DateRange => {
 

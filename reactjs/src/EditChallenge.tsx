@@ -9,16 +9,12 @@ import {NavHeader} from "./App";
 import {useNavigate, useParams} from "react-router-dom";
 import WarningButton from "./component/WarningButton";
 import ChallengeForm from "./ChallengeForm";
-import {emptyChallengeList, emptyEditableChallenge} from "./utility/Constants";
+import {emptyChallengeDataArray, emptyEditableChallenge} from "./utility/Constants";
 import { toLocalChallengeData, toChallengeDto, toLocalChallengeDataList, toChallengeDetailDto} from "./utility/Mapper";
-import {ChallengeDetailDto, ChallengeDto, ChallengeList} from "./types/challenge.types";
+import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types";
 
-const removeChallengesWithId = (challengeList: ChallengeList<ChallengeDetailDto>, challengeId: number) => {
-    return {
-        current: challengeList.current.filter(details => details.id !== challengeId),
-        upcoming: challengeList.upcoming.filter(details => details.id !== challengeId),
-        completed: challengeList.completed.filter(details => details.id !== challengeId)
-    }
+const removeChallengesWithId = (challengeList: ChallengeDetailDto[], challengeId: number) => {
+    return challengeList.filter(details => details.id !== challengeId);
 }
 
 
@@ -34,14 +30,13 @@ function EditChallenge() {
 
     const numericChallengeId = parseInt(challengeId);
 
+    const allChallengesEndpoint = `/api/user/${username}/challenge`;
     const challengeEndpoint = `/api/user/${username}/challenge/${challengeId}`;
-    const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
-    const challengeEndpointTz = `/api/user/${username}/challenge?zoneId=${tz}`;
 
     const [loaded, setLoaded] = useState(false);
     const [editableChallenge, setEditableChallenge] = useState(emptyEditableChallenge());
     const [dataValid, setDataValid] = useState(true);
-    const [savedChallenges, setSavedChallenges] = useState(emptyChallengeList);
+    const [savedChallenges, setSavedChallenges] = useState(emptyChallengeDataArray);
 
     const put = useApiPut();
     const callDelete = useApiDelete();
@@ -56,14 +51,15 @@ function EditChallenge() {
             .then(() => setLoaded(true))
     }, [setEditableChallenge, challengeEndpoint]);
 
+    // load all challenges to check for validation
     useEffect(() => {
-        fetch(challengeEndpointTz, GET)
-            .then((response) => response.json() as Promise<ChallengeList<ChallengeDetailDto>>)
+        fetch(allChallengesEndpoint, GET)
+            .then((response) => response.json() as Promise<ChallengeDetailDto[]>)
             .then(challengeList => removeChallengesWithId(challengeList, numericChallengeId))
             .then(toLocalChallengeDataList)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
-    }, [challengeEndpointTz]);
+    }, [allChallengesEndpoint]);
 
     const onSave = () => {
         put(challengeEndpoint, toChallengeDto(editableChallenge)).then(() => navigate(-1));
