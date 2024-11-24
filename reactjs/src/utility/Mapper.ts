@@ -25,11 +25,6 @@ const toSelectableChallenges = (challengeList: ChallengeList<ChallengeData>, def
     return selectableChallenges;
 }
 
-function isInProgress(challenge: ChallengeData): boolean {
-    const now = LocalDate.now();
-    return challenge.finish.isAfter(now) && (challenge.start.isBefore(now) || challenge.start.equals(now));
-}
-
 function calculateProgress(challenge: ChallengeData): number {
 
     const now = LocalDate.now();
@@ -56,11 +51,14 @@ const toLocalChallengeDataList = (challengeList: ChallengeDetailDto[]): Challeng
 const toChallengeList = (challengeList: ChallengeDetailDto[]): ChallengeList<ChallengeData> => {
 
     const challengeData = challengeList.map(toLocalChallengeData);
+    const now = LocalDate.now();
+
+    // If the start date or end date is today, it is current because it's what the user is looking for
 
     return {
-        current: challengeData.filter(isInProgress),
-        upcoming: challengeData.filter(c => calculateProgress(c) <= 0),
-        completed: challengeData.filter(c => calculateProgress(c) >= 100)
+        current: challengeData.filter(c => c.start.compareTo(now) <= 0 && now.compareTo(c.finish) <= 0),
+        upcoming: challengeData.filter(c => c.start.compareTo(now) > 0),
+        completed: challengeData.filter(c => now.compareTo(c.finish) > 0)
     };
 }
 
