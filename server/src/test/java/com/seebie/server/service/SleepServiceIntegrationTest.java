@@ -17,14 +17,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.lang.reflect.Field;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.test.data.TestData.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.lessThan;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SleepServiceIntegrationTest extends IntegrationTest {
@@ -82,23 +79,6 @@ class SleepServiceIntegrationTest extends IntegrationTest {
 
         var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepService.saveNew(username, badData));
         assertEquals("stop_after_start", ((ConstraintViolationException)exception.getCause()).getConstraintName());
-    }
-
-    @Test
-    public void testDbTimezoneConstraint() {
-
-        var registration = TestData.createRandomUserRegistration();
-        String username = registration.username();
-        userService.saveNewUser(registration);
-
-        var now = ZonedDateTime.now();
-        var data = createStandardSleepData(now.minusHours(1), now);
-        var badTimezone = sleepListMapper.toUnsavedEntity(username, data);
-
-        badTimezone.setSleepData(60, "", data.startTime(), data.stopTime(), "nowhere/badZone");
-
-        var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepRepository.save(badTimezone));
-        assertEquals("sleep_session_zone_id_fkey", ((ConstraintViolationException)exception.getCause()).getConstraintName());
     }
 
     @Test
@@ -187,12 +167,5 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         histData.forEach(durations -> assertEquals(listCount, durations.size()));
 
     }
-
-    @Test
-    public void testZoneIdsInDbAreParsable() {
-        var zones = sleepRepository.findTimezoneIds().stream().map(ZoneId::of).toList();
-        assertEquals(3, zones.size());
-    }
-
 
 }

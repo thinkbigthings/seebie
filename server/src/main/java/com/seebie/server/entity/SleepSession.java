@@ -7,8 +7,6 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "sleep_session")
@@ -84,6 +82,7 @@ public class SleepSession implements Serializable {
     public ZonedDateTime getStopTime() {
         return stopTime.withZoneSameInstant(getZoneId());
     }
+
     public int getMinutesAsleep() {
         return minutesAsleep;
     }

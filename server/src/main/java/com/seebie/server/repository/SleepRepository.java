@@ -61,8 +61,4 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             """)
     List<SleepDetails> findAllByUsername(String username);
 
-    @Query(nativeQuery = true, value = """
-            SELECT * FROM timezone_identifier z ORDER BY z.identifier ASC
-            """)
-    List<String> findTimezoneIds();
 }
