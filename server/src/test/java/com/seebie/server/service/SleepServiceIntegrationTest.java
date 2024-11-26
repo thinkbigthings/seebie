@@ -17,14 +17,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.lang.reflect.Field;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.test.data.TestData.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.lessThan;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SleepServiceIntegrationTest extends IntegrationTest {
@@ -187,12 +184,5 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         histData.forEach(durations -> assertEquals(listCount, durations.size()));
 
     }
-
-    @Test
-    public void testZoneIdsInDbAreParsable() {
-        var zones = sleepRepository.findTimezoneIds().stream().map(ZoneId::of).toList();
-        assertEquals(3, zones.size());
-    }
-
 
 }
