@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.parse;
+import static com.seebie.server.mapper.entitytodto.LocalDateTimeConverter.parse;
 import static com.seebie.server.mapper.entitytodto.SleepDetailsToCsv.HEADER;
 
 @Component

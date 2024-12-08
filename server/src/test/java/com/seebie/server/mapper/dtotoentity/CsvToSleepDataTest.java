@@ -1,5 +1,6 @@
 package com.seebie.server.mapper.dtotoentity;
 
+import com.seebie.server.mapper.entitytodto.LocalDateTimeConverter;
 import com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,12 @@ public class CsvToSleepDataTest {
     private CsvToSleepData fromCsv = new CsvToSleepData();
 
     @Test
-    public void testConstructable() {
+    public void testConstructableLDTC() {
+        assertDoesNotThrow(() -> new LocalDateTimeConverter());
+    }
+
+    @Test
+    public void testConstructableZDTC() {
         assertDoesNotThrow(() -> new ZonedDateTimeConverter());
     }
 

@@ -57,7 +57,8 @@ public class SleepService {
         var entity = sleepRepository.findBy(username, sleepId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sleep session not found"));
 
-        entity.setSleepData(dto.minutesAwake(), dto.notes(), dto.startTime(), dto.stopTime(), dto.zoneId());
+        entity.setSleepData(dto.minutesAwake(), dto.notes(),
+                dto.startTime(), dto.stopTime(), dto.zoneId());
     }
 
     @Transactional(readOnly = true)

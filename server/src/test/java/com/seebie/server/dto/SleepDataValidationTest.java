@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -28,9 +29,9 @@ public class SleepDataValidationTest {
             Arguments.of(new SleepData(null, minutesAwake, start, stop, zoneId), 1),
             Arguments.of(new SleepData(null, -1, start, stop, zoneId), 2),
             Arguments.of(new SleepData(null, -1, null, stop, zoneId), 3),
-            Arguments.of(new SleepData(null, -1, null, null, zoneId), 4),
-            Arguments.of(new SleepData(null, -1, null, null, null), 5),
-            Arguments.of(new SleepData(null, -1, null, null, "invalid"), 5)
+            Arguments.of(new SleepData(null, -1, (LocalDateTime) null, null, zoneId), 4),
+            Arguments.of(new SleepData(null, -1, (LocalDateTime) null, null, null), 5),
+            Arguments.of(new SleepData(null, -1, (LocalDateTime) null, null, "invalid"), 5)
         );
     }
 

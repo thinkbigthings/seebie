@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.lang.reflect.Field;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -140,8 +141,8 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         var data = TestData.createRandomSleepData(listCount, AMERICA_NEW_YORK);
         data.forEach(d -> sleepService.saveNew(username, d));
 
-        var to = data.getFirst().stopTime().plusDays(20);
-        var from = data.getFirst().stopTime().minusDays(20);
+        var to = ZonedDateTime.of(data.getFirst().stopTime().plusDays(20), ZoneId.of(AMERICA_NEW_YORK));
+        var from = ZonedDateTime.of(data.getFirst().stopTime().minusDays(20), ZoneId.of(AMERICA_NEW_YORK));
 
         var points = sleepService.listChartData(username, from, to);
         assertEquals(10, points.size());
@@ -157,8 +158,8 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         var data = TestData.createRandomSleepData(listCount, AMERICA_NEW_YORK);
         data.forEach(d -> sleepService.saveNew(username, d));
 
-        var to = data.getFirst().stopTime().plusDays(20);
-        var from = data.getFirst().stopTime().minusDays(20);
+        var to = ZonedDateTime.of(data.getFirst().stopTime().plusDays(20), ZoneId.of(AMERICA_NEW_YORK));
+        var from = ZonedDateTime.of(data.getFirst().stopTime().minusDays(20), ZoneId.of(AMERICA_NEW_YORK));
 
         var range = new DateRange(from, to);
         var histData = sleepService.listSleepAmounts(username, List.of(range, range, range));

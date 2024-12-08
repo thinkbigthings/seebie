@@ -13,7 +13,4 @@ public class ZonedDateTimeConverter {
         return dateTime.format(ISO_OFFSET_DATE_TIME);
     }
 
-    public static ZonedDateTime parse(String formatted) {
-        return ZonedDateTime.parse(formatted, ISO_OFFSET_DATE_TIME);
-    }
 }
