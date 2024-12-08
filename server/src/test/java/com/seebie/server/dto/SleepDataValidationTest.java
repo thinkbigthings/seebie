@@ -28,9 +28,9 @@ public class SleepDataValidationTest {
             Arguments.of(new SleepData(null, minutesAwake, start, stop, zoneId), 1),
             Arguments.of(new SleepData(null, -1, start, stop, zoneId), 2),
             Arguments.of(new SleepData(null, -1, null, stop, zoneId), 3),
-            Arguments.of(new SleepData(null, -1, null, null, zoneId), 4),
-            Arguments.of(new SleepData(null, -1, null, null, null), 5),
-            Arguments.of(new SleepData(null, -1, null, null, "invalid"), 5)
+            Arguments.of(new SleepData(null, -1, (ZonedDateTime)null, null, zoneId), 4),
+            Arguments.of(new SleepData(null, -1, (ZonedDateTime)null, null, null), 5),
+            Arguments.of(new SleepData(null, -1, (ZonedDateTime)null, null, "invalid"), 5)
         );
     }
 

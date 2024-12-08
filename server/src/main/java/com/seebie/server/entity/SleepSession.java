@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -45,12 +46,12 @@ public class SleepSession implements Serializable {
 
     @Basic
     @NotNull
-    private ZonedDateTime startTime = ZonedDateTime.now();
+    private LocalDateTime startTime = LocalDateTime.now();
 
     @Basic
     @NotNull
     @Column(name="stop_time")
-    private ZonedDateTime stopTime = ZonedDateTime.now();
+    private LocalDateTime stopTime = LocalDateTime.now();
 
     /**
      * We want to keep the duration in the database, so we can do things like query against it,
@@ -76,11 +77,11 @@ public class SleepSession implements Serializable {
     }
 
     public ZonedDateTime getStartTime() {
-        return startTime.withZoneSameInstant(getZoneId());
+        return ZonedDateTime.of(startTime, getZoneId());
     }
 
     public ZonedDateTime getStopTime() {
-        return stopTime.withZoneSameInstant(getZoneId());
+        return ZonedDateTime.of(stopTime, getZoneId());
     }
 
     public int getMinutesAsleep() {
@@ -91,8 +92,8 @@ public class SleepSession implements Serializable {
 
         this.minutesAwake = minutesAwake;
         this.notes = notes;
-        this.startTime = start;
-        this.stopTime = stop;
+        this.startTime = start.toLocalDateTime();
+        this.stopTime = stop.toLocalDateTime();
         this.zoneId = zoneId;
 
         // this is calculated here and not in the database

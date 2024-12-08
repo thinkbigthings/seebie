@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +42,11 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             AND s.stopTime <= :to
             ORDER BY s.stopTime ASC
             """)
-    List<SleepDataPoint> loadChartData(String username, ZonedDateTime from, ZonedDateTime to);
+    List<SleepDataPoint> loadChartData(String username, LocalDateTime from, LocalDateTime to);
+
+    default List<SleepDataPoint> loadChartData(String username, ZonedDateTime from, ZonedDateTime to) {
+        return loadChartData(username, from.toLocalDateTime(), to.toLocalDateTime());
+    }
 
     @Query("""
             SELECT s.minutesAsleep
@@ -51,7 +56,11 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             AND s.stopTime <= :to
             ORDER BY s.stopTime ASC
             """)
-    List<Long> loadDurations(String username, ZonedDateTime from, ZonedDateTime to);
+    List<Long> loadDurations(String username, LocalDateTime from, LocalDateTime to);
+
+    default List<Long> loadDurations(String username, ZonedDateTime from, ZonedDateTime to) {
+        return loadDurations(username, from.toLocalDateTime(), to.toLocalDateTime());
+    }
 
     @Query("""
             SELECT new com.seebie.server.dto.SleepDetails(s.id, s.minutesAsleep, s.notes, s.minutesAwake, s.startTime, s.stopTime, s.zoneId)
