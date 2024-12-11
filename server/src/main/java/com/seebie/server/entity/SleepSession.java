@@ -72,16 +72,16 @@ public class SleepSession implements Serializable {
         return id;
     }
 
-    public ZoneId getZoneId() {
-        return ZoneId.of(zoneId);
+    public String getZoneId() {
+        return zoneId;
     }
 
     public ZonedDateTime getStartTime() {
-        return ZonedDateTime.of(startTime, getZoneId());
+        return ZonedDateTime.of(startTime, ZoneId.of(zoneId));
     }
 
     public ZonedDateTime getStopTime() {
-        return ZonedDateTime.of(stopTime, getZoneId());
+        return ZonedDateTime.of(stopTime, ZoneId.of(zoneId));
     }
 
     public int getMinutesAsleep() {
@@ -97,10 +97,9 @@ public class SleepSession implements Serializable {
         this.zoneId = zoneId;
 
         // this is calculated here and not in the database
-        // (despite the calculation being done in the database anyway to check the constraint)
         // because after saving, database computed values are not available until after the transaction closes
         // and the returned entity after save won't have the updated value
-        this.minutesAsleep = (int)Duration.between(startTime, stopTime).abs().toMinutes() - minutesAwake;
+        this.minutesAsleep = (int)Duration.between(start, stop).abs().toMinutes() - minutesAwake;
     }
 
     public String getNotes() {

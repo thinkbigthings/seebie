@@ -47,27 +47,6 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     private final PageRequest firstPage = PageRequest.of(0, 10);
 
     @Test
-    public void testDbCalculationConstraint() throws NoSuchFieldException, IllegalAccessException {
-
-        var registration = TestData.createRandomUserRegistration();
-        String username = registration.username();
-        userService.saveNewUser(registration);
-
-        var oneHour = createStandardSleepData(ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
-        var badCalculation = sleepListMapper.toUnsavedEntity(username, oneHour);
-
-        // use reflection to hack our way into setting bad data
-        // setter is missing because it should be hard to do the wrong thing
-        Field minutesAsleepField = SleepSession.class.getDeclaredField("minutesAsleep");
-        minutesAsleepField.setAccessible(true);
-        minutesAsleepField.set(badCalculation, 15);
-
-        var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepRepository.save(badCalculation));
-        assertEquals("correct_calculation", ((ConstraintViolationException)exception.getCause()).getConstraintName());
-
-    }
-
-    @Test
     public void testDbTimeOrderConstraint() {
 
         var registration = TestData.createRandomUserRegistration();
