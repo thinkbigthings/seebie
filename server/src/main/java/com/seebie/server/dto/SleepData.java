@@ -4,6 +4,7 @@ import com.seebie.server.validation.ZoneIdConstraint;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -20,21 +21,18 @@ import java.util.Optional;
  */
 public record SleepData(@NotNull String notes,
                         @PositiveOrZero int minutesAwake,
-                        @NotNull ZonedDateTime startTime,
-                        @NotNull ZonedDateTime stopTime,
+                        @NotNull LocalDateTime startTime,
+                        @NotNull LocalDateTime stopTime,
                         @ZoneIdConstraint String zoneId)
 {
 
-    public SleepData(String notes, int minutesAwake, LocalDateTime startTime, LocalDateTime stopTime, String zoneId) {
-        this(notes, minutesAwake, toZDT(startTime, zoneId), toZDT(stopTime, zoneId), zoneId);
+    public SleepData(String notes, int minutesAwake, ZonedDateTime startTime, ZonedDateTime stopTime, String zoneId) {
+        this(notes, minutesAwake, toAlignedZDT(startTime, zoneId).toLocalDateTime(),
+                toAlignedZDT(stopTime, zoneId).toLocalDateTime(), zoneId);
     }
 
-    public SleepData(String notes, int minutesAwake, ZonedDateTime startTime, ZonedDateTime stopTime, String zoneId) {
-        this.notes = notes;
-        this.minutesAwake = minutesAwake;
-        this.startTime = toAlignedZDT(startTime, zoneId);
-        this.stopTime = toAlignedZDT(stopTime, zoneId);
-        this.zoneId = zoneId;
+    public int minutesAsleep() {
+        return (int) Duration.between(toZDT(startTime, zoneId), toZDT(stopTime, zoneId)).abs().toMinutes() - minutesAwake;
     }
 
     private static ZonedDateTime toZDT(LocalDateTime dateTime, String zoneId) {

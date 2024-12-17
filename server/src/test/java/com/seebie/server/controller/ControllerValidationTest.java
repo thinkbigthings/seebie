@@ -33,15 +33,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
 import javax.sql.DataSource;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.seebie.server.mapper.dtotoentity.CsvToSleepData.missingHeader;
-import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
+import static com.seebie.server.mapper.entitytodto.LocalDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
 import static com.seebie.server.test.data.TestData.createRandomSleepData;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
-import static java.time.ZonedDateTime.now;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpMethod.*;
@@ -96,19 +95,19 @@ public class ControllerValidationTest {
 	private static final PasswordResetRequest invalidPw = new PasswordResetRequest("");
 
 	private static final RegistrationRequest invalidRegistration = new RegistrationRequest("", null, null);
-	private static final SleepData invalidSleepData = createStandardSleepData(null, null);
+	private static final SleepData invalidSleepData = new SleepData("", 0, (LocalDateTime)null, null, AMERICA_NEW_YORK);
 
-	private static final ZonedDateTime stopTime = ZonedDateTime.now();
-	private static final ZonedDateTime startTime = stopTime.minusHours(8);
+	private static final LocalDateTime stopTime = LocalDateTime.now();
+	private static final LocalDateTime startTime = stopTime.minusHours(8);
 	private static final SleepData badDurationSleepData = new SleepData("", 481, startTime, stopTime, AMERICA_NEW_YORK);
 
 	private static final PersonalInfo invalidInfo = new PersonalInfo(null, null);
 
-	private static final String from = format(now().minusDays(1));
-	private static final String to = format(now());
+	private static final String from = format(LocalDateTime.now().minusDays(1));
+	private static final String to = format(LocalDateTime.now());
 
-	private static final ZonedDateTime fromDate = now().minusDays(1);
-	private static final ZonedDateTime toDate = now();
+	private static final LocalDateTime fromDate = LocalDateTime.now().minusDays(1);
+	private static final LocalDateTime toDate = LocalDateTime.now();
 
 	private static final HistogramRequest validHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(fromDate, toDate))));
 	private static final HistogramRequest invalidHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(toDate, fromDate))));

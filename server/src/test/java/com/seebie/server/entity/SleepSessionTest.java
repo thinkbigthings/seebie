@@ -16,7 +16,7 @@ public class SleepSessionTest {
 
         var data = new SleepData("", 15, ZonedDateTime.now(), ZonedDateTime.now().minusHours(1), AMERICA_NEW_YORK);
         var entity = new SleepSession();
-        entity.setSleepData(data.minutesAwake(), data.notes(),  data.startTime(), data.stopTime(), data.zoneId());
+        entity.setSleepData(data.minutesAwake(), data.notes(),  data.startTime(), data.stopTime(), data.minutesAsleep(), data.zoneId());
 
         assertEquals(45, entity.getMinutesAsleep());
     }

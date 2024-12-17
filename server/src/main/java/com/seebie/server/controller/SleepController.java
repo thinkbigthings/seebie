@@ -15,7 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
@@ -54,7 +54,7 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/sleep/chart", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<SleepDataPoint> getChartData(@PathVariable String username, @RequestParam ZonedDateTime from, @RequestParam ZonedDateTime to) {
+    public List<SleepDataPoint> getChartData(@PathVariable String username, @RequestParam LocalDateTime from, @RequestParam LocalDateTime to) {
 
         if(to.isBefore(from)) {
             throw new IllegalArgumentException("Request parameter \"from\" must be before \"to\"");

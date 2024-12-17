@@ -3,6 +3,7 @@ package com.seebie.server.controller;
 import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
+import com.seebie.server.mapper.entitytodto.LocalDateTimeConverter;
 import com.seebie.server.mapper.entitytodto.SleepDetailsToCsv;
 import com.seebie.server.security.WebSecurityBeanProvider;
 import com.seebie.server.security.WebSecurityConfig;
@@ -31,11 +32,11 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
+import static com.seebie.server.mapper.entitytodto.LocalDateTimeConverter.format;
 import static com.seebie.server.security.WebSecurityConfig.API_LOGIN;
 import static com.seebie.server.test.data.TestData.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -102,8 +103,8 @@ public class ControllerSecurityTest {
 	private static final String goodCsvText = createCsv(goodCsvRows);
 	private static final MockMultipartFile csvFile = createMultipart(goodCsvText);
 
-	private static final String from = format(ZonedDateTime.now().minusDays(1));
-	private static final String to = format(ZonedDateTime.now());
+	private static final String from = LocalDateTimeConverter.format(LocalDateTime.now().minusDays(1));
+	private static final String to = format(LocalDateTime.now());
 
 	private static final String[] challengeParams = new String[]{"currentDate", LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)};
 	private static final String[] chartParams = new String[]{"from", from, "to", to};

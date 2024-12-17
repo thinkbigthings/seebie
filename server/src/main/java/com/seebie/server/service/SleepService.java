@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -57,7 +57,7 @@ public class SleepService {
         var entity = sleepRepository.findBy(username, sleepId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sleep session not found"));
 
-        entity.setSleepData(dto.minutesAwake(), dto.notes(), dto.startTime(), dto.stopTime(), dto.zoneId());
+        entity.setSleepData(dto.minutesAwake(), dto.notes(), dto.startTime(), dto.stopTime(), dto.minutesAsleep(), dto.zoneId());
     }
 
     @Transactional(readOnly = true)
@@ -69,7 +69,7 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public List<SleepDataPoint> listChartData(String username, ZonedDateTime from, ZonedDateTime to) {
+    public List<SleepDataPoint> listChartData(String username, LocalDateTime from, LocalDateTime to) {
          return sleepRepository.loadChartData(username, from, to);
     }
 

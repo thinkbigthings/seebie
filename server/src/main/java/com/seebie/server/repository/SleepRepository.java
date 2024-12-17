@@ -44,10 +44,6 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             """)
     List<SleepDataPoint> loadChartData(String username, LocalDateTime from, LocalDateTime to);
 
-    default List<SleepDataPoint> loadChartData(String username, ZonedDateTime from, ZonedDateTime to) {
-        return loadChartData(username, from.toLocalDateTime(), to.toLocalDateTime());
-    }
-
     @Query("""
             SELECT s.minutesAsleep
             FROM SleepSession s
@@ -57,10 +53,6 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             ORDER BY s.stopTime ASC
             """)
     List<Long> loadDurations(String username, LocalDateTime from, LocalDateTime to);
-
-    default List<Long> loadDurations(String username, ZonedDateTime from, ZonedDateTime to) {
-        return loadDurations(username, from.toLocalDateTime(), to.toLocalDateTime());
-    }
 
     @Query("""
             SELECT new com.seebie.server.dto.SleepDetails(s.id, s.minutesAsleep, s.notes, s.minutesAwake, s.startTime, s.stopTime, s.zoneId)
