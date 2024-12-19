@@ -16,7 +16,7 @@ import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import {
     toChallengeList,
-    toSelectableChallenges, toStringLocalDate
+    toSelectableChallenges, localDateToString
 } from "./utility/Mapper";
 import {
     createRange,
@@ -48,8 +48,8 @@ const createDataset = (displayInfo: PageSettingFilters, data: number[]) => {
 const pageSettingsToRequest = (pageSettings: PageSettings) => {
 
     const newDataFilters = pageSettings.filters.map( (filter) => { return {
-            from: toStringLocalDate(filter.challenge.start),
-            to: toStringLocalDate(filter.challenge.finish)
+            from: localDateToString(filter.challenge.start),
+            to: localDateToString(filter.challenge.finish)
         }}
     );
 

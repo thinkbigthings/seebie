@@ -19,7 +19,7 @@ import DateRangePicker from "./component/DateRangePicker";
 import {useParams} from "react-router-dom";
 import {createRange} from "./utility/Constants";
 import {DateRange} from "./types/sleep.types";
-import {toDate, toLocalDate, toStringLocalDate} from "./utility/Mapper.ts";
+import {localDateToJsDate, jsDateToLocalDate, localDateToString} from "./utility/Mapper.ts";
 
 
 ChartJS.register(
@@ -86,8 +86,8 @@ function SleepChart(props:{createdCount:number}) {
     }
 
     let requestParameters = '?'
-        + 'from='+encodeURIComponent(toStringLocalDate(range.from)) + '&'
-        + 'to='+encodeURIComponent(toStringLocalDate(range.to));
+        + 'from='+encodeURIComponent(localDateToString(range.from)) + '&'
+        + 'to='+encodeURIComponent(localDateToString(range.to));
 
     const sleepEndpoint = '/api/user/'+username+'/sleep/chart' + requestParameters;
 
@@ -109,10 +109,10 @@ function SleepChart(props:{createdCount:number}) {
         <Container>
             <NavHeader title="Sleep Chart" />
 
-            <DateRangePicker selectedStart={toDate(range.from)}
-                             onChangeStart={date => updateSearchRange({from: toLocalDate(date)})}
-                             selectedEnd={toDate(range.to)}
-                             onChangeEnd={date => updateSearchRange({to: toLocalDate(date)})} />
+            <DateRangePicker selectedStart={localDateToJsDate(range.from)}
+                             onChangeStart={date => updateSearchRange({from: jsDateToLocalDate(date)})}
+                             selectedEnd={localDateToJsDate(range.to)}
+                             onChangeEnd={date => updateSearchRange({to: jsDateToLocalDate(date)})} />
 
             {chartArea}
 
