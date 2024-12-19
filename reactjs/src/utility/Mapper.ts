@@ -1,7 +1,15 @@
 import {SleepData, SleepDetailDto, SleepDto} from "../types/sleep.types";
 import {ChallengeDto, ChallengeDetailDto, ChallengeList, ChallengeData} from "../types/challenge.types";
 
-import {ChronoUnit, convert, DateTimeFormatter, LocalDate, LocalDateTime, nativeJs, TemporalUnit} from "@js-joda/core"
+import {ChronoUnit, convert, DateTimeFormatter, LocalDate, LocalDateTime, nativeJs} from "@js-joda/core"
+
+const toStringLocalDateTime = (date: LocalDateTime): string => {
+    return date.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+}
+
+const toStringLocalDate = (date: LocalDate): string => {
+    return date.format(DateTimeFormatter.ISO_LOCAL_DATE);
+}
 
 const toLocalDate = (date: Date): LocalDate => {
     return nativeJs(date).toLocalDate();
@@ -127,5 +135,6 @@ const toSleepDto = (sleep: SleepData): SleepDto => {
 
 export {
     toSelectableChallenges, toChallengeDto, toLocalChallengeData, toLocalChallengeDataList, toChallengeDetailDto,
-    toLocalSleepData, toSleepDto, calculateProgress, toChallengeList, toLocalDate, toDate, toLocalDateTime, fromLocalDateTime
+    toLocalSleepData, toSleepDto, calculateProgress, toChallengeList, toLocalDate, toDate, toLocalDateTime,
+    fromLocalDateTime, toStringLocalDateTime, toStringLocalDate
 }

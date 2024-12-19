@@ -18,8 +18,8 @@ import {NavHeader} from "./App";
 import DateRangePicker from "./component/DateRangePicker";
 import {useParams} from "react-router-dom";
 import {createRange} from "./utility/Constants";
-import {toIsoString} from "./utility/SleepDataManager";
 import {DateRange} from "./types/sleep.types";
+import {toDate, toLocalDate, toStringLocalDate} from "./utility/Mapper.ts";
 
 
 ChartJS.register(
@@ -65,12 +65,6 @@ const initialChartData = {
     }]
 };
 
-const isDateRangeValid = (d1:Date, d2:Date)  => {
-    let j1 = d1.toJSON().slice(0, 10);
-    let j2 = d2.toJSON().slice(0, 10);
-    return j1 < j2;
-}
-
 function SleepChart(props:{createdCount:number}) {
 
     const {username} = useParams();
@@ -86,14 +80,14 @@ function SleepChart(props:{createdCount:number}) {
 
     function updateSearchRange(updateValues:Partial<DateRange>) {
         let updatedRange = {...range, ...updateValues};
-        if( isDateRangeValid(updatedRange.from, updatedRange.to) ) {
+        if( updatedRange.from.isBefore(updatedRange.to) ) {
             setRange(updatedRange);
         }
     }
 
     let requestParameters = '?'
-        + 'from='+encodeURIComponent(toIsoString(range.from)) + '&'
-        + 'to='+encodeURIComponent(toIsoString(range.to));
+        + 'from='+encodeURIComponent(toStringLocalDate(range.from)) + '&'
+        + 'to='+encodeURIComponent(toStringLocalDate(range.to));
 
     const sleepEndpoint = '/api/user/'+username+'/sleep/chart' + requestParameters;
 
@@ -115,10 +109,10 @@ function SleepChart(props:{createdCount:number}) {
         <Container>
             <NavHeader title="Sleep Chart" />
 
-            <DateRangePicker selectedStart={range.from}
-                             onChangeStart={date => updateSearchRange({from: date})}
-                             selectedEnd={range.to}
-                             onChangeEnd={date => updateSearchRange({to: date})} />
+            <DateRangePicker selectedStart={toDate(range.from)}
+                             onChangeStart={date => updateSearchRange({from: toLocalDate(date)})}
+                             selectedEnd={toDate(range.to)}
+                             onChangeEnd={date => updateSearchRange({to: toLocalDate(date)})} />
 
             {chartArea}
 

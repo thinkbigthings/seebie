@@ -1,5 +1,6 @@
 package com.seebie.server.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -11,6 +12,13 @@ import java.time.LocalDateTime;
  * @param from
  * @param to
  */
-public record DateRange(LocalDateTime from, LocalDateTime to) {
+public record DateRange(LocalDate from, LocalDate to) {
 
+    public static LocalDateTime atStartOfDay(LocalDate date) {
+        return date.atTime(0, 0, 0);
+    }
+
+    public static LocalDateTime atEndOfDay(LocalDate date) {
+        return date.atTime(23, 59, 59);
+    }
 }

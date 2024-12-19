@@ -11,8 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
+
+import static com.seebie.server.dto.DateRange.atEndOfDay;
+import static com.seebie.server.dto.DateRange.atStartOfDay;
 
 @Service
 public class SleepService {
@@ -69,15 +72,17 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public List<SleepDataPoint> listChartData(String username, LocalDateTime from, LocalDateTime to) {
-         return sleepRepository.loadChartData(username, from, to);
+    public List<SleepDataPoint> listChartData(String username, LocalDate from, LocalDate to) {
+         return sleepRepository.loadChartData(username, atStartOfDay(from), atEndOfDay(to));
     }
 
     @Transactional(readOnly = true)
     public List<List<Long>> listSleepAmounts(String username, List<DateRange> filters) {
 
         return filters.stream()
-                .map(dateRange -> sleepRepository.loadDurations(username, dateRange.from(), dateRange.to()))
+                .map(dateRange -> sleepRepository.loadDurations(username,
+                        atStartOfDay(dateRange.from()),
+                        atEndOfDay(dateRange.to())))
                 .toList();
     }
 

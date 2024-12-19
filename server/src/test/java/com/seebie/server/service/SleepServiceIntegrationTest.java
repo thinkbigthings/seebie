@@ -122,7 +122,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         var to = data.getFirst().stopTime().plusDays(20);
         var from = data.getFirst().stopTime().minusDays(20);
 
-        var points = sleepService.listChartData(username, from, to);
+        var points = sleepService.listChartData(username, from.toLocalDate(), to.toLocalDate());
         assertEquals(10, points.size());
     }
 
@@ -139,7 +139,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         var to = data.getFirst().stopTime().plusDays(20);
         var from = data.getFirst().stopTime().minusDays(20);
 
-        var range = new DateRange(from, to);
+        var range = new DateRange(from.toLocalDate(), to.toLocalDate());
         var histData = sleepService.listSleepAmounts(username, List.of(range, range, range));
 
         assertEquals(3, histData.size());

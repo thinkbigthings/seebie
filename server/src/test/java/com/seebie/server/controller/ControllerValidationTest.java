@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
 import javax.sql.DataSource;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -41,6 +42,7 @@ import static com.seebie.server.mapper.entitytodto.LocalDateTimeConverter.format
 import static com.seebie.server.test.data.TestData.*;
 import static com.seebie.server.test.data.TestData.createRandomSleepData;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpMethod.*;
@@ -103,11 +105,13 @@ public class ControllerValidationTest {
 
 	private static final PersonalInfo invalidInfo = new PersonalInfo(null, null);
 
-	private static final String from = format(LocalDateTime.now().minusDays(1));
-	private static final String to = format(LocalDateTime.now());
+	private static final LocalDate today = LocalDate.now();
+	private static final LocalDate yesterday = today.minusDays(1);
+	private static final String from = yesterday.format(ISO_LOCAL_DATE);
+	private static final String to = today.format(ISO_LOCAL_DATE);
 
-	private static final LocalDateTime fromDate = LocalDateTime.now().minusDays(1);
-	private static final LocalDateTime toDate = LocalDateTime.now();
+	private static final LocalDate toDate = LocalDate.now();
+	private static final LocalDate fromDate = toDate.minusDays(1);
 
 	private static final HistogramRequest validHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(fromDate, toDate))));
 	private static final HistogramRequest invalidHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(toDate, fromDate))));

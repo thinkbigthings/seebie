@@ -31,13 +31,8 @@ interface SleepDetailDto {
 }
 
 interface DateRange {
-    from: Date,
-    to: Date
-}
-
-interface DateRangeLocalDate {
     from: LocalDate,
     to: LocalDate
 }
 
-export type { SleepData, SleepDto, SleepDetailDto, DateRange, DateRangeLocalDate}
+export type { SleepData, SleepDto, SleepDetailDto, DateRange}
