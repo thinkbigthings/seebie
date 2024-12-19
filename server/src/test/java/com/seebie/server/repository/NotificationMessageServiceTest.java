@@ -16,9 +16,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Duration;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.seebie.server.mapper.entitytodto.LocalDateTimeConverter.toZDT;
 import static com.seebie.server.test.data.TestData.createStandardSleepData;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -74,8 +75,9 @@ public class NotificationMessageServiceTest extends IntegrationTest {
     @MethodSource("provideSleepLogParameters")
     public void testScanForNotifications(TestParams params) {
 
-        ZonedDateTime start = ZonedDateTime.now();
+        LocalDateTime start = LocalDateTime.now();
         SleepData firstSleepLog = createStandardSleepData(start.minusHours(8), start);
+        String tz = firstSleepLog.zoneId();
         int testDurationHours = 72;
 
         // create new user
@@ -103,7 +105,7 @@ public class NotificationMessageServiceTest extends IntegrationTest {
             }
 
             var present = start.plusHours(hoursPassed);
-            var notificationsToSend = notificationService.findUsersToNotify(present.toInstant());
+            var notificationsToSend = notificationService.findUsersToNotify(toZDT(present, tz).toInstant());
 
             numNotifications += notificationsToSend.stream()
                     .map(NotificationRequired::username)
