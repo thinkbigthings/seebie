@@ -1,10 +1,6 @@
 import {SleepData} from "../types/sleep.types";
 import {Duration, LocalDateTime} from "@js-joda/core";
 
-const pad = function(num: number) {
-    return (num < 10 ? '0' : '') + num;
-};
-
 const createInitSleepData = ():SleepData => {
 
     let today = LocalDateTime.now();

@@ -15,7 +15,7 @@ import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import {
-    toChallengeList, toDate,
+    toChallengeList,
     toSelectableChallenges, toStringLocalDate
 } from "./utility/Mapper";
 import {
