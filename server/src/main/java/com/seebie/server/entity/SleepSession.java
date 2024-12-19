@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "sleep_session")
@@ -76,30 +73,25 @@ public class SleepSession implements Serializable {
         return zoneId;
     }
 
-    public ZonedDateTime getStartTime() {
-        return ZonedDateTime.of(startTime, ZoneId.of(zoneId));
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
-    public ZonedDateTime getStopTime() {
-        return ZonedDateTime.of(stopTime, ZoneId.of(zoneId));
+    public LocalDateTime getStopTime() {
+        return stopTime;
     }
 
     public int getMinutesAsleep() {
         return minutesAsleep;
     }
 
-    public void setSleepData(int minutesAwake, String notes, ZonedDateTime start, ZonedDateTime stop, String zoneId) {
-
+    public void setSleepData(int minutesAwake, String notes, LocalDateTime start, LocalDateTime stop, int minutesAsleep, String zoneId) {
         this.minutesAwake = minutesAwake;
         this.notes = notes;
-        this.startTime = start.toLocalDateTime();
-        this.stopTime = stop.toLocalDateTime();
+        this.startTime = start;
+        this.stopTime = stop;
         this.zoneId = zoneId;
-
-        // this is calculated here and not in the database
-        // because after saving, database computed values are not available until after the transaction closes
-        // and the returned entity after save won't have the updated value
-        this.minutesAsleep = (int)Duration.between(start, stop).abs().toMinutes() - minutesAwake;
+        this.minutesAsleep = minutesAsleep;
     }
 
     public String getNotes() {

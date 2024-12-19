@@ -53,7 +53,7 @@ function SleepList(props:{createdCount: number}) {
                             <tr key={sleep.id}>
                                 <td>
                                     <Link to={"/users/" + username + "/sleep/" + sleep.id + "/edit" } >
-                                        {new Date(sleep.stopTime).toLocaleDateString()}
+                                        {sleep.stopTime.toLocalDate().toString()}
                                     </Link>
                                 </td>
                                 <td>{minuteToHrMin(sleep.minutesAsleep)}</td>

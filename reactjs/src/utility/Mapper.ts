@@ -1,15 +1,32 @@
-import {toIsoString} from "./SleepDataManager";
 import {SleepData, SleepDetailDto, SleepDto} from "../types/sleep.types";
 import {ChallengeDto, ChallengeDetailDto, ChallengeList, ChallengeData} from "../types/challenge.types";
 
-import {LocalDate} from "@js-joda/core"
+import {ChronoUnit, convert, DateTimeFormatter, LocalDate, LocalDateTime, nativeJs} from "@js-joda/core"
 
-const toLocalDate = (date: Date) => {
-    return LocalDate.of(date.getFullYear(), date.getMonth()+1, date.getDate());
+const localDateTimeToString = (date: LocalDateTime): string => {
+    return date.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 }
 
-const toDate = (date: LocalDate) => {
-    return new Date(date.year(), date.monthValue()-1, date.dayOfMonth());
+const localDateToString = (date: LocalDate): string => {
+    return date.format(DateTimeFormatter.ISO_LOCAL_DATE);
+}
+
+const jsDateToLocalDate = (date: Date): LocalDate => {
+    return nativeJs(date).toLocalDate();
+}
+
+const localDateToJsDate = (date: LocalDate): Date => {
+    return convert(date).toDate();
+}
+
+const jsDateToLocalDateTime = (date: Date): LocalDateTime => {
+    return nativeJs(date).toLocalDateTime().truncatedTo(ChronoUnit.SECONDS);
+}
+
+const localDateTimeToJsDate = (date: LocalDateTime): Date => {
+    let d = convert(date).toDate();
+    console.log(d);
+    return d;
 }
 
 const toSelectableChallenges = (challengeList: ChallengeList<ChallengeData>, defaultChallenge: ChallengeData) => {
@@ -86,8 +103,8 @@ const toChallengeDto = (challenge: ChallengeData): ChallengeDto => {
     return {
         name: challenge.name,
         description: challenge.description,
-        start: challenge.start.toString(),
-        finish: challenge.finish.toString()
+        start: localDateToString(challenge.start),
+        finish: localDateToString(challenge.finish)
     }
 }
 
@@ -97,31 +114,25 @@ const toLocalSleepData = (details: SleepDetailDto): SleepData => {
         notes: details.sleepData.notes,
         minutesAwake: details.sleepData.minutesAwake,
         minutesAsleep: details.minutesAsleep,
-        startTime: details.sleepData.startTime,
-        stopTime: details.sleepData.stopTime,
+        startTime: LocalDateTime.parse(details.sleepData.startTime),
+        stopTime: LocalDateTime.parse(details.sleepData.stopTime),
         zoneId: details.sleepData.zoneId,
-        // keep the local time without the offset for display purposes
-        localStartTime: new Date(Date.parse(details.sleepData.startTime.substring(0, 19))),
-        localStopTime: new Date(Date.parse(details.sleepData.stopTime.substring(0, 19))),
     }
 }
 
 const toSleepDto = (sleep: SleepData): SleepDto => {
 
-    // use the local time without the offset for display purposes
-    let localStartTime = toIsoString(sleep.localStartTime).substring(0, 19);
-    let localStopTime = toIsoString(sleep.localStopTime).substring(0, 19);
-
     return {
         notes: sleep.notes,
         minutesAwake: sleep.minutesAwake,
-        startTime: localStartTime + sleep.startTime.substring(19),
-        stopTime: localStopTime + sleep.stopTime.substring(19),
+        startTime: localDateTimeToString(sleep.startTime),
+        stopTime: localDateTimeToString(sleep.stopTime),
         zoneId: sleep.zoneId
     }
 }
 
 export {
     toSelectableChallenges, toChallengeDto, toLocalChallengeData, toLocalChallengeDataList, toChallengeDetailDto,
-    toLocalSleepData, toSleepDto, calculateProgress, toChallengeList, toLocalDate, toDate
+    toLocalSleepData, toSleepDto, calculateProgress, toChallengeList, jsDateToLocalDate, localDateToJsDate, jsDateToLocalDateTime,
+    localDateTimeToJsDate, localDateToString
 }

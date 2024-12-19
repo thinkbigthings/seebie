@@ -8,7 +8,7 @@ import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {ChallengeData} from "./types/challenge.types";
-import {toDate, toLocalDate} from "./utility/Mapper.ts";
+import {localDateToJsDate, jsDateToLocalDate} from "./utility/Mapper.ts";
 
 
 const overlaps = (c1: ChallengeData, c2: ChallengeData): boolean => {
@@ -112,8 +112,8 @@ function ChallengeForm(props:{
                        <Col md={6} className={"col-8 "}>
                            <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
                                        id="startDate" dateFormat="MMMM d, yyyy"
-                                       onChange={date => {if(date) updateChallenge({start: toLocalDate(date)})}}
-                                       selected={toDate(editableChallenge.start)}/>
+                                       onChange={date => {if(date) updateChallenge({start: jsDateToLocalDate(date)})}}
+                                       selected={localDateToJsDate(editableChallenge.start)}/>
                        </Col>
                    </Row>
                    <Row className={"pb-2"}>
@@ -123,8 +123,8 @@ function ChallengeForm(props:{
                        <Col md={6} className={"col-8 "}>
                            <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
                                        id="startDate" dateFormat="MMMM d, yyyy"
-                                       onChange={date => {if(date) updateChallenge({finish: toLocalDate(date)})}}
-                                       selected={toDate(editableChallenge.finish)}/>
+                                       onChange={date => {if(date) updateChallenge({finish: jsDateToLocalDate(date)})}}
+                                       selected={localDateToJsDate(editableChallenge.finish)}/>
                        </Col>
                    </Row>
                    <Row>

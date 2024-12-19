@@ -6,10 +6,7 @@ import com.seebie.server.mapper.entitytodto.SleepDetailsToCsvRow;
 import net.datafaker.Faker;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.*;
 
 import static com.seebie.server.mapper.entitytodto.SleepDetailsToCsv.headerRow;
@@ -122,7 +119,7 @@ public class TestData {
      */
     public static List<SleepData> createRandomSleepData(int listCount, String zoneId) {
 
-        var stopTime = ZonedDateTime.now();
+        var stopTime = LocalDateTime.now();
         var newData = new ArrayList<SleepData>();
         SleepData current;
 
@@ -135,12 +132,12 @@ public class TestData {
         return newData;
     }
 
-    public static SleepData createStandardSleepData(ZonedDateTime startTime, ZonedDateTime stopTime) {
+    public static SleepData createStandardSleepData(LocalDateTime startTime, LocalDateTime stopTime) {
         return new SleepData("", 0, startTime, stopTime, AMERICA_NEW_YORK);
     }
 
     public static SleepData createRandomSleepData() {
-        return createRandomSleepData(ZonedDateTime.now(), AMERICA_NEW_YORK);
+        return createRandomSleepData(LocalDateTime.now(), AMERICA_NEW_YORK);
     }
 
     public static int getGaussianRandom(int min, int max) {
@@ -159,9 +156,9 @@ public class TestData {
         return (int) Math.round(result);
     }
 
-    public static SleepData createRandomSleepData(ZonedDateTime stopTime, String zoneId) {
+    public static SleepData createRandomSleepData(LocalDateTime stopTime, String zoneId) {
         long sleepDuration = getGaussianRandom(3*60, 9*60);
-        var startTime = stopTime.withZoneSameInstant(ZoneId.of(zoneId)).minusMinutes(sleepDuration);
+        var startTime = stopTime.minusMinutes(sleepDuration);
         return new SleepData(faker.lorem().paragraph(3), 0,
                 startTime.plusMinutes(random.nextInt(60)),
                 stopTime.minusMinutes(random.nextInt(60)),

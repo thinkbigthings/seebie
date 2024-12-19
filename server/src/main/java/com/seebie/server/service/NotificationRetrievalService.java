@@ -10,9 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Objects;
 
-import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
 @Service
 public class NotificationRetrievalService {
@@ -61,7 +60,7 @@ public class NotificationRetrievalService {
     }
 
     public static String toLocale(Instant instant) {
-        return format(instant.atZone(ZoneId.systemDefault()));
+        return instant.atZone(ZoneId.systemDefault()).format(ISO_OFFSET_DATE_TIME);
     }
 
 }

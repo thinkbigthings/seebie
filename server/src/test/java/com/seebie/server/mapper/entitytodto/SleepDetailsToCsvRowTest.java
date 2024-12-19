@@ -8,7 +8,7 @@ import java.util.List;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.mapper.entitytodto.SleepDetailsToCsv.HEADER;
 import static com.seebie.server.test.data.TestData.toSleepDetails;
-import static java.time.ZonedDateTime.now;
+import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SleepDetailsToCsvRowTest {

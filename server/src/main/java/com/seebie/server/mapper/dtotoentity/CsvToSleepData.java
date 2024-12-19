@@ -1,6 +1,7 @@
 package com.seebie.server.mapper.dtotoentity;
 
 import com.seebie.server.dto.SleepData;
+import com.seebie.server.mapper.entitytodto.LocalDateTimeConverter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.stereotype.Component;
@@ -11,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.parse;
 import static com.seebie.server.mapper.entitytodto.SleepDetailsToCsv.HEADER;
 
 @Component
@@ -49,8 +49,8 @@ public class CsvToSleepData implements Function<String, List<SleepData>> {
 
     private SleepData fromCsvRow(CSVRecord record) {
 
-        var start = parse(record.get(HEADER.TIME_ASLEEP));
-        var end = parse(record.get(HEADER.TIME_AWAKE));
+        var start = LocalDateTimeConverter.parse(record.get(HEADER.TIME_ASLEEP));
+        var end = LocalDateTimeConverter.parse(record.get(HEADER.TIME_AWAKE));
         var zoneId = record.get(HEADER.TIMEZONE);
         var minutesAwake = Integer.parseInt(record.get(HEADER.MINUTES_AWAKE));
         var notes = record.get(HEADER.NOTES);

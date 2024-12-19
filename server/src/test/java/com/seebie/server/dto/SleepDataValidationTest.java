@@ -7,7 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,8 +18,8 @@ public class SleepDataValidationTest {
 
     private static final String notes = "";
     private static final int minutesAwake = 1;
-    private static final ZonedDateTime stop = ZonedDateTime.now();
-    private static final ZonedDateTime start = stop.minusHours(8);
+    private static final LocalDateTime stop = LocalDateTime.now();
+    private static final LocalDateTime start = stop.minusHours(8);
     private static final String zoneId = ZoneIds.AMERICA_NEW_YORK;
 
     private static List<Arguments> provideSleepDataArguments() {
@@ -28,9 +28,9 @@ public class SleepDataValidationTest {
             Arguments.of(new SleepData(null, minutesAwake, start, stop, zoneId), 1),
             Arguments.of(new SleepData(null, -1, start, stop, zoneId), 2),
             Arguments.of(new SleepData(null, -1, null, stop, zoneId), 3),
-            Arguments.of(new SleepData(null, -1, (ZonedDateTime)null, null, zoneId), 4),
-            Arguments.of(new SleepData(null, -1, (ZonedDateTime)null, null, null), 5),
-            Arguments.of(new SleepData(null, -1, (ZonedDateTime)null, null, "invalid"), 5)
+            Arguments.of(new SleepData(null, -1, (LocalDateTime)null, null, zoneId), 4),
+            Arguments.of(new SleepData(null, -1, (LocalDateTime)null, null, null), 5),
+            Arguments.of(new SleepData(null, -1, (LocalDateTime)null, null, "invalid"), 5)
         );
     }
 

@@ -31,13 +31,11 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
 import static com.seebie.server.security.WebSecurityConfig.API_LOGIN;
 import static com.seebie.server.test.data.TestData.*;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.when;
@@ -102,10 +100,12 @@ public class ControllerSecurityTest {
 	private static final String goodCsvText = createCsv(goodCsvRows);
 	private static final MockMultipartFile csvFile = createMultipart(goodCsvText);
 
-	private static final String from = format(ZonedDateTime.now().minusDays(1));
-	private static final String to = format(ZonedDateTime.now());
+	private static final LocalDate today = LocalDate.now();
+	private static final LocalDate yesterday = today.minusDays(1);
+	private static final String from = yesterday.format(ISO_LOCAL_DATE);
+	private static final String to = today.format(ISO_LOCAL_DATE);
 
-	private static final String[] challengeParams = new String[]{"currentDate", LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)};
+	private static final String[] challengeParams = new String[]{"currentDate", LocalDate.now().format(ISO_LOCAL_DATE)};
 	private static final String[] chartParams = new String[]{"from", from, "to", to};
 	private static final HistogramRequest histogramRequest = new HistogramRequest(1, new FilterList(List.of()));
 	private static final ChallengeDto challenge = createRandomChallenge(0, 14);

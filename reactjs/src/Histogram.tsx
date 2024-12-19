@@ -15,17 +15,16 @@ import {faPlus, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import {
-    toChallengeList, toDate,
-    toSelectableChallenges
+    toChallengeList,
+    toSelectableChallenges, localDateToString
 } from "./utility/Mapper";
 import {
-    createRangeLocalDate,
+    createRange,
     HISTOGRAM_BIN_SIZE_OPTIONS,
     HISTOGRAM_COLORS,
     HISTOGRAM_OPTIONS
 } from "./utility/Constants";
 import {ChallengeData} from "./types/challenge.types";
-import {toIsoString} from "./utility/SleepDataManager.ts";
 
 Chart.register(...registerables)
 
@@ -49,8 +48,8 @@ const createDataset = (displayInfo: PageSettingFilters, data: number[]) => {
 const pageSettingsToRequest = (pageSettings: PageSettings) => {
 
     const newDataFilters = pageSettings.filters.map( (filter) => { return {
-            from: toIsoString(toDate(filter.challenge.start)),
-            to: toIsoString(toDate(filter.challenge.finish))
+            from: localDateToString(filter.challenge.start),
+            to: localDateToString(filter.challenge.finish)
         }}
     );
 
@@ -63,7 +62,7 @@ const pageSettingsToRequest = (pageSettings: PageSettings) => {
 
 }
 
-const last30LocalDays = createRangeLocalDate(30);
+const last30LocalDays = createRange(30);
 
 const defaultChallenge: ChallengeData = {
     id: 0,

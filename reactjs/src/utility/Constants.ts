@@ -1,5 +1,5 @@
-import {ChallengeData, ChallengeDetailDto, ChallengeList} from "../types/challenge.types";
-import {DateRange, DateRangeLocalDate} from "../types/sleep.types";
+import {ChallengeData, ChallengeList} from "../types/challenge.types";
+import {DateRange} from "../types/sleep.types";
 import {LocalDate} from "@js-joda/core";
 
 export const HISTOGRAM_COLORS = ['#897b9c', '#596b7c', '#393b4c'];
@@ -112,20 +112,10 @@ export const PREDEFINED_CHALLENGES:NameDescription[] = [
     }
 ];
 
-export const createRangeLocalDate = (lastNDays: number): DateRangeLocalDate => {
-    let today = LocalDate.now();
-    let lastMonth = today.minusDays(lastNDays);
-    return {from: lastMonth, to: today};
-}
-
 export const createRange = (lastNDays: number): DateRange => {
 
-    let today = new Date();
-    today.setHours(23, 59, 59);
+    let today = LocalDate.now()
+    let previous = today.minusDays(lastNDays);
 
-    let lastMonth = new Date(today.getTime());
-    lastMonth.setDate(today.getDate() - lastNDays);
-    lastMonth.setHours(0, 0, 0);
-
-    return {from: lastMonth, to: today};
+    return {from: previous, to: today};
 }
