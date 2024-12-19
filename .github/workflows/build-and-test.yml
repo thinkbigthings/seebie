@@ -43,7 +43,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          path: seebie/server/build/reports
+          path: server/build/reports
           name: build-reports
 
       - name: Upload Artifacts
