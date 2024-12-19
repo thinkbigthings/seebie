@@ -6,8 +6,8 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import InfoModalButton from "./component/InfoModalButton";
 import Form from "react-bootstrap/Form";
-import {toIsoString} from "./utility/SleepDataManager";
 import {SleepData} from "./types/sleep.types";
+import {fromLocalDateTime, toDate, toLocalDateTime} from "./utility/Mapper.ts";
 
 function isNumericString(value:string) {
     return /^\d+$/.test(value);
@@ -24,8 +24,8 @@ const toForm = (sleep:SleepData):SleepFormFields => {
     return {
         notes: sleep.notes,
         minutesAwake: sleep.minutesAwake.toString(),
-        localStartTime: sleep.localStartTime,
-        localStopTime: sleep.localStopTime
+        localStartTime: fromLocalDateTime(sleep.startTime),
+        localStopTime: fromLocalDateTime(sleep.stopTime)
     }
 }
 
@@ -40,12 +40,6 @@ function SleepForm(props:{setSleepData: (sleep:SleepData) => void, sleepData:Sle
     const updateSleepSession = (updateValues: Partial<SleepFormFields>) => {
 
         let updatedFormFields: SleepFormFields = {...formFields, ...updateValues};
-
-        // use the local time without the offset for display purposes
-        let localStartTime = toIsoString(updatedFormFields.localStartTime).substring(0, 19);
-        let localStopTime = toIsoString(updatedFormFields.localStopTime).substring(0, 19);
-        let updatedLocalStartTime = localStartTime + sleepData.startTime.substring(19);
-        let updatedLocalStopTime = localStopTime + sleepData.stopTime.substring(19);
 
         let minutesAwakeNumeric = isNumericString(updatedFormFields.minutesAwake);
         let minutesAwakeDurationValid = false;
@@ -65,10 +59,8 @@ function SleepForm(props:{setSleepData: (sleep:SleepData) => void, sleepData:Sle
                 ...sleepData,
                 notes: updatedFormFields.notes,
                 minutesAwake: parseInt(updatedFormFields.minutesAwake),
-                localStartTime: updatedFormFields.localStartTime,
-                localStopTime: updatedFormFields.localStopTime,
-                startTime: updatedLocalStartTime,
-                stopTime: updatedLocalStopTime
+                startTime: toLocalDateTime(updatedFormFields.localStartTime),
+                stopTime: toLocalDateTime(updatedFormFields.localStopTime)
             });
         }
         setFormFields(updatedFormFields);

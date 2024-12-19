@@ -1,18 +1,17 @@
 
 // this is the representation used internally by the front end
 // if id===0 then it is unsaved
-import {LocalDate} from "@js-joda/core";
+import {LocalDate, LocalDateTime} from "@js-joda/core";
 
+// this is the representation used internally by the front end
 interface SleepData {
     id: number,
     notes: string,
     minutesAwake: number,
     minutesAsleep: number,
-    startTime: string,
-    stopTime: string,
+    startTime: LocalDateTime,
+    stopTime: LocalDateTime,
     zoneId: string,
-    localStartTime: Date,
-    localStopTime: Date
 }
 
 // this is what we send back and forth with the server
