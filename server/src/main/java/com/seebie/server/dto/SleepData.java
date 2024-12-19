@@ -6,6 +6,8 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import static com.seebie.server.mapper.entitytodto.LocalDateTimeConverter.toZDT;
 
@@ -23,6 +25,11 @@ public record SleepData(@NotNull String notes,
                         @NotNull LocalDateTime stopTime,
                         @ZoneIdConstraint String zoneId)
 {
+
+    public SleepData {
+        startTime = Optional.ofNullable(startTime).map(t -> t.truncatedTo(ChronoUnit.MINUTES)).orElse(null);
+        stopTime = Optional.ofNullable(stopTime).map(t -> t.truncatedTo(ChronoUnit.MINUTES)).orElse(null);
+    }
 
     public int minutesAsleep() {
         return (int) Duration.between(toZDT(startTime, zoneId), toZDT(stopTime, zoneId)).abs().toMinutes() - minutesAwake;
