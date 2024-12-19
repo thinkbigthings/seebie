@@ -103,8 +103,8 @@ const toChallengeDto = (challenge: ChallengeData): ChallengeDto => {
     return {
         name: challenge.name,
         description: challenge.description,
-        start: challenge.start.toString(),
-        finish: challenge.finish.toString()
+        start: toStringLocalDate(challenge.start),
+        finish: toStringLocalDate(challenge.finish)
     }
 }
 
