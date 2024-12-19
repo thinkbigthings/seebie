@@ -7,7 +7,7 @@ import Row from "react-bootstrap/Row";
 import InfoModalButton from "./component/InfoModalButton";
 import Form from "react-bootstrap/Form";
 import {SleepData} from "./types/sleep.types";
-import {fromLocalDateTime, toDate, toLocalDateTime} from "./utility/Mapper.ts";
+import {fromLocalDateTime, toLocalDateTime} from "./utility/Mapper.ts";
 
 function isNumericString(value:string) {
     return /^\d+$/.test(value);

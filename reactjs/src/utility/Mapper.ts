@@ -3,6 +3,10 @@ import {ChallengeDto, ChallengeDetailDto, ChallengeList, ChallengeData} from "..
 
 import {ChronoUnit, convert, DateTimeFormatter, LocalDate, LocalDateTime, nativeJs} from "@js-joda/core"
 
+const toStringLocalDateTime = (date: LocalDateTime): string => {
+    return date.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+}
+
 const toStringLocalDate = (date: LocalDate): string => {
     return date.format(DateTimeFormatter.ISO_LOCAL_DATE);
 }
@@ -16,9 +20,7 @@ const toDate = (date: LocalDate): Date => {
 }
 
 const toLocalDateTime = (date: Date): LocalDateTime => {
-    let d = nativeJs(date).toLocalDateTime().truncatedTo(ChronoUnit.SECONDS);
-    console.log(d);
-    return d;
+    return nativeJs(date).toLocalDateTime().truncatedTo(ChronoUnit.SECONDS);
 }
 
 const fromLocalDateTime = (date: LocalDateTime): Date => {
@@ -123,8 +125,8 @@ const toSleepDto = (sleep: SleepData): SleepDto => {
     return {
         notes: sleep.notes,
         minutesAwake: sleep.minutesAwake,
-        startTime: sleep.startTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-        stopTime: sleep.stopTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+        startTime: toStringLocalDateTime(sleep.startTime),
+        stopTime: toStringLocalDateTime(sleep.stopTime),
         zoneId: sleep.zoneId
     }
 }
