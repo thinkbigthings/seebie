@@ -1,4 +1,4 @@
-![deployment pic](https://github.com/thinkbigthings/seebie/actions/workflows/deploy-on-push-to-master.yml/badge.svg?style=for-the-badge)
+![deployment pic](https://github.com/thinkbigthings/seebie/actions/workflows/deploy.yml/badge.svg?style=for-the-badge)
 
 ![Java](https://img.shields.io/badge/java-21-blue?style=for-the-badge&logo=openjdk&logoColor=orange)
 ![Tech](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
