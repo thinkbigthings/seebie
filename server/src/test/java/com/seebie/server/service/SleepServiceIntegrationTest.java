@@ -74,6 +74,10 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         // test retrieve
         SleepDetails found = sleepService.retrieve(username, savedSleep.id());
 
+        if( ! originalSleep.equals(found.sleepData())) {
+            // so we can see it in the logs in CI until we have access to build artifacts from tests
+            LOG.error("Expected original " + originalSleep + " to be equal to saved " + found.sleepData());
+        }
         assertEquals(originalSleep, found.sleepData());
 
         // test update
