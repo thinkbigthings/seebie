@@ -8,8 +8,7 @@ import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -23,8 +22,6 @@ import static com.seebie.server.test.data.TestData.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SleepServiceIntegrationTest extends IntegrationTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SleepServiceIntegrationTest.class);
 
     @Autowired
     private SleepController sleepController;
@@ -74,10 +71,6 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         // test retrieve
         SleepDetails found = sleepService.retrieve(username, savedSleep.id());
 
-        if( ! originalSleep.equals(found.sleepData())) {
-            // so we can see it in the logs in CI until we have access to build artifacts from tests
-            LOG.error("Expected original " + originalSleep + " to be equal to saved " + found.sleepData());
-        }
         assertEquals(originalSleep, found.sleepData());
 
         // test update
