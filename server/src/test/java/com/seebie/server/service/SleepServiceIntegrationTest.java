@@ -2,22 +2,19 @@ package com.seebie.server.service;
 
 import com.seebie.server.controller.SleepController;
 import com.seebie.server.dto.*;
-import com.seebie.server.entity.SleepSession;
 import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
 import com.seebie.server.repository.SleepRepository;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import java.lang.reflect.Field;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
@@ -25,8 +22,6 @@ import static com.seebie.server.test.data.TestData.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SleepServiceIntegrationTest extends IntegrationTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SleepServiceIntegrationTest.class);
 
     @Autowired
     private SleepController sleepController;
@@ -54,7 +49,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         userService.saveNewUser(registration);
 
         // test with the start and stop times switched
-        var badData = createStandardSleepData(ZonedDateTime.now(), ZonedDateTime.now().minusHours(1));
+        var badData = createStandardSleepData(LocalDateTime.now(), LocalDateTime.now().minusHours(1));
 
         var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepService.saveNew(username, badData));
         assertEquals("stop_after_start", ((ConstraintViolationException)exception.getCause()).getConstraintName());
@@ -67,7 +62,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         String username = registration.username();
         userService.saveNewUser(registration);
 
-        var end = ZonedDateTime.now();
+        var end = LocalDateTime.now();
         var start = end.minusHours(8);
 
         var originalSleep = new SleepData("", 0, start, end,"America/Phoenix" );
@@ -122,7 +117,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         var to = data.getFirst().stopTime().plusDays(20);
         var from = data.getFirst().stopTime().minusDays(20);
 
-        var points = sleepService.listChartData(username, from, to);
+        var points = sleepService.listChartData(username, from.toLocalDate(), to.toLocalDate());
         assertEquals(10, points.size());
     }
 
@@ -139,7 +134,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         var to = data.getFirst().stopTime().plusDays(20);
         var from = data.getFirst().stopTime().minusDays(20);
 
-        var range = new DateRange(from, to);
+        var range = new DateRange(from.toLocalDate(), to.toLocalDate());
         var histData = sleepService.listSleepAmounts(username, List.of(range, range, range));
 
         assertEquals(3, histData.size());

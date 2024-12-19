@@ -5,7 +5,7 @@ import com.seebie.server.dto.SleepDetails;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.seebie.server.mapper.entitytodto.ZonedDateTimeConverter.format;
+import static com.seebie.server.mapper.entitytodto.LocalDateTimeConverter.format;
 
 /**
  * Convert a SleepDetails object to a CSV row.

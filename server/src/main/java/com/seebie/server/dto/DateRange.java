@@ -1,6 +1,7 @@
 package com.seebie.server.dto;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Immutable class representing a date range.
@@ -11,6 +12,13 @@ import java.time.ZonedDateTime;
  * @param from
  * @param to
  */
-public record DateRange(ZonedDateTime from, ZonedDateTime to) {
+public record DateRange(LocalDate from, LocalDate to) {
 
+    public static LocalDateTime atStartOfDay(LocalDate date) {
+        return date.atTime(0, 0, 0);
+    }
+
+    public static LocalDateTime atEndOfDay(LocalDate date) {
+        return date.atTime(23, 59, 59);
+    }
 }

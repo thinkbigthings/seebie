@@ -4,11 +4,12 @@ import com.seebie.server.validation.ZoneIdConstraint;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+
+import static com.seebie.server.mapper.entitytodto.LocalDateTimeConverter.toZDT;
 
 /**
  *
@@ -20,32 +21,18 @@ import java.util.Optional;
  */
 public record SleepData(@NotNull String notes,
                         @PositiveOrZero int minutesAwake,
-                        @NotNull ZonedDateTime startTime,
-                        @NotNull ZonedDateTime stopTime,
+                        @NotNull LocalDateTime startTime,
+                        @NotNull LocalDateTime stopTime,
                         @ZoneIdConstraint String zoneId)
 {
 
-    public SleepData(String notes, int minutesAwake, LocalDateTime startTime, LocalDateTime stopTime, String zoneId) {
-        this(notes, minutesAwake, toZDT(startTime, zoneId), toZDT(stopTime, zoneId), zoneId);
+    public SleepData {
+        startTime = Optional.ofNullable(startTime).map(t -> t.truncatedTo(ChronoUnit.MINUTES)).orElse(null);
+        stopTime = Optional.ofNullable(stopTime).map(t -> t.truncatedTo(ChronoUnit.MINUTES)).orElse(null);
     }
 
-    public SleepData(String notes, int minutesAwake, ZonedDateTime startTime, ZonedDateTime stopTime, String zoneId) {
-        this.notes = notes;
-        this.minutesAwake = minutesAwake;
-        this.startTime = toAlignedZDT(startTime, zoneId);
-        this.stopTime = toAlignedZDT(stopTime, zoneId);
-        this.zoneId = zoneId;
-    }
-
-    private static ZonedDateTime toZDT(LocalDateTime dateTime, String zoneId) {
-        return ZonedDateTime.of(dateTime, ZoneId.of(zoneId));
-    }
-
-    private static ZonedDateTime toAlignedZDT(ZonedDateTime dateTime, String zoneId) {
-        return Optional.ofNullable(dateTime)
-                .map(t -> t.truncatedTo(ChronoUnit.MINUTES))
-                .map(t -> t.withZoneSameInstant(ZoneId.of(zoneId)))
-                .orElse(null);
+    public int minutesAsleep() {
+        return (int) Duration.between(toZDT(startTime, zoneId), toZDT(stopTime, zoneId)).abs().toMinutes() - minutesAwake;
     }
 
 }
