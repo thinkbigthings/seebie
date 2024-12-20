@@ -50,7 +50,7 @@ public class TestData {
         var start = now().plusDays(daysOffsetStart);
         var finish = start.plusDays(lengthDays);
 
-        return new ChallengeDto(STR."\{faker.starTrek().location()} \{randomUUID()}",
+        return new ChallengeDto(faker.starTrek().location() + " " + randomUUID(),
                 faker.lorem().paragraph(3),
                 start, finish);
     }

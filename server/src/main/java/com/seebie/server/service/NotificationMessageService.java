@@ -65,7 +65,7 @@ public class NotificationMessageService {
 
         var listToSend = findUsersToNotify(Instant.now());
 
-        LOG.debug(STR."Email notifications found \{listToSend.size()} users to notify");
+        LOG.debug("Email notifications found "+ listToSend.size() + " users to notify");
 
         listToSend.stream()
                 .map(this::createMessage)
@@ -83,18 +83,17 @@ public class NotificationMessageService {
     public void sendEmail(SimpleMailMessage message) {
 
         try {
-            LOG.debug(STR."Email notification is going out to \{Arrays.asList(message.getTo())}");
+            LOG.debug("Email notification is going out to " + Arrays.asList(message.getTo()));
             emailSender.send(message);
         }
         catch(MailException me) {
-            LOG.error(STR."Email notification failed to send for \{Arrays.asList(message.getTo())}", me);
+            LOG.error("Email notification failed to send for " + Arrays.asList(message.getTo()), me);
         }
     }
 
     public SimpleMailMessage createMessage(NotificationRequired send) {
 
-        String text = STR."""
-        Hi \{send.username()},
+        String text = """
         You missed recording your last sleep session. If you record it right away you won't lose your momentum!
         FYI you can control these notifications in your user settings.
         """;

@@ -28,7 +28,7 @@ public class PropertyLogger implements CommandLineRunner {
 
     record PropertyDetails(String key, String value, String origin) {
         @Override public String toString() {
-           return STR."Property name: \{key} = \{value} (Source: \{origin})";
+           return "Property name: " + key + " = " + value + " (Source: " + origin + ")";
         }
     }
 

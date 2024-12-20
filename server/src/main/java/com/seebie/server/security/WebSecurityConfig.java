@@ -72,13 +72,13 @@ public class WebSecurityConfig {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write("Unauthorized access attempt");
         response.setHeader("WWW-Authenticate", "Basic realm=\"Access to secured area requires authentication\"");
-        LOG.warn(STR."\{authException} at \{request.getRequestURI()}");
+        LOG.warn(authException + " at " + request.getRequestURI());
     }
 
     private void invalidSession(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write("Session expired or invalid");
-        LOG.warn(STR."Session expired or invalid. Request cookie: \{request.getHeader(COOKIE)} accessing \{request.getRequestURI()}");
+        LOG.warn("Session expired or invalid. Request cookie: " + request.getHeader(COOKIE) + " accessing " + request.getRequestURI());
     }
 
 }

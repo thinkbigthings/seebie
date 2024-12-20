@@ -38,7 +38,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.seebie.server.mapper.dtotoentity.CsvToSleepData.missingHeader;
-import static com.seebie.server.mapper.entitytodto.LocalDateTimeConverter.format;
 import static com.seebie.server.test.data.TestData.*;
 import static com.seebie.server.test.data.TestData.createRandomSleepData;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
@@ -171,37 +170,37 @@ public class ControllerValidationTest {
 
 	private static List<Arguments> provideUserTestParameters() {
 		return List.of(
-			user.args(PUT, STR."/api/user/\{USERNAME}/personalInfo", info, 200),
-			user.args(PUT, STR."/api/user/\{USERNAME}/personalInfo", invalidInfo, 400),
+			user.args(PUT, "/api/user/"+USERNAME+"personalInfo", info, 200),
+			user.args(PUT, "/api/user/"+USERNAME+"personalInfo", invalidInfo, 400),
 
-			user.args(POST, STR."/api/user/\{USERNAME}/password/update", pwReset, 200),
-			user.args(POST, STR."/api/user/\{USERNAME}/password/update", invalidPw, 400),
+			user.args(POST, "/api/user/"+USERNAME+"password/update", pwReset, 200),
+			user.args(POST, "/api/user/"+USERNAME+"password/update", invalidPw, 400),
 
-			user.args(POST, STR."/api/user/\{USERNAME}/sleep", sleepData, 200),
-			user.args(POST, STR."/api/user/\{USERNAME}/sleep", invalidSleepData, 400),
-			user.args(POST, STR."/api/user/\{USERNAME}/sleep", badDurationSleepData, 400),
+			user.args(POST, "/api/user/"+USERNAME+"sleep", sleepData, 200),
+			user.args(POST, "/api/user/"+USERNAME+"sleep", invalidSleepData, 400),
+			user.args(POST, "/api/user/"+USERNAME+"sleep", badDurationSleepData, 400),
 
-			user.args(PUT, STR."/api/user/\{USERNAME}/sleep/1", sleepData, 200),
-			user.args(PUT, STR."/api/user/\{USERNAME}/sleep/1", invalidSleepData, 400),
-			user.args(PUT, STR."/api/user/\{USERNAME}/sleep/1", badDurationSleepData, 400),
+			user.args(PUT, "/api/user/"+USERNAME+"sleep/1", sleepData, 200),
+			user.args(PUT, "/api/user/"+USERNAME+"sleep/1", invalidSleepData, 400),
+			user.args(PUT, "/api/user/"+USERNAME+"sleep/1", badDurationSleepData, 400),
 
-			user.args(GET, STR."/api/user/\{USERNAME}/sleep/chart", "", new String[]{"from", from, "to", to}, 200),
-			user.args(GET, STR."/api/user/\{USERNAME}/sleep/chart", "", new String[]{"from", "",   "to", ""}, 400),
-			user.args(GET, STR."/api/user/\{USERNAME}/sleep/chart", "", new String[]{"from", to,   "to", from}, 400),
+			user.args(GET, "/api/user/"+USERNAME+"sleep/chart", "", new String[]{"from", from, "to", to}, 200),
+			user.args(GET, "/api/user/"+USERNAME+"sleep/chart", "", new String[]{"from", "",   "to", ""}, 400),
+			user.args(GET, "/api/user/"+USERNAME+"sleep/chart", "", new String[]{"from", to,   "to", from}, 400),
 
-			user.args(POST, STR."/api/user/\{USERNAME}/sleep/histogram", validHistReq,   200),
-			user.args(POST, STR."/api/user/\{USERNAME}/sleep/histogram", invalidHistReq,   400),
+			user.args(POST, "/api/user/"+USERNAME+"sleep/histogram", validHistReq,   200),
+			user.args(POST, "/api/user/"+USERNAME+"sleep/histogram", invalidHistReq,   400),
 
-			user.args(POST, STR."/api/user/\{USERNAME}/import/json", badJson, 400),
-			user.args(POST, STR."/api/user/\{USERNAME}/import/json", goodJson, 200),
-			user.args(POST, STR."/api/user/\{USERNAME}/import/csv", badCsv, 400),
-			user.args(POST, STR."/api/user/\{USERNAME}/import/csv", goodCsv, 200),
+			user.args(POST, "/api/user/"+USERNAME+"import/json", badJson, 400),
+			user.args(POST, "/api/user/"+USERNAME+"import/json", goodJson, 200),
+			user.args(POST, "/api/user/"+USERNAME+"import/csv", badCsv, 400),
+			user.args(POST, "/api/user/"+USERNAME+"import/csv", goodCsv, 200),
 
-			user.args(POST, STR."/api/user/\{USERNAME}/challenge", invalidChallenge, 400),
-			user.args(POST, STR."/api/user/\{USERNAME}/challenge", validChallenge, 200),
+			user.args(POST, "/api/user/"+USERNAME+"challenge", invalidChallenge, 400),
+			user.args(POST, "/api/user/"+USERNAME+"challenge", validChallenge, 200),
 
-			user.args(PUT, STR."/api/user/\{USERNAME}/challenge/1", invalidChallenge, 400),
-			user.args(PUT, STR."/api/user/\{USERNAME}/challenge/1", validChallenge, 200)
+			user.args(PUT, "/api/user/"+USERNAME+"challenge/1", invalidChallenge, 400),
+			user.args(PUT, "/api/user/"+USERNAME+"challenge/1", validChallenge, 200)
 		);
 
 	}

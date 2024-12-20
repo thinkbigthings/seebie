@@ -1,6 +1,6 @@
 
 plugins {
-    id 'org.springframework.boot' version '3.2.0'
+    id 'org.springframework.boot' version '3.4.1'
     id 'jacoco' // core plugin provided by gradle
     id 'org.flywaydb.flyway' version '9.8.3'
     id "com.gorylenko.gradle-git-properties" version "2.4.1"
@@ -16,15 +16,15 @@ gitProperties {
 group = 'com.seebie'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_23
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(23)
     }
 }
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' } // as needed
+    maven { url='https://repo.spring.io/milestone' } // as needed
 }
 
 // use preview features
@@ -46,24 +46,26 @@ dependencies {
     implementation 'org.apache.commons:commons-csv:1.10.0'
     implementation 'org.flywaydb:flyway-core:9.22.2'
     implementation 'org.postgresql:postgresql:42.6.0'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.2.0'
-    implementation 'org.springframework.boot:spring-boot-starter-web:3.2.0'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.2.0'
-    implementation 'org.springframework.boot:spring-boot-starter-security:3.2.0'
-    implementation 'org.springframework.boot:spring-boot-starter-validation:3.2.0'
-    implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.4.1'
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.4.1'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.4.1'
+    implementation 'org.springframework.boot:spring-boot-starter-security:3.4.1'
+    implementation 'org.springframework.boot:spring-boot-starter-validation:3.4.1'
+    implementation 'org.springframework.boot:spring-boot-starter-mail:3.4.1'
     implementation 'org.springframework.session:spring-session-jdbc:3.1.2'
 
     testImplementation 'net.datafaker:datafaker:2.0.1'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
-    testImplementation 'org.springframework.boot:spring-boot-testcontainers:3.2.0'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers:3.4.1'
     testImplementation 'org.springframework.security:spring-security-test:6.1.4'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.2.0'
-    testImplementation "org.testcontainers:junit-jupiter:1.19.0"
-    testImplementation "org.testcontainers:postgresql:1.19.0"
-    testImplementation "org.testcontainers:testcontainers:1.19.0"
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.4.1'
+    testImplementation "org.testcontainers:junit-jupiter:1.20.4"
+    testImplementation "org.testcontainers:postgresql:1.20.4"
+//    testImplementation "org.testcontainers:testcontainers:1.20.4"
+//
+    testImplementation "org.apache.commons:commons-compress:1.27.1"
 }
 
 // Spring Boot builds both an executable jar and a plain jar suitable for use as a library.
@@ -174,7 +176,7 @@ def integrationTest = tasks.register("integrationTest", Test) {
 
     // To log the events of tests being started, passed, failed, or skipped
     testLogging {
-        events 'passed', 'skipped', 'failed' // , 'started' // if you want to see which test is hanging
+        events =['passed', 'skipped', 'failed'] // , 'started' // if you want to see which test is hanging
     }
     jacoco {
         destinationFile = layout.buildDirectory.file("jacoco/integrationTest/jacocoTest.exec").get().asFile
@@ -199,7 +201,7 @@ tasks.named("check") {
 }
 
 task copyWebApp(type: Copy) {
-    description 'Copies built files from reactjs to server'
+    description='Copies built files from reactjs to server'
     dependsOn ':reactjs:build'
     from(project(":reactjs").buildDir)
     into(project(":server").buildDir.toPath().resolve('resources/main/static'))

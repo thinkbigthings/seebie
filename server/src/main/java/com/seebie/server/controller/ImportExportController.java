@@ -63,14 +63,14 @@ public class ImportExportController {
     @ResponseBody
     public UploadResponse importUserData(@PathVariable String username, @RequestParam("file") MultipartFile file) throws IOException {
 
-        LOG.info(STR."Import started for user \{username}");
+        LOG.info("Import started for user " + username);
 
         String rawJson = new String(file.getBytes(), UTF_8);
 
         var userData = parseJson(rawJson);
         long numImported = importExportService.saveUserData(username, userData);
 
-        LOG.info(STR."Imported \{numImported} records for \{username}");
+        LOG.info("Imported " + numImported + " records for " + username);
 
         return new UploadResponse(numImported, username);
     }
@@ -104,7 +104,7 @@ public class ImportExportController {
         var parsedData = fromCsv.apply(rawCsv);
         long numImported = importExportService.saveSleepData(username, parsedData);
 
-        LOG.info(STR."Imported \{numImported} records.");
+        LOG.info("Imported " + numImported + " records for " + username);
 
         return new UploadResponse(numImported, username);
     }

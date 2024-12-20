@@ -167,8 +167,8 @@ public class SessionSecurityTest extends IntegrationTest {
     @Test
     public void testIncorrectPassword() {
 
-        var badPassword = STR."\{testUserPassword}typo";
-        var badCreds = Base64.getEncoder().encodeToString(STR."\{testUserName}:\{badPassword}".getBytes());
+        var badPassword = testUserPassword + "typo";
+        var badCreds = Base64.getEncoder().encodeToString((testUserName + ":" + badPassword).getBytes());
 
         // the Java HttpClient does not give any control over retry for failed auth,
         // it just keeps retrying until it hits the limit and throws an exception.
@@ -176,7 +176,7 @@ public class SessionSecurityTest extends IntegrationTest {
         var response = clientFactory.fromHttpClient(clientFactory.noAuth())
                 .get()
                 .uri(loginUri)
-                .header("Authorization", STR."Basic \{badCreds}")
+                .header("Authorization", "Basic " + badCreds)
                 .retrieve()
                 .toEntity(String.class);
 
