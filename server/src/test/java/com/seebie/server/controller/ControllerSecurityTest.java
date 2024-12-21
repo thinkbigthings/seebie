@@ -21,11 +21,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
@@ -66,25 +66,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Isolated
 public class ControllerSecurityTest {
 
-	@MockBean
+	@MockitoBean
 	private DataSource dataSource;
 
-	@MockBean
+	@MockitoBean
 	private UserService service;
 
-	@MockBean
+	@MockitoBean
 	private ImportExportService importExportService;
 
-	@MockBean
+	@MockitoBean
 	private SleepService sleepService;
 
-	@MockBean
+	@MockitoBean
 	private ChallengeService challengeService;
 
-	@MockBean
+	@MockitoBean
 	private CsvToSleepData fromCsv;
 
-	@MockBean
+	@MockitoBean
 	private SleepDetailsToCsv toCsv;
 
 	private static final String USERNAME = "someuser";
