@@ -15,6 +15,9 @@ public class ValidDurationsValidator implements ConstraintValidator<ValidDuratio
 
     @Override
     public boolean isValid(SleepData value, ConstraintValidatorContext cxt) {
+        if (value == null || value.startTime() == null || value.stopTime() == null) {
+            return false;
+        }
         return value.minutesAwake() < Duration.between(value.startTime(), value.stopTime()).toMinutes();
     }
 }
