@@ -1,5 +1,6 @@
 package com.seebie.server.test.client;
 
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
@@ -28,7 +29,7 @@ public class RestClientFactory {
         // but couldn't find out how to wire it
 
         this.restClientBuilder = restClientBuilder.clone()
-                .defaultStatusHandler(status -> status.is4xxClientError(), (request,resp) -> {}) // don't throw exceptions on 4XX errors
+                .defaultStatusHandler(HttpStatusCode::is4xxClientError, (request, resp) -> {}) // don't throw exceptions on 4XX errors
                 .baseUrl(baseUrl.toString());
     }
 

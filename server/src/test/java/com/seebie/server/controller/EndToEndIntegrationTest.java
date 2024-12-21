@@ -68,7 +68,7 @@ public class EndToEndIntegrationTest extends IntegrationTest {
         RestClient admin = clientFactory.login("admin", "admin");
 
         // anonymous inner classes should generally be avoided due to risk of memory leaks,
-        // but this is a test and we're not going to be creating a lot of these before the JVM exits
+        // but this is a test and we're not going to be running for long before the JVM exits
         var userPage = new ParameterizedTypeReference<ParsablePage<UserSummary>>() {};
         Page<UserSummary> page = admin.get().uri(usersUrl).retrieve().body(userPage);
 
@@ -84,7 +84,7 @@ public class EndToEndIntegrationTest extends IntegrationTest {
         PersonalInfo info = user.get().uri(testUserUrl).retrieve().body(User.class).personalInfo();
 
         PasswordResetRequest pwReset = new PasswordResetRequest(testUserPassword + "1");
-        user.post().uri(testUserUpdatePasswordUrl).body(pwReset).retrieve();
+        var updateResp = user.post().uri(testUserUpdatePasswordUrl).body(pwReset).retrieve().body(String.class);
 
         user = clientFactory.login(testUserName, pwReset.plainTextPassword());
         PersonalInfo info2 = user.get().uri(testUserUrl).retrieve().body(User.class).personalInfo();
