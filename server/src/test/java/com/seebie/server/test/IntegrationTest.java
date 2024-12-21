@@ -67,7 +67,7 @@ public class IntegrationTest {
 
     @BeforeAll
     public static void setup(@LocalServerPort int randomServerPort) {
-        baseUribuilder = new DefaultUriBuilderFactory("https://localhost: " + randomServerPort);
+        baseUribuilder = new DefaultUriBuilderFactory("https://localhost:" + randomServerPort);
     }
 
 }
