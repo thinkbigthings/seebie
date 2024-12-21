@@ -65,7 +65,7 @@ dependencies {
     testImplementation "org.testcontainers:postgresql:1.20.4"
 //    testImplementation "org.testcontainers:testcontainers:1.20.4"
 //
-    testImplementation "org.apache.commons:commons-compress:1.27.1"
+//testImplementation "org.apache.commons:commons-compress:1.27.1"
 }
 
 // Spring Boot builds both an executable jar and a plain jar suitable for use as a library.
@@ -76,7 +76,7 @@ jar {
 
 // https://docs.gradle.org/current/userguide/jacoco_plugin.html
 jacoco {
-    toolVersion = "0.8.10"
+    toolVersion = "0.8.12"
 }
 
 jacocoTestCoverageVerification {

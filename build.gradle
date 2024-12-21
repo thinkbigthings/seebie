@@ -1,4 +1,15 @@
 
+// this is here to get around the boot gradle plugin not working with its own bundled version of commons compress
+// otherwise we get  Caused by: java.lang.NoSuchMethodError:
+// 'void org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream.putArchiveEntry(org.apache.commons.compress.archivers.zip.ZipArchiveEntry)'
+buildscript {
+    configurations.all {
+        resolutionStrategy {
+            force 'org.apache.commons:commons-compress:1.27.1'
+        }
+    }
+}
+
 plugins {
     id "com.heroku.sdk.heroku-gradle" version "3.0.0"
 }
