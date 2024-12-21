@@ -33,11 +33,10 @@ public class FlywayConfig implements FlywayConfigurationCustomizer {
 
         var flywayReplacementProps = new HashMap<String,String>();
 
-        flywayReplacementProps.put("flyway.cleanDisabled", "false");
+        flywayReplacementProps.put("cleanDisabled", "false");
 
-        // flyway.postgresql.transactional.lock is something we need to run
-        // non-transactional migrations like CREATE INDEX CONCURRENTLY
-        flywayReplacementProps.put("flyway.postgresql.transactional.lock", "false");
+        // this is so we can run non-transactional migrations like CREATE INDEX CONCURRENTLY
+        flywayReplacementProps.put("postgresql.transactional.lock", "false");
 
         fluent.configuration(flywayReplacementProps);
     }

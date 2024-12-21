@@ -45,9 +45,8 @@ dependencies {
 
     implementation 'org.apache.commons:commons-csv:1.12.0'
 
-    implementation 'org.flywaydb:flyway-core:9.22.2' //11.1.0'
-    // Replace 2.10.1 pulled in by flyway otherwise we get java.lang.ClassNotFoundException: com.google.gson.Strictness
-    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation 'org.flywaydb:flyway-core:11.1.0'
+    implementation 'org.flywaydb:flyway-database-postgresql:11.1.0'
 
     implementation 'org.postgresql:postgresql:42.7.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.4.1'
