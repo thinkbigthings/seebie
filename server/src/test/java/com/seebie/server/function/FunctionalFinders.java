@@ -1,13 +1,8 @@
 package com.seebie.server.function;
 
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
-import static java.lang.String.join;
-import static java.util.Arrays.asList;
 
 public class FunctionalFinders {
 
@@ -27,7 +22,8 @@ public class FunctionalFinders {
                 Collectors.toList(),
                 list -> {
                     if (list.size() > 1) {
-                        throw new IllegalArgumentException(STR."Must have zero or one element, found \{list.size()}");
+                        String m = "Must have zero or one element, found " + list.size();
+                        throw new IllegalArgumentException(m);
                     }
                     return list.size() == 1 ? Optional.of(list.get(0)) : Optional.empty();
                 }
@@ -52,7 +48,7 @@ public class FunctionalFinders {
                 Collectors.toList(),
                 list -> {
                     if (list.size() != 1) {
-                        String m = STR."Must have exactly one element, found \{list.size()}. \{join(", ", asList(messages))}";
+                        String m = "Must have exactly one element, found " + list.size();
                         throw new IllegalArgumentException(m);
                     }
                     return list.get(0);

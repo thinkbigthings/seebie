@@ -1,6 +1,6 @@
 ![deployment pic](https://github.com/thinkbigthings/seebie/actions/workflows/trigger-cd.yml/badge.svg)
 
-![Java](https://img.shields.io/badge/java-21-blue?style=for-the-badge&logo=openjdk&logoColor=orange)
+![Java](https://img.shields.io/badge/java-23-blue?style=for-the-badge&logo=openjdk&logoColor=orange)
 ![Tech](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
 ![Tech](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 
@@ -28,7 +28,7 @@ like test reports, code coverage, and more.
 
 Software that needs to be installed and available from the command line:
 
-- Java 21 (tested on Zulu distribution)
+- Java 23 (tested on Zulu distribution)
 - Node 20 (tested on Node 20.6.1)
 - Docker (Try `sudo apt install docker.io` on Linux or  [Docker Desktop](https://hub.docker.com/editions/community/docker-ce-desktop-mac) or brew on Mac)
 

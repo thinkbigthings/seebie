@@ -21,11 +21,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
@@ -66,25 +66,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Isolated
 public class ControllerSecurityTest {
 
-	@MockBean
+	@MockitoBean
 	private DataSource dataSource;
 
-	@MockBean
+	@MockitoBean
 	private UserService service;
 
-	@MockBean
+	@MockitoBean
 	private ImportExportService importExportService;
 
-	@MockBean
+	@MockitoBean
 	private SleepService sleepService;
 
-	@MockBean
+	@MockitoBean
 	private ChallengeService challengeService;
 
-	@MockBean
+	@MockitoBean
 	private CsvToSleepData fromCsv;
 
-	@MockBean
+	@MockitoBean
 	private SleepDetailsToCsv toCsv;
 
 	private static final String USERNAME = "someuser";
@@ -145,53 +145,53 @@ public class ControllerSecurityTest {
 		test.get(API_LOGIN, 401, 200, 200);
 		test.get("/api/user", 401, 403, 200);
 
-		test.put(STR."/api/user/\{USERNAME}/personalInfo", info, 401, 200, 200);
-		test.post(STR."/api/user/\{USERNAME}/password/update", pwReset, 401, 200, 200);
-		test.get(STR."/api/user/\{USERNAME}", 401, 200, 200);
+		test.put("/api/user/"+USERNAME+"/personalInfo", info, 401, 200, 200);
+		test.post("/api/user/"+USERNAME+"/password/update", pwReset, 401, 200, 200);
+		test.get("/api/user/"+USERNAME, 401, 200, 200);
 
-		test.put(STR."/api/user/\{ADMINNAME}/personalInfo", info, 401, 403, 200);
-		test.post(STR."/api/user/\{ADMINNAME}/password/update", pwReset, 401, 403, 200);
-		test.get(STR."/api/user/\{ADMINNAME}", 401, 403, 200);
+		test.put("/api/user/"+ADMINNAME+"/personalInfo", info, 401, 403, 200);
+		test.post("/api/user/"+ADMINNAME+"/password/update", pwReset, 401, 403, 200);
+		test.get("/api/user/"+ADMINNAME, 401, 403, 200);
 
-		test.post(STR."/api/user/\{USERNAME}/sleep", sleepData, 401, 200, 200);
-		test.get(STR."/api/user/\{USERNAME}/sleep", 401, 200, 200);
-		test.get(STR."/api/user/\{USERNAME}/sleep" + "/1", 401, 200, 200);
-		test.put(STR."/api/user/\{USERNAME}/sleep" + "/1", sleepData, 401, 200, 200);
-		test.delete(STR."/api/user/\{USERNAME}/sleep" + "/1", 401, 200, 200);
+		test.post("/api/user/"+USERNAME+"/sleep", sleepData, 401, 200, 200);
+		test.get("/api/user/"+USERNAME+"/sleep", 401, 200, 200);
+		test.get("/api/user/"+USERNAME+"/sleep" + "/1", 401, 200, 200);
+		test.put("/api/user/"+USERNAME+"/sleep" + "/1", sleepData, 401, 200, 200);
+		test.delete("/api/user/"+USERNAME+"/sleep" + "/1", 401, 200, 200);
 
-		test.post(STR."/api/user/\{ADMINNAME}/sleep", sleepData, 401, 403, 200);
-		test.get(STR."/api/user/\{ADMINNAME}/sleep", 401, 403, 200);
-		test.get(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 401, 403, 200);
-		test.put(STR."/api/user/\{ADMINNAME}/sleep" + "/1", sleepData, 401, 403, 200);
-		test.delete(STR."/api/user/\{ADMINNAME}/sleep" + "/1", 401, 403, 200);
+		test.post("/api/user/"+ADMINNAME+"/sleep", sleepData, 401, 403, 200);
+		test.get("/api/user/"+ADMINNAME+"/sleep", 401, 403, 200);
+		test.get("/api/user/"+ADMINNAME+"/sleep" + "/1", 401, 403, 200);
+		test.put("/api/user/"+ADMINNAME+"/sleep" + "/1", sleepData, 401, 403, 200);
+		test.delete("/api/user/"+ADMINNAME+"/sleep" + "/1", 401, 403, 200);
 
-		test.get(STR."/api/user/\{USERNAME}/sleep/chart", chartParams, 401, 200, 200);
-		test.post(STR."/api/user/\{USERNAME}/sleep/histogram", histogramRequest, 401, 200, 200);
+		test.get("/api/user/"+USERNAME+"/sleep/chart", chartParams, 401, 200, 200);
+		test.post("/api/user/"+USERNAME+"/sleep/histogram", histogramRequest, 401, 200, 200);
 
-		test.get(STR."/api/user/\{ADMINNAME}/sleep/chart", chartParams, 401, 403, 200);
-		test.post(STR."/api/user/\{ADMINNAME}/sleep/histogram", histogramRequest, 401, 403, 200);
+		test.get("/api/user/"+ADMINNAME+"/sleep/chart", chartParams, 401, 403, 200);
+		test.post("/api/user/"+ADMINNAME+"/sleep/histogram", histogramRequest, 401, 403, 200);
 
-		test.post(STR."/api/user/\{USERNAME}/import/json", jsonFile, 401, 200, 200);
-		test.get(STR."/api/user/\{USERNAME}/export/json", 401, 200, 200);
-		test.get(STR."/api/user/\{USERNAME}/export/csv", 401, 200, 200);
-		test.post(STR."/api/user/\{USERNAME}/import/csv", csvFile, 401, 200, 200);
+		test.post("/api/user/"+USERNAME+"/import/json", jsonFile, 401, 200, 200);
+		test.get("/api/user/"+USERNAME+"/export/json", 401, 200, 200);
+		test.get("/api/user/"+USERNAME+"/export/csv", 401, 200, 200);
+		test.post("/api/user/"+USERNAME+"/import/csv", csvFile, 401, 200, 200);
 
-		test.post(STR."/api/user/\{ADMINNAME}/import/json", jsonFile, 401, 403, 200);
-		test.get(STR."/api/user/\{ADMINNAME}/export/json", 401, 403, 200);
-		test.get(STR."/api/user/\{ADMINNAME}/export/csv", 401, 403, 200);
-		test.post(STR."/api/user/\{ADMINNAME}/import/csv", csvFile, 401, 403, 200);
+		test.post("/api/user/"+ADMINNAME+"/import/json", jsonFile, 401, 403, 200);
+		test.get("/api/user/"+ADMINNAME+"/export/json", 401, 403, 200);
+		test.get("/api/user/"+ADMINNAME+"/export/csv", 401, 403, 200);
+		test.post("/api/user/"+ADMINNAME+"/import/csv", csvFile, 401, 403, 200);
 
-		test.post(STR."/api/user/\{USERNAME}/challenge", challenge, 401, 200, 200);
-		test.get(STR."/api/user/\{USERNAME}/challenge", challengeParams, 401, 200, 200);
-		test.get(STR."/api/user/\{USERNAME}/challenge" + "/1", 401, 200, 200);
-		test.put(STR."/api/user/\{USERNAME}/challenge" + "/1", challenge, 401, 200, 200);
-		test.delete(STR."/api/user/\{USERNAME}/challenge" + "/1", 401, 200, 200);
+		test.post("/api/user/"+USERNAME+"/challenge", challenge, 401, 200, 200);
+		test.get("/api/user/"+USERNAME+"/challenge", challengeParams, 401, 200, 200);
+		test.get("/api/user/"+USERNAME+"/challenge" + "/1", 401, 200, 200);
+		test.put("/api/user/"+USERNAME+"/challenge" + "/1", challenge, 401, 200, 200);
+		test.delete("/api/user/"+USERNAME+"/challenge" + "/1", 401, 200, 200);
 
-		test.post(STR."/api/user/\{ADMINNAME}/challenge", challenge, 401, 403, 200);
-		test.get(STR."/api/user/\{ADMINNAME}/challenge", challengeParams, 401, 403, 200);
-		test.get(STR."/api/user/\{ADMINNAME}/challenge" + "/1", 401, 403, 200);
-		test.put(STR."/api/user/\{ADMINNAME}/challenge" + "/1", challenge, 401, 403, 200);
-		test.delete(STR."/api/user/\{ADMINNAME}/challenge" + "/1", 401, 403, 200);
+		test.post("/api/user/"+ADMINNAME+"/challenge", challenge, 401, 403, 200);
+		test.get("/api/user/"+ADMINNAME+"/challenge", challengeParams, 401, 403, 200);
+		test.get("/api/user/"+ADMINNAME+"/challenge" + "/1", 401, 403, 200);
+		test.put("/api/user/"+ADMINNAME+"/challenge" + "/1", challenge, 401, 403, 200);
+		test.delete("/api/user/"+ADMINNAME+"/challenge" + "/1", 401, 403, 200);
 	}
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {

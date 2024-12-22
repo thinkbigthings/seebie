@@ -3,8 +3,6 @@ package com.seebie.server.controller;
 import com.seebie.server.dto.*;
 import com.seebie.server.service.UserService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -12,19 +10,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
 // so we can use that for api-only requests only if the UI is served separately
 @RestController
 @RequestMapping("/api")
 public class UserController {
-
-    private static Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
 
@@ -72,9 +64,10 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
     @RequestMapping(value="/user/{username}/password/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void updatePassword(@Valid @RequestBody PasswordResetRequest resetRequest, @PathVariable String username) {
+    public String updatePassword(@Valid @RequestBody PasswordResetRequest resetRequest, @PathVariable String username) {
 
         userService.updatePassword(username, resetRequest.plainTextPassword());
+        return "Password was updated";
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")

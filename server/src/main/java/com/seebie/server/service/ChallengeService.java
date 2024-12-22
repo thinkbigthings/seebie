@@ -51,7 +51,7 @@ public class ChallengeService {
     public void remove(String username, Long challengeId) {
         challengeRepo.findByUsername(username, challengeId)
                 .ifPresentOrElse(challengeRepo::delete, () -> {
-                    throw new EntityNotFoundException(STR."No challenge with id \{challengeId} found for user \{username}");
+                    throw new EntityNotFoundException("No challenge with id " + challengeId + " found for user " + username );
                 });
     }
 

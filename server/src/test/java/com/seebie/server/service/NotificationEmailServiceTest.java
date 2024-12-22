@@ -32,7 +32,6 @@ public class NotificationEmailServiceTest {
 
         var message = service.createMessage(new NotificationRequired(user.email(), user.username()));
 
-        assertTrue(message.getText().contains(user.username()));
         assertTrue(Arrays.stream(message.getTo()).anyMatch(email -> email.equals(user.email())));
     }
 

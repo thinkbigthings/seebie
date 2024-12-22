@@ -1,4 +1,19 @@
 
+// this is here to get around the heroku gradle plugin pulling in an old version of commons compress
+// and then the newer boot plugin trying to use the older version of compress that this plugin brought in,
+// and failing with NoSuchMethodError on ZipArchiveOutputStream.putArchiveEntry()
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+    configurations.all {
+        resolutionStrategy {
+            force 'org.apache.commons:commons-compress:1.27.1'
+        }
+    }
+}
+
 plugins {
     id "com.heroku.sdk.heroku-gradle" version "3.0.0"
 }
@@ -8,12 +23,12 @@ plugins {
 heroku {
 
     appName = project.hasProperty('app') ? project.property('app') : ''
-    jdkVersion = 21
+    jdkVersion = 23
     includes = ["server/build/libs/server.jar"]
     includeBuildDir = false
 
-    processTypes(
+    processTypes = [
         // The \$ is to escape $ for build.gradle, don't need the slash when running the command locally
         web: "java --enable-preview -Dspring.datasource.url='\${HEROKU_POSTGRESQL_CRIMSON_JDBC_URL}&autosave=conservative' -Dserver.port='\${PORT}' -jar server/build/libs/server.jar"
-    )
+    ]
 }
