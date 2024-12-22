@@ -1,8 +1,12 @@
 
-// this is here to get around the boot gradle plugin not working with its own bundled version of commons compress
-// otherwise we get  Caused by: java.lang.NoSuchMethodError:
-// 'void org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream.putArchiveEntry(org.apache.commons.compress.archivers.zip.ZipArchiveEntry)'
+// this is here to get around the heroku gradle plugin pulling in an old version of commons compress
+// and then the newer boot plugin trying to use the older version of compress that this plugin brought in,
+// and failing with NoSuchMethodError on ZipArchiveOutputStream.putArchiveEntry()
 buildscript {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
     configurations.all {
         resolutionStrategy {
             force 'org.apache.commons:commons-compress:1.27.1'
