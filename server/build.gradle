@@ -61,7 +61,6 @@ dependencies {
     testImplementation 'net.datafaker:datafaker:2.4.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
-    testImplementation 'org.mockito:mockito-junit-jupiter:5.14.2'
 
     testImplementation 'org.springframework.security:spring-security-test:6.4.2'
     testImplementation 'org.springframework.boot:spring-boot-testcontainers:3.4.1'
@@ -76,6 +75,26 @@ dependencies {
 jar {
     enabled = false
 }
+
+
+// Mockito was self-attaching to enable the inline-mock-maker, which will no longer work in future releases of the JDK.
+// We need to add Mockito as an agent to the build (here are the docs, they also have the kotlin version of the fix)
+// https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+configurations {
+    mockitoAgent
+}
+
+dependencies {
+    // use the version pulled in by spring-boot-starter-test: boot 3.4.1 pulls in mockito 5.14.2
+    mockitoAgent('org.mockito:mockito-core:5.14.2') { transitive = false }
+}
+
+tasks.withType(Test) {
+    jvmArgs "-javaagent:${configurations.mockitoAgent.asPath}"
+}
+
+// ------------------------------------------------------------------------------------------------
+
 
 // https://docs.gradle.org/current/userguide/jacoco_plugin.html
 jacoco {
