@@ -176,7 +176,7 @@ public class TestData {
      * we can use a record creation method to provide default values.
      */
     public static AppProperties newAppProperties(int rememberMeTokenValidityDays) {
-        return new AppProperties(1,
+        return new AppProperties(
                 new AppProperties.Security(
                         new AppProperties.Security.RememberMe(ofDays(rememberMeTokenValidityDays), randomUUID().toString(), 60)),
                 new AppProperties.Notification(
