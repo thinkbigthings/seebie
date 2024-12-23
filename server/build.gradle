@@ -80,6 +80,7 @@ jar {
 // Mockito was self-attaching to enable the inline-mock-maker, which will no longer work in future releases of the JDK.
 // We need to add Mockito as an agent to the build (here are the docs, they also have the kotlin version of the fix)
 // https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+// I think this was in the bug report here https://github.com/mockito/mockito/issues/3037
 configurations {
     mockitoAgent
 }
