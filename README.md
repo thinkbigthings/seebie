@@ -39,3 +39,11 @@ Software that needs to be installed and available from the command line:
 which will serve the front end files and open a browser for you.
 log in with username `admin` and password `admin` or `test` and `test`
 
+### Troubleshooting
+
+- If this is the very first time running, we need a keystore file to exist.
+  Use this command: `keytool -genkeypair -alias mykey -keyalg RSA -keysize 2048 -validity 365 -keystore ~/.keystore`
+  (this is for local development only)
+- If you ran gradle before setting the PATH, the daemon will have an old path and might not pick up npm, for example. 
+  To restart the daemon, use `gradlew --stop`
+
