@@ -9,7 +9,7 @@ interface PageMetadata {
 }
 
 // TODO refactor name to PagedModel so it matches the server
-interface PageData<T> {
+interface PagedModel<T> {
     content: T[];
     page: PageMetadata;
 }
@@ -22,7 +22,7 @@ const isLast = (pageMetadata: PageMetadata) => {
     return pageMetadata.number == (pageMetadata.totalPages-1);
 }
 
-function createInitialPage<T>(): PageData<T> {
+function createInitialPage<T>(): PagedModel<T> {
     return {
         content: [] as T[],  // Explicitly typing the empty array
         page: {
@@ -37,14 +37,14 @@ function createInitialPage<T>(): PageData<T> {
 
 // Define the return type of the hook explicitly
 export interface UseApiGetReturn<T> {
-    data: PageData<T>;
+    data: PagedModel<T>;
     pagingControls: {
         next: () => void;
         previous: () => void;
     };
 }
 
-const toPagingLabel = <T>(pageData: PageData<T>) => {
+const toPagingLabel = <T>(pageData: PagedModel<T>) => {
     const offset = pageData.page.size * pageData.page.number;
     const numElementsInPage = pageData.content.length;
     const firstElementInPage = offset + 1;
@@ -56,10 +56,10 @@ const toPagingLabel = <T>(pageData: PageData<T>) => {
 const useApiGet = <T>(initialUrl: string, customPageSize: number, reloadCount: number): UseApiGetReturn<T> => {
 
     // Use the factory function to create an initial page of the correct type
-    let customizedPage: PageData<T> = createInitialPage<T>();
+    let customizedPage: PagedModel<T> = createInitialPage<T>();
     customizedPage.page.size = customPageSize;
 
-    const [data, setData] = useState<PageData<T>>(customizedPage);
+    const [data, setData] = useState<PagedModel<T>>(customizedPage);
 
     let newInitialUrl = initialUrl + '?page=' + customizedPage.page.number + '&size=' + customizedPage.page.size
 
@@ -96,4 +96,4 @@ const useApiGet = <T>(initialUrl: string, customPageSize: number, reloadCount: n
 };
 
 export {useApiGet, toPagingLabel, isFirst, isLast};
-export type {PageData};
+export type {PagedModel};
