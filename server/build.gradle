@@ -224,9 +224,9 @@ tasks.named("check") {
 }
 
 task copyWebApp(type: Copy) {
-    description='Copies built files from reactjs to server'
-    dependsOn ':reactjs:build'
-    from(project(":reactjs").buildDir)
+    description='Copies built files from react to server'
+    dependsOn ':react:build'
+    from(project(":react").buildDir)
     into(project(":server").buildDir.toPath().resolve('resources/main/static'))
 }
 

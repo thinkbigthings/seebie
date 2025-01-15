@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 20.6.1
           cache: 'npm'
-          cache-dependency-path: reactjs/package-lock.json
+          cache-dependency-path: react/package-lock.json
 
       # read docs carefully: https://github.com/gradle/actions/tree/main/setup-gradle
       # don't use cache-gradle from setup-java

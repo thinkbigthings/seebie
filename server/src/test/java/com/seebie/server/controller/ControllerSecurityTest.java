@@ -50,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * If it tried to test access to unsecure static resources like "/", "/favicon.ico", "/manifest.json", and so on,
  * the controller would fail with a 404 instead of 200 unless those static resources were present
  * in server/build/resources/main/static in which case the test would pass.
- * Since that would require copying contents of reactjs/public into server/build/resources/main/static
+ * Since that would require copying contents of react/public into server/build/resources/main/static
  * as a dependency of the test phase, it doesn't really fit as a unit test.
  *
  * testing open access to static resources is really a better job of an integration test that happens after the
