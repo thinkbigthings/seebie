@@ -8,7 +8,6 @@ interface PageMetadata {
     totalPages: number
 }
 
-// TODO refactor name to PagedModel so it matches the server
 interface PagedModel<T> {
     content: T[];
     page: PageMetadata;
