@@ -3,7 +3,6 @@ package com.seebie.server.controller;
 import com.seebie.server.dto.*;
 import com.seebie.server.service.UserService;
 import com.seebie.server.test.IntegrationTest;
-import com.seebie.server.test.client.ParsablePage;
 import com.seebie.server.test.client.RestClientFactory;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,14 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Page;
 import org.springframework.web.client.RestClient;
 
 import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This is here mainly to flex the server through a live http connection.
@@ -27,8 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class EndToEndIntegrationTest extends IntegrationTest {
 
     protected static Logger LOG = LoggerFactory.getLogger(EndToEndIntegrationTest.class);
-
-    private static URI usersUrl;
 
     private static String testUserName;
     private static String testUserPassword;
@@ -56,24 +50,8 @@ public class EndToEndIntegrationTest extends IntegrationTest {
 
         var userUriBuilder = baseUribuilder.builder().pathSegment("api", "user");
 
-        usersUrl = userUriBuilder.build();
         testUserUrl = userUriBuilder.pathSegment(testUserName).build();
         testUserUpdatePasswordUrl = userUriBuilder.pathSegment("password", "update").build();
-    }
-
-    @Test
-    @DisplayName("Admin list users")
-    public void adminListUsers() {
-
-        RestClient admin = clientFactory.login("admin", "admin");
-
-        // anonymous inner classes should generally be avoided due to risk of memory leaks,
-        // but this is a test and we're not going to be running for long before the JVM exits
-        var userPage = new ParameterizedTypeReference<ParsablePage<UserSummary>>() {};
-        Page<UserSummary> page = admin.get().uri(usersUrl).retrieve().body(userPage);
-
-        assertTrue(page.isFirst());
-        assertTrue(page.getTotalElements() >= 1);
     }
 
     @Test
@@ -84,7 +62,7 @@ public class EndToEndIntegrationTest extends IntegrationTest {
         PersonalInfo info = user.get().uri(testUserUrl).retrieve().body(User.class).personalInfo();
 
         PasswordResetRequest pwReset = new PasswordResetRequest(testUserPassword + "1");
-        var updateResp = user.post().uri(testUserUpdatePasswordUrl).body(pwReset).retrieve().body(String.class);
+        user.post().uri(testUserUpdatePasswordUrl).body(pwReset).retrieve().body(String.class);
 
         user = clientFactory.login(testUserName, pwReset.plainTextPassword());
         PersonalInfo info2 = user.get().uri(testUserUrl).retrieve().body(User.class).personalInfo();

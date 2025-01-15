@@ -4,7 +4,7 @@ import {faCaretLeft, faCaretRight,} from "@fortawesome/free-solid-svg-icons";
 import Container from "react-bootstrap/Container";
 import Table from "react-bootstrap/Table";
 import {Link, useParams} from "react-router-dom";
-import {toPagingLabel, useApiGet} from './hooks/useApiGet.js';
+import {isFirst, isLast, toPagingLabel, useApiGet} from './hooks/useApiGet.js';
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import {NavHeader} from "./App";
@@ -31,7 +31,7 @@ function SleepList(props:{createdCount: number}) {
 
     const {data, pagingControls} = useApiGet<SleepDetailDto>(sleepUrl, 7, createdCount);
 
-    const pagingControlVisibility = data.totalElements > 0 ? "visible" : "invisible";
+    const pagingControlVisibility = data.page.totalElements > 0 ? "visible" : "invisible";
 
     return (
 
@@ -62,11 +62,11 @@ function SleepList(props:{createdCount: number}) {
                 </tbody>
             </Table>
             <ButtonGroup className={"mt-2 " + pagingControlVisibility}>
-                <Button variant="primary" disabled={data.first} onClick={ pagingControls.previous }>
+                <Button variant="primary" disabled={isFirst(data.page)} onClick={ pagingControls.previous }>
                     <FontAwesomeIcon className="app-highlight me-2" icon={faCaretLeft} />Previous
                 </Button>
                 <div className="page-item disabled border align-middle pt-1 px-3"><span className="page-link">{toPagingLabel(data)}</span></div>
-                <Button variant="primary" disabled={data.last} onClick={ pagingControls.next}>
+                <Button variant="primary" disabled={isLast(data.page)} onClick={ pagingControls.next}>
                     <FontAwesomeIcon className="app-highlight me-2" icon={faCaretRight} />Next
                 </Button>
             </ButtonGroup>

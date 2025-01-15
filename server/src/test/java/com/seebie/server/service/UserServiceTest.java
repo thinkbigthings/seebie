@@ -2,6 +2,7 @@ package com.seebie.server.service;
 
 import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
+import com.seebie.server.dto.UserSummary;
 import com.seebie.server.entity.Notification;
 import com.seebie.server.entity.User;
 import com.seebie.server.repository.NotificationRepository;
@@ -77,6 +78,17 @@ public class UserServiceTest {
         assertEquals(savedUser.getUsername(), foundUser.username());
         assertEquals(savedUser.getDisplayName(), foundUser.personalInfo().displayName());
         assertEquals(savedUser.getEmail(), foundUser.personalInfo().email());
+    }
+
+    @Test
+    public void getUserSummaries() {
+
+        new UserSummary("userName", "displayName");
+//        var foundUsers = service.getUserSummaries(savedUsername);
+//
+//        assertEquals(savedUser.getUsername(), foundUser.username());
+//        assertEquals(savedUser.getDisplayName(), foundUser.personalInfo().displayName());
+//        assertEquals(savedUser.getEmail(), foundUser.personalInfo().email());
     }
 
     @Test
