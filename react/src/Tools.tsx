@@ -40,7 +40,7 @@ function Tools() {
     const downloadUrl = csvSelected ? downloadCsv : downloadJson;
 
     const {data, pagingControls} = useApiGet<SleepDetailDto>(sleepUrl, 1, 0);
-    const numSleepRecords = data.totalElements;
+    const numSleepRecords = data.page.totalElements;
 
     const onFilePicked = (event:React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {

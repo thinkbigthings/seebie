@@ -131,6 +131,7 @@ jacocoTestCoverageVerification {
     }
 
     // NOTE keep all jacoco tasks in sync with regards to excluded classes
+    // (e.g. see jacocoTestReport)
     // see also https://github.com/jacoco/jacoco/issues/1491
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {

@@ -39,7 +39,6 @@ class UserRepositoryTest extends IntegrationTest {
         Set<Role> roles = admin.map(User::getRoles).get();
 
         assertFalse(roles.isEmpty());
-        assertTrue(admin.isPresent());
     }
 
     @Test

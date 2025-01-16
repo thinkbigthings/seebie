@@ -1,61 +1,73 @@
 import {GET} from "../utility/BasicHeaders";
 import {useCallback, useEffect, useState} from "react";
 
-interface PageData<T> {
-    content: T[];
-    first: boolean;
-    last: boolean;
-    totalElements: number;
-    pageable: {
-        offset: number;
-        pageNumber: number;
-        pageSize: number;
-    };
-    numberOfElements: number;
+interface PageMetadata {
+    size: number,
+    number: number,
+    totalElements: number,
+    totalPages: number
 }
 
-function createInitialPage<T>(): PageData<T> {
+interface PagedModel<T> {
+    content: T[];
+    page: PageMetadata;
+}
+
+const isFirst = (pageMetadata: PageMetadata) => {
+    return pageMetadata.number == 0;
+}
+
+const isLast = (pageMetadata: PageMetadata) => {
+    return pageMetadata.number == (pageMetadata.totalPages-1);
+}
+
+function createInitialPage<T>(): PagedModel<T> {
     return {
         content: [] as T[],  // Explicitly typing the empty array
-        first: true,
-        last: true,
-        totalElements: 0,
-        pageable: {
-            offset: 0,
-            pageNumber: 0,
-            pageSize: 10,
+        page: {
+            size: 0,
+            number: 0,
+            totalElements: 0,
+            totalPages: 0
         },
-        numberOfElements: 0,
     };
 }
 
 
 // Define the return type of the hook explicitly
 export interface UseApiGetReturn<T> {
-    data: PageData<T>;
+    data: PagedModel<T>;
     pagingControls: {
         next: () => void;
         previous: () => void;
     };
 }
 
-const toPagingLabel = <T>(pageData: PageData<T>) => {
-    const firstElementInPage = pageData.pageable.offset + 1;
-    const lastElementInPage = pageData.pageable.offset + pageData.numberOfElements;
-    const pagingLabel = firstElementInPage + "-" + lastElementInPage + " of " + pageData.totalElements;
-    return pagingLabel;
-}
+const toPagingLabel = <T>(pageData: PagedModel<T>): string => {
+    const { size, number, totalElements } = pageData.page;
+    const offset = size * number;
+    const numElementsInPage = pageData.content.length;
+
+    if (totalElements === 0) {
+        return "0 of 0"; // Handle empty data gracefully
+    }
+
+    const firstElementInPage = offset + 1;
+    const lastElementInPage = offset + numElementsInPage;
+
+    return `${firstElementInPage} - ${lastElementInPage} of ${totalElements}`;
+};
 
 // This is for paging
 const useApiGet = <T>(initialUrl: string, customPageSize: number, reloadCount: number): UseApiGetReturn<T> => {
 
     // Use the factory function to create an initial page of the correct type
-    let customizedPage: PageData<T> = createInitialPage<T>();
-    customizedPage.pageable.pageSize = customPageSize;
+    let customizedPage: PagedModel<T> = createInitialPage<T>();
+    customizedPage.page.size = customPageSize;
 
-    const [data, setData] = useState<PageData<T>>(customizedPage);
+    const [data, setData] = useState<PagedModel<T>>(customizedPage);
 
-    let newInitialUrl = initialUrl + '?page=' + customizedPage.pageable.pageNumber + '&size=' + customizedPage.pageable.pageSize
+    let newInitialUrl = initialUrl + '?page=' + customizedPage.page.number + '&size=' + customizedPage.page.size
 
     let [url, setUrl] = useState(newInitialUrl);
 
@@ -63,10 +75,10 @@ const useApiGet = <T>(initialUrl: string, customPageSize: number, reloadCount: n
     // const {throwOnHttpError} = useHttpError();
 
     const movePage = useCallback((amount: number) => {
-        let pageable = structuredClone(data.pageable);
-        pageable.pageNumber = pageable.pageNumber + amount;
-        setUrl(initialUrl + '?page=' + pageable.pageNumber + '&size=' + pageable.pageSize)
-    }, [data.pageable, initialUrl]);
+        let page = structuredClone(data.page);
+        page.number = page.number + amount;
+        setUrl(initialUrl + '?page=' + page.number + '&size=' + page.size)
+    }, [data.page, initialUrl]);
 
     const next = useCallback(() => movePage(1), [movePage]);
     const previous = useCallback(() => movePage(-1), [movePage]);
@@ -89,5 +101,5 @@ const useApiGet = <T>(initialUrl: string, customPageSize: number, reloadCount: n
     return {data, pagingControls};
 };
 
-export {useApiGet, toPagingLabel};
-export type {PageData};
+export {useApiGet, toPagingLabel, isFirst, isLast};
+export type {PagedModel};
