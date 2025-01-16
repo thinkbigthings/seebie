@@ -2,7 +2,6 @@ package com.seebie.server.service;
 
 import com.seebie.server.dto.PersonalInfo;
 import com.seebie.server.dto.RegistrationRequest;
-import com.seebie.server.dto.UserSummary;
 import com.seebie.server.entity.Notification;
 import com.seebie.server.entity.User;
 import com.seebie.server.repository.NotificationRepository;
@@ -18,7 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import static java.util.Optional.of;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -77,14 +77,6 @@ public class UserServiceTest {
         assertEquals(savedUser.getUsername(), foundUser.username());
         assertEquals(savedUser.getDisplayName(), foundUser.personalInfo().displayName());
         assertEquals(savedUser.getEmail(), foundUser.personalInfo().email());
-    }
-
-    @Test
-    public void getUserSummaries() {
-
-        // trivial test to satisfy coverage requirements
-        var summary = new UserSummary("userName", "displayName");
-        assertEquals("userName", summary.username());
     }
 
     @Test

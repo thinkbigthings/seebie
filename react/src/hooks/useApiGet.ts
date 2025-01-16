@@ -43,13 +43,20 @@ export interface UseApiGetReturn<T> {
     };
 }
 
-const toPagingLabel = <T>(pageData: PagedModel<T>) => {
-    const offset = pageData.page.size * pageData.page.number;
+const toPagingLabel = <T>(pageData: PagedModel<T>): string => {
+    const { size, number, totalElements } = pageData.page;
+    const offset = size * number;
     const numElementsInPage = pageData.content.length;
+
+    if (totalElements === 0) {
+        return "0 of 0"; // Handle empty data gracefully
+    }
+
     const firstElementInPage = offset + 1;
     const lastElementInPage = offset + numElementsInPage;
-    return firstElementInPage + "-" + lastElementInPage + " of " + pageData.page.totalElements;
-}
+
+    return `${firstElementInPage} - ${lastElementInPage} of ${totalElements}`;
+};
 
 // This is for paging
 const useApiGet = <T>(initialUrl: string, customPageSize: number, reloadCount: number): UseApiGetReturn<T> => {
