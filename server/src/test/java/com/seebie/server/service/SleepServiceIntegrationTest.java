@@ -11,14 +11,15 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PagedModel;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static com.seebie.server.test.data.TestData.*;
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SleepServiceIntegrationTest extends IntegrationTest {
@@ -88,20 +89,20 @@ class SleepServiceIntegrationTest extends IntegrationTest {
         userService.saveNewUser(registration);
 
         // preconditions
-        Page<SleepDetails> listing = sleepService.listSleepData(username, firstPage);
-        assertEquals(0, listing.getTotalElements());
+        PagedModel<SleepDetails> listing = sleepService.listSleepData(username, firstPage);
+        assertEquals(0, requireNonNull(listing.getMetadata()).totalElements());
 
         // set up test data
         var sleep = sleepService.saveNew(username, createRandomSleepData());
         listing = sleepService.listSleepData(username, firstPage);
-        assertEquals(1, listing.getTotalElements());
+        assertEquals(1, requireNonNull(listing.getMetadata()).totalElements());
 
         // perform testable action
         sleepService.remove(username, sleep.id());
 
         // postconditions
         listing = sleepService.listSleepData(username, firstPage);
-        assertEquals(0, listing.getTotalElements());
+        assertEquals(0, requireNonNull(listing.getMetadata()).totalElements());
     }
 
     @Test

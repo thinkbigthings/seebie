@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("""
             SELECT new com.seebie.server.dto.UserSummary(u.username, u.displayName)
             FROM User u
-            ORDER BY u.username ASC 
+            ORDER BY u.username ASC
             """)
     Page<UserSummary> loadSummaries(Pageable page);
 

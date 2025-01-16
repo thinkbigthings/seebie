@@ -9,8 +9,8 @@ import com.seebie.server.mapper.entitytodto.UserMapper;
 import com.seebie.server.repository.NotificationRepository;
 import com.seebie.server.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,9 +68,8 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserSummary> getUserSummaries(Pageable page) {
-
-        return userRepo.loadSummaries(page);
+    public PagedModel<UserSummary> getUserSummaries(Pageable page) {
+        return new PagedModel<>(userRepo.loadSummaries(page));
     }
 
     @Transactional(readOnly = true)
