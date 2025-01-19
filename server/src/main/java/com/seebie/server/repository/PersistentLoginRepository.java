@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PersistentLoginRepository extends JpaRepository<com.seebie.server.entity.PersistentLogin, String> {
 
-    long countAllByUsername(String username);
+    long countAllByUsername(String email);
 
     List<PersistentLogin> findAllByUsername(String username);
 

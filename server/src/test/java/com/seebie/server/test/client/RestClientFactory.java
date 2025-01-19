@@ -37,11 +37,11 @@ public class RestClientFactory {
         return fromHttpClient(noAuth());
     }
 
-    public RestClient login(String username, String plainTextPassword) {
+    public RestClient login(String email, String plainTextPassword) {
 
-            var basicAuth = basicAuth(username, plainTextPassword);
+            var basicAuth = basicAuth(email, plainTextPassword);
 
-            fromHttpClient(basicAuth).get().uri(API_LOGIN).retrieve().body(String.class);
+            var response = fromHttpClient(basicAuth).get().uri(API_LOGIN).retrieve().body(String.class);
 
             // subsequent calls should use session and/or remember me token
             // remove the authorizor, otherwise it still adds the basic auth headers

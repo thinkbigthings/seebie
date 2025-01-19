@@ -41,8 +41,7 @@ public class UserController {
     @RequestMapping(value="/login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public User login(Authentication auth) {
 
-        // The web session isn't saved until the db is flushed at the end, so need to set logged in here
-        return userService.getUser(auth.getName());
+        return userService.getUserByEmail(auth.getName());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -53,12 +52,12 @@ public class UserController {
         return userService.getUserSummaries(page);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
-    @RequestMapping(value="/user/{username}/personalInfo", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
+    @RequestMapping(value="/user/{legacyUsername}/personalInfo", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public User updateUser(@Valid @RequestBody PersonalInfo userData, @PathVariable String username) {
+    public User updateUser(@Valid @RequestBody PersonalInfo userData, @PathVariable String legacyUsername) {
 
-        return userService.updateUser(username, userData);
+        return userService.updateUser(legacyUsername, userData);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
@@ -70,12 +69,12 @@ public class UserController {
         return "Password was updated";
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
-    @RequestMapping(value="/user/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
+    @RequestMapping(value="/user/{legacyUsername}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public User getUser(@PathVariable String username) {
+    public User getUser(@PathVariable String legacyUsername) {
 
-        return userService.getUser(username);
+        return userService.getUser(legacyUsername);
     }
 
 }
