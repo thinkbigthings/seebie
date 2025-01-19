@@ -24,8 +24,9 @@ public class EndToEndIntegrationTest extends IntegrationTest {
 
     protected static Logger LOG = LoggerFactory.getLogger(EndToEndIntegrationTest.class);
 
-    private static String testUserName;
+    private static String testUserEmail;
     private static String testUserPassword;
+    private static String testUserUsername;
     private static URI testUserUrl;
     private static URI testUserUpdatePasswordUrl;
 
@@ -45,12 +46,13 @@ public class EndToEndIntegrationTest extends IntegrationTest {
         RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(testUserRegistration);
 
-        testUserName = testUserRegistration.username();
+        testUserUsername = testUserRegistration.username();
+        testUserEmail = testUserRegistration.email();
         testUserPassword = testUserRegistration.plainTextPassword();
 
         var userUriBuilder = baseUribuilder.builder().pathSegment("api", "user");
 
-        testUserUrl = userUriBuilder.pathSegment(testUserName).build();
+        testUserUrl = userUriBuilder.pathSegment(testUserUsername).build();
         testUserUpdatePasswordUrl = userUriBuilder.pathSegment("password", "update").build();
     }
 
@@ -58,13 +60,14 @@ public class EndToEndIntegrationTest extends IntegrationTest {
     @DisplayName("Update user password")
     public void testUpdatePassword() {
 
-        RestClient user = clientFactory.login(testUserName, testUserPassword);
+        RestClient user = clientFactory.login(testUserEmail, testUserPassword);
+
         PersonalInfo info = user.get().uri(testUserUrl).retrieve().body(User.class).personalInfo();
 
         PasswordResetRequest pwReset = new PasswordResetRequest(testUserPassword + "1");
         user.post().uri(testUserUpdatePasswordUrl).body(pwReset).retrieve().body(String.class);
 
-        user = clientFactory.login(testUserName, pwReset.plainTextPassword());
+        user = clientFactory.login(testUserEmail, pwReset.plainTextPassword());
         PersonalInfo info2 = user.get().uri(testUserUrl).retrieve().body(User.class).personalInfo();
 
         assertEquals(info, info2);

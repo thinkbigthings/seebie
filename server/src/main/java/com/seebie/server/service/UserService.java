@@ -9,6 +9,8 @@ import com.seebie.server.mapper.entitytodto.UserMapper;
 import com.seebie.server.repository.NotificationRepository;
 import com.seebie.server.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
     private final UserMapper toUserRecord = new UserMapper();
 
@@ -80,4 +84,11 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("no user found for " + username));
     }
 
+    @Transactional(readOnly = true)
+    public com.seebie.server.dto.User getUserByEmail(String email) {
+
+        return userRepo.findByEmail(email)
+                .map(toUserRecord)
+                .orElseThrow(() -> new EntityNotFoundException("no user found for " + email));
+    }
 }

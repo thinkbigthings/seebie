@@ -35,7 +35,7 @@ class UserRepositoryTest extends IntegrationTest {
     @Test
     public void testNPlusOneWithJoinFetch() {
 
-        Optional<User> admin = userRepository.loadUserWithRoles("admin");
+        Optional<User> admin = userRepository.loadUserWithRoles("admin@example.com");
         Set<Role> roles = admin.map(User::getRoles).get();
 
         assertFalse(roles.isEmpty());

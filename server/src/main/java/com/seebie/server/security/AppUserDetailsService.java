@@ -19,17 +19,20 @@ public class AppUserDetailsService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * @param email We'll use the email as the username for Spring Security purposes.
+     * @return
+     * @throws UsernameNotFoundException
+     */
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         // if not found, UserDetailsService is supposed to throw UsernameNotFoundException instead of return null
-        UserDetails userDetails = userRepository.loadUserWithRoles(username)
+        return userRepository.loadUserWithRoles(email)
                 .map(toUserDetails)
                 .filter(user -> ! user.getAuthorities().isEmpty())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found or had no authorities: " + username));
-
-        return userDetails;
+                .orElseThrow(() -> new UsernameNotFoundException("User not found or had no authorities: " + email));
     }
 
 }
