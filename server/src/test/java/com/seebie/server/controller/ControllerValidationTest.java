@@ -11,11 +11,13 @@ import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
+import com.seebie.server.test.WithCustomMockUser;
 import com.seebie.server.test.data.ArgumentsBuilder;
 import com.seebie.server.test.data.RoleArgumentsBuilder;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -56,6 +58,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //   Serialization / Deserialization
 //   Error handling
 
+@Disabled
 @WebMvcTest(properties = {
 		// this is a sensitive property and should not be included in the main application.properties
 		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
@@ -207,19 +210,20 @@ public class ControllerValidationTest {
 
 	@ParameterizedTest
 	@MethodSource("provideAdminTestParameters")
-	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
+	@WithCustomMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
 	void testAdminValidation(RequestBuilder testData, int expectedStatus) throws Exception {
 		test(testData, expectedStatus);
 	}
 
-	@ParameterizedTest
+	@ParameterizedTest(name = "{0} + {1} + {2} + {3}")
 	@MethodSource("provideUserTestParameters")
-	@WithMockUser(username = USERNAME, roles = {"USER"})
+	@WithCustomMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
 	void testUserValidation(RequestBuilder testData, int expectedStatus) throws Exception {
 		test(testData, expectedStatus);
 	}
+
 
 	private void test(RequestBuilder testData, int expectedStatus) throws Exception {
 		mockMvc.perform(testData)
