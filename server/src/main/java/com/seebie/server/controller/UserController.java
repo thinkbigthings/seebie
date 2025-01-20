@@ -40,7 +40,6 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value="/login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public User login(Authentication auth) {
-
         return userService.getUserByEmail(auth.getName());
     }
 
@@ -60,12 +59,12 @@ public class UserController {
         return userService.updateUser(legacyUsername, userData);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
-    @RequestMapping(value="/user/{username}/password/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
+    @RequestMapping(value="/user/{legacyUsername}/password/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String updatePassword(@Valid @RequestBody PasswordResetRequest resetRequest, @PathVariable String username) {
+    public String updatePassword(@Valid @RequestBody PasswordResetRequest resetRequest, @PathVariable String legacyUsername) {
 
-        userService.updatePassword(username, resetRequest.plainTextPassword());
+        userService.updatePassword(legacyUsername, resetRequest.plainTextPassword());
         return "Password was updated";
     }
 

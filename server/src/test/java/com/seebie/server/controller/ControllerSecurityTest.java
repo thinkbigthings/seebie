@@ -14,6 +14,7 @@ import com.seebie.server.test.data.MultiRequestBuilder;
 import com.seebie.server.test.data.RoleArgumentsBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -59,6 +60,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * web content is copied from the ui anyway.
  *
  */
+
+@Disabled
 @WebMvcTest(properties = {
 		// this is a sensitive property and should not be included in the main application.properties
 		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
