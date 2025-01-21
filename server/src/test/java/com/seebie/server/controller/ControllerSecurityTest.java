@@ -62,6 +62,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(properties = {
 		// this is a sensitive property and should not be included in the main application.properties
 		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
+		"logging.level.org.springframework.security=DEBUG",
+		"logging.level.org.springframework.security.web.access.expression=DEBUG",
+		"logging.level.org.springframework.security.web.authentication=DEBUG",
+		"logging.level.org.springframework.security.web.context=DEBUG",
+		"logging.level.org.springframework.security.oauth2=DEBUG",
+		"logging.level.org.springframework.security.filter=DEBUG"
 })
 @EnableConfigurationProperties(value = {AppProperties.class})
 @Import({WebSecurityConfig.class, WebSecurityBeanProvider.class})
