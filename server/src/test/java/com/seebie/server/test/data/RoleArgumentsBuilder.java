@@ -10,8 +10,7 @@ import static com.seebie.server.test.data.RoleArgumentsBuilder.Role.*;
 import static org.springframework.http.HttpMethod.*;
 
 /**
- * This class is a convenience for creating test arguments for a set of roles.
- * It is used to create a list of arguments for each role, so that they can be used in a parameterized WebMvcTest
+ * This class creates a list of arguments for each role, so that they can be used in a parameterized WebMvcTest
  * The advantage of this is that it allows you to test the same endpoint with different roles in the same test
  * and ensures that the same tests are run for each role.
  */
@@ -34,8 +33,6 @@ public class RoleArgumentsBuilder {
             case ADMIN -> this.admin;
         };
     }
-
-    // set of convenience methods to account for all roles at once
 
     public void post(String urlPath, Object reqBody, int unauthenticated, int user, int admin) {
         addArgs(POST, urlPath, reqBody, NO_PARAMS, unauthenticated, user, admin);
