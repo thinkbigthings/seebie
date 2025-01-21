@@ -11,8 +11,7 @@ import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.data.ArgumentsBuilder;
-import com.seebie.server.test.data.RoleArgumentsBuilder;
+import com.seebie.server.test.data.MultiRequestBuilder;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -59,6 +59,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(properties = {
 		// this is a sensitive property and should not be included in the main application.properties
 		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
+		"logging.level.org.springframework.security=DEBUG",
+		"logging.level.org.springframework.security.web.access.expression=DEBUG",
+		"logging.level.org.springframework.security.web.authentication=DEBUG",
+		"logging.level.org.springframework.security.web.context=DEBUG",
+		"logging.level.org.springframework.security.oauth2=DEBUG",
+		"logging.level.org.springframework.security.filter=DEBUG"
 })
 @EnableConfigurationProperties(value = {AppProperties.class})
 @Import({WebSecurityConfig.class, WebSecurityBeanProvider.class})
@@ -85,6 +91,12 @@ public class ControllerValidationTest {
 
 	@MockitoBean
 	private SleepDetailsToCsv toCsv;
+
+	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+	@Autowired
+	private MockMvc mockMvc;
+
+	private static MultiRequestBuilder requestBuilder;
 
 	private static final String USERNAME = "someuser";
 	private static final String ADMINNAME = "admin";
@@ -115,6 +127,7 @@ public class ControllerValidationTest {
 	private static final HistogramRequest validHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(fromDate, toDate))));
 	private static final HistogramRequest invalidHistReq = new HistogramRequest(60, new FilterList(List.of(new DateRange(toDate, fromDate))));
 
+	private static final List<String> NO_PARAMS = List.of();
 	private static final String badCsvText = "test";
 	private static final int goodCsvRows = 1;
 	private static final String goodCsvText = createCsv(goodCsvRows);
@@ -126,14 +139,6 @@ public class ControllerValidationTest {
 
 	private static final ChallengeDto invalidChallenge = new ChallengeDto("", "", null, null);
 	private static final ChallengeDto validChallenge = TestData.createRandomChallenge(0, 14);
-
-	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-	@Autowired
-	private MockMvc mockMvc;
-
-	private static RoleArgumentsBuilder test;
-	private static ArgumentsBuilder user;
-	private static ArgumentsBuilder admin;
 
 	@BeforeEach
 	public void setup() {
@@ -152,73 +157,70 @@ public class ControllerValidationTest {
 	@BeforeAll
 	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) throws Exception {
 
-		// so we get the mapper as configured for the app
-		test = new RoleArgumentsBuilder(converter.getObjectMapper());
-
 		goodJson = createMultipart(converter.getObjectMapper().writeValueAsString(randomUserData()));
 
-		user = new ArgumentsBuilder(converter.getObjectMapper());
-		admin = new ArgumentsBuilder(converter.getObjectMapper());
+		requestBuilder = new MultiRequestBuilder(converter.getObjectMapper());
 	}
 
 	private static List<Arguments> provideAdminTestParameters() {
 		return List.of(
-			admin.args(POST, "/api/registration", registration, 200),
-			admin.args(POST, "/api/registration", invalidRegistration, 400)
+			Arguments.of(POST, "/api/registration", registration, NO_PARAMS, 200),
+			Arguments.of(POST, "/api/registration", invalidRegistration, NO_PARAMS, 400)
 		);
 	}
 
 	private static List<Arguments> provideUserTestParameters() {
 		return List.of(
-			user.args(PUT, "/api/user/"+USERNAME+"/personalInfo", info, 200),
-			user.args(PUT, "/api/user/"+USERNAME+"/personalInfo", invalidInfo, 400),
+				
+			Arguments.of(PUT, "/api/user/"+USERNAME+"/personalInfo", info, NO_PARAMS, 200),
+			Arguments.of(PUT, "/api/user/"+USERNAME+"/personalInfo", invalidInfo, NO_PARAMS, 400),
 
-			user.args(POST, "/api/user/"+USERNAME+"/password/update", pwReset, 200),
-			user.args(POST, "/api/user/"+USERNAME+"/password/update", invalidPw, 400),
+			Arguments.of(POST, "/api/user/"+USERNAME+"/password/update", pwReset, NO_PARAMS, 200),
+			Arguments.of(POST, "/api/user/"+USERNAME+"/password/update", invalidPw, NO_PARAMS, 400),
 
-			user.args(POST, "/api/user/"+USERNAME+"/sleep", sleepData, 200),
-			user.args(POST, "/api/user/"+USERNAME+"/sleep", invalidSleepData, 400),
-			user.args(POST, "/api/user/"+USERNAME+"/sleep", badDurationSleepData, 400),
+			Arguments.of(POST, "/api/user/"+USERNAME+"/sleep", sleepData, NO_PARAMS, 200),
+			Arguments.of(POST, "/api/user/"+USERNAME+"/sleep", invalidSleepData, NO_PARAMS, 400),
+			Arguments.of(POST, "/api/user/"+USERNAME+"/sleep", badDurationSleepData, NO_PARAMS, 400),
 
-			user.args(PUT, "/api/user/"+USERNAME+"/sleep/1", sleepData, 200),
-			user.args(PUT, "/api/user/"+USERNAME+"/sleep/1", invalidSleepData, 400),
-			user.args(PUT, "/api/user/"+USERNAME+"/sleep/1", badDurationSleepData, 400),
+			Arguments.of(PUT, "/api/user/"+USERNAME+"/sleep/1", sleepData, NO_PARAMS, 200),
+			Arguments.of(PUT, "/api/user/"+USERNAME+"/sleep/1", invalidSleepData, NO_PARAMS, 400),
+			Arguments.of(PUT, "/api/user/"+USERNAME+"/sleep/1", badDurationSleepData, NO_PARAMS, 400),
 
-			user.args(GET, "/api/user/"+USERNAME+"/sleep/chart", "", new String[]{"from", from, "to", to}, 200),
-			user.args(GET, "/api/user/"+USERNAME+"/sleep/chart", "", new String[]{"from", "",   "to", ""}, 400),
-			user.args(GET, "/api/user/"+USERNAME+"/sleep/chart", "", new String[]{"from", to,   "to", from}, 400),
+			Arguments.of(GET, "/api/user/"+USERNAME+"/sleep/chart", "", List.of("from", from, "to", to), 200),
+			Arguments.of(GET, "/api/user/"+USERNAME+"/sleep/chart", "", List.of("from", "",   "to", ""), 400),
+			Arguments.of(GET, "/api/user/"+USERNAME+"/sleep/chart", "", List.of("from", to,   "to", from), 400),
 
-			user.args(POST, "/api/user/"+USERNAME+"/sleep/histogram", validHistReq,   200),
-			user.args(POST, "/api/user/"+USERNAME+"/sleep/histogram", invalidHistReq,   400),
+			Arguments.of(POST, "/api/user/"+USERNAME+"/sleep/histogram", validHistReq, NO_PARAMS,   200),
+			Arguments.of(POST, "/api/user/"+USERNAME+"/sleep/histogram", invalidHistReq, NO_PARAMS,   400),
 
-			user.args(POST, "/api/user/"+USERNAME+"/import/json", badJson, 400),
-			user.args(POST, "/api/user/"+USERNAME+"/import/json", goodJson, 200),
-			user.args(POST, "/api/user/"+USERNAME+"/import/csv", badCsv, 400),
-			user.args(POST, "/api/user/"+USERNAME+"/import/csv", goodCsv, 200),
+			Arguments.of(POST, "/api/user/"+USERNAME+"/import/json", badJson, NO_PARAMS, 400),
+			Arguments.of(POST, "/api/user/"+USERNAME+"/import/json", goodJson, NO_PARAMS, 200),
+			Arguments.of(POST, "/api/user/"+USERNAME+"/import/csv", badCsv, NO_PARAMS, 400),
+			Arguments.of(POST, "/api/user/"+USERNAME+"/import/csv", goodCsv, NO_PARAMS, 200),
 
-			user.args(POST, "/api/user/"+USERNAME+"/challenge", invalidChallenge, 400),
-			user.args(POST, "/api/user/"+USERNAME+"/challenge", validChallenge, 200),
+			Arguments.of(POST, "/api/user/"+USERNAME+"/challenge", invalidChallenge, NO_PARAMS, 400),
+			Arguments.of(POST, "/api/user/"+USERNAME+"/challenge", validChallenge, NO_PARAMS, 200),
 
-			user.args(PUT, "/api/user/"+USERNAME+"/challenge/1", invalidChallenge, 400),
-			user.args(PUT, "/api/user/"+USERNAME+"/challenge/1", validChallenge, 200)
+			Arguments.of(PUT, "/api/user/"+USERNAME+"/challenge/1", invalidChallenge, NO_PARAMS, 400),
+			Arguments.of(PUT, "/api/user/"+USERNAME+"/challenge/1", validChallenge, NO_PARAMS, 200)
 		);
 
 	}
 
-	@ParameterizedTest
+	@ParameterizedTest(name = "{0} {1}")
 	@MethodSource("provideAdminTestParameters")
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
-	void testAdminValidation(RequestBuilder testData, int expectedStatus) throws Exception {
-		test(testData, expectedStatus);
+	void testAdminValidation(HttpMethod http, String url, Object body, List<String> params, int expectedStatus) throws Exception {
+		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
 	}
 
-	@ParameterizedTest
+	@ParameterizedTest(name = "{0} {1}")
 	@MethodSource("provideUserTestParameters")
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
-	void testUserValidation(RequestBuilder testData, int expectedStatus) throws Exception {
-		test(testData, expectedStatus);
+	void testUserValidation(HttpMethod http, String url, Object body, List<String> params, int expectedStatus) throws Exception {
+		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
 	}
 
 	private void test(RequestBuilder testData, int expectedStatus) throws Exception {
