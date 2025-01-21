@@ -11,7 +11,6 @@ import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.WithCustomMockUser;
 import com.seebie.server.test.data.RoleArgumentsBuilder;
 import com.seebie.server.test.data.MultiRequestBuilder;
 import com.seebie.server.test.data.TestData;
@@ -226,6 +225,7 @@ public class ControllerValidationTest {
 	void testUserValidation(HttpMethod http, String url, Object body, List<String> params, int expectedStatus) throws Exception {
 		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
 	}
+
 
 
 	private void test(RequestBuilder testData, int expectedStatus) throws Exception {
