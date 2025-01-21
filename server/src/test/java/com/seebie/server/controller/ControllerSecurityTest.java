@@ -10,6 +10,7 @@ import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
+import com.seebie.server.test.data.MultiRequestBuilder;
 import com.seebie.server.test.data.RoleArgumentsBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -87,6 +89,13 @@ public class ControllerSecurityTest {
 	@MockitoBean
 	private SleepDetailsToCsv toCsv;
 
+	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+	@Autowired
+	private MockMvc mockMvc;
+
+	private static RoleArgumentsBuilder test;
+	private static MultiRequestBuilder requestBuilder;
+
 	private static final String USERNAME = "someuser";
 	private static final String ADMINNAME = "admin";
 
@@ -110,11 +119,6 @@ public class ControllerSecurityTest {
 	private static final HistogramRequest histogramRequest = new HistogramRequest(1, new FilterList(List.of()));
 	private static final ChallengeDto challenge = createRandomChallenge(0, 14);
 
-	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-	@Autowired
-	private MockMvc mockMvc;
-
-	private static RoleArgumentsBuilder test;
     @Autowired
     private UserService userService;
 
@@ -139,7 +143,9 @@ public class ControllerSecurityTest {
 		jsonFile = createMultipart(converter.getObjectMapper().writeValueAsString(randomUserData()));
 
 		// so we get the mapper as configured for the app
-		test = new RoleArgumentsBuilder(converter.getObjectMapper());
+		requestBuilder = new MultiRequestBuilder(converter.getObjectMapper());
+
+		test = new RoleArgumentsBuilder();
 
 		test.post("/api/registration", registration, 401, 403, 200);
 		test.get(API_LOGIN, 401, 200, 200);
@@ -206,28 +212,27 @@ public class ControllerSecurityTest {
 		return test.getArguments(RoleArgumentsBuilder.Role.ADMIN);
 	}
 
-
-	@ParameterizedTest(name = "{0} {1}")
+	@ParameterizedTest(name = "{5} {0} {1}")
 	@MethodSource("provideUnauthenticatedTestParameters")
 	@DisplayName("Unauthenticated Access")
-	void testUnauthenticatedSecurity(RequestBuilder testData, int expectedStatus) throws Exception {
-		test(testData, expectedStatus);
+	void testUnauthenticatedSecurity(HttpMethod http, String url, Object body, List<String> params, int expectedStatus, RoleArgumentsBuilder.Role role) throws Exception {
+		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
 	}
 
-	@ParameterizedTest(name = "{0} {1}")
+	@ParameterizedTest(name = "{5} {0} {1}")
 	@MethodSource("provideAdminTestParameters")
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
-	void testAdminSecurity(RequestBuilder testData, int expectedStatus) throws Exception {
-		test(testData, expectedStatus);
+	void testAdminSecurity(HttpMethod http, String url, Object body, List<String> params, int expectedStatus, RoleArgumentsBuilder.Role role) throws Exception {
+		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
 	}
 
-	@ParameterizedTest(name = "{0} {1}")
+	@ParameterizedTest(name = "{5} {0} {1}")
 	@MethodSource("provideUserTestParameters")
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
-	void testUserSecurity(RequestBuilder testData, int expectedStatus) throws Exception {
-		test(testData, expectedStatus);
+	void testUserSecurity(HttpMethod http, String url, Object body, List<String> params, int expectedStatus, RoleArgumentsBuilder.Role role) throws Exception {
+		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
 	}
 
 	private void test(RequestBuilder testData, int expectedStatus) throws Exception {

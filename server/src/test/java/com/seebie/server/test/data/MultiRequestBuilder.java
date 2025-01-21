@@ -1,7 +1,6 @@
 package com.seebie.server.test.data;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -17,25 +16,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.util.CollectionUtils.unmodifiableMultiValueMap;
 
-/**
- * This class assembles all the information necessary for an HTTP request and bundles it with an expected http
- * response code so that they can be used in a parameterized WebMvcTest
- */
-public class ArgumentsBuilder {
+public class MultiRequestBuilder {
 
-    private Function<Object, String> bodyMapper;
+    private final Function<Object, String> bodyMapper;
 
-    public ArgumentsBuilder(ObjectMapper mapper) {
+    public MultiRequestBuilder(ObjectMapper mapper) {
         // If the test data is a string, presume it is already in the correct format and return directly.
         // Because if you pass a string "" to the object mapper, it doesn't return the string, it returns """".
         this.bodyMapper = uncheck(obj -> obj instanceof String testData
                 ? testData
                 : mapper.writerFor(obj.getClass()).writeValueAsString(obj)
         );
-    }
-
-    public RequestBuilder toMvcRequest(HttpMethod method, String urlPath, Object reqBody) {
-        return toMvcRequest(method, urlPath, reqBody, List.of());
     }
 
     public RequestBuilder toMvcRequest(HttpMethod method, String urlPath, Object reqBody, List<String> reqParams) {

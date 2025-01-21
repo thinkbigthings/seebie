@@ -11,8 +11,7 @@ import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
-import com.seebie.server.test.data.ArgumentsBuilder;
-import com.seebie.server.test.data.RoleArgumentsBuilder;
+import com.seebie.server.test.data.MultiRequestBuilder;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -87,6 +86,12 @@ public class ControllerValidationTest {
 	@MockitoBean
 	private SleepDetailsToCsv toCsv;
 
+	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+	@Autowired
+	private MockMvc mockMvc;
+
+	private static MultiRequestBuilder requestBuilder;
+
 	private static final String USERNAME = "someuser";
 	private static final String ADMINNAME = "admin";
 
@@ -129,14 +134,6 @@ public class ControllerValidationTest {
 	private static final ChallengeDto invalidChallenge = new ChallengeDto("", "", null, null);
 	private static final ChallengeDto validChallenge = TestData.createRandomChallenge(0, 14);
 
-	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-	@Autowired
-	private MockMvc mockMvc;
-
-	private static RoleArgumentsBuilder test;
-	private static ArgumentsBuilder user;
-	private static ArgumentsBuilder admin;
-
 	@BeforeEach
 	public void setup() {
 
@@ -154,13 +151,9 @@ public class ControllerValidationTest {
 	@BeforeAll
 	public static void setup(@Autowired MappingJackson2HttpMessageConverter converter) throws Exception {
 
-		// so we get the mapper as configured for the app
-		test = new RoleArgumentsBuilder(converter.getObjectMapper());
-
 		goodJson = createMultipart(converter.getObjectMapper().writeValueAsString(randomUserData()));
 
-		user = new ArgumentsBuilder(converter.getObjectMapper());
-		admin = new ArgumentsBuilder(converter.getObjectMapper());
+		requestBuilder = new MultiRequestBuilder(converter.getObjectMapper());
 	}
 
 	private static List<Arguments> provideAdminTestParameters() {
@@ -213,7 +206,7 @@ public class ControllerValidationTest {
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
 	void testAdminValidation(HttpMethod http, String url, Object body, List<String> params, int expectedStatus) throws Exception {
-		test(admin.toMvcRequest(http, url, body, params), expectedStatus);
+		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
 	}
 
 	@ParameterizedTest(name = "{0} {1}")
@@ -221,7 +214,7 @@ public class ControllerValidationTest {
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")
 	void testUserValidation(HttpMethod http, String url, Object body, List<String> params, int expectedStatus) throws Exception {
-		test(user.toMvcRequest(http, url, body, params), expectedStatus);
+		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
 	}
 
 	private void test(RequestBuilder testData, int expectedStatus) throws Exception {
