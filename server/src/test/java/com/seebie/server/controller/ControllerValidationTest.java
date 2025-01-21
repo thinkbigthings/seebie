@@ -57,7 +57,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //   Serialization / Deserialization
 //   Error handling
 
-@Disabled
 @WebMvcTest(properties = {
 		// this is a sensitive property and should not be included in the main application.properties
 		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
@@ -217,7 +216,7 @@ public class ControllerValidationTest {
 		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
 	}
 
-	@ParameterizedTest(name = "{0} + {1} + {2} + {3}")
+	@ParameterizedTest(name = "{0} {1}")
 	@MethodSource("provideUserTestParameters")
 	@WithCustomMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")

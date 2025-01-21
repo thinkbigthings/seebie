@@ -257,7 +257,8 @@ public class SessionSecurityTest extends IntegrationTest {
 
         // Check that the log message was generated
         var expiredCookie = originalCookie.getValue();
-        assertEquals(1, memoryAppender.search("Session expired or invalid", expiredCookie, testUserEmail).size());
+        var path = testUserInfoUri.getPath();
+        assertEquals(1, memoryAppender.search("Session expired or invalid", expiredCookie, path).size());
     }
 
     @Test
@@ -338,7 +339,8 @@ public class SessionSecurityTest extends IntegrationTest {
         assertEquals(1, persistentLoginRepository.countAllByUsername(testUserEmail));
 
         // for testing, we can indiscriminately delete all expired tokens, not just for this user
-        // expired tokens for other users are useless anyway (unless it affects cookies being returned as NOT_SET vs CLEARED)
+        // expired tokens for other users are useless anyway
+        // (unless it affects cookies being returned as NOT_SET vs CLEARED, but we've never seen that)
         schedulingService.callDeleteExpiredRememberMeTokens();
 
         // the token shouldn't even be present in the database anymore
@@ -354,9 +356,10 @@ public class SessionSecurityTest extends IntegrationTest {
         assertResponse(response, 401, NOT_SET, NOT_SET);
 
         // Check that the log message was generated
+        var path = testUserInfoUri.getPath();
         assertEquals(1, memoryAppender.search("Authentication event AuthenticationSuccessEvent", testUserEmail).size());
-        assertEquals(2, memoryAppender.search("Session expired or invalid.", "SESSION", testUserEmail).size());
-        assertEquals(1, memoryAppender.search("Session expired or invalid.", "remember-me", testUserEmail).size());
+        assertEquals(2, memoryAppender.search("Session expired or invalid.", "SESSION", path).size());
+        assertEquals(1, memoryAppender.search("Session expired or invalid.", "remember-me", path).size());
     }
 
     private void waitForExpiration(Duration timeout) {
