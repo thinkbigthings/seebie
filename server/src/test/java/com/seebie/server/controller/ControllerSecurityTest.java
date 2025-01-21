@@ -105,8 +105,8 @@ public class ControllerSecurityTest {
 	private static final String from = yesterday.format(ISO_LOCAL_DATE);
 	private static final String to = today.format(ISO_LOCAL_DATE);
 
-	private static final String[] challengeParams = new String[]{"currentDate", LocalDate.now().format(ISO_LOCAL_DATE)};
-	private static final String[] chartParams = new String[]{"from", from, "to", to};
+	private static final List<String> challengeParams = List.of("currentDate", LocalDate.now().format(ISO_LOCAL_DATE));
+	private static final List<String> chartParams = List.of("from", from, "to", to);
 	private static final HistogramRequest histogramRequest = new HistogramRequest(1, new FilterList(List.of()));
 	private static final ChallengeDto challenge = createRandomChallenge(0, 14);
 
@@ -207,14 +207,14 @@ public class ControllerSecurityTest {
 	}
 
 
-	@ParameterizedTest
+	@ParameterizedTest(name = "{0} {1}")
 	@MethodSource("provideUnauthenticatedTestParameters")
 	@DisplayName("Unauthenticated Access")
 	void testUnauthenticatedSecurity(RequestBuilder testData, int expectedStatus) throws Exception {
 		test(testData, expectedStatus);
 	}
 
-	@ParameterizedTest
+	@ParameterizedTest(name = "{0} {1}")
 	@MethodSource("provideAdminTestParameters")
 	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
@@ -222,7 +222,7 @@ public class ControllerSecurityTest {
 		test(testData, expectedStatus);
 	}
 
-	@ParameterizedTest
+	@ParameterizedTest(name = "{0} {1}")
 	@MethodSource("provideUserTestParameters")
 	@WithMockUser(username = USERNAME, roles = {"USER"})
 	@DisplayName("User Access")

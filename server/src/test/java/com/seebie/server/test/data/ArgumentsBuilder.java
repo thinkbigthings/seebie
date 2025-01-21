@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.List;
 import java.util.function.Function;
 
 import static com.seebie.server.function.Functional.uncheck;
@@ -34,24 +35,15 @@ public class ArgumentsBuilder {
     }
 
     public RequestBuilder toMvcRequest(HttpMethod method, String urlPath, Object reqBody) {
-        return toMvcRequest(method, urlPath, reqBody, new String[0]);
+        return toMvcRequest(method, urlPath, reqBody, List.of());
     }
 
-    public RequestBuilder toMvcRequest(HttpMethod method, String urlPath, Object reqBody, String[] reqParams) {
+    public RequestBuilder toMvcRequest(HttpMethod method, String urlPath, Object reqBody, List<String> reqParams) {
         var params = toParams(reqParams);
         var builder = reqBody instanceof MockMultipartFile multipartFile
                 ? multipart(urlPath).file(multipartFile)
                 : request(method, urlPath).content(bodyMapper.apply(reqBody)).params(params).contentType(APPLICATION_JSON);
         return builder.secure(true);
-    }
-
-    public Arguments args(HttpMethod method, String urlPath, Object reqBody, int expectedResponse) {
-        return args(method, urlPath, reqBody, new String[0], expectedResponse);
-    }
-
-    public Arguments args(HttpMethod method, String urlPath, Object reqBody, String[] reqParams, int expectedResponse) {
-        var request = toMvcRequest(method, urlPath, reqBody, reqParams);
-        return Arguments.of(request, expectedResponse);
     }
 
     /**
@@ -61,13 +53,13 @@ public class ArgumentsBuilder {
      * @param newReqParams
      * @return
      */
-    private static MultiValueMap<String, String> toParams(String... newReqParams) {
-        if (newReqParams.length % 2 != 0) {
+    private static MultiValueMap<String, String> toParams(List<String> newReqParams) {
+        if (newReqParams.size() % 2 != 0) {
             throw new IllegalArgumentException("Number of args must be even");
         }
         var newParams = new LinkedMultiValueMap<String, String>();
-        for (int i = 0; i < newReqParams.length; i += 2) {
-            newParams.add(newReqParams[i], newReqParams[i + 1]);
+        for (int i = 0; i < newReqParams.size(); i += 2) {
+            newParams.add(newReqParams.get(i), newReqParams.get(i + 1));
         }
         return unmodifiableMultiValueMap(newParams);
     }

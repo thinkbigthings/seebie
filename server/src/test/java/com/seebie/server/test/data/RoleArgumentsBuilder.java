@@ -12,7 +12,7 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
 /**
- * This class is a convenience for creating a set of arguments for a set of roles.
+ * This class is a convenience for creating test arguments for a set of roles.
  * It is used to create a list of arguments for each role, so that they can be used in a parameterized WebMvcTest
  * The advantage of this is that it allows you to test the same endpoint with different roles in the same test
  * and ensures that the same tests are run for each role.
@@ -23,11 +23,11 @@ public class RoleArgumentsBuilder {
         USER, ADMIN, UNAUTHENTICATED
     }
 
-    private List<Arguments> unauthenticated = new ArrayList<>();
-    private List<Arguments> user = new ArrayList<>();
-    private List<Arguments> admin = new ArrayList<>();
+    private final List<Arguments> unauthenticated = new ArrayList<>();
+    private final List<Arguments> user = new ArrayList<>();
+    private final List<Arguments> admin = new ArrayList<>();
 
-    private ArgumentsBuilder builder;
+    private final ArgumentsBuilder builder;
 
     public RoleArgumentsBuilder(ObjectMapper mapper) {
         this.builder = new ArgumentsBuilder(mapper);
@@ -51,7 +51,7 @@ public class RoleArgumentsBuilder {
         addArgs(builder.toMvcRequest(HttpMethod.PUT, urlPath, reqBody), unauthenticated, user, admin);
     }
 
-    public void get(String urlPath, String[] requestParams, int unauthenticated, int user, int admin) {
+    public void get(String urlPath, List<String> requestParams, int unauthenticated, int user, int admin) {
         addArgs(builder.toMvcRequest(GET, urlPath, "", requestParams), unauthenticated, user, admin);
     }
 
