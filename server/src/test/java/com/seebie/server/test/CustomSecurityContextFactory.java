@@ -15,8 +15,8 @@ public class CustomSecurityContextFactory implements WithSecurityContextFactory<
     public SecurityContext createSecurityContext(WithCustomMockUser mockUser) {
         AppUserDetails customPrincipal = new AppUserDetails(
             1L, // Replace with mock user ID
-            mockUser.username(), // legacyUsername
-            mockUser.username() + "@example.com", // Email derived from username for testing
+                mockUser.username() + "@example.com", // Email derived from username for testing
+            mockUser.legacyUsername(), // legacyUsername
             "password", // Placeholder password
             List.of(new SimpleGrantedAuthority("ROLE_" + mockUser.roles()[0]))
         );

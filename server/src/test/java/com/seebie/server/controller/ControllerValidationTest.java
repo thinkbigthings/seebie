@@ -16,7 +16,6 @@ import com.seebie.server.test.data.MultiRequestBuilder;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -210,7 +209,7 @@ public class ControllerValidationTest {
 
 	@ParameterizedTest(name = "{0} {1}")
 	@MethodSource("provideAdminTestParameters")
-	@WithCustomMockUser(username = ADMINNAME, roles = {"ADMIN"})
+	@WithCustomMockUser(legacyUsername = ADMINNAME, username="admin@example.com", roles = {"ADMIN"})
 	@DisplayName("Admin Access")
 	void testAdminValidation(HttpMethod http, String url, Object body, List<String> params, int expectedStatus) throws Exception {
 		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
@@ -218,13 +217,11 @@ public class ControllerValidationTest {
 
 	@ParameterizedTest(name = "{0} {1}")
 	@MethodSource("provideUserTestParameters")
-	@WithCustomMockUser(username = USERNAME, roles = {"USER"})
+	@WithCustomMockUser(legacyUsername = USERNAME, username = USERNAME+"@example.com", roles = {"USER"})
 	@DisplayName("User Access")
 	void testUserValidation(HttpMethod http, String url, Object body, List<String> params, int expectedStatus) throws Exception {
 		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
 	}
-
-
 
 	private void test(RequestBuilder testData, int expectedStatus) throws Exception {
 		mockMvc.perform(testData)

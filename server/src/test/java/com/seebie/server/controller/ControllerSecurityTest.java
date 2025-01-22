@@ -10,11 +10,11 @@ import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
+import com.seebie.server.test.WithCustomMockUser;
 import com.seebie.server.test.data.MultiRequestBuilder;
 import com.seebie.server.test.data.RoleArgumentsBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -229,7 +229,7 @@ public class ControllerSecurityTest {
 
 	@ParameterizedTest(name = "{5} {0} {1}")
 	@MethodSource("provideAdminTestParameters")
-	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
+	@WithCustomMockUser(legacyUsername = ADMINNAME, username="admin@example.com", roles = {"ADMIN"})
 	@DisplayName("Admin Access")
 	void testAdminSecurity(HttpMethod http, String url, Object body, List<String> params, int expectedStatus, RoleArgumentsBuilder.Role role) throws Exception {
 		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
@@ -237,7 +237,7 @@ public class ControllerSecurityTest {
 
 	@ParameterizedTest(name = "{5} {0} {1}")
 	@MethodSource("provideUserTestParameters")
-	@WithMockUser(username = USERNAME, roles = {"USER"})
+	@WithCustomMockUser(legacyUsername = USERNAME, username = USERNAME+"@example.com", roles = {"USER"})
 	@DisplayName("User Access")
 	void testUserSecurity(HttpMethod http, String url, Object body, List<String> params, int expectedStatus, RoleArgumentsBuilder.Role role) throws Exception {
 		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
