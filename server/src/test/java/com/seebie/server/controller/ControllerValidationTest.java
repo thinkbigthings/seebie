@@ -98,8 +98,10 @@ public class ControllerValidationTest {
 
 	private static MultiRequestBuilder requestBuilder;
 
-	private static final String USERNAME = "someuser";
-	private static final String ADMINNAME = "admin";
+	private static final String USER_PUBLICID = "someuser";
+	private static final String ADMIN_PUBLICID = "admin";
+	private static final String USER_LOGINID = "someuser@example.com";
+	private static final String ADMIN_LOGINID = "admin@example.com";
 
 	private static final RegistrationRequest registration = createRandomUserRegistration();
 	private static final SleepData sleepData = createRandomSleepData();
@@ -172,44 +174,44 @@ public class ControllerValidationTest {
 	private static List<Arguments> provideUserTestParameters() {
 		return List.of(
 
-			Arguments.of(PUT, "/api/user/"+USERNAME+"/personalInfo", info, NO_PARAMS, 200),
-			Arguments.of(PUT, "/api/user/"+USERNAME+"/personalInfo", invalidInfo, NO_PARAMS, 400),
+			Arguments.of(PUT, "/api/user/"+ USER_PUBLICID +"/personalInfo", info, NO_PARAMS, 200),
+			Arguments.of(PUT, "/api/user/"+ USER_PUBLICID +"/personalInfo", invalidInfo, NO_PARAMS, 400),
 
-			Arguments.of(POST, "/api/user/"+USERNAME+"/password/update", pwReset, NO_PARAMS, 200),
-			Arguments.of(POST, "/api/user/"+USERNAME+"/password/update", invalidPw, NO_PARAMS, 400),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLICID +"/password/update", pwReset, NO_PARAMS, 200),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLICID +"/password/update", invalidPw, NO_PARAMS, 400),
 
-			Arguments.of(POST, "/api/user/"+USERNAME+"/sleep", sleepData, NO_PARAMS, 200),
-			Arguments.of(POST, "/api/user/"+USERNAME+"/sleep", invalidSleepData, NO_PARAMS, 400),
-			Arguments.of(POST, "/api/user/"+USERNAME+"/sleep", badDurationSleepData, NO_PARAMS, 400),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLICID +"/sleep", sleepData, NO_PARAMS, 200),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLICID +"/sleep", invalidSleepData, NO_PARAMS, 400),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLICID +"/sleep", badDurationSleepData, NO_PARAMS, 400),
 
-			Arguments.of(PUT, "/api/user/"+USERNAME+"/sleep/1", sleepData, NO_PARAMS, 200),
-			Arguments.of(PUT, "/api/user/"+USERNAME+"/sleep/1", invalidSleepData, NO_PARAMS, 400),
-			Arguments.of(PUT, "/api/user/"+USERNAME+"/sleep/1", badDurationSleepData, NO_PARAMS, 400),
+			Arguments.of(PUT, "/api/user/"+ USER_PUBLICID +"/sleep/1", sleepData, NO_PARAMS, 200),
+			Arguments.of(PUT, "/api/user/"+ USER_PUBLICID +"/sleep/1", invalidSleepData, NO_PARAMS, 400),
+			Arguments.of(PUT, "/api/user/"+ USER_PUBLICID +"/sleep/1", badDurationSleepData, NO_PARAMS, 400),
 
-			Arguments.of(GET, "/api/user/"+USERNAME+"/sleep/chart", "", List.of("from", from, "to", to), 200),
-			Arguments.of(GET, "/api/user/"+USERNAME+"/sleep/chart", "", List.of("from", "",   "to", ""), 400),
-			Arguments.of(GET, "/api/user/"+USERNAME+"/sleep/chart", "", List.of("from", to,   "to", from), 400),
+			Arguments.of(GET, "/api/user/"+ USER_PUBLICID +"/sleep/chart", "", List.of("from", from, "to", to), 200),
+			Arguments.of(GET, "/api/user/"+ USER_PUBLICID +"/sleep/chart", "", List.of("from", "",   "to", ""), 400),
+			Arguments.of(GET, "/api/user/"+ USER_PUBLICID +"/sleep/chart", "", List.of("from", to,   "to", from), 400),
 
-			Arguments.of(POST, "/api/user/"+USERNAME+"/sleep/histogram", validHistReq, NO_PARAMS,   200),
-			Arguments.of(POST, "/api/user/"+USERNAME+"/sleep/histogram", invalidHistReq, NO_PARAMS,   400),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLICID +"/sleep/histogram", validHistReq, NO_PARAMS,   200),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLICID +"/sleep/histogram", invalidHistReq, NO_PARAMS,   400),
 
-			Arguments.of(POST, "/api/user/"+USERNAME+"/import/json", badJson, NO_PARAMS, 400),
-			Arguments.of(POST, "/api/user/"+USERNAME+"/import/json", goodJson, NO_PARAMS, 200),
-			Arguments.of(POST, "/api/user/"+USERNAME+"/import/csv", badCsv, NO_PARAMS, 400),
-			Arguments.of(POST, "/api/user/"+USERNAME+"/import/csv", goodCsv, NO_PARAMS, 200),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLICID +"/import/json", badJson, NO_PARAMS, 400),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLICID +"/import/json", goodJson, NO_PARAMS, 200),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLICID +"/import/csv", badCsv, NO_PARAMS, 400),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLICID +"/import/csv", goodCsv, NO_PARAMS, 200),
 
-			Arguments.of(POST, "/api/user/"+USERNAME+"/challenge", invalidChallenge, NO_PARAMS, 400),
-			Arguments.of(POST, "/api/user/"+USERNAME+"/challenge", validChallenge, NO_PARAMS, 200),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLICID +"/challenge", invalidChallenge, NO_PARAMS, 400),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLICID +"/challenge", validChallenge, NO_PARAMS, 200),
 
-			Arguments.of(PUT, "/api/user/"+USERNAME+"/challenge/1", invalidChallenge, NO_PARAMS, 400),
-			Arguments.of(PUT, "/api/user/"+USERNAME+"/challenge/1", validChallenge, NO_PARAMS, 200)
+			Arguments.of(PUT, "/api/user/"+ USER_PUBLICID +"/challenge/1", invalidChallenge, NO_PARAMS, 400),
+			Arguments.of(PUT, "/api/user/"+ USER_PUBLICID +"/challenge/1", validChallenge, NO_PARAMS, 200)
 		);
 
 	}
 
 	@ParameterizedTest(name = "{0} {1}")
 	@MethodSource("provideAdminTestParameters")
-	@WithCustomMockUser(legacyUsername = ADMINNAME, username="admin@example.com", roles = {"ADMIN"})
+	@WithCustomMockUser(legacyUsername = ADMIN_PUBLICID, username=ADMIN_LOGINID, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
 	void testAdminValidation(HttpMethod http, String url, Object body, List<String> params, int expectedStatus) throws Exception {
 		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
@@ -217,7 +219,7 @@ public class ControllerValidationTest {
 
 	@ParameterizedTest(name = "{0} {1}")
 	@MethodSource("provideUserTestParameters")
-	@WithCustomMockUser(legacyUsername = USERNAME, username = USERNAME+"@example.com", roles = {"USER"})
+	@WithCustomMockUser(legacyUsername = USER_PUBLICID, username = USER_LOGINID, roles = {"USER"})
 	@DisplayName("User Access")
 	void testUserValidation(HttpMethod http, String url, Object body, List<String> params, int expectedStatus) throws Exception {
 		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);

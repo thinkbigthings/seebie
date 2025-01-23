@@ -6,6 +6,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * By extending UserDetails to include a separate identifier
+ * we're cleanly separating the authentication identifier (email)
+ * from the public identifier (used in url path).
+ */
 public class AppUserDetails implements UserDetails {
 
     private Long id;

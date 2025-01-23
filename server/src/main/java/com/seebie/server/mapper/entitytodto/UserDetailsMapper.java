@@ -24,7 +24,7 @@ public class UserDetailsMapper implements Function<User, UserDetails> {
         return builder().username(" ").password("").roles(toNames(u.getRoles())).build().getAuthorities();
     }
 
-    private String[] toNames(Set<Role> roles) {
+    public static String[] toNames(Set<Role> roles) {
         return roles.stream()
                 .map(Role::name)
                 .toArray(String[]::new);

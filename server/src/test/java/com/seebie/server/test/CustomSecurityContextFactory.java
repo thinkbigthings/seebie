@@ -7,26 +7,26 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
-import java.util.List;
+import java.util.Arrays;
 
 public class CustomSecurityContextFactory implements WithSecurityContextFactory<WithCustomMockUser> {
 
     @Override
-    public SecurityContext createSecurityContext(WithCustomMockUser mockUser) {
-        AppUserDetails customPrincipal = new AppUserDetails(
-            1L, // Replace with mock user ID
-                mockUser.username() + "@example.com", // Email derived from username for testing
-            mockUser.legacyUsername(), // legacyUsername
-            "password", // Placeholder password
-            List.of(new SimpleGrantedAuthority("ROLE_" + mockUser.roles()[0]))
-        );
+    public SecurityContext createSecurityContext(WithCustomMockUser user) {
+
+        var publicId = user.legacyUsername();
+        var loginId = user.username();
+        var roles = Arrays.stream(user.roles())
+                .map(r -> "ROLE_" + r)
+                .map(SimpleGrantedAuthority::new)
+                .toList();
+
+        var customPrincipal = new AppUserDetails(1L, loginId, publicId, "password", roles);
+
+        var authToken = new UsernamePasswordAuthenticationToken(customPrincipal,"password", roles);
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(new UsernamePasswordAuthenticationToken(
-            customPrincipal,
-            "password",
-            customPrincipal.getAuthorities()
-        ));
+        context.setAuthentication(authToken);
         return context;
     }
 }
