@@ -24,44 +24,44 @@ public class ChallengeController {
     }
 
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value= "/user/{legacyUsername}/challenge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value= "/user/{userPublicId}/challenge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void createChallenge(@PathVariable String legacyUsername, @Valid @RequestBody ChallengeDto challenge) {
-        challengeService.saveNew(legacyUsername, challenge);
+    public void createChallenge(@PathVariable String userPublicId, @Valid @RequestBody ChallengeDto challenge) {
+        challengeService.saveNew(userPublicId, challenge);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value= "/user/{legacyUsername}/challenge/{challengeId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value= "/user/{userPublicId}/challenge/{challengeId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void updateChallenge(@Valid @RequestBody ChallengeDto challengeData, @PathVariable String legacyUsername, @PathVariable Long challengeId) {
-        challengeService.update(legacyUsername, challengeId, challengeData);
+    public void updateChallenge(@Valid @RequestBody ChallengeDto challengeData, @PathVariable String userPublicId, @PathVariable Long challengeId) {
+        challengeService.update(userPublicId, challengeId, challengeData);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value= "/user/{legacyUsername}/challenge/{challengeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value= "/user/{userPublicId}/challenge/{challengeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ChallengeDto getChallenge(@PathVariable String legacyUsername, @PathVariable Long challengeId) {
-        return challengeService.retrieve(legacyUsername, challengeId);
+    public ChallengeDto getChallenge(@PathVariable String userPublicId, @PathVariable Long challengeId) {
+        return challengeService.retrieve(userPublicId, challengeId);
     }
 
     /**
      *
-     * @param legacyUsername The user's username is used to retrieve their challenges
+     * @param userPublicId The user's username is used to retrieve their challenges
      * @return
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value= "/user/{legacyUsername}/challenge", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value= "/user/{userPublicId}/challenge", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<ChallengeDetailDto> getChallenges(@PathVariable String legacyUsername) {
-        return challengeService.getChallenges(legacyUsername);
+    public List<ChallengeDetailDto> getChallenges(@PathVariable String userPublicId) {
+        return challengeService.getChallenges(userPublicId);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value= "/user/{legacyUsername}/challenge/{challengeId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value= "/user/{userPublicId}/challenge/{challengeId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void delete(@PathVariable String legacyUsername, @PathVariable Long challengeId) {
-        challengeService.remove(legacyUsername, challengeId);
+    public void delete(@PathVariable String userPublicId, @PathVariable Long challengeId) {
+        challengeService.remove(userPublicId, challengeId);
     }
 
 }

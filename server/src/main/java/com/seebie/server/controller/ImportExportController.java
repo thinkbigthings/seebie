@@ -42,15 +42,15 @@ public class ImportExportController {
         this.toCsv = toCsv;
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value="/user/{legacyUsername}/export/json", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value="/user/{userPublicId}/export/json", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> exportUserData(@PathVariable String legacyUsername) {
+    public ResponseEntity<byte[]> exportUserData(@PathVariable String userPublicId) {
 
-        String filename = "seebie-data-" + legacyUsername + ".json";
+        String filename = "seebie-data-" + userPublicId + ".json";
         String headerValue = "attachment; filename=" + filename;
 
-        String json = toJson(importExportService.retrieveUserData(legacyUsername));
+        String json = toJson(importExportService.retrieveUserData(userPublicId));
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -58,33 +58,33 @@ public class ImportExportController {
                 .body(json.getBytes(UTF_8));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value= "/user/{legacyUsername}/import/json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value= "/user/{userPublicId}/import/json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public UploadResponse importUserData(@PathVariable String legacyUsername, @RequestParam("file") MultipartFile file) throws IOException {
+    public UploadResponse importUserData(@PathVariable String userPublicId, @RequestParam("file") MultipartFile file) throws IOException {
 
-        LOG.info("Import started for user " + legacyUsername);
+        LOG.info("Import started for user " + userPublicId);
 
         String rawJson = new String(file.getBytes(), UTF_8);
 
         var userData = parseJson(rawJson);
-        long numImported = importExportService.saveUserData(legacyUsername, userData);
+        long numImported = importExportService.saveUserData(userPublicId, userData);
 
-        LOG.info("Imported " + numImported + " records for " + legacyUsername);
+        LOG.info("Imported " + numImported + " records for " + userPublicId);
 
-        return new UploadResponse(numImported, legacyUsername);
+        return new UploadResponse(numImported, userPublicId);
     }
 
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value= "/user/{legacyUsername}/export/csv", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value= "/user/{userPublicId}/export/csv", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> downloadSleepData(@PathVariable String legacyUsername) {
+    public ResponseEntity<byte[]> downloadSleepData(@PathVariable String userPublicId) {
 
-        String filename = "seebie-data-" + legacyUsername + ".csv";
+        String filename = "seebie-data-" + userPublicId + ".csv";
         String headerValue = "attachment; filename=" + filename;
 
-        String csv = toCsv.apply(importExportService.retrieveSleepDetails(legacyUsername));
+        String csv = toCsv.apply(importExportService.retrieveSleepDetails(userPublicId));
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -92,21 +92,21 @@ public class ImportExportController {
                 .body(csv.getBytes(UTF_8));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value= "/user/{legacyUsername}/import/csv", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value= "/user/{userPublicId}/import/csv", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public UploadResponse uploadSleepData(@PathVariable String legacyUsername, @RequestParam("file") MultipartFile file) throws IOException {
+    public UploadResponse uploadSleepData(@PathVariable String userPublicId, @RequestParam("file") MultipartFile file) throws IOException {
 
         LOG.info("Upload started...");
 
         String rawCsv = new String(file.getBytes(), UTF_8);
 
         var parsedData = fromCsv.apply(rawCsv);
-        long numImported = importExportService.saveSleepData(legacyUsername, parsedData);
+        long numImported = importExportService.saveSleepData(userPublicId, parsedData);
 
-        LOG.info("Imported " + numImported + " records for " + legacyUsername);
+        LOG.info("Imported " + numImported + " records for " + userPublicId);
 
-        return new UploadResponse(numImported, legacyUsername);
+        return new UploadResponse(numImported, userPublicId);
     }
 
     public String toJson(UserData userData) {

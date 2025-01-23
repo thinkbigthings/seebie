@@ -13,22 +13,20 @@ import java.util.Collections;
  */
 public class AppUserDetails implements UserDetails {
 
-    private Long id;
     private String email;
-    private String legacyUsername;
+    private String userPublicId;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public AppUserDetails(Long userId, String email, String legacyUsername, String password, Collection<? extends GrantedAuthority> authorities) {
-        this.id = userId;
+    public AppUserDetails(String email, String userPublicId, String password, Collection<? extends GrantedAuthority> authorities) {
         this.email = email;
-        this.legacyUsername = legacyUsername;
+        this.userPublicId = userPublicId;
         this.password = password;
         this.authorities = Collections.unmodifiableCollection(authorities);
     }
 
-    public String getLegacyUsername() {
-        return legacyUsername;
+    public String getUserPublicId() {
+        return userPublicId;
     }
 
     @Override

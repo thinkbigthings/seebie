@@ -14,14 +14,14 @@ public class CustomSecurityContextFactory implements WithSecurityContextFactory<
     @Override
     public SecurityContext createSecurityContext(WithCustomMockUser user) {
 
-        var publicId = user.legacyUsername();
+        var publicId = user.userPublicId();
         var loginId = user.username();
         var roles = Arrays.stream(user.roles())
                 .map(r -> "ROLE_" + r)
                 .map(SimpleGrantedAuthority::new)
                 .toList();
 
-        var customPrincipal = new AppUserDetails(1L, loginId, publicId, "password", roles);
+        var customPrincipal = new AppUserDetails(loginId, publicId, "password", roles);
 
         var authToken = new UsernamePasswordAuthenticationToken(customPrincipal,"password", roles);
 

@@ -35,26 +35,26 @@ public class SleepController {
         this.sleepService = sleepService;
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value="/user/{legacyUsername}/sleep", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value="/user/{userPublicId}/sleep", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void saveSleepSession(@Valid @ValidDurations @RequestBody SleepData dto, @PathVariable String legacyUsername) {
+    public void saveSleepSession(@Valid @ValidDurations @RequestBody SleepData dto, @PathVariable String userPublicId) {
 
-        sleepService.saveNew(legacyUsername, dto);
+        sleepService.saveNew(userPublicId, dto);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value="/user/{legacyUsername}/sleep", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value="/user/{userPublicId}/sleep", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public PagedModel<SleepDetails> getSleepList(@PathVariable String legacyUsername, @PageableDefault(page = 0, size = 10, sort = {"stopTime"}, direction=Sort.Direction.DESC) Pageable page) {
+    public PagedModel<SleepDetails> getSleepList(@PathVariable String userPublicId, @PageableDefault(page = 0, size = 10, sort = {"stopTime"}, direction=Sort.Direction.DESC) Pageable page) {
 
-        return sleepService.listSleepData(legacyUsername, page);
+        return sleepService.listSleepData(userPublicId, page);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value="/user/{legacyUsername}/sleep/chart", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value="/user/{userPublicId}/sleep/chart", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<SleepDataPoint> getChartData(@PathVariable String legacyUsername, @RequestParam LocalDate from, @RequestParam LocalDate to) {
+    public List<SleepDataPoint> getChartData(@PathVariable String userPublicId, @RequestParam LocalDate from, @RequestParam LocalDate to) {
 
         if(to.isBefore(from)) {
             throw new IllegalArgumentException("Request parameter \"from\" must be before \"to\"");
@@ -62,7 +62,7 @@ public class SleepController {
 
         LOG.info("Requesting chart data with range " + from + " " + to);
 
-        return sleepService.listChartData(legacyUsername, from, to);
+        return sleepService.listChartData(userPublicId, from, to);
     }
 
     /**
@@ -70,40 +70,40 @@ public class SleepController {
      * the request body can be used in a standard way. You shouldn't send a request body with a GET request
      * or at the very least it's somewhat controversial.
      *
-     * @param legacyUsername
+     * @param userPublicId
      * @param request
      * @return
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value= "/user/{legacyUsername}/sleep/histogram", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value= "/user/{userPublicId}/sleep/histogram", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public StackedHistograms getHistogramData(@Valid @RequestBody HistogramRequest request, @PathVariable String legacyUsername) {
+    public StackedHistograms getHistogramData(@Valid @RequestBody HistogramRequest request, @PathVariable String userPublicId) {
 
         LOG.info("Requesting histogram data with " + request);
 
-        var listsSleepAmounts = sleepService.listSleepAmounts(legacyUsername, request.filters().dataFilters());
+        var listsSleepAmounts = sleepService.listSleepAmounts(userPublicId, request.filters().dataFilters());
         return histogramCalculator.buildNormalizedHistogram(request.binSize(), listsSleepAmounts);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value= "/user/{legacyUsername}/sleep/{sleepId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value= "/user/{userPublicId}/sleep/{sleepId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public SleepDetails getSleepSession(@PathVariable String legacyUsername, @PathVariable Long sleepId) {
-        return sleepService.retrieve(legacyUsername, sleepId);
+    public SleepDetails getSleepSession(@PathVariable String userPublicId, @PathVariable Long sleepId) {
+        return sleepService.retrieve(userPublicId, sleepId);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value= "/user/{legacyUsername}/sleep/{sleepId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value= "/user/{userPublicId}/sleep/{sleepId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void updateSleepSession(@Valid @ValidDurations @RequestBody SleepData sleepData, @PathVariable String legacyUsername, @PathVariable Long sleepId) {
-        sleepService.update(legacyUsername, sleepId, sleepData);
+    public void updateSleepSession(@Valid @ValidDurations @RequestBody SleepData sleepData, @PathVariable String userPublicId, @PathVariable Long sleepId) {
+        sleepService.update(userPublicId, sleepId, sleepData);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value= "/user/{legacyUsername}/sleep/{sleepId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value= "/user/{userPublicId}/sleep/{sleepId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void delete(@PathVariable String legacyUsername, @PathVariable Long sleepId) {
-        sleepService.remove(legacyUsername, sleepId);
+    public void delete(@PathVariable String userPublicId, @PathVariable Long sleepId) {
+        sleepService.remove(userPublicId, sleepId);
     }
 
 }

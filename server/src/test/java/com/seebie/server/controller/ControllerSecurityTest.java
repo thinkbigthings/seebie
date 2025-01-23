@@ -230,7 +230,7 @@ public class ControllerSecurityTest {
 
 	@ParameterizedTest(name = "{5} {0} {1}")
 	@MethodSource("provideAdminTestParameters")
-	@WithCustomMockUser(legacyUsername = ADMIN_PUBLICID, username=ADMIN_LOGINID, roles = {"ADMIN"})
+	@WithCustomMockUser(userPublicId = ADMIN_PUBLICID, username=ADMIN_LOGINID, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
 	void testAdminSecurity(HttpMethod http, String url, Object body, List<String> params, int expectedStatus, RoleArgumentsBuilder.Role role) throws Exception {
 		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
@@ -238,7 +238,7 @@ public class ControllerSecurityTest {
 
 	@ParameterizedTest(name = "{5} {0} {1}")
 	@MethodSource("provideUserTestParameters")
-	@WithCustomMockUser(legacyUsername = USER_PUBLICID, username = USER_LOGINID, roles = {"USER"})
+	@WithCustomMockUser(userPublicId = USER_PUBLICID, username = USER_LOGINID, roles = {"USER"})
 	@DisplayName("User Access")
 	void testUserSecurity(HttpMethod http, String url, Object body, List<String> params, int expectedStatus, RoleArgumentsBuilder.Role role) throws Exception {
 		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);

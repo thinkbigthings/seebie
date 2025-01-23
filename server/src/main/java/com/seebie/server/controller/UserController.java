@@ -51,29 +51,29 @@ public class UserController {
         return userService.getUserSummaries(page);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value="/user/{legacyUsername}/personalInfo", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value="/user/{userPublicId}/personalInfo", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public User updateUser(@Valid @RequestBody PersonalInfo userData, @PathVariable String legacyUsername) {
+    public User updateUser(@Valid @RequestBody PersonalInfo userData, @PathVariable String userPublicId) {
 
-        return userService.updateUser(legacyUsername, userData);
+        return userService.updateUser(userPublicId, userData);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value="/user/{legacyUsername}/password/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value="/user/{userPublicId}/password/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String updatePassword(@Valid @RequestBody PasswordResetRequest resetRequest, @PathVariable String legacyUsername) {
+    public String updatePassword(@Valid @RequestBody PasswordResetRequest resetRequest, @PathVariable String userPublicId) {
 
-        userService.updatePassword(legacyUsername, resetRequest.plainTextPassword());
+        userService.updatePassword(userPublicId, resetRequest.plainTextPassword());
         return "Password was updated";
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #legacyUsername == authentication.principal.legacyUsername")
-    @RequestMapping(value="/user/{legacyUsername}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
+    @RequestMapping(value="/user/{userPublicId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public User getUser(@PathVariable String legacyUsername) {
+    public User getUser(@PathVariable String userPublicId) {
 
-        return userService.getUser(legacyUsername);
+        return userService.getUser(userPublicId);
     }
 
 }

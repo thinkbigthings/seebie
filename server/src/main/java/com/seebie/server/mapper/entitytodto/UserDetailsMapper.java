@@ -16,7 +16,7 @@ public class UserDetailsMapper implements Function<User, UserDetails> {
 
     @Override
     public AppUserDetails apply(User u) {
-        return new AppUserDetails(u.getId(), u.getEmail(), u.getUsername(), u.getPassword(), createAuthorities(u));
+        return new AppUserDetails(u.getEmail(), u.getUsername(), u.getPassword(), createAuthorities(u));
     }
 
     private Collection<? extends GrantedAuthority> createAuthorities(User u) {
