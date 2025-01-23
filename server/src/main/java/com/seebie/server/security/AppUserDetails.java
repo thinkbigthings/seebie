@@ -25,6 +25,11 @@ public class AppUserDetails implements UserDetails {
         this.authorities = Collections.unmodifiableCollection(authorities);
     }
 
+    /**
+     * This gets referenced in the @PreAuthorize SPeL.
+     *
+     * @return
+     */
     public String getUserPublicId() {
         return userPublicId;
     }

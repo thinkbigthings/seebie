@@ -46,10 +46,12 @@ function UserForm(props:{onCancel: () => void, onSave: (personalInfo: PersonalIn
             <form>
 
                 <Container className="ps-0 mb-3">
-                    <label htmlFor="inputUserName" className="form-label">User Name</label>
-                    <input type="email" className="form-control" id="inputUserName" placeholder="User Name"
+                    <label htmlFor="inputEmail" className="form-label">Email address</label>
+                    <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp"
                            disabled
-                           value={formState.username}/>
+                           placeholder="Enter email"
+                           value={formState.personalInfo.email}
+                           onChange={e => dispatch({type:ActionType.UPDATE_USER, payload: {email: e.target.value }})}/>
                 </Container>
 
                 <Container className="ps-0 mb-3">
@@ -74,14 +76,6 @@ function UserForm(props:{onCancel: () => void, onSave: (personalInfo: PersonalIn
                     <input type="text" className="form-control" id="inputDisplayName" placeholder="Display Name"
                            value={formState.personalInfo.displayName}
                            onChange={e => dispatch({type:ActionType.UPDATE_USER, payload: {displayName: e.target.value }})}/>
-                </Container>
-
-                <Container className="ps-0 mb-3">
-                    <label htmlFor="inputEmail" className="form-label">Email address</label>
-                    <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp"
-                           placeholder="Enter email"
-                           value={formState.personalInfo.email}
-                           onChange={e => dispatch({type:ActionType.UPDATE_USER, payload: {email: e.target.value }})}/>
                 </Container>
 
                 <Container className="ps-0 mb-3">
