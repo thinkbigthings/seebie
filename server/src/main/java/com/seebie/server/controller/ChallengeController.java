@@ -24,44 +24,44 @@ public class ChallengeController {
     }
 
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
-    @RequestMapping(value= "/user/{userPublicId}/challenge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
+    @RequestMapping(value= "/user/{publicId}/challenge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void createChallenge(@PathVariable String userPublicId, @Valid @RequestBody ChallengeDto challenge) {
-        challengeService.saveNew(userPublicId, challenge);
+    public void createChallenge(@PathVariable String publicId, @Valid @RequestBody ChallengeDto challenge) {
+        challengeService.saveNew(publicId, challenge);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
-    @RequestMapping(value= "/user/{userPublicId}/challenge/{challengeId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
+    @RequestMapping(value= "/user/{publicId}/challenge/{challengeId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void updateChallenge(@Valid @RequestBody ChallengeDto challengeData, @PathVariable String userPublicId, @PathVariable Long challengeId) {
-        challengeService.update(userPublicId, challengeId, challengeData);
+    public void updateChallenge(@Valid @RequestBody ChallengeDto challengeData, @PathVariable String publicId, @PathVariable Long challengeId) {
+        challengeService.update(publicId, challengeId, challengeData);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
-    @RequestMapping(value= "/user/{userPublicId}/challenge/{challengeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
+    @RequestMapping(value= "/user/{publicId}/challenge/{challengeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ChallengeDto getChallenge(@PathVariable String userPublicId, @PathVariable Long challengeId) {
-        return challengeService.retrieve(userPublicId, challengeId);
+    public ChallengeDto getChallenge(@PathVariable String publicId, @PathVariable Long challengeId) {
+        return challengeService.retrieve(publicId, challengeId);
     }
 
     /**
      *
-     * @param userPublicId The user's username is used to retrieve their challenges
+     * @param publicId The user's username is used to retrieve their challenges
      * @return
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
-    @RequestMapping(value= "/user/{userPublicId}/challenge", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
+    @RequestMapping(value= "/user/{publicId}/challenge", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<ChallengeDetailDto> getChallenges(@PathVariable String userPublicId) {
-        return challengeService.getChallenges(userPublicId);
+    public List<ChallengeDetailDto> getChallenges(@PathVariable String publicId) {
+        return challengeService.getChallenges(publicId);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
-    @RequestMapping(value= "/user/{userPublicId}/challenge/{challengeId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
+    @RequestMapping(value= "/user/{publicId}/challenge/{challengeId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void delete(@PathVariable String userPublicId, @PathVariable Long challengeId) {
-        challengeService.remove(userPublicId, challengeId);
+    public void delete(@PathVariable String publicId, @PathVariable Long challengeId) {
+        challengeService.remove(publicId, challengeId);
     }
 
 }

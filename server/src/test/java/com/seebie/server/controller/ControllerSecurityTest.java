@@ -103,10 +103,10 @@ public class ControllerSecurityTest {
 	private static RoleArgumentsBuilder test;
 	private static MultiRequestBuilder requestBuilder;
 
-	private static final String USER_PUBLICID = "someuser";
-	private static final String ADMIN_PUBLICID = "admin";
-	private static final String USER_LOGINID = "someuser@example.com";
-	private static final String ADMIN_LOGINID = "admin@example.com";
+	private static final String USER_PUBLIC_ID = "someuser";
+	private static final String ADMIN_PUBLIC_ID = "admin";
+	private static final String USER_LOGIN_ID = "someuser@example.com";
+	private static final String ADMIN_LOGIN_ID = "admin@example.com";
 
 	private static final RegistrationRequest registration = createRandomUserRegistration();
 	private static final SleepData sleepData = createRandomSleepData();
@@ -139,8 +139,8 @@ public class ControllerSecurityTest {
 
 		when(toCsv.apply(anyList())).thenReturn("");
 
-		when(userService.getUser(USER_PUBLICID)).thenReturn(createRandomUser(USER_PUBLICID));
-		when(userService.getUser(ADMIN_PUBLICID)).thenReturn(createRandomUser(ADMIN_PUBLICID));
+		when(userService.getUser(USER_PUBLIC_ID)).thenReturn(createRandomUser(USER_PUBLIC_ID));
+		when(userService.getUser(ADMIN_PUBLIC_ID)).thenReturn(createRandomUser(ADMIN_PUBLIC_ID));
 
 		when(importExportService.saveSleepData(anyString(), anyList())).thenReturn(0L);
 		when(importExportService.retrieveSleepDetails(anyString())).thenReturn(List.of());
@@ -160,53 +160,53 @@ public class ControllerSecurityTest {
 		test.get(API_LOGIN, 401, 200, 200);
 		test.get("/api/user", 401, 403, 200);
 
-		test.put("/api/user/"+ USER_PUBLICID +"/personalInfo", info, 401, 200, 200);
-		test.post("/api/user/"+ USER_PUBLICID +"/password/update", pwReset, 401, 200, 200);
-		test.get("/api/user/"+ USER_PUBLICID, 401, 200, 200);
+		test.put("/api/user/"+ USER_PUBLIC_ID +"/personalInfo", info, 401, 200, 200);
+		test.post("/api/user/"+ USER_PUBLIC_ID +"/password/update", pwReset, 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID, 401, 200, 200);
 
-		test.put("/api/user/"+ ADMIN_PUBLICID +"/personalInfo", info, 401, 403, 200);
-		test.post("/api/user/"+ ADMIN_PUBLICID +"/password/update", pwReset, 401, 403, 200);
-		test.get("/api/user/"+ ADMIN_PUBLICID, 401, 403, 200);
+		test.put("/api/user/"+ ADMIN_PUBLIC_ID +"/personalInfo", info, 401, 403, 200);
+		test.post("/api/user/"+ ADMIN_PUBLIC_ID +"/password/update", pwReset, 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID, 401, 403, 200);
 
-		test.post("/api/user/"+ USER_PUBLICID +"/sleep", sleepData, 401, 200, 200);
-		test.get("/api/user/"+ USER_PUBLICID +"/sleep", 401, 200, 200);
-		test.get("/api/user/"+ USER_PUBLICID +"/sleep" + "/1", 401, 200, 200);
-		test.put("/api/user/"+ USER_PUBLICID +"/sleep" + "/1", sleepData, 401, 200, 200);
-		test.delete("/api/user/"+ USER_PUBLICID +"/sleep" + "/1", 401, 200, 200);
+		test.post("/api/user/"+ USER_PUBLIC_ID +"/sleep", sleepData, 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/sleep", 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/sleep" + "/1", 401, 200, 200);
+		test.put("/api/user/"+ USER_PUBLIC_ID +"/sleep" + "/1", sleepData, 401, 200, 200);
+		test.delete("/api/user/"+ USER_PUBLIC_ID +"/sleep" + "/1", 401, 200, 200);
 
-		test.post("/api/user/"+ ADMIN_PUBLICID +"/sleep", sleepData, 401, 403, 200);
-		test.get("/api/user/"+ ADMIN_PUBLICID +"/sleep", 401, 403, 200);
-		test.get("/api/user/"+ ADMIN_PUBLICID +"/sleep" + "/1", 401, 403, 200);
-		test.put("/api/user/"+ ADMIN_PUBLICID +"/sleep" + "/1", sleepData, 401, 403, 200);
-		test.delete("/api/user/"+ ADMIN_PUBLICID +"/sleep" + "/1", 401, 403, 200);
+		test.post("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep", sleepData, 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep", 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep" + "/1", 401, 403, 200);
+		test.put("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep" + "/1", sleepData, 401, 403, 200);
+		test.delete("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep" + "/1", 401, 403, 200);
 
-		test.get("/api/user/"+ USER_PUBLICID +"/sleep/chart", chartParams, 401, 200, 200);
-		test.post("/api/user/"+ USER_PUBLICID +"/sleep/histogram", histogramRequest, 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/sleep/chart", chartParams, 401, 200, 200);
+		test.post("/api/user/"+ USER_PUBLIC_ID +"/sleep/histogram", histogramRequest, 401, 200, 200);
 
-		test.get("/api/user/"+ ADMIN_PUBLICID +"/sleep/chart", chartParams, 401, 403, 200);
-		test.post("/api/user/"+ ADMIN_PUBLICID +"/sleep/histogram", histogramRequest, 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep/chart", chartParams, 401, 403, 200);
+		test.post("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep/histogram", histogramRequest, 401, 403, 200);
 
-		test.post("/api/user/"+ USER_PUBLICID +"/import/json", jsonFile, 401, 200, 200);
-		test.get("/api/user/"+ USER_PUBLICID +"/export/json", 401, 200, 200);
-		test.get("/api/user/"+ USER_PUBLICID +"/export/csv", 401, 200, 200);
-		test.post("/api/user/"+ USER_PUBLICID +"/import/csv", csvFile, 401, 200, 200);
+		test.post("/api/user/"+ USER_PUBLIC_ID +"/import/json", jsonFile, 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/export/json", 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/export/csv", 401, 200, 200);
+		test.post("/api/user/"+ USER_PUBLIC_ID +"/import/csv", csvFile, 401, 200, 200);
 
-		test.post("/api/user/"+ ADMIN_PUBLICID +"/import/json", jsonFile, 401, 403, 200);
-		test.get("/api/user/"+ ADMIN_PUBLICID +"/export/json", 401, 403, 200);
-		test.get("/api/user/"+ ADMIN_PUBLICID +"/export/csv", 401, 403, 200);
-		test.post("/api/user/"+ ADMIN_PUBLICID +"/import/csv", csvFile, 401, 403, 200);
+		test.post("/api/user/"+ ADMIN_PUBLIC_ID +"/import/json", jsonFile, 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/export/json", 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/export/csv", 401, 403, 200);
+		test.post("/api/user/"+ ADMIN_PUBLIC_ID +"/import/csv", csvFile, 401, 403, 200);
 
-		test.post("/api/user/"+ USER_PUBLICID +"/challenge", challenge, 401, 200, 200);
-		test.get("/api/user/"+ USER_PUBLICID +"/challenge", challengeParams, 401, 200, 200);
-		test.get("/api/user/"+ USER_PUBLICID +"/challenge" + "/1", 401, 200, 200);
-		test.put("/api/user/"+ USER_PUBLICID +"/challenge" + "/1", challenge, 401, 200, 200);
-		test.delete("/api/user/"+ USER_PUBLICID +"/challenge" + "/1", 401, 200, 200);
+		test.post("/api/user/"+ USER_PUBLIC_ID +"/challenge", challenge, 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/challenge", challengeParams, 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/challenge" + "/1", 401, 200, 200);
+		test.put("/api/user/"+ USER_PUBLIC_ID +"/challenge" + "/1", challenge, 401, 200, 200);
+		test.delete("/api/user/"+ USER_PUBLIC_ID +"/challenge" + "/1", 401, 200, 200);
 
-		test.post("/api/user/"+ ADMIN_PUBLICID +"/challenge", challenge, 401, 403, 200);
-		test.get("/api/user/"+ ADMIN_PUBLICID +"/challenge", challengeParams, 401, 403, 200);
-		test.get("/api/user/"+ ADMIN_PUBLICID +"/challenge" + "/1", 401, 403, 200);
-		test.put("/api/user/"+ ADMIN_PUBLICID +"/challenge" + "/1", challenge, 401, 403, 200);
-		test.delete("/api/user/"+ ADMIN_PUBLICID +"/challenge" + "/1", 401, 403, 200);
+		test.post("/api/user/"+ ADMIN_PUBLIC_ID +"/challenge", challenge, 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/challenge", challengeParams, 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/challenge" + "/1", 401, 403, 200);
+		test.put("/api/user/"+ ADMIN_PUBLIC_ID +"/challenge" + "/1", challenge, 401, 403, 200);
+		test.delete("/api/user/"+ ADMIN_PUBLIC_ID +"/challenge" + "/1", 401, 403, 200);
 	}
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
@@ -230,7 +230,7 @@ public class ControllerSecurityTest {
 
 	@ParameterizedTest(name = "{5} {0} {1}")
 	@MethodSource("provideAdminTestParameters")
-	@WithCustomMockUser(userPublicId = ADMIN_PUBLICID, username=ADMIN_LOGINID, roles = {"ADMIN"})
+	@WithCustomMockUser(publicId = ADMIN_PUBLIC_ID, username= ADMIN_LOGIN_ID, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
 	void testAdminSecurity(HttpMethod http, String url, Object body, List<String> params, int expectedStatus, RoleArgumentsBuilder.Role role) throws Exception {
 		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
@@ -238,7 +238,7 @@ public class ControllerSecurityTest {
 
 	@ParameterizedTest(name = "{5} {0} {1}")
 	@MethodSource("provideUserTestParameters")
-	@WithCustomMockUser(userPublicId = USER_PUBLICID, username = USER_LOGINID, roles = {"USER"})
+	@WithCustomMockUser(publicId = USER_PUBLIC_ID, username = USER_LOGIN_ID, roles = {"USER"})
 	@DisplayName("User Access")
 	void testUserSecurity(HttpMethod http, String url, Object body, List<String> params, int expectedStatus, RoleArgumentsBuilder.Role role) throws Exception {
 		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);

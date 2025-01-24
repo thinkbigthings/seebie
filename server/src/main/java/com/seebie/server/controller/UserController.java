@@ -51,29 +51,29 @@ public class UserController {
         return userService.getUserSummaries(page);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
-    @RequestMapping(value="/user/{userPublicId}/personalInfo", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
+    @RequestMapping(value="/user/{publicId}/personalInfo", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public User updateUser(@Valid @RequestBody PersonalInfo userData, @PathVariable String userPublicId) {
+    public User updateUser(@Valid @RequestBody PersonalInfo userData, @PathVariable String publicId) {
 
-        return userService.updateUser(userPublicId, userData);
+        return userService.updateUser(publicId, userData);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
-    @RequestMapping(value="/user/{userPublicId}/password/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
+    @RequestMapping(value="/user/{publicId}/password/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String updatePassword(@Valid @RequestBody PasswordResetRequest resetRequest, @PathVariable String userPublicId) {
+    public String updatePassword(@Valid @RequestBody PasswordResetRequest resetRequest, @PathVariable String publicId) {
 
-        userService.updatePassword(userPublicId, resetRequest.plainTextPassword());
+        userService.updatePassword(publicId, resetRequest.plainTextPassword());
         return "Password was updated";
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #userPublicId == authentication.principal.userPublicId")
-    @RequestMapping(value="/user/{userPublicId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
+    @RequestMapping(value="/user/{publicId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public User getUser(@PathVariable String userPublicId) {
+    public User getUser(@PathVariable String publicId) {
 
-        return userService.getUser(userPublicId);
+        return userService.getUser(publicId);
     }
 
 }

@@ -73,10 +73,6 @@ public class User implements Serializable {
         return this;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public String getUsername() {
         return username;
     }

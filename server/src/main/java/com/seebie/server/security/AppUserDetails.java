@@ -14,13 +14,13 @@ import java.util.Collections;
 public class AppUserDetails implements UserDetails {
 
     private String email;
-    private String userPublicId;
+    private String publicId;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public AppUserDetails(String email, String userPublicId, String password, Collection<? extends GrantedAuthority> authorities) {
+    public AppUserDetails(String email, String publicId, String password, Collection<? extends GrantedAuthority> authorities) {
         this.email = email;
-        this.userPublicId = userPublicId;
+        this.publicId = publicId;
         this.password = password;
         this.authorities = Collections.unmodifiableCollection(authorities);
     }
@@ -30,8 +30,8 @@ public class AppUserDetails implements UserDetails {
      *
      * @return
      */
-    public String getUserPublicId() {
-        return userPublicId;
+    public String getPublicId() {
+        return publicId;
     }
 
     @Override

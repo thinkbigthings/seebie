@@ -20,14 +20,18 @@ public class UserDetailsMapper implements Function<User, UserDetails> {
     }
 
     private Collection<? extends GrantedAuthority> createAuthorities(User u) {
-        // leverage Spring Security's method so we get updates if anything changes
-        return builder().username(" ").password("").roles(toNames(u.getRoles())).build().getAuthorities();
+        return toAuthorities(toNames(u.getRoles()));
     }
 
-    public static String[] toNames(Set<Role> roles) {
+    private String[] toNames(Set<Role> roles) {
         return roles.stream()
                 .map(Role::name)
                 .toArray(String[]::new);
+    }
+
+    public static Collection<? extends GrantedAuthority> toAuthorities(String[] roles) {
+        // leverage Spring Security's method so we get updates if anything changes
+        return builder().username(" ").password("").roles(roles).build().getAuthorities();
     }
 
 }
