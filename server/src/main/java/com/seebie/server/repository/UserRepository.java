@@ -14,8 +14,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByUsername(String name);
 
-    @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE u.username=?1")
-    Optional<User> loadUserWithRoles(String name);
+    @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE u.email=?1")
+    Optional<User> loadUserWithRoles(String email);
 
     @Query("""
             SELECT new com.seebie.server.dto.UserSummary(u.username, u.displayName)
@@ -25,5 +25,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<UserSummary> loadSummaries(Pageable page);
 
     Optional<User> findByUsername(String name);
+
+    Optional<User> findByEmail(String email);
 
 }

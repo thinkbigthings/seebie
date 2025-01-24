@@ -10,6 +10,7 @@ import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.ImportExportService;
 import com.seebie.server.service.SleepService;
 import com.seebie.server.service.UserService;
+import com.seebie.server.test.WithCustomMockUser;
 import com.seebie.server.test.data.MultiRequestBuilder;
 import com.seebie.server.test.data.RoleArgumentsBuilder;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,7 +27,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -59,6 +59,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * web content is copied from the ui anyway.
  *
  */
+
 @WebMvcTest(properties = {
 		// this is a sensitive property and should not be included in the main application.properties
 		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
@@ -102,8 +103,10 @@ public class ControllerSecurityTest {
 	private static RoleArgumentsBuilder test;
 	private static MultiRequestBuilder requestBuilder;
 
-	private static final String USERNAME = "someuser";
-	private static final String ADMINNAME = "admin";
+	private static final String USER_PUBLIC_ID = "someuser";
+	private static final String ADMIN_PUBLIC_ID = "admin";
+	private static final String USER_LOGIN_ID = "someuser@example.com";
+	private static final String ADMIN_LOGIN_ID = "admin@example.com";
 
 	private static final RegistrationRequest registration = createRandomUserRegistration();
 	private static final SleepData sleepData = createRandomSleepData();
@@ -136,8 +139,8 @@ public class ControllerSecurityTest {
 
 		when(toCsv.apply(anyList())).thenReturn("");
 
-		when(userService.getUser(USERNAME)).thenReturn(createRandomUser(USERNAME));
-		when(userService.getUser(ADMINNAME)).thenReturn(createRandomUser(ADMINNAME));
+		when(userService.getUser(USER_PUBLIC_ID)).thenReturn(createRandomUser(USER_PUBLIC_ID));
+		when(userService.getUser(ADMIN_PUBLIC_ID)).thenReturn(createRandomUser(ADMIN_PUBLIC_ID));
 
 		when(importExportService.saveSleepData(anyString(), anyList())).thenReturn(0L);
 		when(importExportService.retrieveSleepDetails(anyString())).thenReturn(List.of());
@@ -157,53 +160,53 @@ public class ControllerSecurityTest {
 		test.get(API_LOGIN, 401, 200, 200);
 		test.get("/api/user", 401, 403, 200);
 
-		test.put("/api/user/"+USERNAME+"/personalInfo", info, 401, 200, 200);
-		test.post("/api/user/"+USERNAME+"/password/update", pwReset, 401, 200, 200);
-		test.get("/api/user/"+USERNAME, 401, 200, 200);
+		test.put("/api/user/"+ USER_PUBLIC_ID +"/personalInfo", info, 401, 200, 200);
+		test.post("/api/user/"+ USER_PUBLIC_ID +"/password/update", pwReset, 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID, 401, 200, 200);
 
-		test.put("/api/user/"+ADMINNAME+"/personalInfo", info, 401, 403, 200);
-		test.post("/api/user/"+ADMINNAME+"/password/update", pwReset, 401, 403, 200);
-		test.get("/api/user/"+ADMINNAME, 401, 403, 200);
+		test.put("/api/user/"+ ADMIN_PUBLIC_ID +"/personalInfo", info, 401, 403, 200);
+		test.post("/api/user/"+ ADMIN_PUBLIC_ID +"/password/update", pwReset, 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID, 401, 403, 200);
 
-		test.post("/api/user/"+USERNAME+"/sleep", sleepData, 401, 200, 200);
-		test.get("/api/user/"+USERNAME+"/sleep", 401, 200, 200);
-		test.get("/api/user/"+USERNAME+"/sleep" + "/1", 401, 200, 200);
-		test.put("/api/user/"+USERNAME+"/sleep" + "/1", sleepData, 401, 200, 200);
-		test.delete("/api/user/"+USERNAME+"/sleep" + "/1", 401, 200, 200);
+		test.post("/api/user/"+ USER_PUBLIC_ID +"/sleep", sleepData, 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/sleep", 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/sleep" + "/1", 401, 200, 200);
+		test.put("/api/user/"+ USER_PUBLIC_ID +"/sleep" + "/1", sleepData, 401, 200, 200);
+		test.delete("/api/user/"+ USER_PUBLIC_ID +"/sleep" + "/1", 401, 200, 200);
 
-		test.post("/api/user/"+ADMINNAME+"/sleep", sleepData, 401, 403, 200);
-		test.get("/api/user/"+ADMINNAME+"/sleep", 401, 403, 200);
-		test.get("/api/user/"+ADMINNAME+"/sleep" + "/1", 401, 403, 200);
-		test.put("/api/user/"+ADMINNAME+"/sleep" + "/1", sleepData, 401, 403, 200);
-		test.delete("/api/user/"+ADMINNAME+"/sleep" + "/1", 401, 403, 200);
+		test.post("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep", sleepData, 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep", 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep" + "/1", 401, 403, 200);
+		test.put("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep" + "/1", sleepData, 401, 403, 200);
+		test.delete("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep" + "/1", 401, 403, 200);
 
-		test.get("/api/user/"+USERNAME+"/sleep/chart", chartParams, 401, 200, 200);
-		test.post("/api/user/"+USERNAME+"/sleep/histogram", histogramRequest, 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/sleep/chart", chartParams, 401, 200, 200);
+		test.post("/api/user/"+ USER_PUBLIC_ID +"/sleep/histogram", histogramRequest, 401, 200, 200);
 
-		test.get("/api/user/"+ADMINNAME+"/sleep/chart", chartParams, 401, 403, 200);
-		test.post("/api/user/"+ADMINNAME+"/sleep/histogram", histogramRequest, 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep/chart", chartParams, 401, 403, 200);
+		test.post("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep/histogram", histogramRequest, 401, 403, 200);
 
-		test.post("/api/user/"+USERNAME+"/import/json", jsonFile, 401, 200, 200);
-		test.get("/api/user/"+USERNAME+"/export/json", 401, 200, 200);
-		test.get("/api/user/"+USERNAME+"/export/csv", 401, 200, 200);
-		test.post("/api/user/"+USERNAME+"/import/csv", csvFile, 401, 200, 200);
+		test.post("/api/user/"+ USER_PUBLIC_ID +"/import/json", jsonFile, 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/export/json", 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/export/csv", 401, 200, 200);
+		test.post("/api/user/"+ USER_PUBLIC_ID +"/import/csv", csvFile, 401, 200, 200);
 
-		test.post("/api/user/"+ADMINNAME+"/import/json", jsonFile, 401, 403, 200);
-		test.get("/api/user/"+ADMINNAME+"/export/json", 401, 403, 200);
-		test.get("/api/user/"+ADMINNAME+"/export/csv", 401, 403, 200);
-		test.post("/api/user/"+ADMINNAME+"/import/csv", csvFile, 401, 403, 200);
+		test.post("/api/user/"+ ADMIN_PUBLIC_ID +"/import/json", jsonFile, 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/export/json", 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/export/csv", 401, 403, 200);
+		test.post("/api/user/"+ ADMIN_PUBLIC_ID +"/import/csv", csvFile, 401, 403, 200);
 
-		test.post("/api/user/"+USERNAME+"/challenge", challenge, 401, 200, 200);
-		test.get("/api/user/"+USERNAME+"/challenge", challengeParams, 401, 200, 200);
-		test.get("/api/user/"+USERNAME+"/challenge" + "/1", 401, 200, 200);
-		test.put("/api/user/"+USERNAME+"/challenge" + "/1", challenge, 401, 200, 200);
-		test.delete("/api/user/"+USERNAME+"/challenge" + "/1", 401, 200, 200);
+		test.post("/api/user/"+ USER_PUBLIC_ID +"/challenge", challenge, 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/challenge", challengeParams, 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/challenge" + "/1", 401, 200, 200);
+		test.put("/api/user/"+ USER_PUBLIC_ID +"/challenge" + "/1", challenge, 401, 200, 200);
+		test.delete("/api/user/"+ USER_PUBLIC_ID +"/challenge" + "/1", 401, 200, 200);
 
-		test.post("/api/user/"+ADMINNAME+"/challenge", challenge, 401, 403, 200);
-		test.get("/api/user/"+ADMINNAME+"/challenge", challengeParams, 401, 403, 200);
-		test.get("/api/user/"+ADMINNAME+"/challenge" + "/1", 401, 403, 200);
-		test.put("/api/user/"+ADMINNAME+"/challenge" + "/1", challenge, 401, 403, 200);
-		test.delete("/api/user/"+ADMINNAME+"/challenge" + "/1", 401, 403, 200);
+		test.post("/api/user/"+ ADMIN_PUBLIC_ID +"/challenge", challenge, 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/challenge", challengeParams, 401, 403, 200);
+		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/challenge" + "/1", 401, 403, 200);
+		test.put("/api/user/"+ ADMIN_PUBLIC_ID +"/challenge" + "/1", challenge, 401, 403, 200);
+		test.delete("/api/user/"+ ADMIN_PUBLIC_ID +"/challenge" + "/1", 401, 403, 200);
 	}
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
@@ -227,7 +230,7 @@ public class ControllerSecurityTest {
 
 	@ParameterizedTest(name = "{5} {0} {1}")
 	@MethodSource("provideAdminTestParameters")
-	@WithMockUser(username = ADMINNAME, roles = {"ADMIN"})
+	@WithCustomMockUser(publicId = ADMIN_PUBLIC_ID, username= ADMIN_LOGIN_ID, roles = {"ADMIN"})
 	@DisplayName("Admin Access")
 	void testAdminSecurity(HttpMethod http, String url, Object body, List<String> params, int expectedStatus, RoleArgumentsBuilder.Role role) throws Exception {
 		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);
@@ -235,7 +238,7 @@ public class ControllerSecurityTest {
 
 	@ParameterizedTest(name = "{5} {0} {1}")
 	@MethodSource("provideUserTestParameters")
-	@WithMockUser(username = USERNAME, roles = {"USER"})
+	@WithCustomMockUser(publicId = USER_PUBLIC_ID, username = USER_LOGIN_ID, roles = {"USER"})
 	@DisplayName("User Access")
 	void testUserSecurity(HttpMethod http, String url, Object body, List<String> params, int expectedStatus, RoleArgumentsBuilder.Role role) throws Exception {
 		test(requestBuilder.toMvcRequest(http, url, body, params), expectedStatus);

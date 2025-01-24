@@ -40,9 +40,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value="/login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public User login(Authentication auth) {
-
-        // The web session isn't saved until the db is flushed at the end, so need to set logged in here
-        return userService.getUser(auth.getName());
+        return userService.getUserByEmail(auth.getName());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -53,29 +51,29 @@ public class UserController {
         return userService.getUserSummaries(page);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
-    @RequestMapping(value="/user/{username}/personalInfo", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
+    @RequestMapping(value="/user/{publicId}/personalInfo", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public User updateUser(@Valid @RequestBody PersonalInfo userData, @PathVariable String username) {
+    public User updateUser(@Valid @RequestBody PersonalInfo userData, @PathVariable String publicId) {
 
-        return userService.updateUser(username, userData);
+        return userService.updateUser(publicId, userData);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
-    @RequestMapping(value="/user/{username}/password/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
+    @RequestMapping(value="/user/{publicId}/password/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String updatePassword(@Valid @RequestBody PasswordResetRequest resetRequest, @PathVariable String username) {
+    public String updatePassword(@Valid @RequestBody PasswordResetRequest resetRequest, @PathVariable String publicId) {
 
-        userService.updatePassword(username, resetRequest.plainTextPassword());
+        userService.updatePassword(publicId, resetRequest.plainTextPassword());
         return "Password was updated";
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || #username == authentication.name")
-    @RequestMapping(value="/user/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
+    @RequestMapping(value="/user/{publicId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public User getUser(@PathVariable String username) {
+    public User getUser(@PathVariable String publicId) {
 
-        return userService.getUser(username);
+        return userService.getUser(publicId);
     }
 
 }
