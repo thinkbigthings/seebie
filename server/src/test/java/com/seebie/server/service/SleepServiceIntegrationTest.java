@@ -46,38 +46,38 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     public void testDbTimeOrderConstraint() {
 
         var registration = TestData.createRandomUserRegistration();
-        String username = registration.username();
         userService.saveNewUser(registration);
+        String publicId = userService.getUserByEmail(registration.email()).username();
 
         // test with the start and stop times switched
         var badData = createStandardSleepData(LocalDateTime.now(), LocalDateTime.now().minusHours(1));
 
-        var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepService.saveNew(username, badData));
+        var exception = assertThrows(DataIntegrityViolationException.class, () -> sleepService.saveNew(publicId, badData));
         assertEquals("stop_after_start", ((ConstraintViolationException)exception.getCause()).getConstraintName());
     }
 
     @Test
     public void testRetrieveAndUpdate() {
 
-        var registration = TestData.createRandomUserRegistration("phoenix-user");
-        String username = registration.username();
+        var registration = TestData.createRandomUserRegistration();
         userService.saveNewUser(registration);
+        String publicId = userService.getUserByEmail(registration.email()).username();
 
         var end = LocalDateTime.now();
         var start = end.minusHours(8);
 
         var originalSleep = new SleepData("", 0, start, end,"America/Phoenix" );
-        var savedSleep = sleepService.saveNew(username, originalSleep);
+        var savedSleep = sleepService.saveNew(publicId, originalSleep);
 
         // test retrieve
-        SleepDetails found = sleepService.retrieve(username, savedSleep.id());
+        SleepDetails found = sleepService.retrieve(publicId, savedSleep.id());
 
         assertEquals(originalSleep, found.sleepData());
 
         // test update
         var updatedSleep = new SleepData("new notes", 10, start, end, "America/Phoenix");
-        sleepService.update(username, savedSleep.id(), updatedSleep);
-        found = sleepService.retrieve(username, savedSleep.id());
+        sleepService.update(publicId, savedSleep.id(), updatedSleep);
+        found = sleepService.retrieve(publicId, savedSleep.id());
         assertEquals(updatedSleep, found.sleepData());
     }
 
@@ -85,58 +85,60 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     public void testDelete() {
 
         var registration = TestData.createRandomUserRegistration();
-        String username = registration.username();
         userService.saveNewUser(registration);
+        String publicId = userService.getUserByEmail(registration.email()).username();
 
         // preconditions
-        PagedModel<SleepDetails> listing = sleepService.listSleepData(username, firstPage);
+        PagedModel<SleepDetails> listing = sleepService.listSleepData(publicId, firstPage);
         assertEquals(0, requireNonNull(listing.getMetadata()).totalElements());
 
         // set up test data
-        var sleep = sleepService.saveNew(username, createRandomSleepData());
-        listing = sleepService.listSleepData(username, firstPage);
+        var sleep = sleepService.saveNew(publicId, createRandomSleepData());
+        listing = sleepService.listSleepData(publicId, firstPage);
         assertEquals(1, requireNonNull(listing.getMetadata()).totalElements());
 
         // perform testable action
-        sleepService.remove(username, sleep.id());
+        sleepService.remove(publicId, sleep.id());
 
         // postconditions
-        listing = sleepService.listSleepData(username, firstPage);
+        listing = sleepService.listSleepData(publicId, firstPage);
         assertEquals(0, requireNonNull(listing.getMetadata()).totalElements());
     }
 
     @Test
     public void testChartData() {
 
-        String username = "chartUser";
-        userService.saveNewUser(new RegistrationRequest(username, "password", "chartUser@sleepy.com"));
+        var registration = TestData.createRandomUserRegistration();
+        userService.saveNewUser(registration);
+        String publicId = userService.getUserByEmail(registration.email()).username();
 
         int listCount = 10;
         var data = TestData.createRandomSleepData(listCount, AMERICA_NEW_YORK);
-        data.forEach(d -> sleepService.saveNew(username, d));
+        data.forEach(d -> sleepService.saveNew(publicId, d));
 
         var to = data.getFirst().stopTime().plusDays(20);
         var from = data.getFirst().stopTime().minusDays(20);
 
-        var points = sleepService.listChartData(username, from.toLocalDate(), to.toLocalDate());
+        var points = sleepService.listChartData(publicId, from.toLocalDate(), to.toLocalDate());
         assertEquals(10, points.size());
     }
 
     @Test
     public void testHistogram() {
 
-        String username = "histogramUser";
-        userService.saveNewUser(new RegistrationRequest(username, "password", "histoUser@sleepy.com"));
+        var registration = TestData.createRandomUserRegistration();
+        userService.saveNewUser(registration);
+        String publicId = userService.getUserByEmail(registration.email()).username();
 
         int listCount = 10;
         var data = TestData.createRandomSleepData(listCount, AMERICA_NEW_YORK);
-        data.forEach(d -> sleepService.saveNew(username, d));
+        data.forEach(d -> sleepService.saveNew(publicId, d));
 
         var to = data.getFirst().stopTime().plusDays(20);
         var from = data.getFirst().stopTime().minusDays(20);
 
         var range = new DateRange(from.toLocalDate(), to.toLocalDate());
-        var histData = sleepService.listSleepAmounts(username, List.of(range, range, range));
+        var histData = sleepService.listSleepAmounts(publicId, List.of(range, range, range));
 
         assertEquals(3, histData.size());
         histData.forEach(durations -> assertEquals(listCount, durations.size()));

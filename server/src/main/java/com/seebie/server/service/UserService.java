@@ -51,7 +51,7 @@ public class UserService {
         var user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("No user found: " + username) );
 
-        user.withUserData(userData.email(), userData.displayName(), userData.notificationsEnabled());
+        user.withUserData(userData.displayName(), userData.notificationsEnabled());
 
         return toUserRecord.apply(user);
     }
@@ -59,14 +59,14 @@ public class UserService {
     @Transactional
     public void saveNewUser(RegistrationRequest registration) {
 
-        String username = registration.username();
+        String email = registration.email();
 
-        if(userRepo.existsByUsername(username)) {
-            throw new IllegalArgumentException("Username already exists " + registration.username());
+        if(userRepo.existsByEmail(email)) {
+            throw new IllegalArgumentException("Email already exists " + registration.email());
         }
 
         var encryptedPassword = passwordEncoder.encode(registration.plainTextPassword());
-        var unsavedUser = new User(registration.username(), registration.username(), registration.email(), encryptedPassword);
+        var unsavedUser = new User(registration.displayName(), registration.email(), encryptedPassword);
 
         notificationRepo.save(new Notification(unsavedUser));
     }

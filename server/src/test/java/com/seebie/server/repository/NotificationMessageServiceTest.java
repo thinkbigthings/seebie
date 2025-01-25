@@ -82,26 +82,26 @@ public class NotificationMessageServiceTest extends IntegrationTest {
 
         // create new user
         String userPrefix = "notify-" + params.usernotificationEnabled();
-        RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration(userPrefix);
-        userService.saveNewUser(testUserRegistration);
-        String username = testUserRegistration.username();
+        var registration = TestData.createRandomUserRegistration(userPrefix);
+        userService.saveNewUser(registration);
+        String publicId = userService.getUserByEmail(registration.email()).username();
 
         // update notification settings
-        var updatedInfo = userService.getUser(username)
+        var updatedInfo = userService.getUser(publicId)
                 .personalInfo()
                 .withNotificationEnabled(params.usernotificationEnabled());
 
-        userService.updateUser(username, updatedInfo);
+        userService.updateUser(publicId, updatedInfo);
 
         // save first sleep session
-        var firstSleepData = sleepService.saveNew(username, firstSleepLog).sleepData();
+        var firstSleepData = sleepService.saveNew(publicId, firstSleepLog).sleepData();
 
         long numNotifications = 0L;
         for(int hoursPassed = 0; hoursPassed < testDurationHours; hoursPassed++) {
 
             if(hoursPassed % params.sleepLogFrequencyHrs() == 0) {
                 var nextSleep = TestData.increment(firstSleepData, Duration.ofHours(hoursPassed));
-                sleepService.saveNew(username, nextSleep);
+                sleepService.saveNew(publicId, nextSleep);
             }
 
             var present = start.plusHours(hoursPassed);
@@ -109,7 +109,7 @@ public class NotificationMessageServiceTest extends IntegrationTest {
 
             numNotifications += notificationsToSend.stream()
                     .map(NotificationRequired::username)
-                    .filter(username::equals)
+                    .filter(publicId::equals)
                     .count();
         }
 

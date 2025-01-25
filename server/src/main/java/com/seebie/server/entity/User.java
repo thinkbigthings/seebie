@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "app_user", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
@@ -56,8 +57,8 @@ public class User implements Serializable {
         // no arg constructor is required by JPA
     }
 
-    public User(String name, String displayName, String email, String encryptedPassword) {
-        this.username = name;
+    public User(String displayName, String email, String encryptedPassword) {
+        this.username = UUID.randomUUID().toString();
         this.displayName = displayName;
         this.email = email;
         this.password = encryptedPassword;
@@ -66,8 +67,7 @@ public class User implements Serializable {
         this.roles.add(Role.USER);
     }
 
-    public User withUserData(String email, String displayName, boolean notificationsEnabled) {
-        this.email = email;
+    public User withUserData(String displayName, boolean notificationsEnabled) {
         this.displayName = displayName;
         this.notificationsEnabled = notificationsEnabled;
         return this;

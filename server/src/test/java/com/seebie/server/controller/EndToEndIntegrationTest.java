@@ -26,7 +26,7 @@ public class EndToEndIntegrationTest extends IntegrationTest {
 
     private static String testUserEmail;
     private static String testUserPassword;
-    private static String testUserUsername;
+    private static String testUserPublicId;
     private static URI testUserUrl;
     private static URI testUserUpdatePasswordUrl;
 
@@ -46,13 +46,13 @@ public class EndToEndIntegrationTest extends IntegrationTest {
         RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(testUserRegistration);
 
-        testUserUsername = testUserRegistration.username();
+        testUserPublicId = userService.getUserByEmail(testUserEmail).username();
         testUserEmail = testUserRegistration.email();
         testUserPassword = testUserRegistration.plainTextPassword();
 
         var userUriBuilder = baseUribuilder.builder().pathSegment("api", "user");
 
-        testUserUrl = userUriBuilder.pathSegment(testUserUsername).build();
+        testUserUrl = userUriBuilder.pathSegment(testUserPublicId).build();
         testUserUpdatePasswordUrl = userUriBuilder.pathSegment("password", "update").build();
     }
 

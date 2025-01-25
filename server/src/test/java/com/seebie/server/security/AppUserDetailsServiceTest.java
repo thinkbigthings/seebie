@@ -1,5 +1,6 @@
 package com.seebie.server.security;
 
+import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.entity.User;
 import com.seebie.server.repository.UserRepository;
 import com.seebie.server.test.data.TestData;
@@ -17,16 +18,16 @@ public class AppUserDetailsServiceTest {
 
     private AppUserDetailsService service;
 
-    private UserRepository userRepo = Mockito.mock(UserRepository.class);
-    private String savedUsername = TestData.createRandomUserRegistration().username();
-    private User savedUser = new User(savedUsername, savedUsername, "email", "encryptedpw");
+    private final UserRepository userRepo = Mockito.mock(UserRepository.class);
+    private final RegistrationRequest reg = TestData.createRandomUserRegistration();
+    private final User savedUser = new User(reg.displayName(), reg.email(), "encryptedpw");
 
     @BeforeEach
     public void setup() {
 
         service = new AppUserDetailsService(userRepo);
 
-        when(userRepo.loadUserWithRoles(eq(savedUsername))).thenReturn(of(savedUser));
+        when(userRepo.loadUserWithRoles(eq(reg.email()))).thenReturn(of(savedUser));
     }
 
     @Test
@@ -35,13 +36,13 @@ public class AppUserDetailsServiceTest {
         savedUser.getRoles().clear();
 
         assertTrue(savedUser.getRoles().isEmpty());
-        assertThrows(UsernameNotFoundException.class, () -> service.loadUserByUsername(savedUsername));
+        assertThrows(UsernameNotFoundException.class, () -> service.loadUserByUsername(reg.email()));
     }
 
     @Test
     public void testUserHasRoles() {
 
         assertFalse(savedUser.getRoles().isEmpty());
-        assertDoesNotThrow(() -> service.loadUserByUsername(savedUsername));
+        assertDoesNotThrow(() -> service.loadUserByUsername(reg.email()));
     }
 }

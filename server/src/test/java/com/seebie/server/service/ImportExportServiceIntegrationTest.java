@@ -33,12 +33,12 @@ class ImportExportServiceIntegrationTest extends IntegrationTest {
     public void testImportExportUserData() throws Exception {
 
         var registration = TestData.createRandomUserRegistration();
-        String user1 = registration.username();
         userService.saveNewUser(registration);
+        String user1 = userService.getUserByEmail(registration.email()).username();
 
         registration = TestData.createRandomUserRegistration();
-        String user2 = registration.username();
         userService.saveNewUser(registration);
+        String user2 = userService.getUserByEmail(registration.email()).username();
 
         var userData = randomUserData();
         long importedSleepNum = importExportService.saveUserData(user1, userData);

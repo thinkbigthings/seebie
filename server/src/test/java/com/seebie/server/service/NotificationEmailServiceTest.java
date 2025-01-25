@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 import static com.seebie.server.test.data.TestData.createRandomUserRegistration;
 import static com.seebie.server.test.data.TestData.newAppProperties;
@@ -29,8 +30,8 @@ public class NotificationEmailServiceTest {
     public void testMailTemplate() {
 
         RegistrationRequest user = createRandomUserRegistration();
-
-        var message = service.createMessage(new NotificationRequired(user.email(), user.username()));
+        var publicId = UUID.randomUUID().toString();
+        var message = service.createMessage(new NotificationRequired(user.email(), publicId));
 
         assertTrue(Arrays.stream(message.getTo()).anyMatch(email -> email.equals(user.email())));
     }
