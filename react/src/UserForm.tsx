@@ -46,6 +46,21 @@ function UserForm(props:{onCancel: () => void, onSave: (personalInfo: PersonalIn
             <form>
 
                 <Container className="ps-0 mb-3">
+                    <label htmlFor="inputDisplayName" className="form-label">Display Name</label>
+                    <input type="text" className="form-control" id="inputDisplayName" placeholder="Display Name"
+                           value={formState.personalInfo.displayName}
+                           onChange={e => dispatch({type:ActionType.UPDATE_USER, payload: {displayName: e.target.value }})}/>
+                </Container>
+
+                <Container className="ps-0 mb-3">
+                    <label htmlFor="notificationsEnabled" className="form-label">Enable Reminder Emails</label>
+                    <input className="form-check-input mx-3 p-2" type="checkbox" id="notificationsEnabled"
+                           placeholder="Enable Reminder Emails"
+                           checked={formState.personalInfo.notificationsEnabled }
+                           onChange={e => dispatch({type:ActionType.UPDATE_USER, payload: {notificationsEnabled: e.target.checked }})}/>
+                </Container>
+
+                <Container className="ps-0 mb-3">
                     <label htmlFor="inputEmail" className="form-label">Email address</label>
                     <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp"
                            disabled
@@ -61,6 +76,13 @@ function UserForm(props:{onCancel: () => void, onSave: (personalInfo: PersonalIn
                            value={new Date(Date.parse(formState.registrationTime)).toDateString()}/>
                 </Container>
 
+                <Container className="ps-0 mb-3">
+                    <label htmlFor="publicId" className="form-label">User ID</label>
+                    <input type="text" className="form-control" id="publicId" placeholder="User ID"
+                           disabled
+                           value={formState.publicId}/>
+                </Container>
+
                 {hasAdmin()
                     ? <Container className="ps-0 mb-3">
                         <label htmlFor="roles" className="form-label">Roles</label>
@@ -70,21 +92,6 @@ function UserForm(props:{onCancel: () => void, onSave: (personalInfo: PersonalIn
                       </Container>
                     : <div />
                 }
-
-                <Container className="ps-0 mb-3">
-                    <label htmlFor="inputDisplayName" className="form-label">Display Name</label>
-                    <input type="text" className="form-control" id="inputDisplayName" placeholder="Display Name"
-                           value={formState.personalInfo.displayName}
-                           onChange={e => dispatch({type:ActionType.UPDATE_USER, payload: {displayName: e.target.value }})}/>
-                </Container>
-
-                <Container className="ps-0 mb-3">
-                    <label htmlFor="notificationsEnabled" className="form-label">Enable Reminder Emails</label>
-                    <input className="form-check-input mx-3 p-2" type="checkbox" id="notificationsEnabled"
-                           placeholder="Enable Reminder Emails"
-                           checked={formState.personalInfo.notificationsEnabled }
-                           onChange={e => dispatch({type:ActionType.UPDATE_USER, payload: {notificationsEnabled: e.target.checked }})}/>
-                </Container>
 
                 <div className="d-flex flex-row">
                     <Button className="me-3" variant="primary" onClick={() => { onSave(formState.personalInfo); }} >Save</Button>
