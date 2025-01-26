@@ -13,10 +13,12 @@ public class UserMapper implements Function<User, com.seebie.server.dto.User> {
     @Override
     public com.seebie.server.dto.User apply(User user) {
 
-        return new com.seebie.server.dto.User( user.getUsername(),
+        return new com.seebie.server.dto.User(
+                user.getEmail(),
+                user.getUsername(),
                 user.getRegistrationTime().toString(),
                 user.getRoles().stream().map(Role::name).collect(toSet()),
-                new PersonalInfo(user.getEmail(), user.getDisplayName(), user.isNotificationsEnabled()));
+                new PersonalInfo(user.getDisplayName(), user.isNotificationsEnabled()));
     }
 
 }

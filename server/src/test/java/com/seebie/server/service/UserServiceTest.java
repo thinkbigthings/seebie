@@ -54,7 +54,7 @@ public class UserServiceTest {
     @Test
     public void updateUser() {
 
-        var updateInfo = new PersonalInfo(savedUserEmail, savedUser.getDisplayName()+"1");
+        var updateInfo = new PersonalInfo(savedUser.getDisplayName()+"1", true);
 
         var updatedUser = service.updateUser(savedUsername, updateInfo);
 
@@ -64,7 +64,7 @@ public class UserServiceTest {
     @Test
     public void updateUserNotFound() {
 
-        var updateInfo = new PersonalInfo(savedUserEmail, savedUser.getDisplayName()+"1");
+        var updateInfo = new PersonalInfo(savedUser.getDisplayName()+"1", true);
 
         assertThrows(EntityNotFoundException.class,
                 () -> service.updateUser(noSuchUsername, updateInfo));
@@ -77,7 +77,7 @@ public class UserServiceTest {
 
         assertEquals(savedUser.getUsername(), foundUser.publicId());
         assertEquals(savedUser.getDisplayName(), foundUser.personalInfo().displayName());
-        assertEquals(savedUser.getEmail(), foundUser.personalInfo().email());
+        assertEquals(savedUser.getEmail(), foundUser.email());
     }
 
     @Test

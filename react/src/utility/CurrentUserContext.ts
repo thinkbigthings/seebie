@@ -5,11 +5,11 @@ type CurrentUserContextType = [User, (user: User) => void];
 
 const blankUser: User = {
     publicId: '',
+    email: '',
     roles: [],
     registrationTime: '',
     personalInfo: {
         displayName: '',
-        email: '',
         notificationsEnabled: false
     },
     isLoggedIn: false,

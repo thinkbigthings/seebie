@@ -65,8 +65,7 @@ function UserForm(props:{onCancel: () => void, onSave: (personalInfo: PersonalIn
                     <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp"
                            disabled
                            placeholder="Enter email"
-                           value={formState.personalInfo.email}
-                           onChange={e => dispatch({type:ActionType.UPDATE_USER, payload: {email: e.target.value }})}/>
+                           value={formState.email} />
                 </Container>
 
                 <Container className="ps-0 mb-3">

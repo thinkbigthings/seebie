@@ -1,11 +1,11 @@
 
 interface PersonalInfo {
     displayName: string;
-    email: string;
     notificationsEnabled: boolean;
 }
 
 interface User {
+    email: string;
     publicId: string;
     roles: string[];
     registrationTime: string;
@@ -14,8 +14,8 @@ interface User {
 }
 
 interface UserFormFields {
+    email: string;
     displayName: string,
-    email: string,
     password: string,
     confirmPassword: string
 }
