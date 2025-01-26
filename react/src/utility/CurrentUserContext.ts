@@ -4,7 +4,7 @@ import {User} from "../types/user.types";
 type CurrentUserContextType = [User, (user: User) => void];
 
 const blankUser: User = {
-    username: '',
+    publicId: '',
     roles: [],
     registrationTime: '',
     personalInfo: {

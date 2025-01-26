@@ -47,7 +47,7 @@ public class ChallengeController {
 
     /**
      *
-     * @param publicId The user's username is used to retrieve their challenges
+     * @param publicId The user's publicId is used to retrieve their challenges
      * @return
      */
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")

@@ -47,7 +47,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
 
         var registration = TestData.createRandomUserRegistration();
         userService.saveNewUser(registration);
-        String publicId = userService.getUserByEmail(registration.email()).username();
+        String publicId = userService.getUserByEmail(registration.email()).publicId();
 
         // test with the start and stop times switched
         var badData = createStandardSleepData(LocalDateTime.now(), LocalDateTime.now().minusHours(1));
@@ -61,7 +61,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
 
         var registration = TestData.createRandomUserRegistration();
         userService.saveNewUser(registration);
-        String publicId = userService.getUserByEmail(registration.email()).username();
+        String publicId = userService.getUserByEmail(registration.email()).publicId();
 
         var end = LocalDateTime.now();
         var start = end.minusHours(8);
@@ -86,7 +86,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
 
         var registration = TestData.createRandomUserRegistration();
         userService.saveNewUser(registration);
-        String publicId = userService.getUserByEmail(registration.email()).username();
+        String publicId = userService.getUserByEmail(registration.email()).publicId();
 
         // preconditions
         PagedModel<SleepDetails> listing = sleepService.listSleepData(publicId, firstPage);
@@ -110,7 +110,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
 
         var registration = TestData.createRandomUserRegistration();
         userService.saveNewUser(registration);
-        String publicId = userService.getUserByEmail(registration.email()).username();
+        String publicId = userService.getUserByEmail(registration.email()).publicId();
 
         int listCount = 10;
         var data = TestData.createRandomSleepData(listCount, AMERICA_NEW_YORK);
@@ -128,7 +128,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
 
         var registration = TestData.createRandomUserRegistration();
         userService.saveNewUser(registration);
-        String publicId = userService.getUserByEmail(registration.email()).username();
+        String publicId = userService.getUserByEmail(registration.email()).publicId();
 
         int listCount = 10;
         var data = TestData.createRandomSleepData(listCount, AMERICA_NEW_YORK);

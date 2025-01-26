@@ -6,7 +6,7 @@ interface PersonalInfo {
 }
 
 interface User {
-    username: string;
+    publicId: string;
     roles: string[];
     registrationTime: string;
     personalInfo: PersonalInfo;
@@ -14,14 +14,14 @@ interface User {
 }
 
 interface UserFormFields {
-    username: string,
+    displayName: string,
     email: string,
     password: string,
     confirmPassword: string
 }
 
 interface RegistrationRequest {
-    username:string,
+    displayName:string,
     plainTextPassword:string,
     email:string
 }
@@ -31,7 +31,7 @@ interface PasswordResetRequest {
 }
 
 interface UserSummary {
-    username: string,
+    publicId: string,
     displayName: string
 }
 

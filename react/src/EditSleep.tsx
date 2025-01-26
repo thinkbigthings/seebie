@@ -17,9 +17,13 @@ function EditSleep() {
 
     const navigate = useNavigate();
 
-    const {username, sleepId} = useParams();
+    const {publicId, sleepId} = useParams();
 
-    const sleepEndpoint = `/api/user/${username}/sleep/${sleepId}`;
+    if (publicId === undefined) {
+        throw new Error("Public ID is required in the url");
+    }
+
+    const sleepEndpoint = `/api/user/${publicId}/sleep/${sleepId}`;
 
     const [loaded, setLoaded] = useState(false);
     const [sleepData, setSleepData] = useState(createInitSleepData());

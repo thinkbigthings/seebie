@@ -46,8 +46,8 @@ public class EndToEndIntegrationTest extends IntegrationTest {
         RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(testUserRegistration);
 
-        testUserPublicId = userService.getUserByEmail(testUserEmail).username();
         testUserEmail = testUserRegistration.email();
+        testUserPublicId = userService.getUserByEmail(testUserEmail).publicId();
         testUserPassword = testUserRegistration.plainTextPassword();
 
         var userUriBuilder = baseUribuilder.builder().pathSegment("api", "user");

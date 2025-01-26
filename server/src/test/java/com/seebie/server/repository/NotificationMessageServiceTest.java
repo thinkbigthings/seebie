@@ -1,6 +1,5 @@
 package com.seebie.server.repository;
 
-import com.seebie.server.dto.RegistrationRequest;
 import com.seebie.server.dto.SleepData;
 import com.seebie.server.service.NotificationMessageService;
 import com.seebie.server.service.NotificationRequired;
@@ -84,7 +83,7 @@ public class NotificationMessageServiceTest extends IntegrationTest {
         String userPrefix = "notify-" + params.usernotificationEnabled();
         var registration = TestData.createRandomUserRegistration(userPrefix);
         userService.saveNewUser(registration);
-        String publicId = userService.getUserByEmail(registration.email()).username();
+        String publicId = userService.getUserByEmail(registration.email()).publicId();
 
         // update notification settings
         var updatedInfo = userService.getUser(publicId)

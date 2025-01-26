@@ -36,7 +36,7 @@ function UserForm(props:{onCancel: () => void, onSave: (personalInfo: PersonalIn
 
     // the context hook retains its value over re-renders,
     // so need to trigger the update here once the data has been loaded for real
-    if(initData.username !== '' && formState.username === '') {
+    if(initData.publicId !== '' && formState.publicId === '') {
         dispatch({type:ActionType.LOAD_USER, payload: initData});
     }
 

@@ -95,8 +95,7 @@ function UnauthenticatedApp() {
 function AuthenticatedApp() {
 
     const {currentUser, hasAdmin, onLogout} = useCurrentUser();
-
-    const userUrl = "#/users/"+currentUser.username+"/edit";
+    const userUrl = "#/users/"+currentUser.publicId+"/edit";
     const loginUrl = "#/login";
 
     // Refresh data view if a sleep session is logged that affects the view
@@ -121,7 +120,7 @@ function AuthenticatedApp() {
                         <FontAwesomeIcon className="app-highlight ms-2" icon={faMoon} />
                     </Navbar.Brand>
 
-                    <CreateSleepSession username={currentUser.username} onSave={() => setCreatedCount(createdCount + 1)} />
+                    <CreateSleepSession publicId={currentUser.publicId} onSave={() => setCreatedCount(createdCount + 1)} />
 
                     <NavDropdown className={"nav-link-colored"} title={loggedIn } align="end" id="userDropdown">
                         <NavDropdown.Item className={"nav-link-colored"} href={userUrl}>{<FontAwesomeIcon className="me-2" icon={faCog} />}Profile</NavDropdown.Item>
@@ -133,19 +132,19 @@ function AuthenticatedApp() {
             </Navbar>
             <Container className="d-flex">
 
-                <SideNav hasAdmin={hasAdmin()} username={currentUser.username}/>
+                <SideNav hasAdmin={hasAdmin()} publicId={currentUser.publicId}/>
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/users/:username/sleep/list" element={<SleepList createdCount={createdCount} />} />
+                    <Route path="/users/:publicId/sleep/list" element={<SleepList createdCount={createdCount} />} />
                     <Route path="/login" element={<Login />} />
-                    <Route path="/users/:username/challenge" element={<Challenge />} />
-                    <Route path="/users/:username/sleep/chart" element={<SleepChart createdCount={createdCount} />} />
-                    <Route path="/users/:username/histogram" element={<Histogram createdCount = {createdCount} />} />
+                    <Route path="/users/:publicId/challenge" element={<Challenge />} />
+                    <Route path="/users/:publicId/sleep/chart" element={<SleepChart createdCount={createdCount} />} />
+                    <Route path="/users/:publicId/histogram" element={<Histogram createdCount = {createdCount} />} />
                     <Route path="/users" element={<UserList/>} />
-                    <Route path="/users/:username/edit" element={<EditUser />} />
-                    <Route path="/users/:username/sleep/:sleepId/edit" element={<EditSleep />} />
-                    <Route path="/users/:username/challenge/:challengeId/edit" element={<EditChallenge />} />
-                    <Route path="/users/:username/tools" element={<Tools />} />
+                    <Route path="/users/:publicId/edit" element={<EditUser />} />
+                    <Route path="/users/:publicId/sleep/:sleepId/edit" element={<EditSleep />} />
+                    <Route path="/users/:publicId/challenge/:challengeId/edit" element={<EditChallenge />} />
+                    <Route path="/users/:publicId/tools" element={<Tools />} />
                 </Routes>
             </Container>
 
@@ -153,18 +152,18 @@ function AuthenticatedApp() {
     );
 }
 
-function SideNav(props: {hasAdmin:boolean, username:string}) {
+function SideNav(props: {hasAdmin:boolean, publicId:string}) {
 
-    const {hasAdmin, username} = props;
+    const {hasAdmin, publicId} = props;
     let usersNav = hasAdmin ? <NavItem name="Users" icon={faUsers} href="#/users" /> : "";
 
     return (
         <Nav defaultActiveKey="/home" className="flex-column col-sm-2">
-            <NavItem name="Challenge" icon={faTrophy} href={`#/users/${username}/challenge`} />
-            <NavItem name="List" icon={faList} href={"#/users/"+username+"/sleep/list" } />
-            <NavItem name="Chart" icon={faChartLine} href={"#/users/"+username+"/sleep/chart" } />
-            <NavItem name="Analysis" icon={faChartSimple} href={"#/users/"+username+"/histogram"} />
-            <NavItem name="Tools" icon={faTools} href={"#/users/"+username+"/tools"} />
+            <NavItem name="Challenge" icon={faTrophy} href={`#/users/${publicId}/challenge`} />
+            <NavItem name="List" icon={faList} href={"#/users/"+publicId+"/sleep/list" } />
+            <NavItem name="Chart" icon={faChartLine} href={"#/users/"+publicId+"/sleep/chart" } />
+            <NavItem name="Analysis" icon={faChartSimple} href={"#/users/"+publicId+"/histogram"} />
+            <NavItem name="Tools" icon={faTools} href={"#/users/"+publicId+"/tools"} />
             {usersNav}
         </Nav>
     );

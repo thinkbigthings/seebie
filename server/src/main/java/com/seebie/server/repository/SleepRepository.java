@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public interface SleepRepository extends JpaRepository<SleepSession, Long> {
 
-    // use both username and sleep id in the query to ensure the given user owns this sleep
+    // use both publicId and sleep id in the query to ensure the given user owns this sleep
     @Query("""
             SELECT s FROM SleepSession s
             WHERE s.user.username=:username
@@ -23,7 +23,7 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             """)
     Optional<SleepSession> findBy(String username, Long sleepId);
 
-    // use both username and sleep id in the query to ensure the given user owns this sleep
+    // use both publicId and sleep id in the query to ensure the given user owns this sleep
     @Query("""
             SELECT new com.seebie.server.dto.SleepDetails(s.id, s.minutesAsleep, s.notes, s.minutesAwake, s.startTime, s.stopTime, s.zoneId)
             FROM SleepSession s
@@ -32,7 +32,7 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             """)
     Page<SleepDetails> loadSummaries(String username, Pageable page);
 
-    // use both username and sleep id in the query to ensure the given user owns this sleep
+    // use both publicId and sleep id in the query to ensure the given user owns this sleep
     @Query("""
             SELECT new com.seebie.server.dto.SleepDataPoint(s.stopTime, s.minutesAsleep, s.zoneId)
             FROM SleepSession s

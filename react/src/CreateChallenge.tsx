@@ -18,9 +18,9 @@ function CreateChallenge(props: {onCreated:()=>void, savedChallenges:ChallengeDa
 
     const {onCreated, savedChallenges} = props;
 
-    const {username} = useParams();
+    const {publicId} = useParams();
 
-    const challengeEndpoint = `/api/user/${username}/challenge`;
+    const challengeEndpoint = `/api/user/${publicId}/challenge`;
 
     const [showCreateSuccess, setShowCreateSuccess] = useState(false);
     const [showCreateChallenge, setShowCreateChallenge] = useState(false);

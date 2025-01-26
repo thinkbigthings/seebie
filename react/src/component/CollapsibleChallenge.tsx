@@ -13,7 +13,7 @@ function CollapsibleChallenge(props:{challenge:ChallengeData, onDelete:()=>void}
 
     const {challenge, onDelete} = props;
 
-    const {username} = useParams();
+    const {publicId} = useParams();
 
     const progress = calculateProgress(challenge);
 
@@ -26,7 +26,7 @@ function CollapsibleChallenge(props:{challenge:ChallengeData, onDelete:()=>void}
                     <div className="progress-bar btn-secondary" style={{width: progress + "%"}}>{progress + "%"}</div>
                 </div>
             <div className="d-flex justify-content-end">
-                <Link to={`/users/${username}/challenge/${challenge.id}/edit` } >
+                <Link to={`/users/${publicId}/challenge/${challenge.id}/edit` } >
                     <Button variant={"secondary"} className="me-2" >
                         <FontAwesomeIcon className="me-2" icon={faEdit} />Edit
                     </Button>

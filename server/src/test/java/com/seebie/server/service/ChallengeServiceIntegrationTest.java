@@ -124,6 +124,6 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
     private String saveNewUser() {
         var registration = TestData.createRandomUserRegistration();
         userService.saveNewUser(registration);
-        return userService.getUserByEmail(registration.email()).username();
+        return userService.getUserByEmail(registration.email()).publicId();
     }
 }

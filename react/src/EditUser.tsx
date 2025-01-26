@@ -22,9 +22,9 @@ function EditUser() {
 
     const navigate = useNavigate();
 
-    const {username} = useParams();
+    const {publicId} = useParams();
 
-    const userEndpoint = `/api/user/${username}`;
+    const userEndpoint = `/api/user/${publicId}`;
     const userInfoEndpoint = `${userEndpoint}/personalInfo`;
     const updatePasswordEndpoint = `${userEndpoint}/password/update`;
 
@@ -37,7 +37,7 @@ function EditUser() {
             .then(response => response.json())
             .then(setData)
             .then(() => setLoaded(true))
-    }, [setData, userEndpoint, username]);
+    }, [setData, userEndpoint, publicId]);
 
     const put = useApiPut();
     const onSave = (personalInfo: PersonalInfo) => {
@@ -51,7 +51,7 @@ function EditUser() {
     const onResetPassword = (plainTextPassword: string) => {
         post(updatePasswordEndpoint, {plainTextPassword})
             .then(result => {
-                if(currentUser.username === username) {
+                if(currentUser.publicId === publicId) {
                     onLogin({...currentUser});
                 }
                 setShowResetPassword(false);

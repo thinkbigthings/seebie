@@ -38,7 +38,7 @@ public class TestDataPopulator implements ApplicationListener<ContextRefreshedEv
 
         var email = "test@example.com";
         userService.saveNewUser(new RegistrationRequest("test", "test", email));
-        String publicId = userService.getUserByEmail(email).username();
+        String publicId = userService.getUserByEmail(email).publicId();
 
         createRandomSleepData(60, AMERICA_NEW_YORK).forEach(d -> sleepService.saveNew(publicId, d));
 

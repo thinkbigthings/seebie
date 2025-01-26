@@ -75,7 +75,7 @@ public class UserServiceTest {
 
         var foundUser = service.getUser(savedUsername);
 
-        assertEquals(savedUser.getUsername(), foundUser.username());
+        assertEquals(savedUser.getUsername(), foundUser.publicId());
         assertEquals(savedUser.getDisplayName(), foundUser.personalInfo().displayName());
         assertEquals(savedUser.getEmail(), foundUser.personalInfo().email());
     }

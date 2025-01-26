@@ -45,31 +45,31 @@ function UserList() {
                     </thead>
                     <tbody className="clickable-table">
                     {data.content.map(user =>
-                        <tr key={user.username}>
+                        <tr key={user.publicId}>
                             <td>
-                                <Link to={ "/users/" + user.username + "/edit" } >
+                                <Link to={ "/users/" + user.publicId + "/edit" } >
                                     {user.displayName}
                                 </Link>
                             </td>
                             <td>
                                 <ButtonGroup>
                                     <Button className="p-0 me-1" >
-                                        <Link className="p-0 ps-1 " to={ "/users/" + user.username + "/sleep/list" } >
+                                        <Link className="p-0 ps-1 " to={ "/users/" + user.publicId + "/sleep/list" } >
                                             <FontAwesomeIcon className="me-2" icon={faList} />
                                         </Link>
                                     </Button>
                                     <Button className="p-0 me-1">
-                                        <Link className="p-0 ps-1 " to={ "/users/" + user.username + "/sleep/chart" } >
+                                        <Link className="p-0 ps-1 " to={ "/users/" + user.publicId + "/sleep/chart" } >
                                             <FontAwesomeIcon className="me-2" icon={faChartLine} />
                                         </Link>
                                     </Button>
                                     <Button className="p-0 me-1">
-                                        <Link className="p-0 ps-1 " to={ "/users/" + user.username + "/histogram" } >
+                                        <Link className="p-0 ps-1 " to={ "/users/" + user.publicId + "/histogram" } >
                                             <FontAwesomeIcon className="me-2" icon={faChartSimple} />
                                         </Link>
                                     </Button>
                                     <Button className="p-0 ">
-                                        <Link className="p-0 ps-1 " to={ "/users/" + user.username + "/tools" } >
+                                        <Link className="p-0 ps-1 " to={ "/users/" + user.publicId + "/tools" } >
                                             <FontAwesomeIcon className="me-2" icon={faTools} />
                                         </Link>
                                     </Button>

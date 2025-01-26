@@ -10,7 +10,7 @@ import {RegistrationRequest, UserFormFields} from "./types/user.types";
 
 
 const blankData: UserFormFields = {
-    username: '',
+    displayName: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -25,7 +25,7 @@ function CreateUser(props: {onSave: () => void} ){
     const saveData = (userData:UserFormFields) => {
 
         const registrationRequest: RegistrationRequest = {
-            username: userData.username,
+            displayName: userData.displayName,
             plainTextPassword: userData.password,
             email: userData.email
         }
@@ -41,7 +41,7 @@ function CreateUser(props: {onSave: () => void} ){
         let updatedUser:UserFormFields = {...user, ...updateValues};
 
         // username should not need to be url encoded
-        let valid = encodeURIComponent(updatedUser.username) === updatedUser.username;
+        let valid = encodeURIComponent(updatedUser.displayName) === updatedUser.displayName;
 
         if(valid) {
             setUser( updatedUser );
@@ -75,8 +75,8 @@ function CreateUser(props: {onSave: () => void} ){
                     <div className="mb-3">
                         <label htmlFor="username" className="form-label">Username</label>
                         <input type="text" className="form-control" id="username" placeholder="Username"
-                               value={user.username}
-                               onChange={e => updateUser({username : e.target.value })} />
+                               value={user.displayName}
+                               onChange={e => updateUser({displayName : e.target.value })} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="email" className="form-label">Email</label>

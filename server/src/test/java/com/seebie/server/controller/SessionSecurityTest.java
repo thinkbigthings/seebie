@@ -90,7 +90,7 @@ public class SessionSecurityTest extends IntegrationTest {
 
         var userRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(userRegistration);
-        var publicId = userService.getUserByEmail(userRegistration.email()).username();
+        var publicId = userService.getUserByEmail(userRegistration.email()).publicId();
 
         testUserPassword = userRegistration.plainTextPassword();
         testUserEmail = userRegistration.email();
