@@ -1,3 +1,3 @@
 package com.seebie.server.dto;
 
-public record UploadResponse(long numImported, String username) { }
+public record UploadResponse(long numImported) { }

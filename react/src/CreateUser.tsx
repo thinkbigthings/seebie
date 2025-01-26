@@ -39,13 +39,7 @@ function CreateUser(props: {onSave: () => void} ){
     function updateUser(updateValues:Partial<UserFormFields>) {
 
         let updatedUser:UserFormFields = {...user, ...updateValues};
-
-        // username should not need to be url encoded
-        let valid = encodeURIComponent(updatedUser.displayName) === updatedUser.displayName;
-
-        if(valid) {
-            setUser( updatedUser );
-        }
+        setUser( updatedUser );
     }
 
     function onHide() {
@@ -73,8 +67,8 @@ function CreateUser(props: {onSave: () => void} ){
                 </Modal.Header>
                 <Modal.Body>
                     <div className="mb-3">
-                        <label htmlFor="username" className="form-label">Username</label>
-                        <input type="text" className="form-control" id="username" placeholder="Username"
+                        <label htmlFor="displayName" className="form-label">Display Name</label>
+                        <input type="text" className="form-control" id="displayName" placeholder="Display Name"
                                value={user.displayName}
                                onChange={e => updateUser({displayName : e.target.value })} />
                     </div>

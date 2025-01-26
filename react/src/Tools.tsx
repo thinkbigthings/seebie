@@ -13,7 +13,6 @@ import {SleepDetailDto} from "./types/sleep.types";
 
 interface UploadResponse {
     numImported: number,
-    username: string
 }
 
 const initialSelectedFile:File|null = null;
@@ -29,7 +28,7 @@ function Tools() {
     const [jsonSelected, setJsonSelected] = React.useState(false);
     const [selectedFile, setSelectedFile] = useState(initialSelectedFile);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const [uploadSuccessInfo, setUploadSuccessInfo] = useState({ numImported: 0, username: publicId });
+    const [uploadSuccessInfo, setUploadSuccessInfo] = useState({ numImported: 0 });
 
     const downloadCsv = `/api/user/${publicId}/export/csv`;
     const uploadCsv = `/api/user/${publicId}/import/csv`;

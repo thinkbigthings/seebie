@@ -72,7 +72,7 @@ public class ImportExportController {
 
         LOG.info("Imported " + numImported + " records for " + publicId);
 
-        return new UploadResponse(numImported, publicId);
+        return new UploadResponse(numImported);
     }
 
 
@@ -106,7 +106,7 @@ public class ImportExportController {
 
         LOG.info("Imported " + numImported + " records for " + publicId);
 
-        return new UploadResponse(numImported, publicId);
+        return new UploadResponse(numImported);
     }
 
     public String toJson(UserData userData) {
