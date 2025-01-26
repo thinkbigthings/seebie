@@ -9,13 +9,13 @@ import {GET} from "./utility/BasicHeaders";
 import Container from "react-bootstrap/Container";
 
 interface Credentials {
-    username: string;
+    email: string;
     password: string;
 }
 
 function getWithCreds(url: string, credentials: Credentials) {
 
-    const encoded = btoa(credentials.username + ":" + credentials.password);
+    const encoded = btoa(credentials.email + ":" + credentials.password);
 
     let authGet = structuredClone(GET);
     authGet.headers['Authorization'] = 'Basic ' + encoded;
@@ -28,7 +28,7 @@ function Login() {
     const navigate = useNavigate();
 
     // local form state
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(true);
 
@@ -46,7 +46,7 @@ function Login() {
 
     const onClickLogin = () => {
 
-        getWithCreds(loginUrl, { username, password })
+        getWithCreds(loginUrl, { email: email, password })
             .then(throwOnHttpError)
             .then(response =>
                 response.json().then(data => ({
@@ -72,12 +72,12 @@ function Login() {
 
 
             <Container className="ps-0 mb-3">
-                    <label htmlFor="inputUsername" className="form-label">Username</label>
-                    <input type="email" className="form-control" id="inputUsername" aria-describedby="emailHelp"
+                    <label htmlFor="inputEmail" className="form-label">Email</label>
+                    <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp"
                            autoFocus={true}
-                           placeholder="Username"
-                           value={username}
-                           onChange={e => setUsername(e.target.value)}
+                           placeholder="Email"
+                           value={email}
+                           onChange={e => setEmail(e.target.value)}
                     />
             </Container>
             <Container className="ps-0 mb-3">
