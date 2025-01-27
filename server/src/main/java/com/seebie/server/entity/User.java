@@ -37,9 +37,6 @@ public class User implements Serializable {
     private String displayName = "";
 
     @Basic
-    private boolean enabled = true;
-
-    @Basic
     @NotNull
     private Instant registrationTime;
 
