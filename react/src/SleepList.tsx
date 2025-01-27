@@ -19,15 +19,15 @@ const minuteToHrMin = (minutes: number) => {
 
 function SleepList(props:{createdCount: number}) {
 
-    const {username} = useParams();
+    const {publicId} = useParams();
 
-    if (username === undefined) {
-        throw new Error("Username is required in the url");
+    if (publicId === undefined) {
+        throw new Error("Public ID is required in the url");
     }
 
     const {createdCount} = props;
 
-    const sleepUrl = '/api/user/' + username + '/sleep';
+    const sleepUrl = `/api/user/${publicId}/sleep`
 
     const {data, pagingControls} = useApiGet<SleepDetailDto>(sleepUrl, 7, createdCount);
 
@@ -52,7 +52,7 @@ function SleepList(props:{createdCount: number}) {
                         .map(sleep =>
                             <tr key={sleep.id}>
                                 <td>
-                                    <Link to={"/users/" + username + "/sleep/" + sleep.id + "/edit" } >
+                                    <Link to={`/users/${publicId}/sleep/${sleep.id}/edit` } >
                                         {sleep.stopTime.toLocalDate().toString()}
                                     </Link>
                                 </td>

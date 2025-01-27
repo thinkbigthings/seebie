@@ -24,9 +24,7 @@ const jsDateToLocalDateTime = (date: Date): LocalDateTime => {
 }
 
 const localDateTimeToJsDate = (date: LocalDateTime): Date => {
-    let d = convert(date).toDate();
-    console.log(d);
-    return d;
+    return convert(date).toDate();
 }
 
 const toSelectableChallenges = (challengeList: ChallengeList<ChallengeData>, defaultChallenge: ChallengeData) => {

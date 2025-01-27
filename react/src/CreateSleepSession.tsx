@@ -13,13 +13,13 @@ import CollapsibleContent from "./component/CollapsibleContent";
 import {toChallengeList, toSleepDto} from "./utility/Mapper";
 import {ChallengeDetailDto} from "./types/challenge.types";
 
-function CreateSleepSession(props :{onSave: () => void, username:string}) {
+function CreateSleepSession(props :{onSave: () => void, publicId:string}) {
 
-    const {onSave, username} = props;
+    const {onSave, publicId} = props;
 
-    const sleepUrl = `/api/user/${username}/sleep`;
+    const sleepUrl = `/api/user/${publicId}/sleep`;
 
-    const allChallengesEndpoint = `/api/user/${username}/challenge`;
+    const allChallengesEndpoint = `/api/user/${publicId}/challenge`;
 
     const [sleepData, setSleepData] = useState(createInitSleepData());
     const [dataValid, setDataValid] = useState(true);

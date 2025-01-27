@@ -67,10 +67,10 @@ const initialChartData = {
 
 function SleepChart(props:{createdCount:number}) {
 
-    const {username} = useParams();
+    const {publicId} = useParams();
 
-    if (username === undefined) {
-        throw new Error("Username is required in the url");
+    if (publicId === undefined) {
+        throw new Error("Public ID is required in the url");
     }
 
     const {createdCount} = props;
@@ -89,7 +89,7 @@ function SleepChart(props:{createdCount:number}) {
         + 'from='+encodeURIComponent(localDateToString(range.from)) + '&'
         + 'to='+encodeURIComponent(localDateToString(range.to));
 
-    const sleepEndpoint = '/api/user/'+username+'/sleep/chart' + requestParameters;
+    const sleepEndpoint = `/api/user/${publicId}/sleep/chart${requestParameters}`;
 
     useEffect(() => {
         fetch(sleepEndpoint, GET)

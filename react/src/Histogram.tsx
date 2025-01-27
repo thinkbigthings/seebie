@@ -114,10 +114,10 @@ function Histogram(props: {createdCount:number}) {
     // this is so the page is updated when the user logs sleep
     const {createdCount} = props;
 
-    const {username} = useParams();
+    const {publicId} = useParams();
 
-    const allChallengesEndpoint = `/api/user/${username}/challenge`;
-    const histogramEndpoint = `/api/user/${username}/sleep/histogram`;
+    const allChallengesEndpoint = `/api/user/${publicId}/challenge`;
+    const histogramEndpoint = `/api/user/${publicId}/sleep/histogram`;
 
     let [pageSettings, setPageSettings] = useState(defaultPageSettings);
 

@@ -24,16 +24,15 @@ public class TestData {
     private static Faker faker = new Faker(Locale.US, random);
 
     public static PersonalInfo createRandomPersonalInfo() {
-        return new PersonalInfo(faker.internet().emailAddress(), faker.name().name());
+        return new PersonalInfo(faker.name().name(), false);
     }
 
     public static RegistrationRequest createRandomUserRegistration(String usernamePrefix) {
 
-        String username = usernamePrefix + "-" + randomUUID();
+        String displayName = usernamePrefix + "-" + randomUUID();
         String password = "password";
-        PersonalInfo info = createRandomPersonalInfo();
-
-        return new RegistrationRequest(username, password, info.email());
+        String email = faker.internet().emailAddress();
+        return new RegistrationRequest(displayName, password, email);
     }
 
     public static RegistrationRequest createRandomUserRegistration() {
@@ -109,8 +108,9 @@ public class TestData {
         return new UserData(createRandomSleepData(1, AMERICA_NEW_YORK), createRandomChallenges());
     }
 
-    public static User createRandomUser(String username) {
-        return new User(username, Instant.now().toString(), Set.of(), createRandomPersonalInfo());
+    public static User createRandomUser(String publicId) {
+        String email = faker.internet().emailAddress();
+        return new User(email, publicId, Instant.now().toString(), Set.of(), createRandomPersonalInfo());
     }
 
     /**

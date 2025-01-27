@@ -10,7 +10,7 @@ import {RegistrationRequest, UserFormFields} from "./types/user.types";
 
 
 const blankData: UserFormFields = {
-    username: '',
+    displayName: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -25,7 +25,7 @@ function CreateUser(props: {onSave: () => void} ){
     const saveData = (userData:UserFormFields) => {
 
         const registrationRequest: RegistrationRequest = {
-            username: userData.username,
+            displayName: userData.displayName,
             plainTextPassword: userData.password,
             email: userData.email
         }
@@ -39,13 +39,7 @@ function CreateUser(props: {onSave: () => void} ){
     function updateUser(updateValues:Partial<UserFormFields>) {
 
         let updatedUser:UserFormFields = {...user, ...updateValues};
-
-        // username should not need to be url encoded
-        let valid = encodeURIComponent(updatedUser.username) === updatedUser.username;
-
-        if(valid) {
-            setUser( updatedUser );
-        }
+        setUser( updatedUser );
     }
 
     function onHide() {
@@ -73,10 +67,10 @@ function CreateUser(props: {onSave: () => void} ){
                 </Modal.Header>
                 <Modal.Body>
                     <div className="mb-3">
-                        <label htmlFor="username" className="form-label">Username</label>
-                        <input type="text" className="form-control" id="username" placeholder="Username"
-                               value={user.username}
-                               onChange={e => updateUser({username : e.target.value })} />
+                        <label htmlFor="displayName" className="form-label">Display Name</label>
+                        <input type="text" className="form-control" id="displayName" placeholder="Display Name"
+                               value={user.displayName}
+                               onChange={e => updateUser({displayName : e.target.value })} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="email" className="form-label">Email</label>

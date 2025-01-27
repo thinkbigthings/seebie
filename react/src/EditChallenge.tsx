@@ -22,7 +22,7 @@ function EditChallenge() {
 
     const navigate = useNavigate();
 
-    const {username, challengeId} = useParams();
+    const {publicId, challengeId} = useParams();
 
     if (challengeId === undefined) {
         throw new Error("Challenge ID is required.");
@@ -30,8 +30,8 @@ function EditChallenge() {
 
     const numericChallengeId = parseInt(challengeId);
 
-    const allChallengesEndpoint = `/api/user/${username}/challenge`;
-    const challengeEndpoint = `/api/user/${username}/challenge/${challengeId}`;
+    const allChallengesEndpoint = `/api/user/${publicId}/challenge`;
+    const challengeEndpoint = `/api/user/${publicId}/challenge/${challengeId}`;
 
     const [loaded, setLoaded] = useState(false);
     const [editableChallenge, setEditableChallenge] = useState(emptyEditableChallenge());

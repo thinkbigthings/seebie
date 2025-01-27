@@ -13,11 +13,11 @@ import {ChallengeDetailDto} from "./types/challenge.types";
 
 function Challenge() {
 
-    const {username} = useParams();
+    const {publicId} = useParams();
     const callDelete = useApiDelete();
 
     // the user's current date is used to determine challenge completion status
-    const challengeEndpoint = `/api/user/${username}/challenge`;
+    const challengeEndpoint = `/api/user/${publicId}/challenge`;
 
     const [createdCount, setCreatedCount] = useState(0);
     const [deletedCount, setDeletedCount] = useState(0);
@@ -32,7 +32,7 @@ function Challenge() {
     }, [createdCount, deletedCount]);
 
     const deleteChallenge = (challengeId: number) => {
-        const endpoint = `/api/user/${username}/challenge/${challengeId}`;
+        const endpoint = `/api/user/${publicId}/challenge/${challengeId}`;
         callDelete(endpoint).then(() => setDeletedCount(deletedCount + 1));
     }
 

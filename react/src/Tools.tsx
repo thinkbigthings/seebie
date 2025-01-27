@@ -13,14 +13,13 @@ import {SleepDetailDto} from "./types/sleep.types";
 
 interface UploadResponse {
     numImported: number,
-    username: string
 }
 
 const initialSelectedFile:File|null = null;
 
 function Tools() {
 
-    const { username } = useParams();
+    const { publicId } = useParams();
     const { throwOnHttpError } = useHttpError();
 
     const [fileKey, setFileKey] = useState(Date.now());
@@ -29,13 +28,13 @@ function Tools() {
     const [jsonSelected, setJsonSelected] = React.useState(false);
     const [selectedFile, setSelectedFile] = useState(initialSelectedFile);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const [uploadSuccessInfo, setUploadSuccessInfo] = useState({ numImported: 0, username: username });
+    const [uploadSuccessInfo, setUploadSuccessInfo] = useState({ numImported: 0 });
 
-    const downloadCsv = `/api/user/${username}/export/csv`;
-    const uploadCsv = `/api/user/${username}/import/csv`;
-    const downloadJson = `/api/user/${username}/export/json`;
-    const uploadJson = `/api/user/${username}/import/json`;
-    const sleepUrl = `/api/user/${username}/sleep`;
+    const downloadCsv = `/api/user/${publicId}/export/csv`;
+    const uploadCsv = `/api/user/${publicId}/import/csv`;
+    const downloadJson = `/api/user/${publicId}/export/json`;
+    const uploadJson = `/api/user/${publicId}/import/json`;
+    const sleepUrl = `/api/user/${publicId}/sleep`;
 
     const downloadUrl = csvSelected ? downloadCsv : downloadJson;
 
@@ -98,7 +97,7 @@ function Tools() {
     return (
         <Container>
             <SuccessModal title="Upload Success" showing={showSuccessModal} handleClose={() => setShowSuccessModal(false)}>
-                Uploaded {uploadSuccessInfo.numImported} records for user {username}.
+                Uploaded {uploadSuccessInfo.numImported} records.
             </SuccessModal>
 
             <NavHeader title="Tools" />

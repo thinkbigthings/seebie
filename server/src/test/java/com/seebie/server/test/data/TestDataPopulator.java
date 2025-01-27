@@ -36,17 +36,17 @@ public class TestDataPopulator implements ApplicationListener<ContextRefreshedEv
 
     private void populateTestData() {
 
-        String username = "test";
+        var email = "test@example.com";
+        userService.saveNewUser(new RegistrationRequest("test", "test", email));
+        String publicId = userService.getUserByEmail(email).publicId();
 
-        userService.saveNewUser(new RegistrationRequest(username, "test", "test@example.com"));
+        createRandomSleepData(60, AMERICA_NEW_YORK).forEach(d -> sleepService.saveNew(publicId, d));
 
-        createRandomSleepData(60, AMERICA_NEW_YORK).forEach(d -> sleepService.saveNew(username, d));
-
-        challengeService.saveNew(username, createRandomChallenge(-90, 14));
-        challengeService.saveNew(username, createRandomChallenge(-60, 14));
-        challengeService.saveNew(username, createRandomChallenge(-30, 14));
-        challengeService.saveNew(username, createRandomChallenge(-1, 14));
-        challengeService.saveNew(username, createRandomChallenge(30, 14));
+        challengeService.saveNew(publicId, createRandomChallenge(-90, 14));
+        challengeService.saveNew(publicId, createRandomChallenge(-60, 14));
+        challengeService.saveNew(publicId, createRandomChallenge(-30, 14));
+        challengeService.saveNew(publicId, createRandomChallenge(-1, 14));
+        challengeService.saveNew(publicId, createRandomChallenge(30, 14));
     }
 
 }

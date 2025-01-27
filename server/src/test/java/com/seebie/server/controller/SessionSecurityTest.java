@@ -90,12 +90,13 @@ public class SessionSecurityTest extends IntegrationTest {
 
         var userRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(userRegistration);
+        var publicId = userService.getUserByEmail(userRegistration.email()).publicId();
 
         testUserPassword = userRegistration.plainTextPassword();
         testUserEmail = userRegistration.email();
 
         var apiUriBuilder = baseUribuilder.builder().path("/api");
-        testUserInfoUri = apiUriBuilder.path("/user/").path(userRegistration.username()).build();
+        testUserInfoUri = apiUriBuilder.path("/user/").path(publicId).build();
     }
 
     /**

@@ -29,7 +29,7 @@ public class ChallengeServiceTest {
 
     @Test
     public void testRemoveMissingChallenge() {
-        assertThrows(EntityNotFoundException.class, () -> service.remove("username", 1L));
+        assertThrows(EntityNotFoundException.class, () -> service.remove("publicId", 1L));
     }
 
 }

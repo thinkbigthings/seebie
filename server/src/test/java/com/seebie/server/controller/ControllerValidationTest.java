@@ -116,7 +116,7 @@ public class ControllerValidationTest {
 	private static final LocalDateTime startTime = stopTime.minusHours(8);
 	private static final SleepData badDurationSleepData = new SleepData("", 481, startTime, stopTime, AMERICA_NEW_YORK);
 
-	private static final PersonalInfo invalidInfo = new PersonalInfo(null, null);
+	private static final PersonalInfo invalidInfo = new PersonalInfo(null, false);
 
 	private static final LocalDate today = LocalDate.now();
 	private static final LocalDate yesterday = today.minusDays(1);

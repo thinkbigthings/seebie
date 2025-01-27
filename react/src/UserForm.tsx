@@ -36,7 +36,7 @@ function UserForm(props:{onCancel: () => void, onSave: (personalInfo: PersonalIn
 
     // the context hook retains its value over re-renders,
     // so need to trigger the update here once the data has been loaded for real
-    if(initData.username !== '' && formState.username === '') {
+    if(initData.publicId !== '' && formState.publicId === '') {
         dispatch({type:ActionType.LOAD_USER, payload: initData});
     }
 
@@ -44,32 +44,6 @@ function UserForm(props:{onCancel: () => void, onSave: (personalInfo: PersonalIn
         <Container id="userFormId" className="ps-0 " >
 
             <form>
-
-                <Container className="ps-0 mb-3">
-                    <label htmlFor="inputEmail" className="form-label">Email address</label>
-                    <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp"
-                           disabled
-                           placeholder="Enter email"
-                           value={formState.personalInfo.email}
-                           onChange={e => dispatch({type:ActionType.UPDATE_USER, payload: {email: e.target.value }})}/>
-                </Container>
-
-                <Container className="ps-0 mb-3">
-                    <label htmlFor="registrationTime" className="form-label">Member Since</label>
-                    <input type="text" className="form-control" id="inputRegistrationTime" placeholder="Registration Time"
-                           disabled
-                           value={new Date(Date.parse(formState.registrationTime)).toDateString()}/>
-                </Container>
-
-                {hasAdmin()
-                    ? <Container className="ps-0 mb-3">
-                        <label htmlFor="roles" className="form-label">Roles</label>
-                        <input type="text" className="form-control" id="roles" placeholder="Roles"
-                               disabled
-                               value={formState.roles}/>
-                      </Container>
-                    : <div />
-                }
 
                 <Container className="ps-0 mb-3">
                     <label htmlFor="inputDisplayName" className="form-label">Display Name</label>
@@ -85,6 +59,38 @@ function UserForm(props:{onCancel: () => void, onSave: (personalInfo: PersonalIn
                            checked={formState.personalInfo.notificationsEnabled }
                            onChange={e => dispatch({type:ActionType.UPDATE_USER, payload: {notificationsEnabled: e.target.checked }})}/>
                 </Container>
+
+                <Container className="ps-0 mb-3">
+                    <label htmlFor="inputEmail" className="form-label">Email address</label>
+                    <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp"
+                           disabled
+                           placeholder="Enter email"
+                           value={formState.email} />
+                </Container>
+
+                <Container className="ps-0 mb-3">
+                    <label htmlFor="registrationTime" className="form-label">Member Since</label>
+                    <input type="text" className="form-control" id="inputRegistrationTime" placeholder="Registration Time"
+                           disabled
+                           value={new Date(Date.parse(formState.registrationTime)).toDateString()}/>
+                </Container>
+
+                <Container className="ps-0 mb-3">
+                    <label htmlFor="publicId" className="form-label">User ID</label>
+                    <input type="text" className="form-control" id="publicId" placeholder="User ID"
+                           disabled
+                           value={formState.publicId}/>
+                </Container>
+
+                {hasAdmin()
+                    ? <Container className="ps-0 mb-3">
+                        <label htmlFor="roles" className="form-label">Roles</label>
+                        <input type="text" className="form-control" id="roles" placeholder="Roles"
+                               disabled
+                               value={formState.roles}/>
+                      </Container>
+                    : <div />
+                }
 
                 <div className="d-flex flex-row">
                     <Button className="me-3" variant="primary" onClick={() => { onSave(formState.personalInfo); }} >Save</Button>

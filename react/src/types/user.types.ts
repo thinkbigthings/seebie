@@ -1,12 +1,12 @@
 
 interface PersonalInfo {
     displayName: string;
-    email: string;
     notificationsEnabled: boolean;
 }
 
 interface User {
-    username: string;
+    email: string;
+    publicId: string;
     roles: string[];
     registrationTime: string;
     personalInfo: PersonalInfo;
@@ -14,14 +14,14 @@ interface User {
 }
 
 interface UserFormFields {
-    username: string,
-    email: string,
+    email: string;
+    displayName: string,
     password: string,
     confirmPassword: string
 }
 
 interface RegistrationRequest {
-    username:string,
+    displayName:string,
     plainTextPassword:string,
     email:string
 }
@@ -31,7 +31,7 @@ interface PasswordResetRequest {
 }
 
 interface UserSummary {
-    username: string,
+    publicId: string,
     displayName: string
 }
 
