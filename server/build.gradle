@@ -48,6 +48,7 @@ dependencies {
     implementation 'org.flywaydb:flyway-core:11.1.0'
     implementation 'org.flywaydb:flyway-database-postgresql:11.1.0'
 
+    implementation 'com.github.f4b6a3:uuid-creator:5.1.0'
     implementation 'org.postgresql:postgresql:42.7.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.4.1'
     implementation 'org.springframework.boot:spring-boot-starter-web:3.4.1'
@@ -277,6 +278,6 @@ tasks.named('bootTestRun', org.springframework.boot.gradle.tasks.run.BootRun) {
             '--app.notification.triggerAfter.lastNotified=1m',
             '--app.notification.triggerAfter.sleepLog=1m',
             '--app.security.rememberMe.key=dev-only',
-            '--spring.mail.username=unused-for-dev'
+            '--spring.mail.username=unused-for-dev@seebie.com'
     ]
 }

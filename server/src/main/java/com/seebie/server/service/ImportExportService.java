@@ -30,13 +30,13 @@ public class ImportExportService {
     }
 
     @Transactional(readOnly = true)
-    public UserData retrieveUserData(String username) {
+    public UserData retrieveUserData(String publicId) {
 
-        var sleepData = sleepRepository.findAllByUsername(username).stream()
+        var sleepData = sleepRepository.findAllByUser(publicId).stream()
                 .map(SleepDetails::sleepData)
                 .toList();
 
-        var challengeData = challengeRepository.findAllByUsername(username).stream()
+        var challengeData = challengeRepository.findAllByUser(publicId).stream()
                 .map(ChallengeDetailDto::challenge)
                 .toList();
 
@@ -55,7 +55,7 @@ public class ImportExportService {
 
     @Transactional(readOnly = true)
     public List<SleepDetails> retrieveSleepDetails(String username) {
-        return sleepRepository.findAllByUsername(username);
+        return sleepRepository.findAllByUser(username);
     }
 
     @Transactional

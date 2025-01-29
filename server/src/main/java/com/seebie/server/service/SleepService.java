@@ -68,7 +68,7 @@ public class SleepService {
 
         return sleepRepository.findBy(username, sleepId)
                 .map(sleepMapper)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sleep session not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sleep session not found for user " + username + " and sleep id " + sleepId));
     }
 
     @Transactional(readOnly = true)

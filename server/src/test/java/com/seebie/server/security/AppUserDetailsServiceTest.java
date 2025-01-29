@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.lang.reflect.Field;
+import java.util.UUID;
+
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
@@ -21,11 +24,17 @@ public class AppUserDetailsServiceTest {
     private final UserRepository userRepo = Mockito.mock(UserRepository.class);
     private final RegistrationRequest reg = TestData.createRandomUserRegistration();
     private final User savedUser = new User(reg.displayName(), reg.email(), "encryptedpw");
+    private final String savedUserPublicId = UUID.randomUUID().toString();
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
 
         service = new AppUserDetailsService(userRepo);
+
+        // use reflection to set publicId since we don't want to add a setter for generated values
+        Field field = savedUser.getClass().getDeclaredField("publicId");
+        field.setAccessible(true);
+        field.set(savedUser, UUID.fromString(savedUserPublicId));
 
         when(userRepo.loadUserWithRoles(eq(reg.email()))).thenReturn(of(savedUser));
     }

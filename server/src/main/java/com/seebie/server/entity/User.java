@@ -1,8 +1,10 @@
 package com.seebie.server.entity;
 
+import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
@@ -10,7 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "app_user", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
+@Table(name = "app_user", uniqueConstraints = {@UniqueConstraint(columnNames = {"public_id"})})
 public class User implements Serializable {
 
     @Id
@@ -18,10 +20,8 @@ public class User implements Serializable {
     @Column(name = "id", updatable = false, insertable = false, nullable = false)
     private Long id;
 
-    @Column(unique=true)
-    @NotNull
-    @Size(min = 3, message = "must be at least three characters")
-    private String username = "";
+    @Column(unique = true, name = "public_id", updatable = false, insertable = true, nullable = false)
+    private UUID publicId;
 
     @NotNull
     private String password = "";
@@ -50,16 +50,27 @@ public class User implements Serializable {
     @Basic
     private boolean notificationsEnabled = false;
 
+    /**
+     * Since this field isn't a primary key, we can't use Hibernate's generator annotations.
+     * Once Postgres supports UUID v7 natively (in PG 18)
+     * we can just make that the default value on the column and remove this.
+     * Alternatively if we migrate the publicId to be the PK, we can use the generator annotations.
+     */
+    @PrePersist
+    public void ensurePublicIdUuidV7() {
+        if (publicId == null) {
+            publicId = UuidCreator.getTimeOrderedEpoch();
+        }
+    }
+
     protected User() {
         // no arg constructor is required by JPA
     }
 
     public User(String displayName, String email, String encryptedPassword) {
-        this.username = UUID.randomUUID().toString();
         this.displayName = displayName;
         this.email = email;
         this.password = encryptedPassword;
-
         this.registrationTime = Instant.now();
         this.roles.add(Role.USER);
     }
@@ -70,8 +81,8 @@ public class User implements Serializable {
         return this;
     }
 
-    public String getUsername() {
-        return username;
+    public String getPublicId() {
+        return publicId.toString();
     }
 
     public String getPassword() {

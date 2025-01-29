@@ -46,12 +46,12 @@ public class NotificationRetrievalService {
                 .peek(notification -> LOG.info(createLogMessage(notification, scanDate)))
                 .map(notification -> notification.withLastSent(scanDate))
                 .map(Notification::getUser)
-                .map(user -> new NotificationRequired(user.getEmail(), user.getUsername()))
+                .map(user -> new NotificationRequired(user.getEmail(), user.getPublicId()))
                 .toList();
     }
 
     private String createLogMessage(Notification notification, Instant scanDate) {
-        var user = notification.getUser().getUsername();
+        var user = notification.getUser().getPublicId();
         var lastSentDate = toLocale(notification.getLastSent());
         return "Updating notification record for " + user + " from " + lastSentDate + " to " + scanDate;
     }

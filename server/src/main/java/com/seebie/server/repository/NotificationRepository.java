@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    @Query("SELECT n FROM Notification n WHERE n.user.username=:username")
+    @Query("SELECT n FROM Notification n WHERE n.user.publicId=:publicId")
     Optional<Notification> findBy(String username);
 
     /**

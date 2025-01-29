@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 
 @Service
 public class UserService {
@@ -36,20 +38,20 @@ public class UserService {
     }
 
     @Transactional
-    public void updatePassword(String username, String newPassword) {
+    public void updatePassword(String publicId, String newPassword) {
 
-        userRepo.findByUsername(username)
+        userRepo.findByPublicId(publicId)
                 .ifPresentOrElse(
                     user -> user.setPassword(passwordEncoder.encode(newPassword)),
-                    () -> { throw new EntityNotFoundException("No user found: " + username); }
+                    () -> { throw new EntityNotFoundException("No user found: " + publicId); }
                 );
     }
 
     @Transactional
-    public com.seebie.server.dto.User updateUser(String username, PersonalInfo userData) {
+    public com.seebie.server.dto.User updateUser(String publicId, PersonalInfo userData) {
 
-        var user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("No user found: " + username) );
+        var user = userRepo.findByPublicId(publicId)
+                .orElseThrow(() -> new EntityNotFoundException("No user found: " + publicId) );
 
         user.withUserData(userData.displayName(), userData.notificationsEnabled());
 
@@ -77,11 +79,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public com.seebie.server.dto.User getUser(String username) {
+    public com.seebie.server.dto.User getUser(String publicId) {
 
-        return userRepo.findByUsername(username)
+        return userRepo.findByPublicId(publicId)
                 .map(toUserRecord)
-                .orElseThrow(() -> new EntityNotFoundException("no user found for " + username));
+                .orElseThrow(() -> new EntityNotFoundException("no user found for " + publicId));
     }
 
     @Transactional(readOnly = true)

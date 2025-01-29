@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -18,13 +19,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> loadUserWithRoles(String email);
 
     @Query("""
-            SELECT new com.seebie.server.dto.UserSummary(u.username, u.displayName)
+            SELECT new com.seebie.server.dto.UserSummary(u.publicId, u.displayName)
             FROM User u
-            ORDER BY u.username ASC
+            ORDER BY u.publicId ASC
             """)
     Page<UserSummary> loadSummaries(Pageable page);
 
-    Optional<User> findByUsername(String name);
+    Optional<User> findByPublicId(UUID publicId);
+
+    default Optional<User> findByPublicId(String publicId) {
+        return findByPublicId(UUID.fromString(publicId));
+    }
 
     Optional<User> findByEmail(String email);
 }

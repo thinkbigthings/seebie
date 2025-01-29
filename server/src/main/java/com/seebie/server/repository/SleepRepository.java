@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 public interface SleepRepository extends JpaRepository<SleepSession, Long> {
@@ -18,47 +19,66 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
     // use both publicId and sleep id in the query to ensure the given user owns this sleep
     @Query("""
             SELECT s FROM SleepSession s
-            WHERE s.user.username=:username
+            WHERE s.user.publicId=:publicId
             AND s.id=:sleepId
             """)
-    Optional<SleepSession> findBy(String username, Long sleepId);
+    Optional<SleepSession> findBy(UUID publicId, Long sleepId);
+
+    default Optional<SleepSession> findBy(String publicId, Long sleepId) {
+        return findBy(UUID.fromString(publicId), sleepId);
+    }
 
     // use both publicId and sleep id in the query to ensure the given user owns this sleep
     @Query("""
             SELECT new com.seebie.server.dto.SleepDetails(s.id, s.minutesAsleep, s.notes, s.minutesAwake, s.startTime, s.stopTime, s.zoneId)
             FROM SleepSession s
-            WHERE s.user.username=:username
-            ORDER BY s.stopTime DESC 
+            WHERE s.user.publicId=:publicId
+            ORDER BY s.stopTime DESC
             """)
-    Page<SleepDetails> loadSummaries(String username, Pageable page);
+    Page<SleepDetails> loadSummaries(UUID publicId, Pageable page);
+
+    default Page<SleepDetails> loadSummaries(String publicId, Pageable page) {
+        return loadSummaries(UUID.fromString(publicId), page);
+    }
 
     // use both publicId and sleep id in the query to ensure the given user owns this sleep
     @Query("""
             SELECT new com.seebie.server.dto.SleepDataPoint(s.stopTime, s.minutesAsleep, s.zoneId)
             FROM SleepSession s
-            WHERE s.user.username=:username
+            WHERE s.user.publicId=:publicId
             AND s.stopTime >= :from
             AND s.stopTime <= :to
             ORDER BY s.stopTime ASC
             """)
-    List<SleepDataPoint> loadChartData(String username, LocalDateTime from, LocalDateTime to);
+    List<SleepDataPoint> loadChartData(UUID publicId, LocalDateTime from, LocalDateTime to);
+
+    default List<SleepDataPoint> loadChartData(String publicId, LocalDateTime from, LocalDateTime to) {
+        return loadChartData(UUID.fromString(publicId), from, to);
+    }
 
     @Query("""
             SELECT s.minutesAsleep
             FROM SleepSession s
-            WHERE s.user.username=:username
+            WHERE s.user.publicId=:publicId
             AND s.stopTime >= :from
             AND s.stopTime <= :to
             ORDER BY s.stopTime ASC
             """)
-    List<Long> loadDurations(String username, LocalDateTime from, LocalDateTime to);
+    List<Long> loadDurations(UUID publicId, LocalDateTime from, LocalDateTime to);
+
+    default List<Long> loadDurations(String publicId, LocalDateTime from, LocalDateTime to) {
+        return loadDurations(UUID.fromString(publicId), from, to);
+    }
 
     @Query("""
             SELECT new com.seebie.server.dto.SleepDetails(s.id, s.minutesAsleep, s.notes, s.minutesAwake, s.startTime, s.stopTime, s.zoneId)
             FROM SleepSession s
-            WHERE s.user.username=:username
-            ORDER BY s.stopTime ASC 
+            WHERE s.user.publicId=:publicId
+            ORDER BY s.stopTime ASC
             """)
-    List<SleepDetails> findAllByUsername(String username);
+    List<SleepDetails> findAllByUser(UUID publicId);
 
+    default List<SleepDetails> findAllByUser(String publicId) {
+        return findAllByUser(UUID.fromString(publicId));
+    }
 }

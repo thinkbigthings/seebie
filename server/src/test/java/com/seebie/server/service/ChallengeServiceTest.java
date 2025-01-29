@@ -24,7 +24,7 @@ public class ChallengeServiceTest {
     public void setup() {
         service = new ChallengeService(challengeRepository, challengeListMapper);
 
-        when(challengeRepository.findByUsername(anyString(), anyLong())).thenReturn(Optional.empty());
+        when(challengeRepository.findByUser(anyString(), anyLong())).thenReturn(Optional.empty());
     }
 
     @Test

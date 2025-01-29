@@ -29,7 +29,7 @@ public class TestData {
 
     public static RegistrationRequest createRandomUserRegistration(String usernamePrefix) {
 
-        String displayName = usernamePrefix + "-" + randomUUID();
+        String displayName = usernamePrefix + "-" + faker.name().firstName();
         String password = "password";
         String email = faker.internet().emailAddress();
         return new RegistrationRequest(displayName, password, email);

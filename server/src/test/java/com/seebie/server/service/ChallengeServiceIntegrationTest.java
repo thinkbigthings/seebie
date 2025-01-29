@@ -62,23 +62,23 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testDelete() {
 
-        String username = saveNewUser();
+        String publicId = saveNewUser();
         var today = LocalDate.now();
 
         // preconditions
-        List<ChallengeDetailDto> completed = challengeService.getChallenges(username);
+        List<ChallengeDetailDto> completed = challengeService.getChallenges(publicId);
         assertEquals(0, completed.size());
 
         // set up test data
-        var challenge = challengeService.saveNew(username, createRandomChallenge(-14, 7));
-        completed = challengeService.getChallenges(username);
+        var challenge = challengeService.saveNew(publicId, createRandomChallenge(-14, 7));
+        completed = challengeService.getChallenges(publicId);
         assertEquals(1, completed.size());
 
         // perform testable action
-        challengeService.remove(username, challenge.id());
+        challengeService.remove(publicId, challenge.id());
 
         // postconditions
-        completed = challengeService.getChallenges(username);
+        completed = challengeService.getChallenges(publicId);
         assertEquals(0, completed.size());
     }
 

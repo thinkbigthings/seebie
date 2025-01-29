@@ -22,7 +22,7 @@ public class UnsavedSleepListMapper implements BiFunction<String, List<SleepData
     @Override
     public List<SleepSession> apply(String username, List<SleepData> dtos) {
 
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByPublicId(username)
                 .orElseThrow(() -> new IllegalArgumentException("user not found: " + username));
 
         return dtos.stream()

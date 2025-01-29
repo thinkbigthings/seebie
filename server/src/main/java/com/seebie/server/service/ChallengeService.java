@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ChallengeService {
@@ -35,7 +36,7 @@ public class ChallengeService {
     @Transactional
     public void update(String username, Long challengeId, ChallengeDto dto) {
 
-        var entity = challengeRepo.findByUsername(username, challengeId)
+        var entity = challengeRepo.findByUser(username, challengeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Challenge not found"));
 
         entity.setChallengeData(dto.name(), dto.description(), dto.start(), dto.finish());
@@ -48,16 +49,16 @@ public class ChallengeService {
     }
 
     @Transactional
-    public void remove(String username, Long challengeId) {
-        challengeRepo.findByUsername(username, challengeId)
+    public void remove(String publicId, Long challengeId) {
+        challengeRepo.findByUser(publicId, challengeId)
                 .ifPresentOrElse(challengeRepo::delete, () -> {
-                    throw new EntityNotFoundException("No challenge with id " + challengeId + " found for user " + username );
+                    throw new EntityNotFoundException("No challenge with id " + challengeId + " found for user " + publicId);
                 });
     }
 
     @Transactional(readOnly = true)
     public List<ChallengeDetailDto> getChallenges(String username) {
-        return challengeRepo.findAllByUsername(username);
+        return challengeRepo.findAllByUser(username);
     }
 
 }

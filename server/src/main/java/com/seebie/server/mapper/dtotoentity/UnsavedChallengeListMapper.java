@@ -19,7 +19,7 @@ public class UnsavedChallengeListMapper implements BiFunction<String, List<Chall
 
     @Override
     public List<com.seebie.server.entity.Challenge> apply(String username, List<ChallengeDto> dtos) {
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByPublicId(username)
                 .orElseThrow(() -> new IllegalArgumentException("user not found: " + username));
 
         return dtos.stream()

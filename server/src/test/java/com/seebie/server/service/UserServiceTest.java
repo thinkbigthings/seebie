@@ -14,6 +14,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,7 +31,7 @@ public class UserServiceTest {
     private PasswordEncoder pwEncoder = Mockito.mock(PasswordEncoder.class);
 
     private String savedUserEmail = "test@example.com";
-    private String savedUsername = UUID.randomUUID().toString();
+    private String savedUserPublicId = UUID.randomUUID().toString();
     private String noSuchUsername = UUID.randomUUID().toString();
     private User savedUser = new User("savedUser", savedUserEmail, "encryptedpw");
     private Notification notification = new Notification(savedUser);
@@ -39,16 +40,21 @@ public class UserServiceTest {
     private UserService service;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
 
         service = new UserService(userRepo, notificationRepo, pwEncoder);
 
-        when(userRepo.findByUsername((noSuchUsername))).thenReturn(Optional.empty());
+        // use reflection to set publicId since we don't want to add a setter for generated values
+        Field field = savedUser.getClass().getDeclaredField("publicId");
+        field.setAccessible(true);
+        field.set(savedUser, UUID.fromString(savedUserPublicId));
+
+        when(userRepo.findByPublicId((noSuchUsername))).thenReturn(Optional.empty());
 
         when(userRepo.save(ArgumentMatchers.any(User.class))).then(AdditionalAnswers.returnsFirstArg());
-        when(userRepo.findByUsername(eq(savedUsername))).thenReturn(of(savedUser));
+        when(userRepo.findByPublicId(eq(savedUserPublicId))).thenReturn(of(savedUser));
         when(pwEncoder.encode(ArgumentMatchers.any(String.class))).thenReturn(strongPasswordHash);
-        when(notificationRepo.findBy(eq(savedUsername))).thenReturn(of(notification));
+        when(notificationRepo.findBy(eq(savedUserPublicId))).thenReturn(of(notification));
     }
 
     @Test
@@ -56,7 +62,7 @@ public class UserServiceTest {
 
         var updateInfo = new PersonalInfo(savedUser.getDisplayName()+"1", true);
 
-        var updatedUser = service.updateUser(savedUsername, updateInfo);
+        var updatedUser = service.updateUser(savedUserPublicId, updateInfo);
 
         assertEquals(updateInfo, updatedUser.personalInfo());
     }
@@ -73,9 +79,9 @@ public class UserServiceTest {
     @Test
     public void getUser() {
 
-        var foundUser = service.getUser(savedUsername);
+        var foundUser = service.getUser(savedUserPublicId);
 
-        assertEquals(savedUser.getUsername(), foundUser.publicId());
+        assertEquals(savedUser.getPublicId(), foundUser.publicId());
         assertEquals(savedUser.getDisplayName(), foundUser.personalInfo().displayName());
         assertEquals(savedUser.getEmail(), foundUser.email());
     }
@@ -90,7 +96,7 @@ public class UserServiceTest {
     @Test
     public void updatePassword() {
 
-        service.updatePassword(savedUsername, "newpassword");
+        service.updatePassword(savedUserPublicId, "newpassword");
 
         assertEquals(strongPasswordHash, savedUser.getPassword());
     }

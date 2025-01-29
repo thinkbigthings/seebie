@@ -98,8 +98,8 @@ public class ControllerValidationTest {
 
 	private static MultiRequestBuilder requestBuilder;
 
-	private static final String USER_PUBLIC_ID = "someuser";
-	private static final String ADMIN_PUBLIC_ID = "admin";
+	private static final String USER_PUBLIC_ID = "0c40d394-c856-49b1-bc78-a86121157288";
+	private static final String ADMIN_PUBLIC_ID = "62884376-21e9-4e9f-8f53-b685cd510e65";
 	private static final String USER_LOGIN_ID = "someuser@example.com";
 	private static final String ADMIN_LOGIN_ID = "admin@example.com";
 
