@@ -29,7 +29,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faChartLine,
     faChartSimple,
-    faCog,
+    faCog, faHexagonNodes,
     faList,
     faMoon,
     faServer,
@@ -49,6 +49,7 @@ import EditChallenge from "./EditChallenge";
 import {CurrentUserProvider} from "./CurrentUserProvider";
 import {ErrorProvider} from "./ErrorProvider";
 import {IconDefinition} from "@fortawesome/fontawesome-svg-core";
+import Chat from "./Chat.tsx";
 
 function App() {
 
@@ -145,6 +146,7 @@ function AuthenticatedApp() {
                     <Route path="/users/:publicId/sleep/:sleepId/edit" element={<EditSleep />} />
                     <Route path="/users/:publicId/challenge/:challengeId/edit" element={<EditChallenge />} />
                     <Route path="/users/:publicId/tools" element={<Tools />} />
+                    <Route path="/users/:publicId/chat" element={<Chat />} />
                 </Routes>
             </Container>
 
@@ -164,6 +166,7 @@ function SideNav(props: {hasAdmin:boolean, publicId:string}) {
             <NavItem name="Chart" icon={faChartLine} href={"#/users/"+publicId+"/sleep/chart" } />
             <NavItem name="Analysis" icon={faChartSimple} href={"#/users/"+publicId+"/histogram"} />
             <NavItem name="Tools" icon={faTools} href={"#/users/"+publicId+"/tools"} />
+            <NavItem name="Tools" icon={faHexagonNodes} href={"#/users/"+publicId+"/chat"} />
             {usersNav}
         </Nav>
     );
