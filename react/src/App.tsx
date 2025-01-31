@@ -166,7 +166,7 @@ function SideNav(props: {hasAdmin:boolean, publicId:string}) {
             <NavItem name="Chart" icon={faChartLine} href={"#/users/"+publicId+"/sleep/chart" } />
             <NavItem name="Analysis" icon={faChartSimple} href={"#/users/"+publicId+"/histogram"} />
             <NavItem name="Tools" icon={faTools} href={"#/users/"+publicId+"/tools"} />
-            <NavItem name="Tools" icon={faHexagonNodes} href={"#/users/"+publicId+"/chat"} />
+            <NavItem name="Chat" icon={faHexagonNodes} href={"#/users/"+publicId+"/chat"} />
             {usersNav}
         </Nav>
     );
