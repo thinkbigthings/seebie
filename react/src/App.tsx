@@ -51,6 +51,8 @@ import {ErrorProvider} from "./ErrorProvider";
 import {IconDefinition} from "@fortawesome/fontawesome-svg-core";
 import Chat from "./Chat.tsx";
 
+const SHOW_CHAT = true;
+
 function App() {
 
     return (
@@ -146,7 +148,9 @@ function AuthenticatedApp() {
                     <Route path="/users/:publicId/sleep/:sleepId/edit" element={<EditSleep />} />
                     <Route path="/users/:publicId/challenge/:challengeId/edit" element={<EditChallenge />} />
                     <Route path="/users/:publicId/tools" element={<Tools />} />
-                    <Route path="/users/:publicId/chat" element={<Chat />} />
+                    {SHOW_CHAT
+                        ? <Route path="/users/:publicId/chat" element={<Chat />} />
+                        : null}
                 </Routes>
             </Container>
 
@@ -166,7 +170,9 @@ function SideNav(props: {hasAdmin:boolean, publicId:string}) {
             <NavItem name="Chart" icon={faChartLine} href={"#/users/"+publicId+"/sleep/chart" } />
             <NavItem name="Analysis" icon={faChartSimple} href={"#/users/"+publicId+"/histogram"} />
             <NavItem name="Tools" icon={faTools} href={"#/users/"+publicId+"/tools"} />
-            <NavItem name="Chat" icon={faHexagonNodes} href={"#/users/"+publicId+"/chat"} />
+            {SHOW_CHAT
+                ? <NavItem name="Chat" icon={faHexagonNodes} href={"#/users/"+publicId+"/chat"} />
+                : null}
             {usersNav}
         </Nav>
     );
