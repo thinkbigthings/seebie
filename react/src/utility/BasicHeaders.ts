@@ -36,5 +36,18 @@ const fetchPost = (url: string, body: Record<string, unknown>) => {
     return fetch(url, requestMeta);
 }
 
+const fetchPostStr = (url: string, bodyString: string) => {
 
-export {basicHeader, GET, fetchPost}
+    const requestHeaders = basicHeader();
+
+    const requestMeta = {
+        headers: requestHeaders,
+        method: 'POST',
+        body: bodyString
+    };
+
+    return fetch(url, requestMeta);
+}
+
+
+export {basicHeader, GET, fetchPost, fetchPostStr}

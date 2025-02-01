@@ -94,7 +94,7 @@ function Login() {
                            placeholder="Remember Me"
                            checked={rememberMe}
                            onChange={e => setRememberMe(e.target.checked)}
-                           onKeyPress={e => callOnEnter(e)}
+                           onKeyUp={e => callOnEnter(e)}
                     />
             </Container>
 

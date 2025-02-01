@@ -8,6 +8,11 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class and all its components are only used by tests.
+ * They're in src/main with the idea that they could be used by an admin feature to manage sessions
+ * but that has never been implemented, and it could be fine to move to src/test
+ */
 @Service
 public class PersistentLoginSchedulingService {
 
