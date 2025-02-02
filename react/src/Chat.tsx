@@ -6,11 +6,8 @@ import {useParams} from "react-router-dom";
 import {fetchPostStr, GET} from "./utility/BasicHeaders.ts";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import {MessageDto, MessageType} from "./types/message.types.ts";
 
-interface PromptResponse {
-    prompt: string,
-    response: string
-}
 
 function Chat() {
 
@@ -23,11 +20,9 @@ function Chat() {
 
     const chatUrl = `/api/user/${publicId}/chat`
 
-    const [chatHistory, setChatHistory] = useState<PromptResponse[]>([]);
+    const [chatHistory, setChatHistory] = useState<MessageDto[]>([]);
 
     const chatHistoryRef = useRef<HTMLDivElement>(null);
-
-
 
     // call the callback function if the enter key was pressed in the event
     function callOnEnter(event:React.KeyboardEvent<HTMLTextAreaElement>, callback:()=>void) {
@@ -35,6 +30,13 @@ function Chat() {
             callback();
         }
     }
+
+    useEffect(() => {
+        fetch(chatUrl, GET)
+            .then((response) => response.json() as Promise<MessageDto[]>)
+            .then(setChatHistory)
+            .catch(error => console.log(error));
+    }, []);
 
     // Auto-scroll to bottom whenever chatHistory updates
     useEffect(() => {
@@ -45,8 +47,8 @@ function Chat() {
 
     const promptRef = useRef<HTMLTextAreaElement>(null);
 
-    const appendChatHistory = (response:PromptResponse) => {
-        setChatHistory(prevChatHistory => [...prevChatHistory, response]);
+    const appendMessage = (message:MessageDto) => {
+        setChatHistory(prevChatHistory => [...prevChatHistory, message]);
     }
 
     const submitPrompt = () => {
@@ -58,10 +60,12 @@ function Chat() {
         const prompt = promptRef.current.value;
         promptRef.current.value = "";
 
+        appendMessage({content: prompt, type: MessageType.USER});
+
         fetchPostStr(chatUrl, prompt)
             .then(throwOnHttpError)
             .then((response) => response.json())
-            .then(appendChatHistory)
+            .then(appendMessage)
             .catch((error) => console.error('Error:', error));
     };
 
@@ -76,17 +80,13 @@ function Chat() {
                            style={{ height: '300px', overflowY: 'auto' }}
                             ref={chatHistoryRef}>
                     {
-                        chatHistory.map((promptResponse, i) => {
+                        chatHistory.map((message, i) => {
+                            const alignment = message.type === MessageType.USER ? "text-end" : "text-start";
                             return (
                                 <Container key={i}>
                                     <Row className={"p-2 mb-1 pe-0"}>
-                                        <Col className="text-end">
-                                            {promptResponse.prompt}
-                                        </Col>
-                                    </Row>
-                                    <Row className={"p-2 mb-1 pe-0"}>
-                                        <Col className="text-start">
-                                            {promptResponse.response}
+                                        <Col className={alignment} >
+                                            {message.content}
                                         </Col>
                                     </Row>
                                 </Container>

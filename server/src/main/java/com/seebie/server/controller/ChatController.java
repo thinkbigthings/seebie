@@ -1,7 +1,6 @@
 package com.seebie.server.controller;
 
 import com.seebie.server.dto.MessageDto;
-import com.seebie.server.dto.PromptResponse;
 import com.seebie.server.service.MessageService;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
@@ -33,7 +32,7 @@ public class ChatController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value="/user/{publicId}/chat", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public PromptResponse submitPrompt(@Valid @RequestBody String prompt, @PathVariable String publicId) {
+    public MessageDto submitPrompt(@Valid @RequestBody String prompt, @PathVariable String publicId) {
 
         return messageService.processPrompt(prompt, publicId);
     }

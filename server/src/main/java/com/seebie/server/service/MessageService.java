@@ -1,7 +1,6 @@
 package com.seebie.server.service;
 
 import com.seebie.server.dto.MessageDto;
-import com.seebie.server.dto.PromptResponse;
 import com.seebie.server.entity.Message;
 import com.seebie.server.entity.MessageType;
 import com.seebie.server.repository.MessageRepository;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -33,11 +33,11 @@ public class MessageService {
 
     @Transactional
     public List<MessageDto> getMessages(String publicId) {
-         return messageRepo.findAllByUserPublicId(publicId);
+         return messageRepo.findAllByUserPublicId(UUID.fromString(publicId));
     }
 
     @Transactional
-    public PromptResponse processPrompt(String prompt, String publicId) {
+    public MessageDto processPrompt(String prompt, String publicId) {
 
         var trimmedPrompt = prompt.trim();
         var response = "LLM response goes here"; // chatModel.call(trimmedPrompt);
@@ -48,7 +48,7 @@ public class MessageService {
         messageRepo.save(new Message(user, trimmedPrompt, MessageType.USER));
         messageRepo.save(new Message(user, response, MessageType.ASSISTANT));
 
-        return new PromptResponse(trimmedPrompt, response);
+        return new MessageDto(response, MessageType.ASSISTANT);
     }
 
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.UUID;
 
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
@@ -16,6 +17,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             WHERE m.user.publicId=:publicId
             ORDER BY m.time ASC
             """)
-    List<MessageDto> findAllByUserPublicId(String publicId);
+    List<MessageDto> findAllByUserPublicId(UUID publicId);
 }
 
