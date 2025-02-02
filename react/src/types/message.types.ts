@@ -1,7 +1,19 @@
 
 enum MessageType {
-    ASSISTANT,
-    USER
+    ASSISTANT = "ASSISTANT",
+    USER = "USER",
+}
+
+function mapToMessageDto(raw: any): MessageDto {
+    // Optionally, you can validate or transform the raw value:
+    const typeValue = raw.type;
+    if (!Object.values(MessageType).includes(typeValue)) {
+        throw new Error(`Invalid message type: ${typeValue}`);
+    }
+    return {
+        content: raw.content,
+        type: typeValue as MessageType,
+    };
 }
 
 interface MessageDto {
@@ -9,5 +21,5 @@ interface MessageDto {
     type: MessageType
 }
 
-export {MessageType}
+export {MessageType, mapToMessageDto}
 export type {MessageDto}

@@ -6,7 +6,7 @@ import {useParams} from "react-router-dom";
 import {fetchPostStr, GET} from "./utility/BasicHeaders.ts";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {MessageDto, MessageType} from "./types/message.types.ts";
+import {mapToMessageDto, MessageDto, MessageType} from "./types/message.types.ts";
 
 
 function Chat() {
@@ -34,6 +34,7 @@ function Chat() {
     useEffect(() => {
         fetch(chatUrl, GET)
             .then((response) => response.json() as Promise<MessageDto[]>)
+            .then((data: any[]) => data.map(mapToMessageDto))
             .then(setChatHistory)
             .catch(error => console.log(error));
     }, []);
@@ -69,6 +70,7 @@ function Chat() {
             .catch((error) => console.error('Error:', error));
     };
 
+    console.log(chatHistory)
 
     return (
         <Container>
@@ -81,7 +83,7 @@ function Chat() {
                             ref={chatHistoryRef}>
                     {
                         chatHistory.map((message, i) => {
-                            const alignment = message.type === MessageType.USER ? "text-end" : "text-start";
+                            const alignment = message.type !== MessageType.USER ? "text-end" : "text-start";
                             return (
                                 <Container key={i}>
                                     <Row className={"p-2 mb-1 pe-0"}>
