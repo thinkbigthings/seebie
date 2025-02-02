@@ -20,6 +20,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -77,6 +78,9 @@ public class ControllerSecurityTest {
 
 	@MockitoBean
 	private DataSource dataSource;
+
+	@MockitoBean
+	private OpenAiChatModel chatModel;
 
 	@MockitoBean
 	private UserService service;
