@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import useHttpError from "./hooks/useHttpError";
 import {useParams} from "react-router-dom";
-import {fetchPostStr} from "./utility/BasicHeaders.ts";
+import {fetchPostStr, GET} from "./utility/BasicHeaders.ts";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
@@ -26,6 +26,8 @@ function Chat() {
     const [chatHistory, setChatHistory] = useState<PromptResponse[]>([]);
 
     const chatHistoryRef = useRef<HTMLDivElement>(null);
+
+
 
     // call the callback function if the enter key was pressed in the event
     function callOnEnter(event:React.KeyboardEvent<HTMLTextAreaElement>, callback:()=>void) {
@@ -68,7 +70,7 @@ function Chat() {
         <Container>
             <NavHeader title="Chat" />
 
-            <Container className="mx-0 px-0 py-2 border-top border-light-subtle">
+            <Container className="mx-0 px-0">
                 <Container id="chatHistory"
                            className="ps-0 border rounded"
                            style={{ height: '300px', overflowY: 'auto' }}

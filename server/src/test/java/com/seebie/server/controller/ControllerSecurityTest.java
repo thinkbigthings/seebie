@@ -6,10 +6,7 @@ import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.mapper.entitytodto.SleepDetailsToCsv;
 import com.seebie.server.security.WebSecurityBeanProvider;
 import com.seebie.server.security.WebSecurityConfig;
-import com.seebie.server.service.ChallengeService;
-import com.seebie.server.service.ImportExportService;
-import com.seebie.server.service.SleepService;
-import com.seebie.server.service.UserService;
+import com.seebie.server.service.*;
 import com.seebie.server.test.WithCustomMockUser;
 import com.seebie.server.test.data.MultiRequestBuilder;
 import com.seebie.server.test.data.RoleArgumentsBuilder;
@@ -20,7 +17,6 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -40,7 +36,6 @@ import static com.seebie.server.security.WebSecurityConfig.API_LOGIN;
 import static com.seebie.server.test.data.TestData.*;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -80,7 +75,7 @@ public class ControllerSecurityTest {
 	private DataSource dataSource;
 
 	@MockitoBean
-	private OpenAiChatModel chatModel;
+	private MessageService messageService;
 
 	@MockitoBean
 	private UserService service;
