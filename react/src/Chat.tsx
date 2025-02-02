@@ -20,7 +20,7 @@ function Chat() {
 
     const chatUrl = `/api/user/${publicId}/chat`
 
-    const [chatHistory, setChatHistory] = useState<MessageDto[]>([]);
+    const [messages, setMessages] = useState<MessageDto[]>([]);
 
     const chatHistoryRef = useRef<HTMLDivElement>(null);
 
@@ -31,25 +31,17 @@ function Chat() {
         }
     }
 
-    useEffect(() => {
-        fetch(chatUrl, GET)
-            .then((response) => response.json() as Promise<MessageDto[]>)
-            .then((data: any[]) => data.map(mapToMessageDto))
-            .then(setChatHistory)
-            .catch(error => console.log(error));
-    }, []);
-
     // Auto-scroll to bottom whenever chatHistory updates
     useEffect(() => {
         if (chatHistoryRef.current) {
             chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
         }
-    }, [chatHistory]);
+    }, [messages]);
 
     const promptRef = useRef<HTMLTextAreaElement>(null);
 
     const appendMessage = (message:MessageDto) => {
-        setChatHistory(prevChatHistory => [...prevChatHistory, message]);
+        setMessages(prevChatHistory => [...prevChatHistory, message]);
     }
 
     const submitPrompt = () => {
@@ -70,7 +62,13 @@ function Chat() {
             .catch((error) => console.error('Error:', error));
     };
 
-    console.log(chatHistory)
+    useEffect(() => {
+        fetch(chatUrl, GET)
+            .then((response) => response.json() as Promise<MessageDto[]>)
+            .then((data: any[]) => data.map(mapToMessageDto))
+            .then(setMessages)
+            .catch(error => console.log(error));
+    }, []);
 
     return (
         <Container>
@@ -82,7 +80,7 @@ function Chat() {
                            style={{ height: '300px', overflowY: 'auto' }}
                             ref={chatHistoryRef}>
                     {
-                        chatHistory.map((message, i) => {
+                        messages.map((message, i) => {
                             const alignment = message.type !== MessageType.USER ? "text-end" : "text-start";
                             return (
                                 <Container key={i}>
