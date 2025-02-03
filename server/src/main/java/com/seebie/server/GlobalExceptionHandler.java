@@ -20,6 +20,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String,String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ex.printStackTrace();
         return new ResponseEntity<>(createBody(BAD_REQUEST, ex), new HttpHeaders(), BAD_REQUEST);
     }
 

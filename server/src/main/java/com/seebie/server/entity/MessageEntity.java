@@ -61,6 +61,9 @@ public class MessageEntity implements Serializable, Message {
 
     @Override
     public org.springframework.ai.chat.messages.MessageType getMessageType() {
-        return null;
+        return switch (type) {
+            case USER -> org.springframework.ai.chat.messages.MessageType.USER;
+            case ASSISTANT -> org.springframework.ai.chat.messages.MessageType.ASSISTANT;
+        };
     }
 }

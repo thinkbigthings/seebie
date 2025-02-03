@@ -3,6 +3,7 @@ package com.seebie.server.controller;
 
 import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
+import com.seebie.server.entity.MessageType;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.mapper.entitytodto.SleepDetailsToCsv;
 import com.seebie.server.security.WebSecurityBeanProvider;
@@ -141,6 +142,8 @@ public class ControllerValidationTest {
 	private static final ChallengeDto invalidChallenge = new ChallengeDto("", "", null, null);
 	private static final ChallengeDto validChallenge = TestData.createRandomChallenge(0, 14);
 
+	private static final MessageDto validChat = new MessageDto("hello", MessageType.USER);
+
 	@BeforeEach
 	public void setup() {
 
@@ -203,7 +206,10 @@ public class ControllerValidationTest {
 			Arguments.of(POST, "/api/user/"+ USER_PUBLIC_ID +"/challenge", validChallenge, NO_PARAMS, 200),
 
 			Arguments.of(PUT, "/api/user/"+ USER_PUBLIC_ID +"/challenge/1", invalidChallenge, NO_PARAMS, 400),
-			Arguments.of(PUT, "/api/user/"+ USER_PUBLIC_ID +"/challenge/1", validChallenge, NO_PARAMS, 200)
+			Arguments.of(PUT, "/api/user/"+ USER_PUBLIC_ID +"/challenge/1", validChallenge, NO_PARAMS, 200),
+
+			Arguments.of(POST, "/api/user/"+ USER_PUBLIC_ID +"/chat", validChat, NO_PARAMS, 200)
+
 		);
 
 	}

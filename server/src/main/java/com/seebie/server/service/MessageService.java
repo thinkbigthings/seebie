@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,7 +31,7 @@ public class MessageService {
     private final OpenAiChatModel chatModel;
     private final UserRepository userRepo;
     private final MessageRepository messageRepo;
-    private final boolean useRealLLM = false;
+    private final boolean useRealLLM = true;
 
     public MessageService(UserRepository repo, OpenAiChatModel chatModel, MessageRepository messageRepo) {
         this.userRepo = repo;
@@ -49,9 +50,15 @@ public class MessageService {
         var user = userRepo.findByPublicId(publicId)
                 .orElseThrow(() -> new EntityNotFoundException("No user found: " + publicId) );
 
+        var newUserMessage = new MessageEntity(user, userPrompt, MessageType.USER);
+
         var sevenDaysAgo = Instant.now().minus(7, ChronoUnit.DAYS);
 
-        Prompt conversation = new Prompt(messageRepo.findSince(publicId, sevenDaysAgo));
+        var messagesToSend = new ArrayList<>(messageRepo.findSince(publicId, sevenDaysAgo));
+        messagesToSend.add(newUserMessage);
+
+        Prompt conversation = new Prompt(messagesToSend);
+
         var chatResponse = useRealLLM
                 ? chatModel.call(conversation)
                 : new ChatResponse(List.of(new Generation(new AssistantMessage("LLM response")))) ;
@@ -63,7 +70,7 @@ public class MessageService {
                 .map(text -> new MessageEntity(user, text, MessageType.ASSISTANT))
                 .orElseThrow(() -> new RuntimeException("Nothing was generated"));
 
-        messageRepo.save(new MessageEntity(user, userPrompt, MessageType.USER));
+        messageRepo.save(newUserMessage);
         messageRepo.save(response);
 
         return new MessageDto(response.getText(), MessageType.ASSISTANT);

@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import useHttpError from "./hooks/useHttpError";
 import {useParams} from "react-router-dom";
-import {fetchPostStr, GET} from "./utility/BasicHeaders.ts";
+import {fetchPost, fetchPostStr, GET} from "./utility/BasicHeaders.ts";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {mapToMessageDto, MessageDto, MessageType} from "./types/message.types.ts";
@@ -53,11 +53,13 @@ function Chat() {
         const prompt = promptRef.current.value;
         promptRef.current.value = "";
 
-        appendMessage({content: prompt, type: MessageType.USER});
+        const newUserPrompt = {content: prompt, type: MessageType.USER};
+        appendMessage(newUserPrompt);
 
-        fetchPostStr(chatUrl, prompt)
+        fetchPost(chatUrl, newUserPrompt)
             .then(throwOnHttpError)
-            .then((response) => response.json())
+            // .then((response) => response.json())
+            .then(response => response.json() as Promise<MessageDto>)
             .then(appendMessage)
             .catch((error) => console.error('Error:', error));
     };
