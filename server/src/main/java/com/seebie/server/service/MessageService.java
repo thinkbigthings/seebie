@@ -56,18 +56,17 @@ public class MessageService {
                 ? chatModel.call(conversation)
                 : new ChatResponse(List.of(new Generation(new AssistantMessage("LLM response")))) ;
 
-
-        var newUserMessage = new MessageEntity(user, userPrompt, MessageType.USER);
-
-        var responses = chatResponse.getResults().stream()
+        // there could be multiple completions, but n is configured to 1
+        var response = chatResponse.getResults().stream()
+                .findFirst()
                 .map(gen -> gen.getOutput().getText())
                 .map(text -> new MessageEntity(user, text, MessageType.ASSISTANT))
-                .toList();
+                .orElseThrow(() -> new RuntimeException("Nothing was generated"));
 
-        messageRepo.save(newUserMessage);
-        messageRepo.saveAll(responses);
+        messageRepo.save(new MessageEntity(user, userPrompt, MessageType.USER));
+        messageRepo.save(response);
 
-        return new MessageDto(responses.getFirst().getText(), MessageType.ASSISTANT);
+        return new MessageDto(response.getText(), MessageType.ASSISTANT);
     }
 
 }
