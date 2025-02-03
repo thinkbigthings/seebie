@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
 // so we can use that for api-only requests only if the UI is served separately
@@ -34,7 +35,7 @@ public class ChatController {
     @ResponseBody
     public MessageDto submitPrompt(@Valid @RequestBody String prompt, @PathVariable String publicId) {
 
-        return messageService.processPrompt(prompt, publicId);
+        return messageService.processPrompt(prompt.trim(), UUID.fromString(publicId));
     }
 
 }
