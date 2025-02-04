@@ -1,11 +1,7 @@
 package com.seebie.server.service;
 
 import com.seebie.server.dto.MessageDto;
-import com.seebie.server.entity.MessageEntity;
 import com.seebie.server.entity.MessageType;
-import com.seebie.server.repository.MessageRepository;
-import com.seebie.server.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -13,8 +9,8 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -27,42 +23,31 @@ import java.util.UUID;
 public class MessageService {
 
     private final OpenAiChatModel chatModel;
-    private final UserRepository userRepo;
-    private final MessageRepository messageRepo;
+    private final MessagePersistenceService messagePersistenceService;
     private final boolean useRealLLM = false;
 
-    public MessageService(UserRepository repo, OpenAiChatModel chatModel, MessageRepository messageRepo) {
-        this.userRepo = repo;
+    public MessageService(OpenAiChatModel chatModel, MessagePersistenceService messagePersistenceService) {
         this.chatModel = chatModel;
-        this.messageRepo = messageRepo;
+        this.messagePersistenceService = messagePersistenceService;
     }
 
-    @Transactional
-    public List<MessageDto> getMessages(String publicId) {
-         return messageRepo.findAllByUserPublicId(UUID.fromString(publicId));
+    public List<MessageDto> getMessages(UUID publicId) {
+        var sevenDaysAgo = Instant.now().minus(7, ChronoUnit.DAYS);
+        return messagePersistenceService.getChatHistory(publicId, sevenDaysAgo);
     }
 
-    @Transactional
     public MessageDto processPrompt(MessageDto userPrompt, UUID publicId) {
 
-        var user = userRepo.findByPublicId(publicId)
-                .orElseThrow(() -> new EntityNotFoundException("No user found: " + publicId) );
-
-        // make sure the timestamp of the user message is before the timestamp of the response
-        // so they appear in the right order
-        var userMessage = new MessageEntity(user, userPrompt.content(), MessageType.USER);
-
         var sevenDaysAgo = Instant.now().minus(7, ChronoUnit.DAYS);
+        var chatHistory = messagePersistenceService.getChatHistory(publicId, sevenDaysAgo);
 
-        var chatHistory = messageRepo.findSince(publicId, sevenDaysAgo).stream()
-                .map(this::dtoToSpringAi)
-                .toList();
-
-        var messagesToSend = new ArrayList<>(chatHistory);
+        var messagesToSend = new ArrayList<Message>();
+        chatHistory.stream().map(this::dtoToSpringAi).forEach(messagesToSend::add);
         messagesToSend.add(new UserMessage(userPrompt.content()));
 
+        var options = OpenAiChatOptions.builder().user(publicId.toString()).build();
         var chatResponse = useRealLLM
-                ? chatModel.call(new Prompt(messagesToSend))
+                ? chatModel.call(new Prompt(messagesToSend, options))
                 : new ChatResponse(List.of(new Generation(new AssistantMessage("LLM response")))) ;
 
         // there could be multiple completions,
@@ -71,13 +56,12 @@ public class MessageService {
         var response = chatResponse.getResults().stream()
                 .findFirst()
                 .map(gen -> gen.getOutput().getText())
-                .map(text -> new MessageEntity(user, text, MessageType.ASSISTANT))
+                .map(text -> new MessageDto(text, MessageType.ASSISTANT))
                 .orElseThrow(() -> new RuntimeException("Nothing was generated"));
 
-        messageRepo.save(userMessage);
-        messageRepo.save(response);
+        messagePersistenceService.saveExchange(publicId, userPrompt, response);
 
-        return new MessageDto(response.getText(), MessageType.ASSISTANT);
+        return response;
     }
 
     /**

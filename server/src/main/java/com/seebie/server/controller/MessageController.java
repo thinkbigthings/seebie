@@ -13,11 +13,11 @@ import java.util.UUID;
 // so we can use that for api-only requests only if the UI is served separately
 @RestController
 @RequestMapping("/api")
-public class ChatController {
+public class MessageController {
 
     private final MessageService messageService;
 
-    public ChatController(MessageService messageService) {
+    public MessageController(MessageService messageService) {
         this.messageService = messageService;
     }
 
@@ -26,7 +26,7 @@ public class ChatController {
     @ResponseBody
     public List<MessageDto> getChatHistory(@PathVariable String publicId) {
 
-        return messageService.getMessages(publicId);
+        return messageService.getMessages(UUID.fromString(publicId));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")

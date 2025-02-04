@@ -16,19 +16,9 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
             SELECT new com.seebie.server.dto.MessageDto(m.text, m.type)
             FROM MessageEntity m
             WHERE m.user.publicId=:publicId
-            ORDER BY m.time ASC
-            """)
-    List<MessageDto> findAllByUserPublicId(UUID publicId);
-
-    @Query("""
-            SELECT new com.seebie.server.dto.MessageDto(m.text, m.type)
-            FROM MessageEntity m
-            WHERE m.user.publicId=:publicId
             AND m.time >= :earliest
             ORDER BY m.time ASC
             """)
     List<MessageDto> findSince(UUID publicId, Instant earliest);
 
-
 }
-
