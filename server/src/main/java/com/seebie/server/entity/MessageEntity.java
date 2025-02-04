@@ -2,15 +2,13 @@ package com.seebie.server.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.ai.chat.messages.Message;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Map;
 
 @Entity
 @Table(name = "message")
-public class MessageEntity implements Serializable, Message {
+public class MessageEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -48,22 +46,4 @@ public class MessageEntity implements Serializable, Message {
         return text;
     }
 
-    @Deprecated
-    @Override
-    public String getContent() {
-        return text;
-    }
-
-    @Override
-    public Map<String, Object> getMetadata() {
-        return Map.of();
-    }
-
-    @Override
-    public org.springframework.ai.chat.messages.MessageType getMessageType() {
-        return switch (type) {
-            case USER -> org.springframework.ai.chat.messages.MessageType.USER;
-            case ASSISTANT -> org.springframework.ai.chat.messages.MessageType.ASSISTANT;
-        };
-    }
 }

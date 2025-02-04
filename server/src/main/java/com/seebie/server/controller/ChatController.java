@@ -38,7 +38,7 @@ public class ChatController {
     @ResponseBody
     public MessageDto submitPrompt(@RequestBody MessageDto prompt, @PathVariable String publicId) {
 
-        return messageService.processPrompt(prompt.content().trim(), UUID.fromString(publicId));
+        return messageService.processPrompt(prompt, UUID.fromString(publicId));
     }
 
 }

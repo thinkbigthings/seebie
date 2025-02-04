@@ -2,7 +2,6 @@ package com.seebie.server.repository;
 
 import com.seebie.server.dto.MessageDto;
 import com.seebie.server.entity.MessageEntity;
-import org.springframework.ai.chat.messages.Message;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -22,12 +21,13 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
     List<MessageDto> findAllByUserPublicId(UUID publicId);
 
     @Query("""
-            SELECT m FROM MessageEntity m
+            SELECT new com.seebie.server.dto.MessageDto(m.text, m.type)
+            FROM MessageEntity m
             WHERE m.user.publicId=:publicId
             AND m.time >= :earliest
             ORDER BY m.time ASC
             """)
-    List<Message> findSince(UUID publicId, Instant earliest);
+    List<MessageDto> findSince(UUID publicId, Instant earliest);
 
 
 }
