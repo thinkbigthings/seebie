@@ -2,8 +2,6 @@ package com.seebie.server.controller;
 
 import com.seebie.server.dto.MessageDto;
 import com.seebie.server.service.MessageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +14,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api")
 public class ChatController {
-
-    private static Logger LOG = LoggerFactory.getLogger(ChatController.class);
 
     private final MessageService messageService;
 

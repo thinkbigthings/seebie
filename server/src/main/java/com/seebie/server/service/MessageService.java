@@ -28,8 +28,6 @@ import java.util.UUID;
 @Service
 public class MessageService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MessageService.class);
-
     private final OpenAiChatModel chatModel;
     private final UserRepository userRepo;
     private final MessageRepository messageRepo;

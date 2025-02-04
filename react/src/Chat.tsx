@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import useHttpError from "./hooks/useHttpError";
 import {useParams} from "react-router-dom";
-import {fetchPost, fetchPostStr, GET} from "./utility/BasicHeaders.ts";
+import {fetchPost, GET} from "./utility/BasicHeaders.ts";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {mapToMessageDto, MessageDto, MessageType} from "./types/message.types.ts";
@@ -53,7 +53,7 @@ function Chat() {
         const prompt = promptRef.current.value;
         promptRef.current.value = "";
 
-        const newUserPrompt = {content: prompt, type: MessageType.USER};
+        const newUserPrompt = {content: prompt.trim(), type: MessageType.USER};
         appendMessage(newUserPrompt);
 
         fetchPost(chatUrl, newUserPrompt)
