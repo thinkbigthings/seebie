@@ -6,8 +6,6 @@ import com.seebie.server.entity.MessageType;
 import com.seebie.server.repository.MessageRepository;
 import com.seebie.server.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -56,16 +54,10 @@ public class MessageService {
 
         var sevenDaysAgo = Instant.now().minus(7, ChronoUnit.DAYS);
 
-        // OpenAiChatModel.createRequest(Prompt prompt, boolean stream) presumes that if a Message
-        // in the prompt has a message where message.getMessageType() == MessageType.ASSISTANT then
-        // they immediately try to cast it as an AssistantMessage
-        // so although Prompt() takes a List of interfaces, it actually depends on the concrete classes.
-
         var chatHistory = messageRepo.findSince(publicId, sevenDaysAgo).stream()
                 .map(this::dtoToSpringAi)
                 .toList();
 
-        // .toList() is unmodifiable so need to build a new list to add the user's message
         var messagesToSend = new ArrayList<>(chatHistory);
         messagesToSend.add(new UserMessage(userPrompt.content()));
 
@@ -73,7 +65,8 @@ public class MessageService {
                 ? chatModel.call(new Prompt(messagesToSend))
                 : new ChatResponse(List.of(new Generation(new AssistantMessage("LLM response")))) ;
 
-        // there could be multiple completions, but n is configured to 1
+        // there could be multiple completions,
+        // but spring.ai.openai.chat.options.n is configured to 1
         // so it's ok to use .findFirst()
         var response = chatResponse.getResults().stream()
                 .findFirst()
@@ -87,6 +80,11 @@ public class MessageService {
         return new MessageDto(response.getText(), MessageType.ASSISTANT);
     }
 
+    /**
+     *  Although OpenAiChatModel takes a List of Message interfaces,
+     *  it actually depends on Spring's concrete classes internally,
+     *  so we can't just implement the interfaces ourselves.
+     */
     public Message dtoToSpringAi(MessageDto messageDto) {
         return switch(messageDto.type()) {
             case ASSISTANT -> new AssistantMessage(messageDto.content());

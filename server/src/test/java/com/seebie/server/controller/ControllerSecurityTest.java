@@ -153,9 +153,6 @@ public class ControllerSecurityTest {
 		// so we get the mapper as configured for the app
 		requestBuilder = new MultiRequestBuilder(converter.getObjectMapper());
 
-//		var payload = "{\"content\":\"asdf\\n\",\"type\":\"USER\"}";
-//		var m = converter.getObjectMapper().readValue(payload, MessageDto.class);
-
 		test = new RoleArgumentsBuilder();
 
 		test.post("/api/registration", registration, 401, 403, 200);
