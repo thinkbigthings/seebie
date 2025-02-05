@@ -10,6 +10,7 @@ import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -24,11 +25,12 @@ public class MessageService {
 
     private final OpenAiChatModel chatModel;
     private final MessagePersistenceService messagePersistenceService;
-    private final boolean useRealLLM = false;
+    private final boolean liveChatEnabled;
 
-    public MessageService(OpenAiChatModel chatModel, MessagePersistenceService messagePersistenceService) {
+    public MessageService(OpenAiChatModel chatModel, MessagePersistenceService messagePersistenceService, Environment env) {
         this.chatModel = chatModel;
         this.messagePersistenceService = messagePersistenceService;
+        this.liveChatEnabled = env.getProperty("spring.ai.openai.chat.enabled", Boolean.class, false);
     }
 
     public List<MessageDto> getMessages(UUID publicId) {
@@ -46,7 +48,7 @@ public class MessageService {
         messagesToSend.add(new UserMessage(userPrompt.content()));
 
         var options = OpenAiChatOptions.builder().user(publicId.toString()).build();
-        var chatResponse = useRealLLM
+        var chatResponse = liveChatEnabled
                 ? chatModel.call(new Prompt(messagesToSend, options))
                 : new ChatResponse(List.of(new Generation(new AssistantMessage("LLM response")))) ;
 

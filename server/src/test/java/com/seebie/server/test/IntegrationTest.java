@@ -29,8 +29,7 @@ import org.testcontainers.junit.jupiter.Container;
         "spring.session.timeout=1s", // small values for SessionSecurityTest
         "app.security.rememberMe.key=test-only",
         "spring.mail.username=test-only",
-        "logging.level.org.springframework.security=DEBUG",
-        "logging.level.org.springframework.security.web.access.expression=DEBUG"
+        "spring.ai.openai.chat.enabled=false"
         })
 public class IntegrationTest {
 

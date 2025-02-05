@@ -83,10 +83,10 @@ function Chat() {
                             ref={chatHistoryRef}>
                     {
                         messages.map((message, i) => {
-                            const alignment = message.type !== MessageType.USER ? "text-end" : "text-start";
+                            const alignment = message.type === MessageType.USER ? "text-end" : "text-start";
                             return (
                                 <Container key={i}>
-                                    <Row className={"p-2 mb-1 pe-0"}>
+                                    <Row className={"p-2 pe-0"}>
                                         <Col className={alignment} >
                                             {message.content}
                                         </Col>
