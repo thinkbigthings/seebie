@@ -37,6 +37,7 @@ import static com.seebie.server.test.data.TestData.*;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -127,6 +128,8 @@ public class ControllerSecurityTest {
 	private static final HistogramRequest histogramRequest = new HistogramRequest(1, new FilterList(List.of()));
 	private static final ChallengeDto challenge = createRandomChallenge(0, 14);
 
+	private static final MessageDto validChat = randomUserMessage();
+
     @Autowired
     private UserService userService;
 
@@ -206,6 +209,9 @@ public class ControllerSecurityTest {
 		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/challenge" + "/1", 401, 403, 200);
 		test.put("/api/user/"+ ADMIN_PUBLIC_ID +"/challenge" + "/1", challenge, 401, 403, 200);
 		test.delete("/api/user/"+ ADMIN_PUBLIC_ID +"/challenge" + "/1", 401, 403, 200);
+
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/chat", 401, 200, 200);
+		test.post("/api/user/"+ USER_PUBLIC_ID +"/chat", validChat, 401, 200, 200);
 	}
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {

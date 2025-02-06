@@ -143,6 +143,7 @@ public class ControllerValidationTest {
 	private static final ChallengeDto validChallenge = TestData.createRandomChallenge(0, 14);
 
 	private static final MessageDto validChat = randomUserMessage();
+	private static final MessageDto invalidChat = new MessageDto(null, MessageType.USER);
 
 	@BeforeEach
 	public void setup() {
@@ -208,8 +209,8 @@ public class ControllerValidationTest {
 			Arguments.of(PUT, "/api/user/"+ USER_PUBLIC_ID +"/challenge/1", invalidChallenge, NO_PARAMS, 400),
 			Arguments.of(PUT, "/api/user/"+ USER_PUBLIC_ID +"/challenge/1", validChallenge, NO_PARAMS, 200),
 
-			Arguments.of(POST, "/api/user/"+ USER_PUBLIC_ID +"/chat", validChat, NO_PARAMS, 200)
-
+			Arguments.of(POST, "/api/user/"+ USER_PUBLIC_ID +"/chat", validChat, NO_PARAMS, 200),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLIC_ID +"/chat", invalidChat, NO_PARAMS, 400)
 		);
 
 	}
