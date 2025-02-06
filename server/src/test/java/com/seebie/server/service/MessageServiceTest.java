@@ -29,7 +29,6 @@ public class MessageServiceTest {
 
     private final OpenAiChatModel chatModel = Mockito.mock(OpenAiChatModel.class);
     private final MessagePersistenceService messagePersistenceService = Mockito.mock(MessagePersistenceService.class);
-    private final MockEnvironment env = new MockEnvironment();
 
     private MessageService service;
 
@@ -38,9 +37,7 @@ public class MessageServiceTest {
     @BeforeEach
     public void setup() {
 
-        env.setProperty("spring.ai.openai.chat.enabled", Boolean.TRUE.toString());
-
-        service = new MessageService(chatModel, messagePersistenceService, env);
+        service = new MessageService(chatModel, messagePersistenceService);
 
         when(messagePersistenceService.getChatHistory(any(UUID.class), any(Instant.class))).thenReturn(List.of());
     }

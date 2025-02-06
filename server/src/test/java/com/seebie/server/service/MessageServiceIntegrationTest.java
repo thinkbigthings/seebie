@@ -4,29 +4,27 @@ import com.seebie.server.dto.MessageDto;
 import com.seebie.server.entity.MessageType;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static com.seebie.server.service.MessageService.CANNED_RESPONSE;
 import static com.seebie.server.service.MessageService.toChatResponse;
 import static com.seebie.server.test.data.TestData.randomUserMessage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
-// This tells Spring to provide a mock instead of a real bean
 class MessageServiceIntegrationTest extends IntegrationTest {
 
-     @MockitoBean
+    public final static String CANNED_RESPONSE = "LLM response";
+
+    @MockitoBean
      private OpenAiChatModel chatModel;
 
      @Autowired

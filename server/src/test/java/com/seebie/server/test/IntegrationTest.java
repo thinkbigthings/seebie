@@ -28,8 +28,7 @@ import org.testcontainers.junit.jupiter.Container;
         "app.security.rememberMe.tokenValidity=2s", // small values for SessionSecurityTest
         "spring.session.timeout=1s", // small values for SessionSecurityTest
         "app.security.rememberMe.key=test-only",
-        "spring.mail.username=test-only",
-        "spring.ai.openai.chat.enabled=false"
+        "spring.mail.username=test-only"
         })
 public class IntegrationTest {
 

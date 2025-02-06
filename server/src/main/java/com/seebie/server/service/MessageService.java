@@ -10,7 +10,6 @@ import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -23,16 +22,12 @@ import java.util.UUID;
 @Service
 public class MessageService {
 
-    public final static String CANNED_RESPONSE = "LLM response";
-
     private final OpenAiChatModel chatModel;
     private final MessagePersistenceService messagePersistenceService;
-    private final boolean liveChatEnabled;
 
-    public MessageService(OpenAiChatModel chatModel, MessagePersistenceService messagePersistenceService, Environment env) {
+    public MessageService(OpenAiChatModel chatModel, MessagePersistenceService messagePersistenceService) {
         this.chatModel = chatModel;
         this.messagePersistenceService = messagePersistenceService;
-        this.liveChatEnabled = env.getProperty("spring.ai.openai.chat.enabled", Boolean.class, false);
     }
 
     public List<MessageDto> getMessages(UUID publicId) {
@@ -50,9 +45,7 @@ public class MessageService {
         messagesToSend.add(new UserMessage(userPrompt.content()));
 
         var options = OpenAiChatOptions.builder().user(publicId.toString()).build();
-        var chatResponse = liveChatEnabled
-                ? chatModel.call(new Prompt(messagesToSend, options))
-                : toChatResponse(CANNED_RESPONSE);
+        var chatResponse = chatModel.call(new Prompt(messagesToSend, options));
 
         // there could be multiple completions,
         // but spring.ai.openai.chat.options.n is configured to 1
