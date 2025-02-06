@@ -23,6 +23,8 @@ import java.util.UUID;
 @Service
 public class MessageService {
 
+    public final static String CANNED_RESPONSE = "LLM response";
+
     private final OpenAiChatModel chatModel;
     private final MessagePersistenceService messagePersistenceService;
     private final boolean liveChatEnabled;
@@ -44,13 +46,13 @@ public class MessageService {
         var chatHistory = messagePersistenceService.getChatHistory(publicId, sevenDaysAgo);
 
         var messagesToSend = new ArrayList<Message>();
-        chatHistory.stream().map(this::dtoToSpringAi).forEach(messagesToSend::add);
+        chatHistory.stream().map(MessageService::dtoToSpringAi).forEach(messagesToSend::add);
         messagesToSend.add(new UserMessage(userPrompt.content()));
 
         var options = OpenAiChatOptions.builder().user(publicId.toString()).build();
         var chatResponse = liveChatEnabled
                 ? chatModel.call(new Prompt(messagesToSend, options))
-                : new ChatResponse(List.of(new Generation(new AssistantMessage("LLM response")))) ;
+                : toChatResponse(CANNED_RESPONSE);
 
         // there could be multiple completions,
         // but spring.ai.openai.chat.options.n is configured to 1
@@ -71,11 +73,14 @@ public class MessageService {
      *  it actually depends on Spring's concrete classes internally,
      *  so we can't just implement the interfaces ourselves.
      */
-    public Message dtoToSpringAi(MessageDto messageDto) {
+    public static Message dtoToSpringAi(MessageDto messageDto) {
         return switch(messageDto.type()) {
             case ASSISTANT -> new AssistantMessage(messageDto.content());
             case USER -> new UserMessage(messageDto.content());
         };
     }
 
+    public static ChatResponse toChatResponse(String content) {
+        return new ChatResponse(List.of(new Generation(new AssistantMessage(content))));
+    }
 }

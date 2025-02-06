@@ -142,7 +142,7 @@ public class ControllerValidationTest {
 	private static final ChallengeDto invalidChallenge = new ChallengeDto("", "", null, null);
 	private static final ChallengeDto validChallenge = TestData.createRandomChallenge(0, 14);
 
-	private static final MessageDto validChat = new MessageDto("hello", MessageType.USER);
+	private static final MessageDto validChat = randomUserMessage();
 
 	@BeforeEach
 	public void setup() {

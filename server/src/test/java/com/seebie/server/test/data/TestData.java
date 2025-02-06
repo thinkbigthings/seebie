@@ -2,6 +2,7 @@ package com.seebie.server.test.data;
 
 import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
+import com.seebie.server.entity.MessageType;
 import com.seebie.server.mapper.entitytodto.SleepDetailsToCsvRow;
 import net.datafaker.Faker;
 import org.springframework.mock.web.MockMultipartFile;
@@ -37,6 +38,10 @@ public class TestData {
 
     public static RegistrationRequest createRandomUserRegistration() {
         return createRandomUserRegistration("user");
+    }
+
+    public static MessageDto randomUserMessage() {
+        return new MessageDto("message " + UUID.randomUUID(), MessageType.USER);
     }
 
     /**

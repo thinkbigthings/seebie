@@ -42,8 +42,4 @@ public class MessageEntity implements Serializable {
         this.time = Instant.now();
     }
 
-    public String getText() {
-        return text;
-    }
-
 }
