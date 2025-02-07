@@ -1,9 +1,11 @@
 package com.seebie.server.service;
 
+import com.seebie.server.AppProperties;
 import com.seebie.server.dto.MessageDto;
 import com.seebie.server.entity.MessageType;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
@@ -18,16 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
 @Service
 public class MessageService {
 
     private final OpenAiChatModel chatModel;
     private final MessagePersistenceService messagePersistenceService;
+    private final SystemMessage systemMessage;
 
-    public MessageService(OpenAiChatModel chatModel, MessagePersistenceService messagePersistenceService) {
+    public MessageService(OpenAiChatModel chatModel,
+                          MessagePersistenceService messagePersistenceService,
+                          AppProperties appProperties)
+    {
         this.chatModel = chatModel;
         this.messagePersistenceService = messagePersistenceService;
+        this. systemMessage = new SystemMessage(appProperties.ai().system().prompt());
     }
 
     public List<MessageDto> getMessages(UUID publicId) {
@@ -41,6 +47,8 @@ public class MessageService {
         var chatHistory = messagePersistenceService.getChatHistory(publicId, sevenDaysAgo);
 
         var messagesToSend = new ArrayList<Message>();
+
+        messagesToSend.add(systemMessage);
         chatHistory.stream().map(MessageService::dtoToSpringAi).forEach(messagesToSend::add);
         messagesToSend.add(new UserMessage(userPrompt.content()));
 

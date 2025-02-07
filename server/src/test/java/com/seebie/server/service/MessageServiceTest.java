@@ -2,6 +2,7 @@ package com.seebie.server.service;
 
 import com.seebie.server.dto.MessageDto;
 import com.seebie.server.entity.MessageType;
+import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -37,7 +38,7 @@ public class MessageServiceTest {
     @BeforeEach
     public void setup() {
 
-        service = new MessageService(chatModel, messagePersistenceService);
+        service = new MessageService(chatModel, messagePersistenceService, TestData.newAppProperties(30));
 
         when(messagePersistenceService.getChatHistory(any(UUID.class), any(Instant.class))).thenReturn(List.of());
     }
