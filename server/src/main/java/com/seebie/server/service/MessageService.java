@@ -5,7 +5,6 @@ import com.seebie.server.dto.MessageDto;
 import com.seebie.server.entity.MessageType;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
@@ -26,7 +25,7 @@ public class MessageService {
 
     private final OpenAiChatModel chatModel;
     private final MessagePersistenceService messagePersistenceService;
-    private final SystemMessage systemMessage;
+    private final Message systemMessage;
 
     public MessageService(OpenAiChatModel chatModel,
                           MessagePersistenceService messagePersistenceService,
@@ -34,7 +33,9 @@ public class MessageService {
     {
         this.chatModel = chatModel;
         this.messagePersistenceService = messagePersistenceService;
-        this. systemMessage = new SystemMessage(appProperties.ai().system().prompt());
+
+        // gpt4 takes a SystemMessage, o1 takes a Developer Message which isn't available
+        this.systemMessage = new UserMessage(appProperties.ai().system().prompt());
     }
 
     public List<MessageDto> getMessages(UUID publicId) {
