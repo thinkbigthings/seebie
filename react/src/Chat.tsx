@@ -78,11 +78,11 @@ function Chat() {
             .catch(error => console.log(error));
     }, []);
 
-    const userRowStyle = "ms-5";
-    const botRowStyle = "me-5";
+    const userRowStyle = "ms-5 chat-bot";
+    const botRowStyle = "me-5 chat-user";
 
     return (
-        <Container
+        <Container className={"p-0"}
             style={{
                 height: '90vh',
                 display: 'flex',
@@ -123,7 +123,6 @@ function Chat() {
                     )}
                 </div>
 
-                {/*<div style={{ flexShrink: 0 }}>*/}
                 <textarea
                     className="form-control"
                     id="prompt"
@@ -131,9 +130,7 @@ function Chat() {
                     rows={3}
                     ref={promptRef}
                     onKeyUp={(e) => callOnEnter(e, submitPrompt)}
-                    // Removed mt-2 to prevent extra bottom spacing
                 />
-                {/*</div>*/}
             </div>
         </Container>
     );

@@ -17,6 +17,8 @@
     --orange-gold: #FFC107;
     --lilac-gray: #4f4f5d;
     --slate: #6f6f9b;
+    --slate-green: #5f7f8b;
+    --slate-blue: #6f6fBb;
     --peri-lilac: #7070c2;
     --sage-green: #89a987;
     --sage-green-darker: #6b8569;
@@ -147,4 +149,12 @@ body {
 }
 .btn-secondary:active:focus {
     background-color: var(--peri-lilac);
+}
+
+.chat-bot {
+    background-color: var(--slate-green);
+}
+
+.chat-user {
+    background-color: var(--slate-blue);
 }
