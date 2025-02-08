@@ -7,9 +7,9 @@ import {fetchPost, GET} from "./utility/BasicHeaders.ts";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {mapToMessageDto, MessageDto, MessageType} from "./types/message.types.ts";
-import {faCircle, faMoon} from "@fortawesome/free-solid-svg-icons";
+import {faCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import CollapsibleContent from "./component/CollapsibleContent.tsx";
+import InfoModalButton from "./component/InfoModalButton.tsx";
 
 
 function Chat() {
@@ -82,24 +82,18 @@ function Chat() {
     const botRowStyle = "me-5 chat-user";
 
     return (
-        <Container className={"p-0"}
-            style={{
-                height: '90vh',
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden',
-            }}
-        >
-            <NavHeader title="Chat" />
+        <Container className={"p-0 d-flex flex-column overflow-hidden h-90vh "} >
+            <NavHeader title="Chat">
+                <InfoModalButton
+                    titleText={"Chat History"}
+                    modalText={"Chat history is only available for the last 7 days"} />
+                </NavHeader>
             {/* Use a div instead of Container if Bootstrap's default margins/paddings interfere */}
             <div
-                className="mx-0 px-0 d-flex flex-column"
-                style={{ flex: 1, overflow: 'hidden' }}
-            >
+                className="mx-0 px-0 d-flex flex-column flex-fill overflow-hidden" >
                 <div
                     id="chatHistory"
-                    className="border rounded m-0 p-1"
-                    style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}
+                    className="border rounded m-0 p-1 overflow-y-auto flex-1"
                     ref={chatHistoryRef}
                 >
                     {messages.map((message, i) => {
