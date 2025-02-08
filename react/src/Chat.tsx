@@ -7,6 +7,9 @@ import {fetchPost, GET} from "./utility/BasicHeaders.ts";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {mapToMessageDto, MessageDto, MessageType} from "./types/message.types.ts";
+import {faCircle, faMoon} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import CollapsibleContent from "./component/CollapsibleContent.tsx";
 
 
 function Chat() {
@@ -21,6 +24,7 @@ function Chat() {
     const chatUrl = `/api/user/${publicId}/chat`
 
     const [messages, setMessages] = useState<MessageDto[]>([]);
+    const [processing, setProcessing] = useState<boolean>(false);
 
     const chatHistoryRef = useRef<HTMLDivElement>(null);
 
@@ -41,12 +45,15 @@ function Chat() {
     const promptRef = useRef<HTMLTextAreaElement>(null);
 
     const appendMessage = (message:MessageDto) => {
+        setProcessing(message.type === MessageType.USER);
         setMessages(prevChatHistory => [...prevChatHistory, message]);
     }
 
     const submitPrompt = () => {
 
-        if(promptRef.current === null) {
+        setProcessing(true);
+
+        if (promptRef.current === null) {
             return;
         }
 
@@ -58,7 +65,6 @@ function Chat() {
 
         fetchPost(chatUrl, newUserPrompt)
             .then(throwOnHttpError)
-            // .then((response) => response.json())
             .then(response => response.json() as Promise<MessageDto>)
             .then(appendMessage)
             .catch((error) => console.error('Error:', error));
@@ -72,40 +78,63 @@ function Chat() {
             .catch(error => console.log(error));
     }, []);
 
+    const userRowStyle = "ms-5";
+    const botRowStyle = "me-5";
+
     return (
-        <Container>
+        <Container
+            style={{
+                height: '90vh',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+            }}
+        >
             <NavHeader title="Chat" />
+            {/* Use a div instead of Container if Bootstrap's default margins/paddings interfere */}
+            <div
+                className="mx-0 px-0 d-flex flex-column"
+                style={{ flex: 1, overflow: 'hidden' }}
+            >
+                <div
+                    id="chatHistory"
+                    className="border rounded m-0 p-1"
+                    style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}
+                    ref={chatHistoryRef}
+                >
+                    {messages.map((message, i) => {
+                        const rowStyle = message.type === MessageType.USER ? userRowStyle : botRowStyle;
+                        return (
+                            <Container key={i}>
+                                <Row className={`${rowStyle} border rounded mt-1 `}>
+                                    <Col>{message.content}</Col>
+                                </Row>
+                            </Container>
+                        );
+                    })}
+                    {processing && (
+                        <Container key="processing">
+                            <Row>
+                                <Col className="text-start">
+                                    <FontAwesomeIcon className="fa-beat-fade ms-2" icon={faCircle} />
+                                </Col>
+                            </Row>
+                        </Container>
+                    )}
+                </div>
 
-            <Container className="mx-0 px-0">
-                <Container id="chatHistory"
-                           className="ps-0 border rounded"
-                           style={{ height: '300px', overflowY: 'auto' }}
-                            ref={chatHistoryRef}>
-                    {
-                        messages.map((message, i) => {
-                            const alignment = message.type === MessageType.USER ? "text-end" : "text-start";
-                            return (
-                                <Container key={i}>
-                                    <Row className={"p-2 pe-0"}>
-                                        <Col className={alignment} >
-                                            {message.content}
-                                        </Col>
-                                    </Row>
-                                </Container>
-                            )
-                        })
-                    }
-                </Container>
-
-                <textarea className="form-control mt-2"
-                          id="prompt"
-                          placeholder="prompt"
-                          rows={3}
-                          ref={promptRef}
-                          onKeyUp={e => callOnEnter(e, submitPrompt)}
+                {/*<div style={{ flexShrink: 0 }}>*/}
+                <textarea
+                    className="form-control"
+                    id="prompt"
+                    placeholder="Press Enter to send"
+                    rows={3}
+                    ref={promptRef}
+                    onKeyUp={(e) => callOnEnter(e, submitPrompt)}
+                    // Removed mt-2 to prevent extra bottom spacing
                 />
-
-            </Container>
+                {/*</div>*/}
+            </div>
         </Container>
     );
 }

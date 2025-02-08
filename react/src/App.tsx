@@ -29,10 +29,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faChartLine,
     faChartSimple,
-    faCog,
+    faCog, faCommentDots,
     faList,
     faMoon,
-    faRobot,
     faSignOut,
     faTools,
     faTrophy,
@@ -166,7 +165,7 @@ function SideNav(props: {hasAdmin:boolean, publicId:string}) {
             <NavItem name="Chart" icon={faChartLine} href={"#/users/"+publicId+"/sleep/chart" } />
             <NavItem name="Analysis" icon={faChartSimple} href={"#/users/"+publicId+"/histogram"} />
             <NavItem name="Tools" icon={faTools} href={"#/users/"+publicId+"/tools"} />
-            <NavItem name="Chat" icon={faRobot} href={"#/users/"+publicId+"/chat"} />
+            <NavItem name="Chat" icon={faCommentDots} href={"#/users/"+publicId+"/chat"} />
             {usersNav}
         </Nav>
     );
