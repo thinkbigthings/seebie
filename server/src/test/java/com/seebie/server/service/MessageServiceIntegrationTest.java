@@ -12,7 +12,7 @@ import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static com.seebie.server.service.MessageServiceTest.toChatResponse;
@@ -27,7 +27,7 @@ class MessageServiceIntegrationTest extends IntegrationTest {
     @MockitoBean
      private OpenAiChatModel chatModel;
 
-     @Autowired
+    @Autowired
     private MessageService messageService;
 
     @Autowired
@@ -41,31 +41,34 @@ class MessageServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testConversation() {
 
-        var registration = TestData.createRandomUserRegistration();
-        userService.saveNewUser(registration);
-        UUID publicId = UUID.fromString(userService.getUserByEmail(registration.email()).publicId());
+        // Arrange: Set up test data per test
+        UUID publicId = saveNewUser();
 
-        var knownConversation = new ArrayList<MessageDto>();
+        // Act: Send first message and capture response
+        var firstUserMessage = randomUserMessage();
+        var firstResponse = messageService.processPrompt(firstUserMessage, publicId);
 
-        var userMessage = randomUserMessage();
-        var response = messageService.processPrompt(userMessage, publicId);
+        // Assert: Validate the first response details
+        assertEquals(CANNED_RESPONSE, firstResponse.content());
+        assertEquals(MessageType.ASSISTANT, firstResponse.type());
 
-        knownConversation.add(userMessage);
-        knownConversation.add(response);
+        // Act: Send a second message and capture the subsequent response
+        MessageDto secondUserMessage = randomUserMessage();
+        MessageDto secondResponse = messageService.processPrompt(secondUserMessage, publicId);
 
-        assertEquals(CANNED_RESPONSE, response.content());
-        assertEquals(MessageType.ASSISTANT, response.type());
+        // Assert: Validate the overall conversation history
+        List<MessageDto> expectedConversation = List.of(
+                firstUserMessage, firstResponse,
+                secondUserMessage, secondResponse
+        );
+        List<MessageDto> actualConversation = messageService.getMessages(publicId);
+        assertEquals(expectedConversation, actualConversation);
 
-        userMessage = randomUserMessage();
-        response = messageService.processPrompt(userMessage, publicId);
-
-        knownConversation.add(userMessage);
-        knownConversation.add(response);
-
-        var storedConversation = messageService.getMessages(publicId);
-
-        assertEquals(knownConversation, storedConversation);
     }
 
-
+    private UUID saveNewUser() {
+        var registration = TestData.createRandomUserRegistration();
+        userService.saveNewUser(registration);
+        return UUID.fromString(userService.getUserByEmail(registration.email()).publicId());
+    }
 }
