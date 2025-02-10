@@ -5,15 +5,9 @@ plugins {
 
 apply plugin: 'base'
 
-
-// node needs to have been downloaded and be available on the path
 node {
-
-    // match the version of node specified in the README
-    version = "20.6.1"
-
-    // not sure this needs to be true to work, but we should understand what it is doing
-    download = false
+    version = "20.6.1" // match the version of node specified in the README
+    download = true
 }
 
 task bundle(type: NpmTask, dependsOn: npmInstall) {

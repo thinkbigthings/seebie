@@ -1,14 +1,12 @@
 package com.seebie.server.service;
 
-import com.seebie.server.controller.SleepController;
-import com.seebie.server.dto.*;
-import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
-import com.seebie.server.repository.SleepRepository;
+import com.seebie.server.dto.DateRange;
+import com.seebie.server.dto.SleepData;
+import com.seebie.server.dto.SleepDetails;
 import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
@@ -17,28 +15,20 @@ import org.springframework.data.web.PagedModel;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.seebie.server.test.data.TestData.createRandomSleepData;
+import static com.seebie.server.test.data.TestData.createStandardSleepData;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
-import static com.seebie.server.test.data.TestData.*;
 import static java.util.Objects.requireNonNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SleepServiceIntegrationTest extends IntegrationTest {
-
-    @Autowired
-    private SleepController sleepController;
 
     @Autowired
     private SleepService sleepService;
 
     @Autowired
-    private SleepRepository sleepRepository;
-
-    @Autowired
     private UserService userService;
-
-    @Autowired
-    private UnsavedSleepListMapper sleepListMapper;
-
 
     private final PageRequest firstPage = PageRequest.of(0, 10);
 

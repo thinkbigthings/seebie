@@ -1,9 +1,10 @@
 
 plugins {
     id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
     id 'jacoco' // core plugin provided by gradle
     id 'org.flywaydb.flyway' version '11.1.0'
-    id "com.gorylenko.gradle-git-properties" version "2.4.1"
+    id 'com.gorylenko.gradle-git-properties' version '2.4.1'
 }
 
 
@@ -15,31 +16,22 @@ gitProperties {
 
 group = 'com.seebie'
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_23
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(23)
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
+}
+
+ext {
+    set('springAiVersion', "1.0.0-M5")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
     }
 }
 
-repositories {
-    mavenCentral()
-    maven { url='https://repo.spring.io/milestone' } // as needed
-}
-
-// use preview features
-tasks.withType(JavaCompile) {
-    options.compilerArgs += "--enable-preview"
-    // options.compilerArgs += "-Xlint:preview"
-    options.compilerArgs += "-Xlint:unchecked"
-    options.compilerArgs += "-Xlint:deprecation"
-}
-tasks.withType(Test) {
-    jvmArgs += "--enable-preview"
-}
-tasks.withType(JavaExec) {
-    jvmArgs += '--enable-preview'
-}
 
 dependencies {
 
@@ -58,6 +50,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail:3.4.1'
     implementation 'org.springframework.session:spring-session-jdbc:3.4.1'
 
+    implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
 
     testImplementation 'net.datafaker:datafaker:2.4.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
@@ -69,6 +62,27 @@ dependencies {
     testImplementation "org.testcontainers:junit-jupiter:1.20.4"
     testImplementation "org.testcontainers:postgresql:1.20.4"
     testImplementation "org.testcontainers:testcontainers:1.20.4"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_23
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(23)
+    }
+}
+
+// use preview features
+tasks.withType(JavaCompile) {
+    options.compilerArgs += "--enable-preview"
+    // options.compilerArgs += "-Xlint:preview"
+    options.compilerArgs += "-Xlint:unchecked"
+    options.compilerArgs += "-Xlint:deprecation"
+}
+tasks.withType(Test) {
+    jvmArgs += "--enable-preview"
+}
+tasks.withType(JavaExec) {
+    jvmArgs += '--enable-preview'
 }
 
 // Spring Boot builds both an executable jar and a plain jar suitable for use as a library.

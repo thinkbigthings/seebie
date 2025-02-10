@@ -10,7 +10,7 @@ import java.time.Duration;
 
 @Validated
 @ConfigurationProperties(prefix="app")
-public record AppProperties(@NotNull Security security, @NotNull Notification notification) {
+public record AppProperties(@NotNull Security security, @NotNull Notification notification, @NotNull AI ai) {
 
     public record Notification(@NotNull TriggerAfter triggerAfter) {
         public record TriggerAfter(@NotNull Duration lastNotified, @NotNull Duration sleepLog) {}
@@ -21,6 +21,11 @@ public record AppProperties(@NotNull Security security, @NotNull Notification no
             public int tokenValiditySeconds() {
                 return (int) tokenValidity.toSeconds();
             }
+        }
+    }
+
+    public record AI(@NotNull System system) {
+        public record System(@NotNull String prompt) {
         }
     }
 

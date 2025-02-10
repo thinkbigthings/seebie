@@ -7,7 +7,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 public class GlobalExceptionHandlerTest {
 
-    private GlobalExceptionHandler handler = new GlobalExceptionHandler();
+    private AppExceptionHandler handler = new AppExceptionHandler();
 
     @Test
     public void illegalArgument() {

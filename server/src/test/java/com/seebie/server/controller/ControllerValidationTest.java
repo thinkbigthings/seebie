@@ -3,14 +3,12 @@ package com.seebie.server.controller;
 
 import com.seebie.server.AppProperties;
 import com.seebie.server.dto.*;
+import com.seebie.server.entity.MessageType;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.mapper.entitytodto.SleepDetailsToCsv;
 import com.seebie.server.security.WebSecurityBeanProvider;
 import com.seebie.server.security.WebSecurityConfig;
-import com.seebie.server.service.ChallengeService;
-import com.seebie.server.service.ImportExportService;
-import com.seebie.server.service.SleepService;
-import com.seebie.server.service.UserService;
+import com.seebie.server.service.*;
 import com.seebie.server.test.WithCustomMockUser;
 import com.seebie.server.test.data.MultiRequestBuilder;
 import com.seebie.server.test.data.TestData;
@@ -39,7 +37,6 @@ import java.util.List;
 
 import static com.seebie.server.mapper.dtotoentity.CsvToSleepData.missingHeader;
 import static com.seebie.server.test.data.TestData.*;
-import static com.seebie.server.test.data.TestData.createRandomSleepData;
 import static com.seebie.server.test.data.ZoneIds.AMERICA_NEW_YORK;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static org.mockito.ArgumentMatchers.*;
@@ -73,6 +70,9 @@ public class ControllerValidationTest {
 
 	@MockitoBean
 	private DataSource dataSource;
+
+	@MockitoBean
+	private MessageService messageService;
 
 	@MockitoBean
 	private UserService service;
@@ -142,6 +142,9 @@ public class ControllerValidationTest {
 	private static final ChallengeDto invalidChallenge = new ChallengeDto("", "", null, null);
 	private static final ChallengeDto validChallenge = TestData.createRandomChallenge(0, 14);
 
+	private static final MessageDto validChat = randomUserMessage();
+	private static final MessageDto invalidChat = new MessageDto(null, MessageType.USER);
+
 	@BeforeEach
 	public void setup() {
 
@@ -204,7 +207,10 @@ public class ControllerValidationTest {
 			Arguments.of(POST, "/api/user/"+ USER_PUBLIC_ID +"/challenge", validChallenge, NO_PARAMS, 200),
 
 			Arguments.of(PUT, "/api/user/"+ USER_PUBLIC_ID +"/challenge/1", invalidChallenge, NO_PARAMS, 400),
-			Arguments.of(PUT, "/api/user/"+ USER_PUBLIC_ID +"/challenge/1", validChallenge, NO_PARAMS, 200)
+			Arguments.of(PUT, "/api/user/"+ USER_PUBLIC_ID +"/challenge/1", validChallenge, NO_PARAMS, 200),
+
+			Arguments.of(POST, "/api/user/"+ USER_PUBLIC_ID +"/chat", validChat, NO_PARAMS, 200),
+			Arguments.of(POST, "/api/user/"+ USER_PUBLIC_ID +"/chat", invalidChat, NO_PARAMS, 400)
 		);
 
 	}
