@@ -18,7 +18,8 @@ function getWithCreds(url: string, credentials: Credentials) {
     const encoded = btoa(credentials.email + ":" + credentials.password);
 
     let authGet = structuredClone(GET);
-    authGet.headers['Authorization'] = 'Basic ' + encoded;
+    authGet.headers = new Headers(authGet.headers)
+    authGet.headers.append('Authorization', 'Basic ');
 
     return fetch(url, authGet);
 }

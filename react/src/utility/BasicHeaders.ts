@@ -1,6 +1,6 @@
 
-const GET = {
-    headers: basicHeader(false),
+const GET: RequestInit = {
+    headers: basicHeader(false) as Headers,
     method: 'GET'
 };
 
