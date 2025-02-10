@@ -15,7 +15,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static com.seebie.server.service.MessageService.toChatResponse;
+import static com.seebie.server.service.MessageServiceTest.toChatResponse;
 import static com.seebie.server.test.data.TestData.randomUserMessage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;

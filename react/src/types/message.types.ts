@@ -16,7 +16,7 @@ function mapToMessageDto(raw: any): MessageDto {
     };
 }
 
-interface MessageDto {
+interface MessageDto extends Record<string, unknown> {
     content: string,
     type: MessageType
 }

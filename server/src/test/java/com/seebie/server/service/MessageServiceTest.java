@@ -1,7 +1,6 @@
 package com.seebie.server.service;
 
 import com.seebie.server.dto.MessageDto;
-import com.seebie.server.entity.MessageType;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,19 +10,15 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatModel;
-import org.springframework.mock.env.MockEnvironment;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-import static com.seebie.server.service.MessageService.toChatResponse;
 import static com.seebie.server.test.data.TestData.randomUserMessage;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class MessageServiceTest {
@@ -65,5 +60,9 @@ public class MessageServiceTest {
         when(chatModel.call(any(Prompt.class))).thenReturn(new ChatResponse(List.of()));
 
         assertThrows(RuntimeException.class, () -> service.processPrompt(userPrompt, randomUUID()));
+    }
+
+    public static ChatResponse toChatResponse(String content) {
+        return new ChatResponse(List.of(new Generation(new AssistantMessage(content))));
     }
 }

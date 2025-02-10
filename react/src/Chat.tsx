@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import useHttpError from "./hooks/useHttpError";
@@ -37,8 +37,12 @@ function Chat() {
 
     // Auto-scroll to bottom whenever chatHistory updates
     useEffect(() => {
-        if (chatHistoryRef.current) {
-            chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
+        const chatDiv = chatHistoryRef.current;
+        if (!chatDiv) return;
+
+        const isAtBottom = chatDiv.scrollHeight - chatDiv.clientHeight <= chatDiv.scrollTop + 10;
+        if (isAtBottom) {
+            chatDiv.scrollTop = chatDiv.scrollHeight;
         }
     }, [messages]);
 
@@ -50,32 +54,49 @@ function Chat() {
     }
 
     const submitPrompt = () => {
-
         setProcessing(true);
+        const prompt = handleUserInput();
+        if (!prompt) return;
 
-        if (promptRef.current === null) {
-            return;
-        }
-
-        const prompt = promptRef.current.value;
-        promptRef.current.value = "";
-
-        const newUserPrompt = {content: prompt.trim(), type: MessageType.USER};
+        const newUserPrompt: MessageDto = { content: prompt, type: MessageType.USER };
         appendMessage(newUserPrompt);
 
-        fetchPost(chatUrl, newUserPrompt)
-            .then(throwOnHttpError)
-            .then(response => response.json() as Promise<MessageDto>)
-            .then(appendMessage)
-            .catch((error) => console.error('Error:', error));
+        sendMessageToServer(newUserPrompt)
+            .catch(error => console.error("Failed to send message:", error));
+    };
+
+    const handleUserInput = (): string | null => {
+        if (!promptRef.current) return null;
+        const prompt = promptRef.current.value.trim();
+        promptRef.current.value = "";
+        return prompt;
+    };
+
+    const sendMessageToServer = async (message: MessageDto) => {
+        try {
+            const response = await fetchPost(chatUrl, message);
+            throwOnHttpError(response);
+            const data = await response.json() as MessageDto;
+            appendMessage(data);
+        } catch (error) {
+            console.error("Error:", error);
+        }
     };
 
     useEffect(() => {
-        fetch(chatUrl, GET)
-            .then((response) => response.json() as Promise<MessageDto[]>)
-            .then((data: any[]) => data.map(mapToMessageDto))
-            .then(setMessages)
-            .catch(error => console.log(error));
+        const abortController = new AbortController();
+        fetch(chatUrl, { ...GET, signal: abortController.signal })
+            .then(response => response.json() as Promise<MessageDto[]>)
+            .then(data => setMessages(data.map(mapToMessageDto)))
+            .catch(error => {
+                if (error.name !== "AbortError") console.log(error);
+            });
+
+        return () => abortController.abort();
+    }, []);
+
+    const handleKeyUp = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        callOnEnter(e, submitPrompt);
     }, []);
 
     const userRowStyle = "ms-5 chat-bot";
@@ -88,7 +109,6 @@ function Chat() {
                     titleText={"Chat History"}
                     modalText={"Chat history is only available for the last 7 days"} />
                 </NavHeader>
-            {/* Use a div instead of Container if Bootstrap's default margins/paddings interfere */}
             <div
                 className="mx-0 px-0 d-flex flex-column flex-fill overflow-hidden" >
                 <div
@@ -123,7 +143,7 @@ function Chat() {
                     placeholder="Press Enter to send"
                     rows={3}
                     ref={promptRef}
-                    onKeyUp={(e) => callOnEnter(e, submitPrompt)}
+                    onKeyUp={handleKeyUp}
                 />
             </div>
         </Container>
