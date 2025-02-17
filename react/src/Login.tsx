@@ -15,11 +15,14 @@ interface Credentials {
 
 function getWithCreds(url: string, credentials: Credentials) {
 
-    const encoded = btoa(credentials.email + ":" + credentials.password);
+    const encoded = btoa(`${credentials.email}:${credentials.password}`);
+    const authHeaders = new Headers(GET.headers);
+    authHeaders.append('Authorization', 'Basic ' + encoded);
 
-    let authGet = structuredClone(GET);
-    authGet.headers = new Headers(authGet.headers)
-    authGet.headers.append('Authorization', 'Basic ');
+    const authGet: RequestInit = {
+        ...GET,
+        headers: authHeaders,
+    };
 
     return fetch(url, authGet);
 }
