@@ -39,7 +39,7 @@ class MessageServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void testConversation() {
+    public void testHavingConversation() {
 
         // Arrange: Set up test data per test
         UUID publicId = saveNewUser();
@@ -64,6 +64,18 @@ class MessageServiceIntegrationTest extends IntegrationTest {
         List<MessageDto> actualConversation = messageService.getMessages(publicId);
         assertEquals(expectedConversation, actualConversation);
 
+    }
+
+    @Test
+    public void testDeleteConversation() {
+
+        UUID publicId = saveNewUser();
+
+        messageService.processPrompt(randomUserMessage(), publicId);
+        assertEquals(2, messageService.getMessages(publicId).size());
+
+        messageService.deleteMessages(publicId);
+        assertEquals(0, messageService.getMessages(publicId).size());
     }
 
     private UUID saveNewUser() {
