@@ -21,4 +21,10 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
             """)
     List<MessageDto> findSince(UUID publicId, Instant earliest);
 
+    @Query("""
+            DELETE FROM MessageEntity m
+            WHERE m.user.publicId=:publicId
+            """)
+    void deleteAllByUserPublicId(UUID publicId);
+
 }
