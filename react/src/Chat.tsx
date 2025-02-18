@@ -99,8 +99,8 @@ function Chat() {
         callOnEnter(e, submitPrompt);
     }, []);
 
-    const userRowStyle = "ms-5 chat-bot";
-    const botRowStyle = "me-5 chat-user";
+    const userRowStyle = "chat-message-user text-start";
+    const botRowStyle = "chat-message-bot text-start";
 
     return (
         <Container className={"p-0 d-flex flex-column overflow-hidden h-90vh "} >
@@ -117,12 +117,14 @@ function Chat() {
                     ref={chatHistoryRef}
                 >
                     {messages.map((message, i) => {
-                        const rowStyle = message.type === MessageType.USER ? userRowStyle : botRowStyle;
+                        const isUser = message.type === MessageType.USER;
                         return (
-                            <Container key={i}>
-                                <Row className={`${rowStyle} border rounded mt-1 `}>
-                                    <Col>{message.content}</Col>
-                                </Row>
+                            <Container key={i} className={"p-0"}>
+                                <div className={`d-flex ${isUser ? 'justify-content-end' : 'justify-content-start'} mt-2`}>
+                                    <div className={`p-2 rounded chat-bubble ${isUser ? userRowStyle : botRowStyle}`}>
+                                        {message.content}
+                                    </div>
+                                </div>
                             </Container>
                         );
                     })}

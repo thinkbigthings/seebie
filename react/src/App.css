@@ -17,8 +17,8 @@
     --orange-gold: #FFC107;
     --lilac-gray: #4f4f5d;
     --slate: #6f6f9b;
-    --sky-blue: #0f368e;
-    --slate-blue: #383868;
+    --sky-blue: #25448e;
+    --slate-blue: #414173;
     --peri-lilac: #7070c2;
     --sage-green: #89a987;
     --sage-green-darker: #6b8569;
@@ -161,4 +161,8 @@ body {
 
 .chat-message-user {
     background-color: var(--slate-blue);
+}
+
+.chat-bubble {
+    max-width: 80%;
 }
