@@ -27,17 +27,12 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     @Autowired
     private SleepService sleepService;
 
-    @Autowired
-    private UserService userService;
-
     private final PageRequest firstPage = PageRequest.of(0, 10);
 
     @Test
     public void testDbTimeOrderConstraint() {
 
-        var registration = TestData.createRandomUserRegistration();
-        userService.saveNewUser(registration);
-        String publicId = userService.getUserByEmail(registration.email()).publicId();
+        String publicId = saveNewUser().toString();
 
         // test with the start and stop times switched
         var badData = createStandardSleepData(LocalDateTime.now(), LocalDateTime.now().minusHours(1));
@@ -49,9 +44,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testRetrieveAndUpdate() {
 
-        var registration = TestData.createRandomUserRegistration();
-        userService.saveNewUser(registration);
-        String publicId = userService.getUserByEmail(registration.email()).publicId();
+        String publicId = saveNewUser().toString();
 
         var end = LocalDateTime.now();
         var start = end.minusHours(8);
@@ -74,9 +67,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testDelete() {
 
-        var registration = TestData.createRandomUserRegistration();
-        userService.saveNewUser(registration);
-        String publicId = userService.getUserByEmail(registration.email()).publicId();
+        String publicId = saveNewUser().toString();
 
         // preconditions
         PagedModel<SleepDetails> listing = sleepService.listSleepData(publicId, firstPage);
@@ -98,9 +89,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testChartData() {
 
-        var registration = TestData.createRandomUserRegistration();
-        userService.saveNewUser(registration);
-        String publicId = userService.getUserByEmail(registration.email()).publicId();
+        String publicId = saveNewUser().toString();
 
         int listCount = 10;
         var data = TestData.createRandomSleepData(listCount, AMERICA_NEW_YORK);
@@ -116,9 +105,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testHistogram() {
 
-        var registration = TestData.createRandomUserRegistration();
-        userService.saveNewUser(registration);
-        String publicId = userService.getUserByEmail(registration.email()).publicId();
+        String publicId = saveNewUser().toString();
 
         int listCount = 10;
         var data = TestData.createRandomSleepData(listCount, AMERICA_NEW_YORK);
