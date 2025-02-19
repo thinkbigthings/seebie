@@ -86,8 +86,7 @@ public class SessionSecurityTest extends IntegrationTest {
     @BeforeEach
     public void setupTestUser(@Autowired UserService userService) {
 
-        // each test has its own test user so each test can be run in parallel
-
+        // don't use IntegrationTest.saveNewUser() because we need the registration object for the password
         var userRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(userRegistration);
         var publicId = userService.getUserByEmail(userRegistration.email()).publicId();

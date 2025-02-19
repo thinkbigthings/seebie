@@ -78,6 +78,7 @@ public class IntegrationTest {
     }
 
     /**
+     * Each test has its own test user so each test has its own data and can be run in parallel.
      * This setup is so common it makes sense for IntegrationTest to hold the UserService.
      * @return
      */

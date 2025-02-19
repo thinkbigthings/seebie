@@ -43,6 +43,7 @@ public class EndToEndIntegrationTest extends IntegrationTest {
         // we get the rest client builder as configured for the app, including mappers
         clientFactory = new RestClientFactory(builder, baseUribuilder.builder().build());
 
+        // don't use IntegrationTest.saveNewUser() because we need the registration object for the password
         RegistrationRequest testUserRegistration = TestData.createRandomUserRegistration();
         userService.saveNewUser(testUserRegistration);
 
