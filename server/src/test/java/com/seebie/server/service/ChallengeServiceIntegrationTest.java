@@ -1,12 +1,8 @@
 package com.seebie.server.service;
 
-import com.seebie.server.controller.ChallengeController;
-import com.seebie.server.dto.ChallengeDto;
 import com.seebie.server.dto.ChallengeDetailDto;
-import com.seebie.server.mapper.dtotoentity.UnsavedSleepListMapper;
-import com.seebie.server.repository.ChallengeRepository;
+import com.seebie.server.dto.ChallengeDto;
 import com.seebie.server.test.IntegrationTest;
-import com.seebie.server.test.data.TestData;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,24 +18,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ChallengeServiceIntegrationTest extends IntegrationTest {
 
     @Autowired
-    private ChallengeController challengeController;
-
-    @Autowired
     private ChallengeService challengeService;
-
-    @Autowired
-    private ChallengeRepository challengeRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UnsavedSleepListMapper sleepListMapper;
 
     @Test
     public void testRetrieveAndUpdate() {
 
-        String username = saveNewUser();
+        String username = saveNewUser().toString();
 
         var end = LocalDate.now();
         var start = end.minusDays(7);
@@ -62,7 +46,7 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testDelete() {
 
-        String publicId = saveNewUser();
+        String publicId = saveNewUser().toString();
         var today = LocalDate.now();
 
         // preconditions
@@ -85,7 +69,7 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testChallengeUniqueNamePerUser() {
 
-        String username = saveNewUser();
+        String username = saveNewUser().toString();
 
         var challenge = createRandomChallenge(-1, 14);
 
@@ -98,7 +82,7 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testConstraintStopAfterStart() {
 
-        var username = saveNewUser();
+        var username = saveNewUser().toString();
 
         // test with the start and stop times switched
         var badData = new ChallengeDto("title", "", LocalDate.now(), LocalDate.now().minusDays(7L));
@@ -110,8 +94,8 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testChallengeNameAcrossUsers() {
 
-        String username1 = saveNewUser();
-        String username2 = saveNewUser();
+        String username1 = saveNewUser().toString();
+        String username2 = saveNewUser().toString();
 
         var challenge = createRandomChallenge(-1, 14);
 
@@ -121,9 +105,4 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
         challengeService.saveNew(username2, challenge);
     }
 
-    private String saveNewUser() {
-        var registration = TestData.createRandomUserRegistration();
-        userService.saveNewUser(registration);
-        return userService.getUserByEmail(registration.email()).publicId();
-    }
 }

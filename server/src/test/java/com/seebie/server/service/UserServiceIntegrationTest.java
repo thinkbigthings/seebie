@@ -1,16 +1,13 @@
 package com.seebie.server.service;
 
-import com.seebie.server.repository.UserRepository;
 import com.seebie.server.test.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class UserServiceIntegrationTest extends IntegrationTest {
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private UserService userService;
@@ -24,6 +21,5 @@ class UserServiceIntegrationTest extends IntegrationTest {
         var users = userService.getUserSummaries(firstPage);
         assertFalse(users.getContent().isEmpty());
     }
-
 
 }

@@ -3,7 +3,6 @@ package com.seebie.server.service;
 import com.seebie.server.dto.MessageDto;
 import com.seebie.server.entity.MessageType;
 import com.seebie.server.test.IntegrationTest;
-import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
@@ -31,9 +30,6 @@ class MessageServiceIntegrationTest extends IntegrationTest {
 
     @Autowired
     private MessageService messageService;
-
-    @Autowired
-    private UserService userService;
 
     @BeforeEach
     void setUp() {
@@ -80,9 +76,4 @@ class MessageServiceIntegrationTest extends IntegrationTest {
         assertEquals(0, messageService.getMessages(publicId).size());
     }
 
-    private UUID saveNewUser() {
-        var registration = TestData.createRandomUserRegistration();
-        userService.saveNewUser(registration);
-        return UUID.fromString(userService.getUserByEmail(registration.email()).publicId());
-    }
 }

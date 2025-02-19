@@ -44,9 +44,6 @@ public class NotificationMessageServiceTest extends IntegrationTest {
     @Autowired
     private NotificationMessageService notificationService;
 
-    @Autowired
-    private NotificationRepository notificationRepository;
-
     public interface NotificationTestArgs extends Arguments {
         default Object[] get() {
             return new Object[] { this };
@@ -80,10 +77,7 @@ public class NotificationMessageServiceTest extends IntegrationTest {
         int testDurationHours = 72;
 
         // create new user
-        String userPrefix = "notify-" + params.usernotificationEnabled();
-        var registration = TestData.createRandomUserRegistration(userPrefix);
-        userService.saveNewUser(registration);
-        String publicId = userService.getUserByEmail(registration.email()).publicId();
+        String publicId = saveNewUser().toString();
 
         // update notification settings
         var updatedInfo = userService.getUser(publicId)
