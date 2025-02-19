@@ -212,6 +212,7 @@ public class ControllerSecurityTest {
 
 		test.get("/api/user/"+ USER_PUBLIC_ID +"/chat", 401, 200, 200);
 		test.post("/api/user/"+ USER_PUBLIC_ID +"/chat", validChat, 401, 200, 200);
+		test.delete("/api/user/"+ USER_PUBLIC_ID +"/chat", 401, 200, 200);
 	}
 
 	private static List<Arguments> provideUnauthenticatedTestParameters() {
