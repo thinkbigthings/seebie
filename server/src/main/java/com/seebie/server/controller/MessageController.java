@@ -38,4 +38,11 @@ public class MessageController {
         return messageService.processPrompt(prompt, UUID.fromString(publicId));
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
+    @RequestMapping(value="/user/{publicId}/chat", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void deleteChatHistory(@PathVariable String publicId) {
+
+        messageService.deleteMessages(UUID.fromString(publicId));
+    }
 }

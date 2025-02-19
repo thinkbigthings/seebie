@@ -42,4 +42,9 @@ public class MessagePersistenceService {
         messageRepo.save(new MessageEntity(user, chatResponse.content(), MessageType.ASSISTANT));
     }
 
+    @Transactional
+    public void deleteConversation(UUID userPublicId) {
+        messageRepo.deleteAllByUserPublicId(userPublicId);
+    }
+
 }

@@ -37,6 +37,10 @@ public class MessageService {
         this.systemMessage = new UserMessage(appProperties.ai().system().prompt());
     }
 
+    public void deleteMessages(UUID userPublicId) {
+        messagePersistenceService.deleteConversation(userPublicId);
+    }
+
     public List<MessageDto> getMessages(UUID publicId) {
         var sevenDaysAgo = now().minus(7, ChronoUnit.DAYS);
         return messagePersistenceService.getChatHistory(publicId, sevenDaysAgo);

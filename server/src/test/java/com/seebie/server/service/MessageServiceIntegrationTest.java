@@ -6,6 +6,7 @@ import com.seebie.server.test.IntegrationTest;
 import com.seebie.server.test.data.TestData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.mockito.Mockito;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -20,12 +21,13 @@ import static com.seebie.server.test.data.TestData.randomUserMessage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
+@Isolated // because it uses a @MockitoBean which doesn't play nicely with parallel tests
 class MessageServiceIntegrationTest extends IntegrationTest {
 
     public final static String CANNED_RESPONSE = "LLM response";
 
     @MockitoBean
-     private OpenAiChatModel chatModel;
+    private OpenAiChatModel chatModel;
 
     @Autowired
     private MessageService messageService;
@@ -39,7 +41,7 @@ class MessageServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void testConversation() {
+    public void testHavingConversation() {
 
         // Arrange: Set up test data per test
         UUID publicId = saveNewUser();
@@ -64,6 +66,18 @@ class MessageServiceIntegrationTest extends IntegrationTest {
         List<MessageDto> actualConversation = messageService.getMessages(publicId);
         assertEquals(expectedConversation, actualConversation);
 
+    }
+
+    @Test
+    public void testDeleteConversation() {
+
+        UUID publicId = saveNewUser();
+
+        messageService.processPrompt(randomUserMessage(), publicId);
+        assertEquals(2, messageService.getMessages(publicId).size());
+
+        messageService.deleteMessages(publicId);
+        assertEquals(0, messageService.getMessages(publicId).size());
     }
 
     private UUID saveNewUser() {

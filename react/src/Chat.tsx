@@ -10,6 +10,8 @@ import {mapToMessageDto, MessageDto, MessageType} from "./types/message.types.ts
 import {faCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import InfoModalButton from "./component/InfoModalButton.tsx";
+import WarningButton from "./component/WarningButton.tsx";
+import useApiDelete from "./hooks/useApiDelete.ts";
 
 
 function Chat() {
@@ -20,6 +22,7 @@ function Chat() {
     }
 
     const { throwOnHttpError } = useHttpError();
+    const callDelete = useApiDelete();
 
     const chatUrl = `/api/user/${publicId}/chat`
 
@@ -99,6 +102,10 @@ function Chat() {
         callOnEnter(e, submitPrompt);
     }, []);
 
+    const deleteById = () => {
+        callDelete(chatUrl).then(r => setMessages([]));
+    }
+
     const userRowStyle = "chat-message-user text-start";
     const botRowStyle = "chat-message-bot text-start";
 
@@ -106,9 +113,13 @@ function Chat() {
         <Container className={"p-0 d-flex flex-column overflow-hidden h-90vh "} >
             <NavHeader title="Chat">
                 <InfoModalButton
+                    className={"me-1"}
                     titleText={"Chat History"}
                     modalText={"Chat history is only available for the last 7 days"} />
-                </NavHeader>
+                <WarningButton buttonText="Delete" onConfirm={deleteById}>
+                    This deletes the entire conversation and cannot be undone. Proceed?
+                </WarningButton>
+            </NavHeader>
             <div
                 className="mx-0 px-0 d-flex flex-column flex-fill overflow-hidden" >
                 <div
