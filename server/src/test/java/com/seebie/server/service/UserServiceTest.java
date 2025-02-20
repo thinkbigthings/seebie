@@ -32,7 +32,7 @@ public class UserServiceTest {
 
     private String savedUserEmail = "test@example.com";
     private UUID savedUserPublicId = UUID.randomUUID();
-    private UUID noSuchUsername = UUID.randomUUID();
+    private UUID noSuchUserPublicId = UUID.randomUUID();
     private User savedUser = new User("savedUser", savedUserEmail, "encryptedpw");
     private Notification notification = new Notification(savedUser);
     private String strongPasswordHash = "strongencryptedpasswordhere";
@@ -49,7 +49,7 @@ public class UserServiceTest {
         field.setAccessible(true);
         field.set(savedUser, savedUserPublicId);
 
-        when(userRepo.findByPublicId((noSuchUsername))).thenReturn(Optional.empty());
+        when(userRepo.findByPublicId((noSuchUserPublicId))).thenReturn(Optional.empty());
 
         when(userRepo.save(ArgumentMatchers.any(User.class))).then(AdditionalAnswers.returnsFirstArg());
         when(userRepo.findByPublicId(eq(savedUserPublicId))).thenReturn(of(savedUser));
@@ -73,7 +73,7 @@ public class UserServiceTest {
         var updateInfo = new PersonalInfo(savedUser.getDisplayName()+"1", true);
 
         assertThrows(EntityNotFoundException.class,
-                () -> service.updateUser(noSuchUsername, updateInfo));
+                () -> service.updateUser(noSuchUserPublicId, updateInfo));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class UserServiceTest {
     public void updatePasswordUserNotFound() {
 
         assertThrows(EntityNotFoundException.class,
-                () -> service.updatePassword(noSuchUsername, "newpassword"));
+                () -> service.updatePassword(noSuchUserPublicId, "newpassword"));
     }
 
     @Test
