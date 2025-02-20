@@ -30,7 +30,7 @@ public class NotificationEmailServiceTest {
     public void testMailTemplate() {
 
         RegistrationRequest user = createRandomUserRegistration();
-        var publicId = UUID.randomUUID().toString();
+        var publicId = UUID.randomUUID();
         var message = service.createMessage(new NotificationRequired(user.email(), publicId));
 
         assertTrue(Arrays.stream(message.getTo()).anyMatch(email -> email.equals(user.email())));

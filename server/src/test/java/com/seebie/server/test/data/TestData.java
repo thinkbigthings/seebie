@@ -113,7 +113,7 @@ public class TestData {
         return new UserData(createRandomSleepData(1, AMERICA_NEW_YORK), createRandomChallenges());
     }
 
-    public static User createRandomUser(String publicId) {
+    public static User createRandomUser(UUID publicId) {
         String email = faker.internet().emailAddress();
         return new User(email, publicId, Instant.now().toString(), Set.of(), createRandomPersonalInfo());
     }

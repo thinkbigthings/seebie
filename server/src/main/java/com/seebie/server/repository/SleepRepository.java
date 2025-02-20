@@ -24,10 +24,6 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             """)
     Optional<SleepSession> findBy(UUID publicId, Long sleepId);
 
-    default Optional<SleepSession> findBy(String publicId, Long sleepId) {
-        return findBy(UUID.fromString(publicId), sleepId);
-    }
-
     // use both publicId and sleep id in the query to ensure the given user owns this sleep
     @Query("""
             SELECT new com.seebie.server.dto.SleepDetails(s.id, s.minutesAsleep, s.notes, s.minutesAwake, s.startTime, s.stopTime, s.zoneId)
@@ -36,10 +32,6 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             ORDER BY s.stopTime DESC
             """)
     Page<SleepDetails> loadSummaries(UUID publicId, Pageable page);
-
-    default Page<SleepDetails> loadSummaries(String publicId, Pageable page) {
-        return loadSummaries(UUID.fromString(publicId), page);
-    }
 
     // use both publicId and sleep id in the query to ensure the given user owns this sleep
     @Query("""
@@ -52,10 +44,6 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             """)
     List<SleepDataPoint> loadChartData(UUID publicId, LocalDateTime from, LocalDateTime to);
 
-    default List<SleepDataPoint> loadChartData(String publicId, LocalDateTime from, LocalDateTime to) {
-        return loadChartData(UUID.fromString(publicId), from, to);
-    }
-
     @Query("""
             SELECT s.minutesAsleep
             FROM SleepSession s
@@ -66,10 +54,6 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             """)
     List<Long> loadDurations(UUID publicId, LocalDateTime from, LocalDateTime to);
 
-    default List<Long> loadDurations(String publicId, LocalDateTime from, LocalDateTime to) {
-        return loadDurations(UUID.fromString(publicId), from, to);
-    }
-
     @Query("""
             SELECT new com.seebie.server.dto.SleepDetails(s.id, s.minutesAsleep, s.notes, s.minutesAwake, s.startTime, s.stopTime, s.zoneId)
             FROM SleepSession s
@@ -78,7 +62,4 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             """)
     List<SleepDetails> findAllByUser(UUID publicId);
 
-    default List<SleepDetails> findAllByUser(String publicId) {
-        return findAllByUser(UUID.fromString(publicId));
-    }
 }

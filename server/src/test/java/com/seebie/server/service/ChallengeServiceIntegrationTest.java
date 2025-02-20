@@ -23,31 +23,30 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testRetrieveAndUpdate() {
 
-        String username = saveNewUser().toString();
+        var publicId = saveNewUser();
 
         var end = LocalDate.now();
         var start = end.minusDays(7);
 
         var originalChallenge = new ChallengeDto("Title", "", start, end);
-        var savedChallenge = challengeService.saveNew(username, originalChallenge);
+        var savedChallenge = challengeService.saveNew(publicId, originalChallenge);
 
         // test retrieve
-        ChallengeDto found = challengeService.retrieve(username, savedChallenge.id());
+        ChallengeDto found = challengeService.retrieve(publicId, savedChallenge.id());
 
         assertEquals(originalChallenge, found);
 
         // test update
         var updated = new ChallengeDto("New title", "stuff", start, end);
-        challengeService.update(username, savedChallenge.id(), updated);
-        found = challengeService.retrieve(username, savedChallenge.id());
+        challengeService.update(publicId, savedChallenge.id(), updated);
+        found = challengeService.retrieve(publicId, savedChallenge.id());
         assertEquals(updated, found);
     }
 
     @Test
     public void testDelete() {
 
-        String publicId = saveNewUser().toString();
-        var today = LocalDate.now();
+        var publicId = saveNewUser();
 
         // preconditions
         List<ChallengeDetailDto> completed = challengeService.getChallenges(publicId);
@@ -69,40 +68,40 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testChallengeUniqueNamePerUser() {
 
-        String username = saveNewUser().toString();
+        var publicId = saveNewUser();
 
         var challenge = createRandomChallenge(-1, 14);
 
-        challengeService.saveNew(username, challenge);
+        challengeService.saveNew(publicId, challenge);
 
-        var exception = assertThrows(DataIntegrityViolationException.class, () -> challengeService.saveNew(username, challenge));
+        var exception = assertThrows(DataIntegrityViolationException.class, () -> challengeService.saveNew(publicId, challenge));
         assertEquals("challenge_user_id_name_key", ((ConstraintViolationException)exception.getCause()).getConstraintName());
     }
 
     @Test
     public void testConstraintStopAfterStart() {
 
-        var username = saveNewUser().toString();
+        var publicId = saveNewUser();
 
         // test with the start and stop times switched
         var badData = new ChallengeDto("title", "", LocalDate.now(), LocalDate.now().minusDays(7L));
 
-        var exception = assertThrows(DataIntegrityViolationException.class, () -> challengeService.saveNew(username, badData));
+        var exception = assertThrows(DataIntegrityViolationException.class, () -> challengeService.saveNew(publicId, badData));
         assertEquals("stop_after_start", ((ConstraintViolationException)exception.getCause()).getConstraintName());
     }
 
     @Test
     public void testChallengeNameAcrossUsers() {
 
-        String username1 = saveNewUser().toString();
-        String username2 = saveNewUser().toString();
+        var publicId1 = saveNewUser();
+        var publicId2 = saveNewUser();
 
         var challenge = createRandomChallenge(-1, 14);
 
         // if the constraint is working, this is the happy path: name can be used across users
         // but in the UI it is a unique identifier, so it should be unique per user
-        challengeService.saveNew(username1, challenge);
-        challengeService.saveNew(username2, challenge);
+        challengeService.saveNew(publicId1, challenge);
+        challengeService.saveNew(publicId2, challenge);
     }
 
 }

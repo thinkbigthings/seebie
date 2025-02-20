@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
 /**
  * By extending UserDetails to include a separate identifier
@@ -14,11 +15,11 @@ import java.util.Collections;
 public class AppUserDetails implements UserDetails {
 
     private String email;
-    private String publicId;
+    private UUID publicId;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public AppUserDetails(String email, String publicId, String password, Collection<? extends GrantedAuthority> authorities) {
+    public AppUserDetails(String email, UUID publicId, String password, Collection<? extends GrantedAuthority> authorities) {
         this.email = email;
         this.publicId = publicId;
         this.password = password;
@@ -30,7 +31,7 @@ public class AppUserDetails implements UserDetails {
      *
      * @return
      */
-    public String getPublicId() {
+    public UUID getPublicId() {
         return publicId;
     }
 

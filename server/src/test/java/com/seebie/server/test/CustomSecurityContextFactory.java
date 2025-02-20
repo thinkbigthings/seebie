@@ -7,6 +7,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
 
+import java.util.UUID;
+
 import static com.seebie.server.mapper.entitytodto.UserDetailsMapper.toAuthorities;
 
 public class CustomSecurityContextFactory implements WithSecurityContextFactory<WithCustomMockUser> {
@@ -14,7 +16,7 @@ public class CustomSecurityContextFactory implements WithSecurityContextFactory<
     @Override
     public SecurityContext createSecurityContext(WithCustomMockUser user) {
 
-        var publicId = user.publicId();
+        var publicId = UUID.fromString(user.publicId());
         var loginId = user.username();
         var roles = toAuthorities(user.roles());
         var password = "password";

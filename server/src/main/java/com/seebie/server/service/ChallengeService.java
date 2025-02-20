@@ -25,31 +25,31 @@ public class ChallengeService {
     }
 
     @Transactional
-    public ChallengeDetailDto saveNew(String username, ChallengeDto challenge) {
+    public ChallengeDetailDto saveNew(UUID publicId, ChallengeDto challenge) {
 
         // The computed value for timeAsleep isn't calculated until the transaction is closed
         // so the entity does not have the correct value here.
-        var entity = challengeRepo.save(toEntity.toUnsavedEntity(username, challenge));
+        var entity = challengeRepo.save(toEntity.toUnsavedEntity(publicId, challenge));
         return new ChallengeDetailDto(entity.getId(), entity.getName(), entity.getDescription(), entity.getStart(), entity.getFinish());
     }
 
     @Transactional
-    public void update(String username, Long challengeId, ChallengeDto dto) {
+    public void update(UUID publicId, Long challengeId, ChallengeDto dto) {
 
-        var entity = challengeRepo.findByUser(username, challengeId)
+        var entity = challengeRepo.findByUser(publicId, challengeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Challenge not found"));
 
         entity.setChallengeData(dto.name(), dto.description(), dto.start(), dto.finish());
     }
 
     @Transactional(readOnly = true)
-    public ChallengeDto retrieve(String username, Long challengeId) {
-        return challengeRepo.findDtoBy(username, challengeId)
+    public ChallengeDto retrieve(UUID publicId, Long challengeId) {
+        return challengeRepo.findDtoBy(publicId, challengeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Challenge not found"));
     }
 
     @Transactional
-    public void remove(String publicId, Long challengeId) {
+    public void remove(UUID publicId, Long challengeId) {
         challengeRepo.findByUser(publicId, challengeId)
                 .ifPresentOrElse(challengeRepo::delete, () -> {
                     throw new EntityNotFoundException("No challenge with id " + challengeId + " found for user " + publicId);
@@ -57,8 +57,8 @@ public class ChallengeService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChallengeDetailDto> getChallenges(String username) {
-        return challengeRepo.findAllByUser(username);
+    public List<ChallengeDetailDto> getChallenges(UUID publicId) {
+        return challengeRepo.findAllByUser(publicId);
     }
 
 }

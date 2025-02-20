@@ -9,12 +9,13 @@ import org.mockito.Mockito;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.seebie.server.test.data.TestData.createRandomSleepData;
+import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 public class SleepServiceTest {
@@ -28,16 +29,16 @@ public class SleepServiceTest {
     public void setup() {
         service = new SleepService(sleepRepository, entityMapper);
 
-        when(sleepRepository.findBy(anyString(), anyLong())).thenReturn(Optional.empty());
+        when(sleepRepository.findBy(any(UUID.class), anyLong())).thenReturn(Optional.empty());
     }
 
     @Test
     public void testNotFound() {
         assertAll(
                 "Data not found should throw exceptions",
-                () -> assertThrows(ResponseStatusException.class, () -> service.remove("user", 1L)),
-                () -> assertThrows(ResponseStatusException.class, () -> service.update("user", 1L, data)),
-                () -> assertThrows(ResponseStatusException.class, () -> service.retrieve("user", 1L))
+                () -> assertThrows(ResponseStatusException.class, () -> service.remove(randomUUID(), 1L)),
+                () -> assertThrows(ResponseStatusException.class, () -> service.update(randomUUID(), 1L, data)),
+                () -> assertThrows(ResponseStatusException.class, () -> service.retrieve(randomUUID(), 1L))
         );
     }
 

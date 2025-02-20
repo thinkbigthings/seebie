@@ -7,12 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
     @Query("SELECT n FROM Notification n WHERE n.user.publicId=:publicId")
-    Optional<Notification> findBy(String username);
+    Optional<Notification> findBy(UUID username);
 
     /**
      * This is a native query because the method parameters comparing against the JPA types were different

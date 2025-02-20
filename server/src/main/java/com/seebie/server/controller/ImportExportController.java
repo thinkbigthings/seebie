@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -45,7 +46,7 @@ public class ImportExportController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value="/user/{publicId}/export/json", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> exportUserData(@PathVariable String publicId) {
+    public ResponseEntity<byte[]> exportUserData(@PathVariable UUID publicId) {
 
         String filename = "seebie-data-" + publicId + ".json";
         String headerValue = "attachment; filename=" + filename;
@@ -61,7 +62,7 @@ public class ImportExportController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value= "/user/{publicId}/import/json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public UploadResponse importUserData(@PathVariable String publicId, @RequestParam("file") MultipartFile file) throws IOException {
+    public UploadResponse importUserData(@PathVariable UUID publicId, @RequestParam("file") MultipartFile file) throws IOException {
 
         LOG.info("Import started for user " + publicId);
 
@@ -79,7 +80,7 @@ public class ImportExportController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value= "/user/{publicId}/export/csv", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> downloadSleepData(@PathVariable String publicId) {
+    public ResponseEntity<byte[]> downloadSleepData(@PathVariable UUID publicId) {
 
         String filename = "seebie-data-" + publicId + ".csv";
         String headerValue = "attachment; filename=" + filename;
@@ -95,7 +96,7 @@ public class ImportExportController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value= "/user/{publicId}/import/csv", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public UploadResponse uploadSleepData(@PathVariable String publicId, @RequestParam("file") MultipartFile file) throws IOException {
+    public UploadResponse uploadSleepData(@PathVariable UUID publicId, @RequestParam("file") MultipartFile file) throws IOException {
 
         LOG.info("Upload started...");
 

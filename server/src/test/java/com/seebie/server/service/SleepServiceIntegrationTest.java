@@ -32,7 +32,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testDbTimeOrderConstraint() {
 
-        String publicId = saveNewUser().toString();
+        var publicId = saveNewUser();
 
         // test with the start and stop times switched
         var badData = createStandardSleepData(LocalDateTime.now(), LocalDateTime.now().minusHours(1));
@@ -44,7 +44,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testRetrieveAndUpdate() {
 
-        String publicId = saveNewUser().toString();
+        var publicId = saveNewUser();
 
         var end = LocalDateTime.now();
         var start = end.minusHours(8);
@@ -67,7 +67,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testDelete() {
 
-        String publicId = saveNewUser().toString();
+        var publicId = saveNewUser();
 
         // preconditions
         PagedModel<SleepDetails> listing = sleepService.listSleepData(publicId, firstPage);
@@ -89,7 +89,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testChartData() {
 
-        String publicId = saveNewUser().toString();
+        var publicId = saveNewUser();
 
         int listCount = 10;
         var data = TestData.createRandomSleepData(listCount, AMERICA_NEW_YORK);
@@ -105,7 +105,7 @@ class SleepServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testHistogram() {
 
-        String publicId = saveNewUser().toString();
+        var publicId = saveNewUser();
 
         int listCount = 10;
         var data = TestData.createRandomSleepData(listCount, AMERICA_NEW_YORK);

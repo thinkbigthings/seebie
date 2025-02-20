@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestClient;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,7 +27,7 @@ public class EndToEndIntegrationTest extends IntegrationTest {
 
     private static String testUserEmail;
     private static String testUserPassword;
-    private static String testUserPublicId;
+    private static UUID testUserPublicId;
     private static URI testUserUrl;
     private static URI testUserUpdatePasswordUrl;
 
@@ -53,7 +54,7 @@ public class EndToEndIntegrationTest extends IntegrationTest {
 
         var userUriBuilder = baseUribuilder.builder().pathSegment("api", "user");
 
-        testUserUrl = userUriBuilder.pathSegment(testUserPublicId).build();
+        testUserUrl = userUriBuilder.pathSegment(testUserPublicId.toString()).build();
         testUserUpdatePasswordUrl = userUriBuilder.pathSegment("password", "update").build();
     }
 

@@ -25,24 +25,24 @@ public class MessageController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value="/user/{publicId}/chat", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<MessageDto> getChatHistory(@PathVariable String publicId) {
+    public List<MessageDto> getChatHistory(@PathVariable UUID publicId) {
 
-        return messageService.getMessages(UUID.fromString(publicId));
+        return messageService.getMessages(publicId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value="/user/{publicId}/chat", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public MessageDto submitPrompt(@Valid @RequestBody MessageDto prompt, @PathVariable String publicId) {
+    public MessageDto submitPrompt(@Valid @RequestBody MessageDto prompt, @PathVariable UUID publicId) {
 
-        return messageService.processPrompt(prompt, UUID.fromString(publicId));
+        return messageService.processPrompt(prompt, publicId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value="/user/{publicId}/chat", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void deleteChatHistory(@PathVariable String publicId) {
+    public void deleteChatHistory(@PathVariable UUID publicId) {
 
-        messageService.deleteMessages(UUID.fromString(publicId));
+        messageService.deleteMessages(publicId);
     }
 }

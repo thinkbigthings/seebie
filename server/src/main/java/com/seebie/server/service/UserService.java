@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 
 @Service
 public class UserService {
@@ -36,7 +38,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updatePassword(String publicId, String newPassword) {
+    public void updatePassword(UUID publicId, String newPassword) {
 
         userRepo.findByPublicId(publicId)
                 .ifPresentOrElse(
@@ -46,7 +48,7 @@ public class UserService {
     }
 
     @Transactional
-    public com.seebie.server.dto.User updateUser(String publicId, PersonalInfo userData) {
+    public com.seebie.server.dto.User updateUser(UUID publicId, PersonalInfo userData) {
 
         var user = userRepo.findByPublicId(publicId)
                 .orElseThrow(() -> new EntityNotFoundException("No user found: " + publicId) );
@@ -77,7 +79,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public com.seebie.server.dto.User getUser(String publicId) {
+    public com.seebie.server.dto.User getUser(UUID publicId) {
 
         return userRepo.findByPublicId(publicId)
                 .map(toUserRecord)

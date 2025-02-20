@@ -12,6 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
 // so we can use that for api-only requests only if the UI is served separately
 @RestController
@@ -54,7 +56,7 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value="/user/{publicId}/personalInfo", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public User updateUser(@Valid @RequestBody PersonalInfo userData, @PathVariable String publicId) {
+    public User updateUser(@Valid @RequestBody PersonalInfo userData, @PathVariable UUID publicId) {
 
         return userService.updateUser(publicId, userData);
     }
@@ -62,7 +64,7 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value="/user/{publicId}/password/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String updatePassword(@Valid @RequestBody PasswordResetRequest resetRequest, @PathVariable String publicId) {
+    public String updatePassword(@Valid @RequestBody PasswordResetRequest resetRequest, @PathVariable UUID publicId) {
 
         userService.updatePassword(publicId, resetRequest.plainTextPassword());
         return "Password was updated";
@@ -71,7 +73,7 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value="/user/{publicId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public User getUser(@PathVariable String publicId) {
+    public User getUser(@PathVariable UUID publicId) {
 
         return userService.getUser(publicId);
     }

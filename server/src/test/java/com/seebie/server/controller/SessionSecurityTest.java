@@ -95,7 +95,7 @@ public class SessionSecurityTest extends IntegrationTest {
         testUserEmail = userRegistration.email();
 
         var apiUriBuilder = baseUribuilder.builder().path("/api");
-        testUserInfoUri = apiUriBuilder.path("/user/").path(publicId).build();
+        testUserInfoUri = apiUriBuilder.path("/user/").path(publicId.toString()).build();
     }
 
     /**
