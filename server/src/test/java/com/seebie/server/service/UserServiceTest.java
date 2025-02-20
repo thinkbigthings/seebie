@@ -31,8 +31,8 @@ public class UserServiceTest {
     private PasswordEncoder pwEncoder = Mockito.mock(PasswordEncoder.class);
 
     private String savedUserEmail = "test@example.com";
-    private String savedUserPublicId = UUID.randomUUID().toString();
-    private String noSuchUsername = UUID.randomUUID().toString();
+    private UUID savedUserPublicId = UUID.randomUUID();
+    private UUID noSuchUsername = UUID.randomUUID();
     private User savedUser = new User("savedUser", savedUserEmail, "encryptedpw");
     private Notification notification = new Notification(savedUser);
     private String strongPasswordHash = "strongencryptedpasswordhere";
@@ -47,7 +47,7 @@ public class UserServiceTest {
         // use reflection to set publicId since we don't want to add a setter for generated values
         Field field = savedUser.getClass().getDeclaredField("publicId");
         field.setAccessible(true);
-        field.set(savedUser, UUID.fromString(savedUserPublicId));
+        field.set(savedUser, savedUserPublicId);
 
         when(userRepo.findByPublicId((noSuchUsername))).thenReturn(Optional.empty());
 

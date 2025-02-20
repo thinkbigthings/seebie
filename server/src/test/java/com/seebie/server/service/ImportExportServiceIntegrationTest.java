@@ -4,6 +4,8 @@ import com.seebie.server.test.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.UUID;
+
 import static com.seebie.server.test.data.TestData.randomUserData;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -16,8 +18,8 @@ class ImportExportServiceIntegrationTest extends IntegrationTest {
     @Test
     public void testImportExportUserData() {
 
-        String user1 = saveNewUser().toString();
-        String user2 = saveNewUser().toString();
+        UUID user1 = saveNewUser();
+        UUID user2 = saveNewUser();
 
         var userData = randomUserData();
         long importedSleepNum = importExportService.saveUserData(user1, userData);

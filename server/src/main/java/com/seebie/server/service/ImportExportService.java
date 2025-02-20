@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ImportExportService {
@@ -30,7 +31,7 @@ public class ImportExportService {
     }
 
     @Transactional(readOnly = true)
-    public UserData retrieveUserData(String publicId) {
+    public UserData retrieveUserData(UUID publicId) {
 
         var sleepData = sleepRepository.findAllByUser(publicId).stream()
                 .map(SleepDetails::sleepData)
@@ -44,24 +45,24 @@ public class ImportExportService {
     }
 
     @Transactional
-    public long saveUserData(String username, UserData parsedData) {
+    public long saveUserData(UUID publicId, UserData parsedData) {
 
-        var sleepEntities = toUnsavedSleepEntity.apply(username, parsedData.sleepData());
-        var challengeEntities = toUnsavedChallengeEntity.apply(username, parsedData.challengeData());
+        var sleepEntities = toUnsavedSleepEntity.apply(publicId, parsedData.sleepData());
+        var challengeEntities = toUnsavedChallengeEntity.apply(publicId, parsedData.challengeData());
 
         challengeRepository.saveAll(challengeEntities);
         return sleepRepository.saveAll(sleepEntities).size();
     }
 
     @Transactional(readOnly = true)
-    public List<SleepDetails> retrieveSleepDetails(String username) {
-        return sleepRepository.findAllByUser(username);
+    public List<SleepDetails> retrieveSleepDetails(UUID publicId) {
+        return sleepRepository.findAllByUser(publicId);
     }
 
     @Transactional
-    public long saveSleepData(String username, List<SleepData> parsedData) {
+    public long saveSleepData(UUID publicId, List<SleepData> parsedData) {
 
-        var entityList = toUnsavedSleepEntity.apply(username, parsedData);
+        var entityList = toUnsavedSleepEntity.apply(publicId, parsedData);
         return sleepRepository.saveAll(entityList).size();
     }
 

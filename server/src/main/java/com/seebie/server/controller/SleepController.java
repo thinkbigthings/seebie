@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
 // so we can use that for api-only requests only if the UI is served separately
@@ -38,7 +39,7 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value="/user/{publicId}/sleep", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void saveSleepSession(@Valid @ValidDurations @RequestBody SleepData dto, @PathVariable String publicId) {
+    public void saveSleepSession(@Valid @ValidDurations @RequestBody SleepData dto, @PathVariable UUID publicId) {
 
         sleepService.saveNew(publicId, dto);
     }
@@ -46,7 +47,7 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value="/user/{publicId}/sleep", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public PagedModel<SleepDetails> getSleepList(@PathVariable String publicId, @PageableDefault(page = 0, size = 10, sort = {"stopTime"}, direction=Sort.Direction.DESC) Pageable page) {
+    public PagedModel<SleepDetails> getSleepList(@PathVariable UUID publicId, @PageableDefault(page = 0, size = 10, sort = {"stopTime"}, direction=Sort.Direction.DESC) Pageable page) {
 
         return sleepService.listSleepData(publicId, page);
     }
@@ -54,7 +55,7 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value="/user/{publicId}/sleep/chart", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<SleepDataPoint> getChartData(@PathVariable String publicId, @RequestParam LocalDate from, @RequestParam LocalDate to) {
+    public List<SleepDataPoint> getChartData(@PathVariable UUID publicId, @RequestParam LocalDate from, @RequestParam LocalDate to) {
 
         if(to.isBefore(from)) {
             throw new IllegalArgumentException("Request parameter \"from\" must be before \"to\"");
@@ -77,7 +78,7 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value= "/user/{publicId}/sleep/histogram", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public StackedHistograms getHistogramData(@Valid @RequestBody HistogramRequest request, @PathVariable String publicId) {
+    public StackedHistograms getHistogramData(@Valid @RequestBody HistogramRequest request, @PathVariable UUID publicId) {
 
         LOG.info("Requesting histogram data with " + request);
 
@@ -88,21 +89,21 @@ public class SleepController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value= "/user/{publicId}/sleep/{sleepId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public SleepDetails getSleepSession(@PathVariable String publicId, @PathVariable Long sleepId) {
+    public SleepDetails getSleepSession(@PathVariable UUID publicId, @PathVariable Long sleepId) {
         return sleepService.retrieve(publicId, sleepId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value= "/user/{publicId}/sleep/{sleepId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void updateSleepSession(@Valid @ValidDurations @RequestBody SleepData sleepData, @PathVariable String publicId, @PathVariable Long sleepId) {
+    public void updateSleepSession(@Valid @ValidDurations @RequestBody SleepData sleepData, @PathVariable UUID publicId, @PathVariable Long sleepId) {
         sleepService.update(publicId, sleepId, sleepData);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value= "/user/{publicId}/sleep/{sleepId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void delete(@PathVariable String publicId, @PathVariable Long sleepId) {
+    public void delete(@PathVariable UUID publicId, @PathVariable Long sleepId) {
         sleepService.remove(publicId, sleepId);
     }
 

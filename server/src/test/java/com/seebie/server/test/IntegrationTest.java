@@ -84,6 +84,6 @@ public class IntegrationTest {
     protected UUID saveNewUser() {
         var registration = TestData.createRandomUserRegistration();
         userService.saveNewUser(registration);
-        return UUID.fromString(userService.getUserByEmail(registration.email()).publicId());
+        return userService.getUserByEmail(registration.email()).publicId();
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
 // so we can use that for api-only requests only if the UI is served separately
@@ -27,21 +28,21 @@ public class ChallengeController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value= "/user/{publicId}/challenge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void createChallenge(@PathVariable String publicId, @Valid @RequestBody ChallengeDto challenge) {
+    public void createChallenge(@PathVariable UUID publicId, @Valid @RequestBody ChallengeDto challenge) {
         challengeService.saveNew(publicId, challenge);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value= "/user/{publicId}/challenge/{challengeId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void updateChallenge(@Valid @RequestBody ChallengeDto challengeData, @PathVariable String publicId, @PathVariable Long challengeId) {
+    public void updateChallenge(@Valid @RequestBody ChallengeDto challengeData, @PathVariable UUID publicId, @PathVariable Long challengeId) {
         challengeService.update(publicId, challengeId, challengeData);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value= "/user/{publicId}/challenge/{challengeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ChallengeDto getChallenge(@PathVariable String publicId, @PathVariable Long challengeId) {
+    public ChallengeDto getChallenge(@PathVariable UUID publicId, @PathVariable Long challengeId) {
         return challengeService.retrieve(publicId, challengeId);
     }
 
@@ -53,14 +54,14 @@ public class ChallengeController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value= "/user/{publicId}/challenge", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<ChallengeDetailDto> getChallenges(@PathVariable String publicId) {
+    public List<ChallengeDetailDto> getChallenges(@PathVariable UUID publicId) {
         return challengeService.getChallenges(publicId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value= "/user/{publicId}/challenge/{challengeId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void delete(@PathVariable String publicId, @PathVariable Long challengeId) {
+    public void delete(@PathVariable UUID publicId, @PathVariable Long challengeId) {
         challengeService.remove(publicId, challengeId);
     }
 

@@ -77,7 +77,7 @@ public class NotificationMessageServiceTest extends IntegrationTest {
         int testDurationHours = 72;
 
         // create new user
-        String publicId = saveNewUser().toString();
+        var publicId = saveNewUser();
 
         // update notification settings
         var updatedInfo = userService.getUser(publicId)
@@ -101,7 +101,7 @@ public class NotificationMessageServiceTest extends IntegrationTest {
             var notificationsToSend = notificationService.findUsersToNotify(toZDT(present, tz).toInstant());
 
             numNotifications += notificationsToSend.stream()
-                    .map(NotificationRequired::username)
+                    .map(NotificationRequired::publicId)
                     .filter(publicId::equals)
                     .count();
         }

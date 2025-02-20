@@ -34,6 +34,7 @@ import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static com.seebie.server.mapper.dtotoentity.CsvToSleepData.missingHeader;
 import static com.seebie.server.test.data.TestData.*;
@@ -151,12 +152,12 @@ public class ControllerValidationTest {
 		when(fromCsv.apply(eq(badCsvText))).thenThrow(missingHeader());
 		when(fromCsv.apply(eq(goodCsvText))).thenReturn(List.of(createRandomSleepData()));
 
-		when(importExportService.saveSleepData(anyString(), anyList())).thenReturn(0L);
-		when(importExportService.retrieveSleepDetails(anyString())).thenReturn(List.of());
+		when(importExportService.saveSleepData(any(UUID.class), anyList())).thenReturn(0L);
+		when(importExportService.retrieveSleepDetails(any(UUID.class))).thenReturn(List.of());
 		when(fromCsv.apply(contains(goodCsvText))).thenReturn(List.of(createRandomSleepData()));
 
-		when(importExportService.saveSleepData(anyString(), anyList())).thenReturn(0L);
-		when(importExportService.retrieveSleepDetails(anyString())).thenReturn(List.of());
+		when(importExportService.saveSleepData(any(UUID.class), anyList())).thenReturn(0L);
+		when(importExportService.retrieveSleepDetails(any(UUID.class))).thenReturn(List.of());
 	}
 
 	@BeforeAll

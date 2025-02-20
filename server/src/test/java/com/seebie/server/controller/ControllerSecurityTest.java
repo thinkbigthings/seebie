@@ -31,13 +31,13 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import static com.seebie.server.security.WebSecurityConfig.API_LOGIN;
 import static com.seebie.server.test.data.TestData.*;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -141,11 +141,13 @@ public class ControllerSecurityTest {
 
 		when(toCsv.apply(anyList())).thenReturn("");
 
-		when(userService.getUser(USER_PUBLIC_ID)).thenReturn(createRandomUser(USER_PUBLIC_ID));
-		when(userService.getUser(ADMIN_PUBLIC_ID)).thenReturn(createRandomUser(ADMIN_PUBLIC_ID));
+		var userUuid = UUID.fromString(USER_PUBLIC_ID);
+		var adminUuid = UUID.fromString(ADMIN_PUBLIC_ID);
+		when(userService.getUser(userUuid)).thenReturn(createRandomUser(userUuid));
+		when(userService.getUser(adminUuid)).thenReturn(createRandomUser(adminUuid));
 
-		when(importExportService.saveSleepData(anyString(), anyList())).thenReturn(0L);
-		when(importExportService.retrieveSleepDetails(anyString())).thenReturn(List.of());
+		when(importExportService.saveSleepData(any(UUID.class), anyList())).thenReturn(0L);
+		when(importExportService.retrieveSleepDetails(any(UUID.class))).thenReturn(List.of());
 	}
 
 	@BeforeAll

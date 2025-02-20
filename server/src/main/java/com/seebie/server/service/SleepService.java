@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import static com.seebie.server.dto.DateRange.atEndOfDay;
 import static com.seebie.server.dto.DateRange.atStartOfDay;
@@ -32,55 +33,55 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public PagedModel<SleepDetails> listSleepData(String username, Pageable page) {
-        return new PagedModel<>(sleepRepository.loadSummaries(username, page));
+    public PagedModel<SleepDetails> listSleepData(UUID publicId, Pageable page) {
+        return new PagedModel<>(sleepRepository.loadSummaries(publicId, page));
     }
 
     @Transactional
-    public SleepDetails saveNew(String username, SleepData dto) {
+    public SleepDetails saveNew(UUID publicId, SleepData dto) {
 
         // The computed value for timeAsleep isn't calculated until the transaction is closed
         // so the entity does not have the correct value here.
-        var entity = sleepRepository.save(entityMapper.toUnsavedEntity(username, dto));
+        var entity = sleepRepository.save(entityMapper.toUnsavedEntity(publicId, dto));
         return sleepMapper.apply(entity);
     }
 
     @Transactional
-    public void remove(String username, Long sleepId) {
+    public void remove(UUID publicId, Long sleepId) {
 
-        var entity = sleepRepository.findBy(username, sleepId)
+        var entity = sleepRepository.findBy(publicId, sleepId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sleep session not found"));
 
         sleepRepository.delete(entity);
     }
 
     @Transactional
-    public void update(String username, Long sleepId, SleepData dto) {
+    public void update(UUID publicId, Long sleepId, SleepData dto) {
 
-        var entity = sleepRepository.findBy(username, sleepId)
+        var entity = sleepRepository.findBy(publicId, sleepId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sleep session not found"));
 
         entity.setSleepData(dto.minutesAwake(), dto.notes(), dto.startTime(), dto.stopTime(), dto.minutesAsleep(), dto.zoneId());
     }
 
     @Transactional(readOnly = true)
-    public SleepDetails retrieve(String username, Long sleepId) {
+    public SleepDetails retrieve(UUID publicId, Long sleepId) {
 
-        return sleepRepository.findBy(username, sleepId)
+        return sleepRepository.findBy(publicId, sleepId)
                 .map(sleepMapper)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sleep session not found for user " + username + " and sleep id " + sleepId));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sleep session not found for user " + publicId + " and sleep id " + sleepId));
     }
 
     @Transactional(readOnly = true)
-    public List<SleepDataPoint> listChartData(String username, LocalDate from, LocalDate to) {
-         return sleepRepository.loadChartData(username, atStartOfDay(from), atEndOfDay(to));
+    public List<SleepDataPoint> listChartData(UUID publicId, LocalDate from, LocalDate to) {
+         return sleepRepository.loadChartData(publicId, atStartOfDay(from), atEndOfDay(to));
     }
 
     @Transactional(readOnly = true)
-    public List<List<Long>> listSleepAmounts(String username, List<DateRange> filters) {
+    public List<List<Long>> listSleepAmounts(UUID publicId, List<DateRange> filters) {
 
         return filters.stream()
-                .map(dateRange -> sleepRepository.loadDurations(username,
+                .map(dateRange -> sleepRepository.loadDurations(publicId,
                         atStartOfDay(dateRange.from()),
                         atEndOfDay(dateRange.to())))
                 .toList();

@@ -81,8 +81,8 @@ public class User implements Serializable {
         return this;
     }
 
-    public String getPublicId() {
-        return publicId.toString();
+    public UUID getPublicId() {
+        return publicId;
     }
 
     public String getPassword() {

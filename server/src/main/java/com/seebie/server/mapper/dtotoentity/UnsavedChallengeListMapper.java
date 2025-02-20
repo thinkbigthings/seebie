@@ -6,10 +6,11 @@ import com.seebie.server.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.function.BiFunction;
 
 @Component
-public class UnsavedChallengeListMapper implements BiFunction<String, List<ChallengeDto>, List<com.seebie.server.entity.Challenge>> {
+public class UnsavedChallengeListMapper implements BiFunction<UUID, List<ChallengeDto>, List<com.seebie.server.entity.Challenge>> {
 
     private UserRepository userRepository;
 
@@ -18,16 +19,16 @@ public class UnsavedChallengeListMapper implements BiFunction<String, List<Chall
     }
 
     @Override
-    public List<com.seebie.server.entity.Challenge> apply(String username, List<ChallengeDto> dtos) {
-        User user = userRepository.findByPublicId(username)
-                .orElseThrow(() -> new IllegalArgumentException("user not found: " + username));
+    public List<com.seebie.server.entity.Challenge> apply(UUID publicId, List<ChallengeDto> dtos) {
+        User user = userRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new IllegalArgumentException("user not found: " + publicId));
 
         return dtos.stream()
                 .map(dto -> toUnsavedEntity(user, dto))
                 .toList();
     }
 
-    public com.seebie.server.entity.Challenge toUnsavedEntity(String username, ChallengeDto dto) {
+    public com.seebie.server.entity.Challenge toUnsavedEntity(UUID username, ChallengeDto dto) {
         return apply(username, List.of(dto)).getFirst();
     }
 

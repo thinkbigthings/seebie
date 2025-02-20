@@ -7,11 +7,12 @@ import com.seebie.server.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.function.BiFunction;
 
 
 @Component
-public class UnsavedSleepListMapper implements BiFunction<String, List<SleepData>, List<SleepSession>> {
+public class UnsavedSleepListMapper implements BiFunction<UUID, List<SleepData>, List<SleepSession>> {
 
     private UserRepository userRepository;
 
@@ -20,18 +21,18 @@ public class UnsavedSleepListMapper implements BiFunction<String, List<SleepData
     }
 
     @Override
-    public List<SleepSession> apply(String username, List<SleepData> dtos) {
+    public List<SleepSession> apply(UUID publicId, List<SleepData> dtos) {
 
-        User user = userRepository.findByPublicId(username)
-                .orElseThrow(() -> new IllegalArgumentException("user not found: " + username));
+        User user = userRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new IllegalArgumentException("user not found: " + publicId));
 
         return dtos.stream()
                     .map(dto -> toUnsavedEntity(user, dto))
                     .toList();
     }
 
-    public SleepSession toUnsavedEntity(String username, SleepData dto) {
-        return apply(username, List.of(dto)).getFirst();
+    public SleepSession toUnsavedEntity(UUID publicId, SleepData dto) {
+        return apply(publicId, List.of(dto)).getFirst();
     }
 
     private SleepSession toUnsavedEntity(User user, SleepData dto) {
