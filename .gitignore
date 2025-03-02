@@ -3,6 +3,9 @@
 build/
 out/
 
+# docker compose postgres data
+.data
+
 # Certificates and keystores
 *.p12
 

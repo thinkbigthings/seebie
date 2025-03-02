@@ -1,0 +1,23 @@
+# keep this file in the root of the project
+
+# USAGE:
+# docker compose -f compose-dev.yml down;
+# rm -r ./data;
+# docker compose -p seebie-postgres -f compose-dev.yml up
+
+# make sure this is in .gitignore
+# # docker compose postgres data
+# .data
+
+services:
+  db:
+    image: postgres:16.2
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - .data:/var/lib/postgresql/data
