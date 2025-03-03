@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 
+import { QueryClient, QueryClientProvider } from 'react-query';
+
 import Form from 'react-bootstrap/Form';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
@@ -50,6 +52,17 @@ import {ErrorProvider} from "./ErrorProvider";
 import {IconDefinition} from "@fortawesome/fontawesome-svg-core";
 import Chat from "./Chat.tsx";
 
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            suspense: true,
+            // this is in milliseconds, setting staleTime: 10000 means that
+            // the data will be considered fresh for 10 seconds after it is fetched
+            staleTime: 10000,
+        },
+    },
+});
+
 function App() {
 
     return (
@@ -59,7 +72,12 @@ function App() {
                     <ErrorModal />
                     <CurrentUserProvider>
                         <CurrentUserContext.Consumer>
-                            { value => value[0].isLoggedIn ? <AuthenticatedApp /> : <UnauthenticatedApp /> }
+                            { value => value[0].isLoggedIn
+                                ? <QueryClientProvider client={queryClient}>
+                                     <AuthenticatedApp />
+                                  </QueryClientProvider>
+                                : <UnauthenticatedApp />
+                            }
                         </CurrentUserContext.Consumer>
                     </CurrentUserProvider>
                 </ErrorProvider>

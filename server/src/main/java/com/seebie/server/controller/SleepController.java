@@ -80,10 +80,15 @@ public class SleepController {
     @ResponseBody
     public StackedHistograms getHistogramData(@Valid @RequestBody HistogramRequest request, @PathVariable UUID publicId) {
 
-        LOG.info("Requesting histogram data with " + request);
-
         var listsSleepAmounts = sleepService.listSleepAmounts(publicId, request.filters().dataFilters());
         return histogramCalculator.buildNormalizedHistogram(request.binSize(), listsSleepAmounts);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
+    @RequestMapping(value= "/user/{publicId}/sleep/count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public RecordCount getSleepRecordCount(@PathVariable UUID publicId) {
+        return new RecordCount(sleepService.countSleepRecords(publicId));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")

@@ -73,6 +73,11 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
+    public int countSleepRecords(UUID publicId) {
+        return sleepRepository.countByUser_PublicId(publicId);
+    }
+
+    @Transactional(readOnly = true)
     public List<SleepDataPoint> listChartData(UUID publicId, LocalDate from, LocalDate to) {
          return sleepRepository.loadChartData(publicId, atStartOfDay(from), atEndOfDay(to));
     }

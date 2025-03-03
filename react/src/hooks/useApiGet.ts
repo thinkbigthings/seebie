@@ -58,6 +58,10 @@ const toPagingLabel = <T>(pageData: PagedModel<T>): string => {
     return `${firstElementInPage} - ${lastElementInPage} of ${totalElements}`;
 };
 
+const buildPagingUrl = (baseUrl: string, page: PageMetadata) => {
+    return `${baseUrl}?page=${page.number}&size=${page.size}`;
+}
+
 // This is for paging
 const useApiGet = <T>(initialUrl: string, customPageSize: number, reloadCount: number): UseApiGetReturn<T> => {
 
@@ -67,17 +71,14 @@ const useApiGet = <T>(initialUrl: string, customPageSize: number, reloadCount: n
 
     const [data, setData] = useState<PagedModel<T>>(customizedPage);
 
-    let newInitialUrl = initialUrl + '?page=' + customizedPage.page.number + '&size=' + customizedPage.page.size
+    let newInitialUrl = buildPagingUrl(initialUrl, customizedPage.page);
 
     let [url, setUrl] = useState(newInitialUrl);
-
-    // TODO maybe this should be in a callback hook?
-    // const {throwOnHttpError} = useHttpError();
 
     const movePage = useCallback((amount: number) => {
         let page = structuredClone(data.page);
         page.number = page.number + amount;
-        setUrl(initialUrl + '?page=' + page.number + '&size=' + page.size)
+        setUrl(buildPagingUrl(initialUrl, page))
     }, [data.page, initialUrl]);
 
     const next = useCallback(() => movePage(1), [movePage]);
