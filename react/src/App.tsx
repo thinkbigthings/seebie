@@ -56,8 +56,6 @@ const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             suspense: true,
-            // this is in milliseconds, setting staleTime: 10000 means that
-            // the data will be considered fresh for 10 seconds after it is fetched
             staleTime: 10000,
         },
     },

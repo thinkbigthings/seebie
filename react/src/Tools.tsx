@@ -38,6 +38,9 @@ function Tools() {
 
     const downloadUrl = csvSelected ? downloadCsv : downloadJson;
 
+    const isUploadCsv = selectedFile ? selectedFile.type === "text/csv" : false;
+    const isUploadJson = selectedFile ? selectedFile.type === "application/json" : false;
+    const uploadInvalid = fileIsBeingSelected && !(isUploadCsv || isUploadJson);
 
     const queryClient = useQueryClient();
 
@@ -49,9 +52,6 @@ function Tools() {
         queryFn: fetchSleepCount
     })
 
-
-
-
     const onFilePicked = (event:React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
             setSelectedFile(event.target.files[0]);
@@ -61,10 +61,6 @@ function Tools() {
             setFileIsBeingSelected(false);
         }
     };
-
-    const isUploadCsv = selectedFile ? selectedFile.type === "text/csv" : false;
-    const isUploadJson = selectedFile ? selectedFile.type === "application/json" : false;
-    const uploadInvalid = fileIsBeingSelected && !(isUploadCsv || isUploadJson);
 
     const swapDownloadTypeSelection = () => {
         setCsvSelected(!csvSelected);
@@ -106,6 +102,7 @@ function Tools() {
             .then(onUploadSuccess)
             .catch((error) => console.error('Error:', error));
     };
+
 
     return (
         <Container>
