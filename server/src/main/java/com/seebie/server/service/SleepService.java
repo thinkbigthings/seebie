@@ -73,8 +73,8 @@ public class SleepService {
     }
 
     @Transactional(readOnly = true)
-    public int countSleepRecords(UUID publicId) {
-        return sleepRepository.countByUser_PublicId(publicId);
+    public RecordCount countSleepRecords(UUID publicId) {
+        return new RecordCount(sleepRepository.countByUser_PublicId(publicId));
     }
 
     @Transactional(readOnly = true)

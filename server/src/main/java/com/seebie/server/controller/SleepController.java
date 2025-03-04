@@ -88,7 +88,7 @@ public class SleepController {
     @RequestMapping(value= "/user/{publicId}/sleep/count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public RecordCount getSleepRecordCount(@PathVariable UUID publicId) {
-        return new RecordCount(sleepService.countSleepRecords(publicId));
+        return sleepService.countSleepRecords(publicId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
