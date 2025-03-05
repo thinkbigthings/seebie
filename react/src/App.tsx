@@ -55,7 +55,7 @@ import Chat from "./Chat.tsx";
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            suspense: true,
+            suspense: false,
             staleTime: 10000,
         },
     },
