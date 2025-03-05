@@ -2,7 +2,7 @@ package com.seebie.server.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.seebie.server.dto.UploadResponse;
+import com.seebie.server.dto.RecordCount;
 import com.seebie.server.dto.UserData;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.mapper.entitytodto.SleepDetailsToCsv;
@@ -62,7 +62,7 @@ public class ImportExportController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value= "/user/{publicId}/import/json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public UploadResponse importUserData(@PathVariable UUID publicId, @RequestParam("file") MultipartFile file) throws IOException {
+    public RecordCount importUserData(@PathVariable UUID publicId, @RequestParam("file") MultipartFile file) throws IOException {
 
         LOG.info("Import started for user " + publicId);
 
@@ -73,7 +73,7 @@ public class ImportExportController {
 
         LOG.info("Imported " + numImported + " records for " + publicId);
 
-        return new UploadResponse(numImported);
+        return new RecordCount(numImported);
     }
 
 
@@ -96,7 +96,7 @@ public class ImportExportController {
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @RequestMapping(value= "/user/{publicId}/import/csv", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public UploadResponse uploadSleepData(@PathVariable UUID publicId, @RequestParam("file") MultipartFile file) throws IOException {
+    public RecordCount uploadSleepData(@PathVariable UUID publicId, @RequestParam("file") MultipartFile file) throws IOException {
 
         LOG.info("Upload started...");
 
@@ -107,7 +107,7 @@ public class ImportExportController {
 
         LOG.info("Imported " + numImported + " records for " + publicId);
 
-        return new UploadResponse(numImported);
+        return new RecordCount(numImported);
     }
 
     public String toJson(UserData userData) {

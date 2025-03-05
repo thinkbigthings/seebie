@@ -6,13 +6,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload, faUpload} from "@fortawesome/free-solid-svg-icons";
 import Form from 'react-bootstrap/Form';
 import useHttpError from "./hooks/useHttpError";
-import {useApiGet} from "./hooks/useApiGet";
 import {useParams} from "react-router-dom";
 import SuccessModal from "./component/SuccessModal";
-import {SleepDetailDto} from "./types/sleep.types";
+import {GET} from "./utility/BasicHeaders.ts";
+import {useQuery, useQueryClient} from "react-query";
 
-interface UploadResponse {
-    numImported: number,
+interface RecordCount {
+    numRecords: number,
 }
 
 const initialSelectedFile:File|null = null;
@@ -28,18 +28,29 @@ function Tools() {
     const [jsonSelected, setJsonSelected] = React.useState(false);
     const [selectedFile, setSelectedFile] = useState(initialSelectedFile);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const [uploadSuccessInfo, setUploadSuccessInfo] = useState({ numImported: 0 });
+    const [uploadSuccessInfo, setUploadSuccessInfo] = useState({ numRecords: 0 });
 
     const downloadCsv = `/api/user/${publicId}/export/csv`;
     const uploadCsv = `/api/user/${publicId}/import/csv`;
     const downloadJson = `/api/user/${publicId}/export/json`;
     const uploadJson = `/api/user/${publicId}/import/json`;
-    const sleepUrl = `/api/user/${publicId}/sleep`;
+    const sleepCountUrl = `api/user/${publicId}/sleep/count`;
 
     const downloadUrl = csvSelected ? downloadCsv : downloadJson;
 
-    const {data, pagingControls} = useApiGet<SleepDetailDto>(sleepUrl, 1, 0);
-    const numSleepRecords = data.page.totalElements;
+    const isUploadCsv = selectedFile ? selectedFile.type === "text/csv" : false;
+    const isUploadJson = selectedFile ? selectedFile.type === "application/json" : false;
+    const uploadInvalid = fileIsBeingSelected && !(isUploadCsv || isUploadJson);
+
+    const queryClient = useQueryClient();
+
+    const fetchSleepCount = () => fetch(sleepCountUrl, GET)
+        .then((response) => response.json() as Promise<RecordCount>);
+
+    const sleepCountQuery = useQuery<RecordCount>({
+        queryKey: [sleepCountUrl],
+        queryFn: fetchSleepCount
+    })
 
     const onFilePicked = (event:React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
@@ -51,16 +62,14 @@ function Tools() {
         }
     };
 
-    const isUploadCsv = selectedFile ? selectedFile.type === "text/csv" : false;
-    const isUploadJson = selectedFile ? selectedFile.type === "application/json" : false;
-    const uploadInvalid = fileIsBeingSelected && !(isUploadCsv || isUploadJson);
-
     const swapDownloadTypeSelection = () => {
         setCsvSelected(!csvSelected);
         setJsonSelected(!jsonSelected);
     }
 
-    const onUploadSuccess = (uploadResponse: UploadResponse) => {
+    const onUploadSuccess = (uploadResponse: RecordCount) => {
+
+        queryClient.invalidateQueries(sleepCountUrl);
         setFileKey(Date.now());  // Changing the key will remount the input and reset its value
         setUploadSuccessInfo(uploadResponse);
         setShowSuccessModal(true);
@@ -94,17 +103,18 @@ function Tools() {
             .catch((error) => console.error('Error:', error));
     };
 
+
     return (
         <Container>
             <SuccessModal title="Upload Success" showing={showSuccessModal} handleClose={() => setShowSuccessModal(false)}>
-                Uploaded {uploadSuccessInfo.numImported} records.
+                Uploaded {uploadSuccessInfo.numRecords} records.
             </SuccessModal>
 
             <NavHeader title="Tools" />
 
             <Container className="mx-0 px-0 py-2 border-top border-light-subtle">
                 <h4 className="mb-3">Export</h4>
-                <label className="d-block mb-3">You have {numSleepRecords} sleep records that you can download</label>
+                <label className="d-block mb-3">You have {sleepCountQuery.data?.numRecords} sleep records that you can download</label>
                 <div className={"mb-3"}>
                     <Form.Check
                         name="download-format"

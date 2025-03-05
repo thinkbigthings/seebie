@@ -186,9 +186,11 @@ public class ControllerSecurityTest {
 
 		test.get("/api/user/"+ USER_PUBLIC_ID +"/sleep/chart", chartParams, 401, 200, 200);
 		test.post("/api/user/"+ USER_PUBLIC_ID +"/sleep/histogram", histogramRequest, 401, 200, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/sleep/count", 401, 200, 200);
 
 		test.get("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep/chart", chartParams, 401, 403, 200);
 		test.post("/api/user/"+ ADMIN_PUBLIC_ID +"/sleep/histogram", histogramRequest, 401, 403, 200);
+		test.get("/api/user/"+ USER_PUBLIC_ID +"/sleep/count", 401, 200, 200);
 
 		test.post("/api/user/"+ USER_PUBLIC_ID +"/import/json", jsonFile, 401, 200, 200);
 		test.get("/api/user/"+ USER_PUBLIC_ID +"/export/json", 401, 200, 200);

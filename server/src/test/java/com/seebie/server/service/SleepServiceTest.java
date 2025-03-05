@@ -13,13 +13,13 @@ import java.util.UUID;
 
 import static com.seebie.server.test.data.TestData.createRandomSleepData;
 import static java.util.UUID.randomUUID;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 public class SleepServiceTest {
 
+    private static final long MOCK_COUNT = 12;
     private SleepRepository sleepRepository = Mockito.mock(SleepRepository.class);
     private UnsavedSleepListMapper entityMapper = Mockito.mock(UnsavedSleepListMapper.class);
     private SleepService service;
@@ -27,9 +27,12 @@ public class SleepServiceTest {
 
     @BeforeEach
     public void setup() {
+
         service = new SleepService(sleepRepository, entityMapper);
 
         when(sleepRepository.findBy(any(UUID.class), anyLong())).thenReturn(Optional.empty());
+        when(sleepRepository.countByUser_PublicId(any(UUID.class))).thenReturn(MOCK_COUNT);
+
     }
 
     @Test
@@ -40,6 +43,11 @@ public class SleepServiceTest {
                 () -> assertThrows(ResponseStatusException.class, () -> service.update(randomUUID(), 1L, data)),
                 () -> assertThrows(ResponseStatusException.class, () -> service.retrieve(randomUUID(), 1L))
         );
+    }
+
+    @Test
+    public void testCount() {
+        assertEquals(MOCK_COUNT, service.countSleepRecords(UUID.randomUUID()).numRecords());
     }
 
 }

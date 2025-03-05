@@ -62,4 +62,5 @@ public interface SleepRepository extends JpaRepository<SleepSession, Long> {
             """)
     List<SleepDetails> findAllByUser(UUID publicId);
 
+    long countByUser_PublicId(UUID userPublicId);
 }
