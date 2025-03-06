@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import Form from 'react-bootstrap/Form';
 import Navbar from 'react-bootstrap/Navbar';
@@ -55,7 +55,6 @@ import Chat from "./Chat.tsx";
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            suspense: false,
             staleTime: 10000,
         },
     },

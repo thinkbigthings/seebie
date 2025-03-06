@@ -5,22 +5,41 @@ import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload, faUpload} from "@fortawesome/free-solid-svg-icons";
 import Form from 'react-bootstrap/Form';
-import useHttpError from "./hooks/useHttpError";
 import {useParams} from "react-router-dom";
 import SuccessModal from "./component/SuccessModal";
 import {GET} from "./utility/BasicHeaders.ts";
-import {useQuery, useQueryClient} from "react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 
 interface RecordCount {
     numRecords: number,
 }
 
+interface UploadFileVariables {
+    uploadUrl: string;
+    selectedFile: File;
+}
+
 const initialSelectedFile:File|null = null;
+
+const uploadFileFunction = async <T,>({ uploadUrl, selectedFile }: UploadFileVariables): Promise<T> => {
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    // Do not set content type; the browser will set it for you.
+    const requestMeta: RequestInit = {
+        method: 'POST',
+        body: formData,
+    };
+
+    const response = await fetch(uploadUrl, requestMeta);
+    const data = await response.json();
+    return data as T;
+};
+
 
 function Tools() {
 
     const { publicId } = useParams();
-    const { throwOnHttpError } = useHttpError();
 
     const [fileKey, setFileKey] = useState(Date.now());
     const [fileIsBeingSelected, setFileIsBeingSelected] = useState(false);
@@ -48,8 +67,8 @@ function Tools() {
         .then((response) => response.json() as Promise<RecordCount>);
 
     const sleepCountQuery = useQuery<RecordCount>({
+        queryFn: fetchSleepCount,
         queryKey: [sleepCountUrl],
-        queryFn: fetchSleepCount
     })
 
     const onFilePicked = (event:React.ChangeEvent<HTMLInputElement>) => {
@@ -68,14 +87,20 @@ function Tools() {
     }
 
     const onUploadSuccess = (uploadResponse: RecordCount) => {
-
-        queryClient.invalidateQueries(sleepCountUrl);
         setFileKey(Date.now());  // Changing the key will remount the input and reset its value
         setUploadSuccessInfo(uploadResponse);
         setShowSuccessModal(true);
         setSelectedFile(null);
         setFileIsBeingSelected(false);
     };
+
+    const uploadFileMutation = useMutation({
+        mutationFn: (variables: UploadFileVariables) => uploadFileFunction<RecordCount>(variables),
+        onSuccess: (data: RecordCount) => {
+            onUploadSuccess(data);
+            queryClient.invalidateQueries({queryKey: [sleepCountUrl]});
+        },
+    });
 
     const handleSubmission = () => {
 
@@ -84,23 +109,10 @@ function Tools() {
             return;
         }
 
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-
-        // Do not set content type, the browser will correctly set that
-        // (and in fact this will break if you try to add "Content-type": "multipart/form-data")
-        const requestMeta = {
-            method: 'POST',
-            body: formData
-        };
-
-        const uploadUrl = isUploadCsv ? uploadCsv : uploadJson;
-
-        fetch(uploadUrl, requestMeta)
-            .then(throwOnHttpError)
-            .then((response) => response.json())
-            .then(onUploadSuccess)
-            .catch((error) => console.error('Error:', error));
+        uploadFileMutation.mutate({
+            uploadUrl: isUploadCsv ? uploadCsv : uploadJson,
+            selectedFile
+        });
     };
 
 
