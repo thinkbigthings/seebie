@@ -64,6 +64,7 @@ function Tools() {
     const sleepCountQuery = useQuery<RecordCount>({
         queryFn: fetchSleepCount,
         queryKey: [sleepCountUrl],
+        initialData: { numRecords: 0 }
     })
 
     const onFilePicked = (event:React.ChangeEvent<HTMLInputElement>) => {
@@ -89,7 +90,9 @@ function Tools() {
         mutationFn: (variables: UploadFileVariables) => uploadFileFunction<RecordCount>(variables),
         onSuccess: (data: RecordCount) => {
             onUploadSuccess(data);
-            queryClient.invalidateQueries({queryKey: [sleepCountUrl]});
+            queryClient.setQueryData([sleepCountUrl], {
+                numRecords: data.numRecords + sleepCountQuery.data.numRecords
+            });
         },
     });
 
@@ -116,7 +119,7 @@ function Tools() {
 
             <Container className="mx-0 px-0 py-2 border-top border-light-subtle">
                 <h4 className="mb-3">Export</h4>
-                <label className="d-block mb-3">You have {sleepCountQuery.data?.numRecords} sleep records that you can download</label>
+                <label className="d-block mb-3">You have {sleepCountQuery.data.numRecords} sleep records that you can download</label>
                 <div className={"mb-3"}>
                     <Form.Check
                         name="download-format"
