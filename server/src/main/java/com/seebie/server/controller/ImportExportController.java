@@ -25,7 +25,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
 // so we can use that for api-only requests only if the UI is served separately
 @RestController
-@RequestMapping("/api")
+@RequestMapping(path="/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ImportExportController {
 
     private static Logger LOG = LoggerFactory.getLogger(ImportExportController.class);
@@ -44,8 +44,7 @@ public class ImportExportController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value="/user/{publicId}/export/json", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
+    @GetMapping(value = "/user/{publicId}/export/json", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> exportUserData(@PathVariable UUID publicId) {
 
         String filename = "seebie-data-" + publicId + ".json";
@@ -60,8 +59,7 @@ public class ImportExportController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value= "/user/{publicId}/import/json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @PostMapping("/user/{publicId}/import/json")
     public RecordCount importUserData(@PathVariable UUID publicId, @RequestParam("file") MultipartFile file) throws IOException {
 
         LOG.info("Import started for user " + publicId);
@@ -78,8 +76,7 @@ public class ImportExportController {
 
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value= "/user/{publicId}/export/csv", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
+    @GetMapping("/user/{publicId}/export/csv")
     public ResponseEntity<byte[]> downloadSleepData(@PathVariable UUID publicId) {
 
         String filename = "seebie-data-" + publicId + ".csv";
@@ -94,8 +91,7 @@ public class ImportExportController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value= "/user/{publicId}/import/csv", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @PostMapping("/user/{publicId}/import/csv")
     public RecordCount uploadSleepData(@PathVariable UUID publicId, @RequestParam("file") MultipartFile file) throws IOException {
 
         LOG.info("Upload started...");

@@ -22,7 +22,7 @@ import java.util.UUID;
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
 // so we can use that for api-only requests only if the UI is served separately
 @RestController
-@RequestMapping("/api")
+@RequestMapping(path="/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SleepController {
 
     private static Logger LOG = LoggerFactory.getLogger(SleepController.class);
@@ -37,24 +37,21 @@ public class SleepController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value="/user/{publicId}/sleep", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @PostMapping("/user/{publicId}/sleep")
     public void saveSleepSession(@Valid @ValidDurations @RequestBody SleepData dto, @PathVariable UUID publicId) {
 
         sleepService.saveNew(publicId, dto);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value="/user/{publicId}/sleep", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @GetMapping("/user/{publicId}/sleep")
     public PagedModel<SleepDetails> getSleepList(@PathVariable UUID publicId, @PageableDefault(page = 0, size = 10, sort = {"stopTime"}, direction=Sort.Direction.DESC) Pageable page) {
 
         return sleepService.listSleepData(publicId, page);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value="/user/{publicId}/sleep/chart", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @GetMapping("/user/{publicId}/sleep/chart")
     public List<SleepDataPoint> getChartData(@PathVariable UUID publicId, @RequestParam LocalDate from, @RequestParam LocalDate to) {
 
         if(to.isBefore(from)) {
@@ -76,8 +73,7 @@ public class SleepController {
      * @return
      */
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value= "/user/{publicId}/sleep/histogram", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @PostMapping("/user/{publicId}/sleep/histogram")
     public StackedHistograms getHistogramData(@Valid @RequestBody HistogramRequest request, @PathVariable UUID publicId) {
 
         var listsSleepAmounts = sleepService.listSleepAmounts(publicId, request.filters().dataFilters());
@@ -85,29 +81,25 @@ public class SleepController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value= "/user/{publicId}/sleep/count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @GetMapping("/user/{publicId}/sleep/count")
     public RecordCount getSleepRecordCount(@PathVariable UUID publicId) {
         return sleepService.countSleepRecords(publicId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value= "/user/{publicId}/sleep/{sleepId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @GetMapping( "/user/{publicId}/sleep/{sleepId}")
     public SleepDetails getSleepSession(@PathVariable UUID publicId, @PathVariable Long sleepId) {
         return sleepService.retrieve(publicId, sleepId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value= "/user/{publicId}/sleep/{sleepId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @PutMapping("/user/{publicId}/sleep/{sleepId}")
     public void updateSleepSession(@Valid @ValidDurations @RequestBody SleepData sleepData, @PathVariable UUID publicId, @PathVariable Long sleepId) {
         sleepService.update(publicId, sleepId, sleepData);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value= "/user/{publicId}/sleep/{sleepId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @DeleteMapping("/user/{publicId}/sleep/{sleepId}")
     public void delete(@PathVariable UUID publicId, @PathVariable Long sleepId) {
         sleepService.remove(publicId, sleepId);
     }

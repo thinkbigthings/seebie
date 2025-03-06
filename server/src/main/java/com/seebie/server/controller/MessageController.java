@@ -13,7 +13,7 @@ import java.util.UUID;
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
 // so we can use that for api-only requests only if the UI is served separately
 @RestController
-@RequestMapping("/api")
+@RequestMapping(path="/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MessageController {
 
     private final MessageService messageService;
@@ -23,24 +23,21 @@ public class MessageController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value="/user/{publicId}/chat", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @GetMapping("/user/{publicId}/chat")
     public List<MessageDto> getChatHistory(@PathVariable UUID publicId) {
 
         return messageService.getMessages(publicId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value="/user/{publicId}/chat", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @PostMapping("/user/{publicId}/chat")
     public MessageDto submitPrompt(@Valid @RequestBody MessageDto prompt, @PathVariable UUID publicId) {
 
         return messageService.processPrompt(prompt, publicId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value="/user/{publicId}/chat", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @DeleteMapping("/user/{publicId}/chat")
     public void deleteChatHistory(@PathVariable UUID publicId) {
 
         messageService.deleteMessages(publicId);

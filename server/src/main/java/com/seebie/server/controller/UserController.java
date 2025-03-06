@@ -17,7 +17,7 @@ import java.util.UUID;
 // if we use server.servlet.context-path=/api, static content and API all come from the same base
 // so we can use that for api-only requests only if the UI is served separately
 @RestController
-@RequestMapping("/api")
+@RequestMapping(path="/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
     private final UserService userService;
@@ -28,8 +28,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value="/registration", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @PostMapping("/registration")
     public void createUser(@Valid @RequestBody RegistrationRequest newUser) {
 
         userService.saveNewUser(newUser);
@@ -40,30 +39,27 @@ public class UserController {
     // and get the user's details.
     // The logout endpoint is defined in the security configuration
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value="/login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/login")
     public User login(Authentication auth) {
         return userService.getUserByEmail(auth.getName());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value="/user", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @GetMapping("/user")
     public PagedModel<UserSummary> getUsers(@PageableDefault(page = 0, size = 10, sort = {"registrationTime"}, direction=Sort.Direction.DESC) Pageable page) {
 
         return userService.getUserSummaries(page);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value="/user/{publicId}/personalInfo", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @RequestMapping("/user/{publicId}/personalInfo")
     public User updateUser(@Valid @RequestBody PersonalInfo userData, @PathVariable UUID publicId) {
 
         return userService.updateUser(publicId, userData);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value="/user/{publicId}/password/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @PostMapping("/user/{publicId}/password/update")
     public String updatePassword(@Valid @RequestBody PasswordResetRequest resetRequest, @PathVariable UUID publicId) {
 
         userService.updatePassword(publicId, resetRequest.plainTextPassword());
@@ -71,8 +67,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping(value="/user/{publicId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @GetMapping("/user/{publicId}")
     public User getUser(@PathVariable UUID publicId) {
 
         return userService.getUser(publicId);
