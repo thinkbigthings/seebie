@@ -19,7 +19,7 @@ interface UploadFileVariables {
     selectedFile: File;
 }
 
-const initialSelectedFile:File|null = null;
+type FileFormat = 'csv' | 'json';
 
 const uploadFileFunction = async <T,>({ uploadUrl, selectedFile }: UploadFileVariables): Promise<T> => {
     const formData = new FormData();
@@ -42,24 +42,19 @@ function Tools() {
     const { publicId } = useParams();
 
     const [fileKey, setFileKey] = useState(Date.now());
-    const [fileIsBeingSelected, setFileIsBeingSelected] = useState(false);
-    const [csvSelected, setCsvSelected] = React.useState(true);
-    const [jsonSelected, setJsonSelected] = React.useState(false);
-    const [selectedFile, setSelectedFile] = useState(initialSelectedFile);
+    const [selectedFormat, setSelectedFormat] = useState<FileFormat>('csv');
+    const [selectedFile, setSelectedFile] = useState<File|null>(null);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [uploadSuccessInfo, setUploadSuccessInfo] = useState({ numRecords: 0 });
 
-    const downloadCsv = `/api/user/${publicId}/export/csv`;
-    const uploadCsv = `/api/user/${publicId}/import/csv`;
-    const downloadJson = `/api/user/${publicId}/export/json`;
-    const uploadJson = `/api/user/${publicId}/import/json`;
+
+    const downloadUrl = `/api/user/${publicId}/export/${selectedFormat}`;
+    const uploadUrl = `/api/user/${publicId}/import/${selectedFormat}`;
     const sleepCountUrl = `/api/user/${publicId}/sleep/count`;
 
-    const downloadUrl = csvSelected ? downloadCsv : downloadJson;
-
-    const isUploadCsv = selectedFile ? selectedFile.type === "text/csv" : false;
-    const isUploadJson = selectedFile ? selectedFile.type === "application/json" : false;
-    const uploadInvalid = fileIsBeingSelected && !(isUploadCsv || isUploadJson);
+    const isUploadCsv = selectedFile !== null ? selectedFile.type === "text/csv" : false;
+    const isUploadJson = selectedFile !== null ? selectedFile.type === "application/json" : false;
+    const uploadInvalid = selectedFile !== null && !(isUploadCsv || isUploadJson);
 
     const queryClient = useQueryClient();
 
@@ -74,16 +69,13 @@ function Tools() {
     const onFilePicked = (event:React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
             setSelectedFile(event.target.files[0]);
-            setFileIsBeingSelected(true);
         } else {
             setSelectedFile(null);
-            setFileIsBeingSelected(false);
         }
     };
 
     const swapDownloadTypeSelection = () => {
-        setCsvSelected(!csvSelected);
-        setJsonSelected(!jsonSelected);
+        setSelectedFormat(selectedFormat === 'csv' ? 'json' : 'csv');
     }
 
     const onUploadSuccess = (uploadResponse: RecordCount) => {
@@ -91,7 +83,6 @@ function Tools() {
         setUploadSuccessInfo(uploadResponse);
         setShowSuccessModal(true);
         setSelectedFile(null);
-        setFileIsBeingSelected(false);
     };
 
     const uploadFileMutation = useMutation({
@@ -102,7 +93,7 @@ function Tools() {
         },
     });
 
-    const handleSubmission = () => {
+    const handleUploadSubmission = () => {
 
         if(selectedFile === null) {
             console.log("No file selected, so can't handle submission");
@@ -110,11 +101,10 @@ function Tools() {
         }
 
         uploadFileMutation.mutate({
-            uploadUrl: isUploadCsv ? uploadCsv : uploadJson,
+            uploadUrl,
             selectedFile
         });
     };
-
 
     return (
         <Container>
@@ -133,7 +123,7 @@ function Tools() {
                         type="radio"
                         id="radio-csv"
                         label="CSV (sleep data only)"
-                        checked={csvSelected}
+                        checked={selectedFormat === 'csv'}
                         onChange={swapDownloadTypeSelection}
                     />
                     <Form.Check
@@ -141,7 +131,7 @@ function Tools() {
                         type="radio"
                         id="radio-json"
                         label="JSON (sleep and challenges)"
-                        checked={jsonSelected}
+                        checked={selectedFormat === 'json'}
                         onChange={swapDownloadTypeSelection}
                     />
                 </div>
@@ -173,7 +163,7 @@ function Tools() {
                         </Form.Control.Feedback>
                     </Form.Group>
 
-                    <Button variant="secondary" onClick={handleSubmission} disabled={uploadInvalid}>
+                    <Button variant="secondary" onClick={handleUploadSubmission} disabled={uploadInvalid || selectedFile === null}>
                         <FontAwesomeIcon className="app-highlight me-2" icon={faUpload}/>
                         Upload
                     </Button>
