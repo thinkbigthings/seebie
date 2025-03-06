@@ -53,7 +53,7 @@ function Tools() {
     const uploadCsv = `/api/user/${publicId}/import/csv`;
     const downloadJson = `/api/user/${publicId}/export/json`;
     const uploadJson = `/api/user/${publicId}/import/json`;
-    const sleepCountUrl = `api/user/${publicId}/sleep/count`;
+    const sleepCountUrl = `/api/user/${publicId}/sleep/count`;
 
     const downloadUrl = csvSelected ? downloadCsv : downloadJson;
 
