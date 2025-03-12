@@ -55,7 +55,7 @@ function Chat() {
 
     const chatUrl = `/api/user/${publicId}/chat`
 
-    const [processing, setProcessing] = useState<boolean>(false);
+    const [showProcessingIcon, setShowProcessingIcon] = useState<boolean>(false);
 
     const queryClient = useQueryClient();
 
@@ -72,7 +72,7 @@ function Chat() {
     const uploadMessageMutation = useMutation({
         mutationFn: (variables: PostFetchVariables) => httpPost<MessageDto>(variables.url, variables.body),
         onSuccess: (message: MessageDto) => {
-            setProcessing(false);
+            setShowProcessingIcon(false);
             queryClient.setQueryData([chatUrl], (oldData: MessageDto[] | undefined) => [
                 ...(oldData ?? []),
                 message,
@@ -81,7 +81,7 @@ function Chat() {
     });
 
     const submitPrompt = () => {
-        setProcessing(true);
+        setShowProcessingIcon(true);
         const prompt = retrieveUserPrompt();
         if (!prompt) return;
 
@@ -167,7 +167,7 @@ function Chat() {
                             </Container>
                         );
                     })}
-                    {processing && (
+                    {showProcessingIcon && (
                         <Container key="processing">
                             <Row>
                                 <Col className="text-start">
