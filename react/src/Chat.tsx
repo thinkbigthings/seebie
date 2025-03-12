@@ -1,17 +1,49 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
-import useHttpError from "./hooks/useHttpError";
 import {useParams} from "react-router-dom";
-import {fetchPost, GET} from "./utility/BasicHeaders.ts";
+import {basicHeader, GET} from "./utility/BasicHeaders.ts";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {mapToMessageDto, MessageDto, MessageType} from "./types/message.types.ts";
+import {MessageDto, MessageType} from "./types/message.types.ts";
 import {faCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import InfoModalButton from "./component/InfoModalButton.tsx";
 import WarningButton from "./component/WarningButton.tsx";
-import useApiDelete from "./hooks/useApiDelete.ts";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+
+interface PostFetchVariables {
+    url: string;
+    body: MessageDto;
+}
+
+const httpPost = async <T,>(url: string, body: Record<string, unknown>) => {
+
+    const bodyString = JSON.stringify(body);
+    const requestHeaders: HeadersInit = basicHeader();
+
+    const requestMeta: RequestInit = {
+        headers: requestHeaders,
+        method: 'POST',
+        body: bodyString
+    };
+
+    const response = await fetch(url, requestMeta);
+    const data = await response.json();
+    return data as T;
+}
+
+const httpDelete = (url: string) => {
+
+    const requestHeaders: HeadersInit = basicHeader();
+
+    const requestMeta = {
+        headers: requestHeaders,
+        method: 'DELETE'
+    };
+
+    return fetch(url, requestMeta);
+}
 
 
 function Chat() {
@@ -21,25 +53,78 @@ function Chat() {
         throw new Error("Public ID is required in the url");
     }
 
-    const { throwOnHttpError } = useHttpError();
-    const callDelete = useApiDelete();
-
     const chatUrl = `/api/user/${publicId}/chat`
 
-    const [messages, setMessages] = useState<MessageDto[]>([]);
     const [processing, setProcessing] = useState<boolean>(false);
 
-    const chatHistoryRef = useRef<HTMLDivElement>(null);
+    const queryClient = useQueryClient();
 
-    // call the callback function if the enter key was pressed in the event
-    function callOnEnter(event:React.KeyboardEvent<HTMLTextAreaElement>, callback:()=>void) {
-        if(event.key === 'Enter') {
-            callback();
-        }
+    const fetchChatHistory = () => fetch(chatUrl, GET)
+        .then((response) => response.json() as Promise<MessageDto[]>);
+
+    const chatHistoryQuery = useQuery<MessageDto[]>({
+        queryFn: fetchChatHistory,
+        queryKey: [chatUrl],
+        initialData: []
+    });
+
+
+    const uploadMessageMutation = useMutation({
+        mutationFn: (variables: PostFetchVariables) => httpPost<MessageDto>(variables.url, variables.body),
+        onSuccess: (message: MessageDto) => {
+            setProcessing(false);
+            queryClient.setQueryData([chatUrl], (oldData: MessageDto[] | undefined) => [
+                ...(oldData ?? []),
+                message,
+            ]);
+        },
+    });
+
+    const submitPrompt = () => {
+        setProcessing(true);
+        const prompt = retrieveUserPrompt();
+        if (!prompt) return;
+
+        const userPrompt: MessageDto = { content: prompt, type: MessageType.USER };
+
+        queryClient.setQueryData([chatUrl], (oldData: MessageDto[] | undefined) => [
+            ...(oldData ?? []),
+            userPrompt,
+        ]);
+
+        uploadMessageMutation.mutate({
+            url: chatUrl,
+            body: userPrompt
+        });
+    };
+
+    const promptRef = useRef<HTMLTextAreaElement>(null);
+
+    const retrieveUserPrompt = (): string | null => {
+        if (!promptRef.current) return null;
+        const prompt = promptRef.current.value.trim();
+        promptRef.current.value = "";
+        return prompt;
+    };
+
+
+    const deleteChat = () => {
+        httpDelete(chatUrl).then(response => queryClient.invalidateQueries({queryKey: [chatUrl]}));
     }
 
+
+    // call the callback function if the enter key was pressed in the textarea
+    const handleKeyUp = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Enter') {
+            submitPrompt();
+        }
+    }, []);
+
+
     // Auto-scroll to bottom whenever chatHistory updates
-    useEffect(() => {
+    const chatHistoryRef = useRef<HTMLDivElement>(null);
+
+    useLayoutEffect(() => {
         const chatDiv = chatHistoryRef.current;
         if (!chatDiv) return;
 
@@ -47,64 +132,7 @@ function Chat() {
         if (isAtBottom) {
             chatDiv.scrollTop = chatDiv.scrollHeight;
         }
-    }, [messages]);
-
-    const promptRef = useRef<HTMLTextAreaElement>(null);
-
-    const appendMessage = (message:MessageDto) => {
-        setProcessing(message.type === MessageType.USER);
-        setMessages(prevChatHistory => [...prevChatHistory, message]);
-    }
-
-    const submitPrompt = () => {
-        setProcessing(true);
-        const prompt = handleUserInput();
-        if (!prompt) return;
-
-        const newUserPrompt: MessageDto = { content: prompt, type: MessageType.USER };
-        appendMessage(newUserPrompt);
-
-        sendMessageToServer(newUserPrompt)
-            .catch(error => console.error("Failed to send message:", error));
-    };
-
-    const handleUserInput = (): string | null => {
-        if (!promptRef.current) return null;
-        const prompt = promptRef.current.value.trim();
-        promptRef.current.value = "";
-        return prompt;
-    };
-
-    const sendMessageToServer = async (message: MessageDto) => {
-        try {
-            const response = await fetchPost(chatUrl, message);
-            throwOnHttpError(response);
-            const data = await response.json() as MessageDto;
-            appendMessage(data);
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    };
-
-    useEffect(() => {
-        const abortController = new AbortController();
-        fetch(chatUrl, { ...GET, signal: abortController.signal })
-            .then(response => response.json() as Promise<MessageDto[]>)
-            .then(data => setMessages(data.map(mapToMessageDto)))
-            .catch(error => {
-                if (error.name !== "AbortError") console.log(error);
-            });
-
-        return () => abortController.abort();
-    }, []);
-
-    const handleKeyUp = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        callOnEnter(e, submitPrompt);
-    }, []);
-
-    const deleteById = () => {
-        callDelete(chatUrl).then(r => setMessages([]));
-    }
+    }, [chatHistoryQuery.data]);
 
     const userRowStyle = "chat-message-user text-start";
     const botRowStyle = "chat-message-bot text-start";
@@ -116,7 +144,7 @@ function Chat() {
                     className={"me-1"}
                     titleText={"Chat History"}
                     modalText={"Chat history is only available for the last 7 days"} />
-                <WarningButton buttonText="Delete" onConfirm={deleteById}>
+                <WarningButton buttonText="Delete" onConfirm={deleteChat}>
                     This deletes the entire conversation and cannot be undone. Proceed?
                 </WarningButton>
             </NavHeader>
@@ -127,7 +155,7 @@ function Chat() {
                     className="border rounded m-0 p-1 overflow-y-auto flex-1"
                     ref={chatHistoryRef}
                 >
-                    {messages.map((message, i) => {
+                    {chatHistoryQuery.data.map((message, i) => {
                         const isUser = message.type === MessageType.USER;
                         return (
                             <Container key={i} className={"p-0"}>
