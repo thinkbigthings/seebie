@@ -68,7 +68,6 @@ function Chat() {
         initialData: []
     });
 
-
     const uploadMessageMutation = useMutation({
         mutationFn: (variables: PostFetchVariables) => httpPost<MessageDto>(variables.url, variables.body),
         onSuccess: (message: MessageDto) => {
@@ -107,11 +106,9 @@ function Chat() {
         return prompt;
     };
 
-
     const deleteChat = () => {
         httpDelete(chatUrl).then(response => queryClient.invalidateQueries({queryKey: [chatUrl]}));
     }
-
 
     // call the callback function if the enter key was pressed in the textarea
     const handleKeyUp = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -120,16 +117,9 @@ function Chat() {
         }
     }, []);
 
-
     // Auto-scroll to bottom whenever chatHistory updates.
-    // This replaces manual scroll calculations done in useLayoutEffect.
-    // By adding a dummy element at the bottom of your list and scrolling it into view,
-    // you let the browser handle the scroll behavior for you.
-    // In this case, using useEffect is acceptable because:
-    // The scrollIntoView call doesn't require synchronous layout measurement,
-    // it simply tells the browser to scroll after the DOM has updated.
+    // Let the browser handle the scroll behavior by adding a dummy element at the bottom and scrolling it into view.
 	// useEffect runs after rendering and painting, which is usually sufficient when you're just triggering a scroll.
-	// It avoids blocking the browser's paint process, potentially leading to smoother updates.
     const bottomRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
