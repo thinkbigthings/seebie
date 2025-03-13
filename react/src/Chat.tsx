@@ -65,7 +65,8 @@ function Chat() {
     const chatHistoryQuery = useQuery<MessageDto[]>({
         queryFn: fetchChatHistory,
         queryKey: [chatUrl],
-        initialData: []
+        placeholderData: [] as MessageDto[],
+        staleTime: Infinity,
     });
 
     const uploadMessageMutation = useMutation({
@@ -146,7 +147,7 @@ function Chat() {
                     id="chatHistory"
                     className="border rounded m-0 p-1 overflow-y-auto flex-1"
                 >
-                    {chatHistoryQuery.data.map((message, i) => {
+                    {chatHistoryQuery.data?.map((message, i) => {
                         const isUser = message.type === MessageType.USER;
                         return (
                             <Container key={i} className={"p-0"}>
