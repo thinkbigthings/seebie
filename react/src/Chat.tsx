@@ -1,4 +1,4 @@
-import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import {useParams} from "react-router-dom";
@@ -121,17 +121,19 @@ function Chat() {
     }, []);
 
 
-    // Auto-scroll to bottom whenever chatHistory updates
-    const chatHistoryRef = useRef<HTMLDivElement>(null);
+    // Auto-scroll to bottom whenever chatHistory updates.
+    // This replaces manual scroll calculations done in useLayoutEffect.
+    // By adding a dummy element at the bottom of your list and scrolling it into view,
+    // you let the browser handle the scroll behavior for you.
+    // In this case, using useEffect is acceptable because:
+    // The scrollIntoView call doesn't require synchronous layout measurement,
+    // it simply tells the browser to scroll after the DOM has updated.
+	// useEffect runs after rendering and painting, which is usually sufficient when you're just triggering a scroll.
+	// It avoids blocking the browser's paint process, potentially leading to smoother updates.
+    const bottomRef = useRef<HTMLDivElement>(null);
 
-    useLayoutEffect(() => {
-        const chatDiv = chatHistoryRef.current;
-        if (!chatDiv) return;
-
-        const isAtBottom = chatDiv.scrollHeight - chatDiv.clientHeight <= chatDiv.scrollTop + 10;
-        if (isAtBottom) {
-            chatDiv.scrollTop = chatDiv.scrollHeight;
-        }
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [chatHistoryQuery.data]);
 
     const userRowStyle = "chat-message-user text-start";
@@ -153,7 +155,6 @@ function Chat() {
                 <div
                     id="chatHistory"
                     className="border rounded m-0 p-1 overflow-y-auto flex-1"
-                    ref={chatHistoryRef}
                 >
                     {chatHistoryQuery.data.map((message, i) => {
                         const isUser = message.type === MessageType.USER;
@@ -176,6 +177,7 @@ function Chat() {
                             </Row>
                         </Container>
                     )}
+                    <div ref={bottomRef} />
                 </div>
 
                 <textarea
