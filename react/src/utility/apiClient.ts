@@ -1,7 +1,7 @@
 import {MessageDto} from "../types/message.types.ts";
 import {basicHeader} from "./BasicHeaders.ts";
 
-interface PostFetchVariables {
+interface PostVariables {
     url: string;
     body: MessageDto;
 }
@@ -34,5 +34,5 @@ const httpDelete = (url: string) => {
     return fetch(url, requestMeta);
 }
 
-export type {PostFetchVariables}
+export type {PostVariables}
 export {httpPost, httpDelete}

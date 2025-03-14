@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import {useParams} from "react-router-dom";
 import {GET} from "./utility/BasicHeaders.ts";
-import {httpDelete, httpPost, PostFetchVariables} from "./utility/apiClient.ts";
+import {httpDelete, httpPost, PostVariables} from "./utility/apiClient.ts";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {MessageDto, MessageType} from "./types/message.types.ts";
@@ -12,7 +12,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import InfoModalButton from "./component/InfoModalButton.tsx";
 import WarningButton from "./component/WarningButton.tsx";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-
 
 
 function Chat() {
@@ -40,7 +39,7 @@ function Chat() {
     });
 
     const uploadMessageMutation = useMutation({
-        mutationFn: (variables: PostFetchVariables) => httpPost<MessageDto>(variables.url, variables.body),
+        mutationFn: (variables: PostVariables) => httpPost<MessageDto>(variables.url, variables.body),
         onSuccess: (message: MessageDto) => {
             setShowProcessingIcon(false);
             queryClient.setQueryData([chatUrl], (oldData: MessageDto[] | undefined) => [
@@ -77,7 +76,7 @@ function Chat() {
     }, [prompt]);
 
     // Auto-scroll to bottom whenever chatHistory updates.
-    const bottomRef = React.useRef<HTMLDivElement>(null);
+    const bottomRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [chatHistoryQuery.data]);
@@ -86,8 +85,6 @@ function Chat() {
         httpDelete(chatUrl).then(response => queryClient.invalidateQueries({queryKey: [chatUrl]}));
     }
 
-    const userRowStyle = "chat-message-user text-start";
-    const botRowStyle = "chat-message-bot text-start";
 
     return (
         <Container className={"p-0 d-flex flex-column overflow-hidden h-90vh "} >
@@ -111,7 +108,7 @@ function Chat() {
                         return (
                             <Container key={i} className={"p-0"}>
                                 <div className={`d-flex ${isUser ? 'justify-content-end' : 'justify-content-start'} mt-2`}>
-                                    <div className={`p-2 rounded chat-bubble ${isUser ? userRowStyle : botRowStyle}`}>
+                                    <div className={`p-2 rounded chat-bubble text-start ${isUser ? 'chat-message-user' : 'chat-message-bot'}`}>
                                         {message.content}
                                     </div>
                                 </div>
