@@ -2,7 +2,8 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import {useParams} from "react-router-dom";
-import {basicHeader, GET} from "./utility/BasicHeaders.ts";
+import {GET} from "./utility/BasicHeaders.ts";
+import {httpDelete, httpPost, PostFetchVariables} from "./utility/apiClient.ts";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {MessageDto, MessageType} from "./types/message.types.ts";
@@ -12,38 +13,6 @@ import InfoModalButton from "./component/InfoModalButton.tsx";
 import WarningButton from "./component/WarningButton.tsx";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 
-interface PostFetchVariables {
-    url: string;
-    body: MessageDto;
-}
-
-const httpPost = async <T,>(url: string, body: Record<string, unknown>) => {
-
-    const bodyString = JSON.stringify(body);
-    const requestHeaders: HeadersInit = basicHeader();
-
-    const requestMeta: RequestInit = {
-        headers: requestHeaders,
-        method: 'POST',
-        body: bodyString
-    };
-
-    const response = await fetch(url, requestMeta);
-    const data = await response.json();
-    return data as T;
-}
-
-const httpDelete = (url: string) => {
-
-    const requestHeaders: HeadersInit = basicHeader();
-
-    const requestMeta = {
-        headers: requestHeaders,
-        method: 'DELETE'
-    };
-
-    return fetch(url, requestMeta);
-}
 
 
 function Chat() {
@@ -56,6 +25,7 @@ function Chat() {
     const chatUrl = `/api/user/${publicId}/chat`
 
     const [showProcessingIcon, setShowProcessingIcon] = useState<boolean>(false);
+    const [prompt, setPrompt] = useState<string>("");
 
     const queryClient = useQueryClient();
 
@@ -81,11 +51,10 @@ function Chat() {
     });
 
     const submitPrompt = () => {
+        if (!prompt.trim()) return;
         setShowProcessingIcon(true);
-        const prompt = retrieveUserPrompt();
-        if (!prompt) return;
 
-        const userPrompt: MessageDto = { content: prompt, type: MessageType.USER };
+        const userPrompt: MessageDto = { content: prompt.trim(), type: MessageType.USER };
 
         queryClient.setQueryData([chatUrl], (oldData: MessageDto[] | undefined) => [
             ...(oldData ?? []),
@@ -96,36 +65,26 @@ function Chat() {
             url: chatUrl,
             body: userPrompt
         });
+        setPrompt('');
     };
 
-    const promptRef = useRef<HTMLTextAreaElement>(null);
+    // Use onKeyDown to capture Enter and prevent newline insertion
+    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            submitPrompt();
+        }
+    }, [prompt]);
 
-    const retrieveUserPrompt = (): string | null => {
-        if (!promptRef.current) return null;
-        const prompt = promptRef.current.value.trim();
-        promptRef.current.value = "";
-        return prompt;
-    };
+    // Auto-scroll to bottom whenever chatHistory updates.
+    const bottomRef = React.useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [chatHistoryQuery.data]);
 
     const deleteChat = () => {
         httpDelete(chatUrl).then(response => queryClient.invalidateQueries({queryKey: [chatUrl]}));
     }
-
-    // call the callback function if the enter key was pressed in the textarea
-    const handleKeyUp = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Enter') {
-            submitPrompt();
-        }
-    }, []);
-
-    // Auto-scroll to bottom whenever chatHistory updates.
-    // Let the browser handle the scroll behavior by adding a dummy element at the bottom and scrolling it into view.
-	// useEffect runs after rendering and painting, which is usually sufficient when you're just triggering a scroll.
-    const bottomRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [chatHistoryQuery.data]);
 
     const userRowStyle = "chat-message-user text-start";
     const botRowStyle = "chat-message-bot text-start";
@@ -176,8 +135,9 @@ function Chat() {
                     id="prompt"
                     placeholder="Press Enter to send"
                     rows={3}
-                    ref={promptRef}
-                    onKeyUp={handleKeyUp}
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    onKeyDown={handleKeyDown}
                 />
             </div>
         </Container>
