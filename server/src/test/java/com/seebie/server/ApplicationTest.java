@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * For use with springBootTest, this class is used to run the application in a test context.
+ * For use with bootTestRun, this class is used to run the application in a test context.
  * It should run out of the box when you run gradlew bootTestRun
  */
 @SpringBootApplication(exclude = OpenAiAutoConfiguration.class)
