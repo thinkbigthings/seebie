@@ -55,7 +55,7 @@ import Chat from "./Chat.tsx";
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            staleTime: 10000,
+            staleTime: 10 * 1000,
         },
     },
 });

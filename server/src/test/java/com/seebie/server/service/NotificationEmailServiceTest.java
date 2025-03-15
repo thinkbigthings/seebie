@@ -4,7 +4,7 @@ import com.seebie.server.dto.RegistrationRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.MailSender;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NotificationEmailServiceTest {
 
-    private JavaMailSenderImpl mailSender = Mockito.mock(JavaMailSenderImpl.class);
+    private MailSender mailSender = Mockito.mock(MailSender.class);
     private NotificationRetrievalService retrievalService = Mockito.mock(NotificationRetrievalService.class);
 
     private NotificationMessageService service;

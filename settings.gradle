@@ -3,12 +3,10 @@ rootProject.name = 'seebie'
 
 include 'react', 'server'
 
+// using the local build cache is faster, but you might not get a completely clean build every time
+// you can get a pristine build by calling gradlew --no-build-cache clean build
 buildCache {
     local {
-        enabled = false
+        enabled = true
     }
-
-    // You can also enable a remote cache
-    // so that you can share the cache between different machines
-
 }
