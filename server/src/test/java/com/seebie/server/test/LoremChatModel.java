@@ -7,6 +7,7 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Random;
 
@@ -18,9 +19,15 @@ public class LoremChatModel implements ChatModel {
     @Override
     public ChatResponse call(Prompt prompt) {
 
-        // return 1 to 3 sentences
+        simulateLatency();
+
         int numSentences = 1 + random.nextInt(6);
         var message = new AssistantMessage(faker.lorem().paragraph(numSentences));
         return new ChatResponse(List.of(new Generation(message)));
+    }
+
+    private void simulateLatency() {
+        try { Thread.sleep(Duration.ofSeconds(2L)); }
+        catch (InterruptedException e) { e.printStackTrace(); }
     }
 }
