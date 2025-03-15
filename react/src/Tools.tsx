@@ -64,7 +64,8 @@ function Tools() {
     const sleepCountQuery = useQuery<RecordCount>({
         queryFn: fetchSleepCount,
         queryKey: [sleepCountUrl],
-        placeholderData: { numRecords: 0 }
+        placeholderData: { numRecords: 0 } as RecordCount,
+        staleTime: Infinity,
     })
 
     const onFilePicked = (event:React.ChangeEvent<HTMLInputElement>) => {
