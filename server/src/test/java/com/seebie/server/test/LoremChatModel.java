@@ -19,8 +19,8 @@ public class LoremChatModel implements ChatModel {
     public ChatResponse call(Prompt prompt) {
 
         // return 1 to 3 sentences
-        int numSentences = 1 + random.nextInt(4);
-        var message = new AssistantMessage(faker.lorem().sentence(numSentences));
+        int numSentences = 1 + random.nextInt(6);
+        var message = new AssistantMessage(faker.lorem().paragraph(numSentences));
         return new ChatResponse(List.of(new Generation(message)));
     }
 }
