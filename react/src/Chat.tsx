@@ -67,7 +67,7 @@ function Chat() {
         setPrompt('');
     };
 
-    // Use onKeyDown to capture Enter and prevent newline insertion
+    // Send the user prompt when they hit Enter
     const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
