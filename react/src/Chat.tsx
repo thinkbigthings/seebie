@@ -2,8 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import {useParams} from "react-router-dom";
-import {GET} from "./utility/BasicHeaders.ts";
-import {httpDelete, httpPost, PostVariables} from "./utility/apiClient.ts";
+import {httpDelete, httpGet, httpPost, PostVariables} from "./utility/apiClient.ts";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {MessageDto, MessageType} from "./types/message.types.ts";
@@ -28,11 +27,8 @@ function Chat() {
 
     const queryClient = useQueryClient();
 
-    const fetchChatHistory = () => fetch(chatUrl, GET)
-        .then((response) => response.json() as Promise<MessageDto[]>);
-
     const chatHistoryQuery = useQuery<MessageDto[]>({
-        queryFn: fetchChatHistory,
+        queryFn: () => httpGet<MessageDto[]>(chatUrl),
         queryKey: [chatUrl],
         placeholderData: [] as MessageDto[],
         staleTime: Infinity,
@@ -82,7 +78,7 @@ function Chat() {
     }, [chatHistoryQuery.data]);
 
     const deleteChat = () => {
-        httpDelete(chatUrl).then(response => queryClient.invalidateQueries({queryKey: [chatUrl]}));
+        httpDelete(chatUrl).then(() => queryClient.invalidateQueries({queryKey: [chatUrl]}));
     }
 
 
