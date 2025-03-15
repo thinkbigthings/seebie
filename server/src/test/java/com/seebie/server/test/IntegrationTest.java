@@ -8,6 +8,7 @@ import com.seebie.server.test.data.TestData;
 import com.seebie.server.test.data.TestDataPopulator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -33,7 +34,7 @@ import java.util.UUID;
         "spring.session.timeout=1s", // small values for SessionSecurityTest
         "app.security.rememberMe.key=test-only",
         "spring.mail.username=test-only"
-        })
+})
 public class IntegrationTest {
 
     @Autowired
@@ -54,6 +55,10 @@ public class IntegrationTest {
 
         @Bean public MailSender createMailSenderToLogs() {
             return new MailSenderToLogs();
+        }
+
+        @Bean public ChatModel createChatModel() {
+            return new LoremChatModel();
         }
     }
 
