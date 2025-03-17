@@ -16,6 +16,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.context.ImportTestcontainers;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mail.MailSender;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -27,14 +28,7 @@ import java.util.UUID;
 @Tag("integration")
 @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-        "logging.level.org.hibernate.SQL=DEBUG",
-        "logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE",
-        "spring.main.lazy-initialization=true",
-        "spring.flyway.enabled=true",
-        "app.security.rememberMe.tokenValidity=2s", // small values for SessionSecurityTest
-        "spring.session.timeout=1s", // small values for SessionSecurityTest
-        "app.security.rememberMe.key=test-only",
-        "spring.mail.username=test-only"
+
 })
 public class IntegrationTest {
 
@@ -58,6 +52,7 @@ public class IntegrationTest {
             return new MailSenderToLogs();
         }
 
+        @Primary
         @Bean public ChatModel createChatModel() {
             return new LoremChatModel();
         }
