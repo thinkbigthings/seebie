@@ -25,11 +25,9 @@ import org.testcontainers.junit.jupiter.Container;
 
 import java.util.UUID;
 
+// see properties in src/test/resources
 @Tag("integration")
-@SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {
-
-})
+@SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class IntegrationTest {
 
     @Autowired
