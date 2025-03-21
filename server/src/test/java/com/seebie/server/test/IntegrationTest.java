@@ -8,6 +8,7 @@ import com.seebie.server.test.data.TestData;
 import com.seebie.server.test.data.TestDataPopulator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.context.ImportTestcontainers;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mail.MailSender;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -23,17 +25,9 @@ import org.testcontainers.junit.jupiter.Container;
 
 import java.util.UUID;
 
+// see properties in src/test/resources
 @Tag("integration")
-@SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-        "logging.level.org.hibernate.SQL=DEBUG",
-        "logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE",
-        "spring.main.lazy-initialization=true",
-        "spring.flyway.enabled=true",
-        "app.security.rememberMe.tokenValidity=2s", // small values for SessionSecurityTest
-        "spring.session.timeout=1s", // small values for SessionSecurityTest
-        "app.security.rememberMe.key=test-only",
-        "spring.mail.username=test-only"
-        })
+@SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class IntegrationTest {
 
     @Autowired
@@ -54,6 +48,11 @@ public class IntegrationTest {
 
         @Bean public MailSender createMailSenderToLogs() {
             return new MailSenderToLogs();
+        }
+
+        @Primary
+        @Bean public ChatModel createChatModel() {
+            return new LoremChatModel();
         }
     }
 

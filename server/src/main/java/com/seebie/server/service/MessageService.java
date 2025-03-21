@@ -6,9 +6,9 @@ import com.seebie.server.entity.MessageType;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +22,11 @@ import static java.time.Instant.now;
 @Service
 public class MessageService {
 
-    private final OpenAiChatModel chatModel;
+    private final ChatModel chatModel;
     private final MessagePersistenceService messagePersistenceService;
     private final Message systemMessage;
 
-    public MessageService(OpenAiChatModel chatModel,
+    public MessageService(ChatModel chatModel,
                           MessagePersistenceService messagePersistenceService,
                           AppProperties appProperties)
     {
