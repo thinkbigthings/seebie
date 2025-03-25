@@ -1,6 +1,8 @@
 package com.seebie.server.controller;
 
 import com.seebie.server.AppProperties;
+import com.seebie.server.Application;
+import com.seebie.server.ApplicationTest;
 import com.seebie.server.dto.*;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.mapper.entitytodto.SleepDetailsToCsv;
@@ -24,6 +26,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -56,9 +59,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * web content is copied from the ui anyway.
  *
  */
-
 @WebMvcTest(properties = {
-		// this is a sensitive property and should not be included in the main application.properties
+		// the remember-me key is a sensitive property, here it is a dummy value
 		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
 		"logging.level.org.springframework.security=DEBUG",
 		"logging.level.org.springframework.security.web.access.expression=DEBUG",
@@ -68,6 +70,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		"logging.level.org.springframework.security.filter=DEBUG"
 })
 @EnableConfigurationProperties(value = {AppProperties.class})
+@ContextConfiguration(classes = Application.class)
 @Import({WebSecurityConfig.class, WebSecurityBeanProvider.class})
 @Isolated
 public class ControllerSecurityTest {

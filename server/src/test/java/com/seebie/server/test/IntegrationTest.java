@@ -1,5 +1,6 @@
 package com.seebie.server.test;
 
+import com.seebie.server.ApplicationTest;
 import com.seebie.server.PropertyLogger;
 import com.seebie.server.service.ChallengeService;
 import com.seebie.server.service.SleepService;
@@ -25,9 +26,19 @@ import org.testcontainers.junit.jupiter.Container;
 
 import java.util.UUID;
 
-// see properties in src/test/resources
 @Tag("integration")
-@SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT,
+        classes = {ApplicationTest.class},
+        properties = {
+        "logging.level.org.hibernate.SQL=DEBUG",
+        "logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE",
+        "spring.main.lazy-initialization=true",
+        "spring.flyway.enabled=true",
+        "app.security.rememberMe.tokenValidity=2s",
+        "app.security.rememberMe.key=test-only",
+        "spring.session.timeout=1s",
+        "spring.mail.username=test-only"
+})
 public class IntegrationTest {
 
     @Autowired
@@ -43,7 +54,9 @@ public class IntegrationTest {
 
         @Bean
         public TestDataPopulator createTestDataPopulator(UserService users, SleepService sleep, ChallengeService challenges) {
-            return new TestDataPopulator(users, sleep, challenges);
+            var data = new TestDataPopulator(users, sleep, challenges);
+            System.out.println("TestDataPopulator created: " + data);
+            return data;
         }
 
         @Bean public MailSender createMailSenderToLogs() {
@@ -51,7 +64,7 @@ public class IntegrationTest {
         }
 
         @Primary
-        @Bean public ChatModel createChatModel() {
+        @Bean public ChatModel createLoremChatModel() {
             return new LoremChatModel();
         }
     }
