@@ -17,7 +17,6 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.context.ImportTestcontainers;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mail.MailSender;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -54,16 +53,13 @@ public class IntegrationTest {
 
         @Bean
         public TestDataPopulator createTestDataPopulator(UserService users, SleepService sleep, ChallengeService challenges) {
-            var data = new TestDataPopulator(users, sleep, challenges);
-            System.out.println("TestDataPopulator created: " + data);
-            return data;
+            return new TestDataPopulator(users, sleep, challenges);
         }
 
         @Bean public MailSender createMailSenderToLogs() {
             return new MailSenderToLogs();
         }
 
-        @Primary
         @Bean public ChatModel createLoremChatModel() {
             return new LoremChatModel();
         }

@@ -5,7 +5,6 @@ import com.seebie.server.AppProperties;
 import com.seebie.server.service.NotificationMessageService;
 
 import com.seebie.server.service.NotificationRetrievalService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mail.MailSendException;
