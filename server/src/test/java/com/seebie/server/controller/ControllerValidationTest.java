@@ -57,13 +57,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //   Error handling
 
 @WebMvcTest(properties = {
-		// the remember-me key is a sensitive property, here it is a dummy value
-		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
+		// the remember-me key needs to be here since security is enabled and looking for it
+		"app.security.rememberMe.key=dummy-value-for-testing",
 		"logging.level.org.springframework.security=DEBUG",
 		"logging.level.org.springframework.security.web.access.expression=DEBUG",
 		"logging.level.org.springframework.security.web.authentication=DEBUG",
 		"logging.level.org.springframework.security.web.context=DEBUG",
-		"logging.level.org.springframework.security.oauth2=DEBUG",
 		"logging.level.org.springframework.security.filter=DEBUG"
 })
 @EnableConfigurationProperties(value = {AppProperties.class})

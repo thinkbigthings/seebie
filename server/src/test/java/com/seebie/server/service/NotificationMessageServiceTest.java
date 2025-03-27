@@ -1,18 +1,17 @@
-package com.seebie.server.repository;
+package com.seebie.server.service;
 
 import com.seebie.server.dto.SleepData;
-import com.seebie.server.service.NotificationMessageService;
-import com.seebie.server.service.NotificationRequired;
-import com.seebie.server.service.SleepService;
-import com.seebie.server.service.UserService;
 import com.seebie.server.test.IntegrationTest;
+import com.seebie.server.test.MailSenderToLogs;
 import com.seebie.server.test.data.TestData;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -44,16 +43,19 @@ public class NotificationMessageServiceTest extends IntegrationTest {
     @Autowired
     private NotificationMessageService notificationService;
 
+    @Autowired
+    private MailSender mailSender;
+
     public interface NotificationTestArgs extends Arguments {
         default Object[] get() {
             return new Object[] { this };
         }
     }
 
-    // What's the difference between wrapping the values here vs just having them already unwrapped in the test method?
+    // The difference between wrapping the values here vs just having them already unwrapped in the test method is this:
     // Using a record allows us to name the parameters at the point of declaration instead of at the point of use.
     // It's easier to see which value is which in the IDE, and consolidates the number of arguments to the test method.
-    record TestParams(boolean usernotificationEnabled, int sleepLogFrequencyHrs, int expectedNotificationCount) implements NotificationTestArgs { }
+    record TestParams(boolean userNotificationEnabled, int sleepLogFrequencyHrs, int expectedNotificationCount) implements NotificationTestArgs { }
 
     private static List<Arguments> provideSleepLogParameters() {
         return List.of(
@@ -82,7 +84,7 @@ public class NotificationMessageServiceTest extends IntegrationTest {
         // update notification settings
         var updatedInfo = userService.getUser(publicId)
                 .personalInfo()
-                .withNotificationEnabled(params.usernotificationEnabled());
+                .withNotificationEnabled(params.userNotificationEnabled());
 
         userService.updateUser(publicId, updatedInfo);
 
@@ -109,4 +111,11 @@ public class NotificationMessageServiceTest extends IntegrationTest {
         assertEquals(params.expectedNotificationCount(), numNotifications);
     }
 
+    @Test
+    public void testEmailTestConfig() {
+
+        // prove that we're pulling in the test bean
+        assertEquals(MailSenderToLogs.class, mailSender.getClass());
+
+    }
 }
