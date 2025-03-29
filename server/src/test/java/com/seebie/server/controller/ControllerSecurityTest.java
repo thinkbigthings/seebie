@@ -2,7 +2,6 @@ package com.seebie.server.controller;
 
 import com.seebie.server.AppProperties;
 import com.seebie.server.Application;
-import com.seebie.server.ApplicationTest;
 import com.seebie.server.dto.*;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.mapper.entitytodto.SleepDetailsToCsv;
@@ -50,13 +49,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * It is specific to testing annotations on controllers.
  *
  * If it tried to test access to unsecure static resources like "/", "/favicon.ico", "/manifest.json", and so on,
- * the controller would fail with a 404 instead of 200 unless those static resources were present
- * in server/build/resources/main/static in which case the test would pass.
+ * the controller would fail with a 404 instead of 200,
+ * unless those static resources were present in server/build/resources/main/static for the test to pass.
  * Since that would require copying contents of react/public into server/build/resources/main/static
  * as a dependency of the test phase, it doesn't really fit as a unit test.
  *
- * testing open access to static resources is really a better job of an integration test that happens after the
- * web content is copied from the ui anyway.
+ * Testing open access to static resources is really a better job of an integration test that happens after the
+ * web content is copied from the UI anyway.
  *
  */
 @WebMvcTest(properties = {
