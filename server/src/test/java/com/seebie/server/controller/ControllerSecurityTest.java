@@ -1,6 +1,7 @@
 package com.seebie.server.controller;
 
 import com.seebie.server.AppProperties;
+import com.seebie.server.Application;
 import com.seebie.server.dto.*;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
 import com.seebie.server.mapper.entitytodto.SleepDetailsToCsv;
@@ -24,6 +25,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -47,27 +49,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * It is specific to testing annotations on controllers.
  *
  * If it tried to test access to unsecure static resources like "/", "/favicon.ico", "/manifest.json", and so on,
- * the controller would fail with a 404 instead of 200 unless those static resources were present
- * in server/build/resources/main/static in which case the test would pass.
+ * the controller would fail with a 404 instead of 200,
+ * unless those static resources were present in server/build/resources/main/static for the test to pass.
  * Since that would require copying contents of react/public into server/build/resources/main/static
  * as a dependency of the test phase, it doesn't really fit as a unit test.
  *
- * testing open access to static resources is really a better job of an integration test that happens after the
- * web content is copied from the ui anyway.
+ * Testing open access to static resources is really a better job of an integration test that happens after the
+ * web content is copied from the UI anyway.
  *
  */
-
 @WebMvcTest(properties = {
-		// this is a sensitive property and should not be included in the main application.properties
-		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
+		// the remember-me key needs to be here since security is enabled and looking for it
+		"app.security.rememberMe.key=dummy-value-for-testing",
 		"logging.level.org.springframework.security=DEBUG",
 		"logging.level.org.springframework.security.web.access.expression=DEBUG",
 		"logging.level.org.springframework.security.web.authentication=DEBUG",
 		"logging.level.org.springframework.security.web.context=DEBUG",
-		"logging.level.org.springframework.security.oauth2=DEBUG",
 		"logging.level.org.springframework.security.filter=DEBUG"
 })
 @EnableConfigurationProperties(value = {AppProperties.class})
+@ContextConfiguration(classes = Application.class)
 @Import({WebSecurityConfig.class, WebSecurityBeanProvider.class})
 @Isolated
 public class ControllerSecurityTest {

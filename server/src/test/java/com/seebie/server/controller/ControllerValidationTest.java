@@ -2,6 +2,7 @@ package com.seebie.server.controller;
 
 
 import com.seebie.server.AppProperties;
+import com.seebie.server.Application;
 import com.seebie.server.dto.*;
 import com.seebie.server.entity.MessageType;
 import com.seebie.server.mapper.dtotoentity.CsvToSleepData;
@@ -26,6 +27,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -55,16 +57,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //   Error handling
 
 @WebMvcTest(properties = {
-		// this is a sensitive property and should not be included in the main application.properties
-		"app.security.rememberMe.key=0ef16205-ba16-4154-b843-8bd1709b1ef4",
+		// the remember-me key needs to be here since security is enabled and looking for it
+		"app.security.rememberMe.key=dummy-value-for-testing",
 		"logging.level.org.springframework.security=DEBUG",
 		"logging.level.org.springframework.security.web.access.expression=DEBUG",
 		"logging.level.org.springframework.security.web.authentication=DEBUG",
 		"logging.level.org.springframework.security.web.context=DEBUG",
-		"logging.level.org.springframework.security.oauth2=DEBUG",
 		"logging.level.org.springframework.security.filter=DEBUG"
 })
 @EnableConfigurationProperties(value = {AppProperties.class})
+@ContextConfiguration(classes = Application.class)
 @Import({WebSecurityConfig.class, WebSecurityBeanProvider.class})
 @Isolated
 public class ControllerValidationTest {

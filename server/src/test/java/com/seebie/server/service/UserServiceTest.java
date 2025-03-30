@@ -6,6 +6,7 @@ import com.seebie.server.entity.Notification;
 import com.seebie.server.entity.User;
 import com.seebie.server.repository.NotificationRepository;
 import com.seebie.server.repository.UserRepository;
+import com.seebie.server.test.data.TestData;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,10 +31,10 @@ public class UserServiceTest {
     private NotificationRepository notificationRepo = Mockito.mock(NotificationRepository.class);
     private PasswordEncoder pwEncoder = Mockito.mock(PasswordEncoder.class);
 
-    private String savedUserEmail = "test@example.com";
+    private RegistrationRequest reg = TestData.createRandomUserRegistration();
     private UUID savedUserPublicId = UUID.randomUUID();
     private UUID noSuchUserPublicId = UUID.randomUUID();
-    private User savedUser = new User("savedUser", savedUserEmail, "encryptedpw");
+    private User savedUser = new User(reg.displayName(), reg.email(), "encryptedpw");
     private Notification notification = new Notification(savedUser);
     private String strongPasswordHash = "strongencryptedpasswordhere";
 
