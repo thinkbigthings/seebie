@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import {useParams} from "react-router-dom";
@@ -9,7 +9,8 @@ import CollapsibleChallenge from "./component/CollapsibleChallenge";
 import useApiDelete from "./hooks/useApiDelete";
 import CreateChallenge from "./CreateChallenge";
 import {toChallengeList} from "./utility/Mapper";
-import {ChallengeDetailDto} from "./types/challenge.types";
+import {ChallengeData, ChallengeDetailDto, ChallengeList} from "./types/challenge.types";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 
 function Challenge() {
 
@@ -17,30 +18,43 @@ function Challenge() {
     const callDelete = useApiDelete();
 
     // the user's current date is used to determine challenge completion status
-    const challengeEndpoint = `/api/user/${publicId}/challenge`;
+    const challengeUrl = `/api/user/${publicId}/challenge`;
 
-    const [createdCount, setCreatedCount] = useState(0);
     const [deletedCount, setDeletedCount] = useState(0);
-    const [savedChallenges, setSavedChallenges] = useState(emptyChallengeList);
 
-    useEffect(() => {
-        fetch(challengeEndpoint, GET)
-            .then((response) => response.json() as Promise<ChallengeDetailDto[]>)
-            .then(toChallengeList)
-            .then(setSavedChallenges)
-            .catch(error => console.log(error));
-    }, [createdCount, deletedCount]);
+
+    // TODO Replace useDelete with TSQ mutation
+    // update state when deleted
+    const queryClient = useQueryClient();
 
     const deleteChallenge = (challengeId: number) => {
         const endpoint = `/api/user/${publicId}/challenge/${challengeId}`;
         callDelete(endpoint).then(() => setDeletedCount(deletedCount + 1));
     }
 
+    // TODO ChallengeList doesn't need to be parameterized, maybe it needed to be in the past
+
+    const fetchChallenges = () => fetch(challengeUrl, GET)
+        .then((response) => response.json() as Promise<ChallengeDetailDto[]>);
+
+
+    // TODO update state when created
+    // passing saved challenges to CreateChallenge is really only used for prop drilling
+    // to do validation on new names to prevent name collisions
+
+    const { data: savedChallenges = emptyChallengeList } = useQuery<ChallengeDetailDto[], Error, ChallengeList<ChallengeData>>({
+        queryKey: [challengeUrl],
+        queryFn: fetchChallenges,
+        placeholderData: [] as ChallengeDetailDto[],
+        staleTime: Infinity,
+        select: (data: ChallengeDetailDto[]) => toChallengeList(data),
+    });
+
     return (
         <Container>
 
             <NavHeader title="Sleep Challenge">
-                <CreateChallenge onCreated={() => setCreatedCount(createdCount+1)}
+                <CreateChallenge onCreated={() => {}}
                                  savedChallenges={[...savedChallenges.completed, ...savedChallenges.current, ...savedChallenges.upcoming]}
                 />
             </NavHeader>
