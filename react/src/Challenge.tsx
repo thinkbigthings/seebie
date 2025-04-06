@@ -20,13 +20,12 @@ function Challenge() {
     // the user's current date is used to determine challenge completion status
     const challengeUrl = `/api/user/${publicId}/challenge`;
 
-    const [deletedCount, setDeletedCount] = useState(0);
 
 
     // TODO Replace useDelete with TSQ mutation
     // update state when deleted
     const queryClient = useQueryClient();
-
+    const [deletedCount, setDeletedCount] = useState(0);
     const deleteChallenge = (challengeId: number) => {
         const endpoint = `/api/user/${publicId}/challenge/${challengeId}`;
         callDelete(endpoint).then(() => setDeletedCount(deletedCount + 1));
@@ -34,13 +33,11 @@ function Challenge() {
 
     // TODO ChallengeList doesn't need to be parameterized, maybe it needed to be in the past
 
+    // TODO should this be httpGet()?
+    // and should we use httpGet in Tools?
+
     const fetchChallenges = () => fetch(challengeUrl, GET)
         .then((response) => response.json() as Promise<ChallengeDetailDto[]>);
-
-
-    // TODO update state when created
-    // passing saved challenges to CreateChallenge is really only used for prop drilling
-    // to do validation on new names to prevent name collisions
 
     const { data: savedChallenges = emptyChallengeList } = useQuery<ChallengeDetailDto[], Error, ChallengeList<ChallengeData>>({
         queryKey: [challengeUrl],
@@ -54,9 +51,7 @@ function Challenge() {
         <Container>
 
             <NavHeader title="Sleep Challenge">
-                <CreateChallenge onCreated={() => {}}
-                                 savedChallenges={[...savedChallenges.completed, ...savedChallenges.current, ...savedChallenges.upcoming]}
-                />
+                <CreateChallenge challengeUrl={challengeUrl} />
             </NavHeader>
 
             <Container className="container mt-3 px-0">

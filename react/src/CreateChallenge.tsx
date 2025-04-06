@@ -3,24 +3,20 @@ import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
-import useApiPost from "./hooks/useApiPost";
 import CollapsibleContent from "./component/CollapsibleContent";
 import {emptyEditableChallenge, NameDescription, PREDEFINED_CHALLENGES} from "./utility/Constants";
 import SuccessModal from "./component/SuccessModal";
 import {toChallengeDto} from "./utility/Mapper";
 import ChallengeForm from "./ChallengeForm";
-import {ChallengeData} from "./types/challenge.types";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {ChallengeData, ChallengeDto} from "./types/challenge.types.ts";
+import {httpPost, PostVariables} from "./utility/apiClient.ts";
 
-function CreateChallenge(props: {onCreated:()=>void, savedChallenges:ChallengeData[]}) {
+function CreateChallenge(props: {challengeUrl:string}) {
 
-    const {onCreated, savedChallenges} = props;
-
-    const {publicId} = useParams();
-
-    const challengeEndpoint = `/api/user/${publicId}/challenge`;
+    const {challengeUrl} = props;
 
     const [showCreateSuccess, setShowCreateSuccess] = useState(false);
     const [showCreateChallenge, setShowCreateChallenge] = useState(false);
@@ -30,15 +26,6 @@ function CreateChallenge(props: {onCreated:()=>void, savedChallenges:ChallengeDa
     // validation of the overall form, so we know whether to enable the save button
     // this is set as invalid to start so the name can be blank before showing validation messages
     const [dataValid, setDataValid] = useState(false);
-
-    const post = useApiPost();
-
-    const saveData = () => {
-        post(challengeEndpoint, toChallengeDto(editableChallenge))
-        .then(clearChallengeEdit)
-        .then(() => setShowCreateSuccess(true))
-        .then(onCreated);
-    }
 
     const clearChallengeEdit = () => {
         setShowCreateChallenge(false);
@@ -59,6 +46,61 @@ function CreateChallenge(props: {onCreated:()=>void, savedChallenges:ChallengeDa
         setShowPredefinedChallenges( ! showPredefinedChallenges);
     }
 
+    // TODO update state when created
+    // passing saved challenges to CreateChallenge is really only used for prop drilling
+    // to do validation on new names to prevent name collisions.
+    // can pass along the TSQ key instead
+
+
+    const queryClient = useQueryClient();
+
+    // TODO pass the query key at the use site instead of passing the data
+    const savedChallenges = queryClient.getQueryData<ChallengeData[]>([challengeUrl]) ?? [];
+
+    const uploadNewChallenge = useMutation({
+        mutationFn: (vars: PostVariables<ChallengeDto>) => httpPost(vars.url, vars.body),
+        onSuccess: (challenge: ChallengeDto) => {
+
+            console.log("Challenge created successfully");
+            setShowCreateSuccess(true);
+            clearChallengeEdit();
+
+            // the object returned from the server is passed to the onSuccess function
+            // TODO challenge controller should return the created object
+            // it will have the id and created date and be able to be rendered when the new query data is set
+
+            // TODO add the response data to the query cache since the id should be in the response
+
+            // TODO if we do nothing with the promise does this still run?
+            // TODO should we use the refetchType where we use invalidateQueries elsewhere?
+            // TODO what's the default refetch type?
+            queryClient.invalidateQueries(  {
+                queryKey: [challengeUrl],
+                refetchType: 'all',
+            });
+
+            console.log("invalidated queries");
+
+            // TODO does this need to be "| undefined"? See also Tools, same question
+            // queryClient.setQueryData([challengeUrl], (oldData: ChallengeDto[] | undefined) => [
+            //     ...(oldData ?? []),
+            //     challenge,
+            // ]);
+        },
+    });
+
+    const saveEditableChallenge = () => {
+        uploadNewChallenge.mutate({
+            url: challengeUrl,
+            body: toChallengeDto(editableChallenge)
+        });
+    };
+
+    console.log("Saved challenges")
+    console.log(savedChallenges)
+    console.log("Editable Challenge")
+    console.log(editableChallenge)
+
     return (
         <>
             <Button variant="success" disabled={false} onClick={() => setShowCreateChallenge(true)}>
@@ -73,14 +115,14 @@ function CreateChallenge(props: {onCreated:()=>void, savedChallenges:ChallengeDa
                     <Button variant="secondary" className={"app-highlight w-100 mb-3"} onClick={swapModals}>
                         Select from a list
                     </Button>
-                    <ChallengeForm editableChallenge={editableChallenge}
-                                   setEditableChallenge={setEditableChallenge}
-                                   setDataValid={setDataValid}
-                                   savedChallenges={savedChallenges} />
+                    {/*<ChallengeForm editableChallenge={editableChallenge}*/}
+                    {/*               setEditableChallenge={setEditableChallenge}*/}
+                    {/*               setDataValid={setDataValid}*/}
+                    {/*               savedChallenges={savedChallenges} />*/}
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="d-flex flex-row">
-                        <Button className="me-3" variant="success" onClick={saveData}
+                        <Button className="me-3" variant="success" onClick={saveEditableChallenge}
                                 disabled={!dataValid}>Save</Button>
                         <Button className="" variant="secondary" onClick={clearChallengeEdit}>Cancel</Button>
                     </div>

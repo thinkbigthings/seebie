@@ -24,6 +24,7 @@ function ChallengeForm(props:{
                             savedChallenges:ChallengeData[]}
                         ) {
 
+
     const {setEditableChallenge, editableChallenge, setDataValid, savedChallenges} = props;
 
     // validation of individual fields for validation feedback to the user

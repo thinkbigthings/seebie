@@ -91,7 +91,6 @@ function Tools() {
         mutationFn: (variables: UploadFileVariables) => uploadFileFunction<RecordCount>(variables),
         onSuccess: (data: RecordCount) => {
             onUploadSuccess(data);
-            // TODO does this need to be "| undefined"?
             queryClient.setQueryData([sleepCountUrl], (oldData: RecordCount | undefined) => ({
                 numRecords: data.numRecords + (oldData?.numRecords ?? 0),
             }));

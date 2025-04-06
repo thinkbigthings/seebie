@@ -1,8 +1,7 @@
-import {MessageDto} from "../types/message.types.ts";
 
-interface PostVariables {
+interface PostVariables<T> {
     url: string;
-    body: MessageDto;
+    body: T;
 }
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -30,7 +29,7 @@ const httpGet = async <T,>(url: string) => {
     return data as T;
 }
 
-const httpPost = async <T,>(url: string, body: Record<string, unknown>) => {
+const httpPost = async <T,>(url: string, body: T) => {
     const requestMeta = buildRequestMeta('POST', JSON.stringify(body));
     const response = await fetch(url, requestMeta);
     const data = await response.json();
