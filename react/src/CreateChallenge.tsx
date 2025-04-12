@@ -6,13 +6,14 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import CollapsibleContent from "./component/CollapsibleContent";
-import {emptyEditableChallenge, NameDescription, PREDEFINED_CHALLENGES} from "./utility/Constants";
+import {emptyChallengeList, emptyEditableChallenge, NameDescription, PREDEFINED_CHALLENGES} from "./utility/Constants";
 import SuccessModal from "./component/SuccessModal";
 import {toChallengeDto} from "./utility/Mapper";
 import ChallengeForm from "./ChallengeForm";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {ChallengeData, ChallengeDto} from "./types/challenge.types.ts";
+import {ChallengeDto} from "./types/challenge.types.ts";
 import {httpPost, PostVariables} from "./utility/apiClient.ts";
+import {useChallenges} from "./hooks/useChallenges.ts";
 
 function CreateChallenge(props: {challengeUrl:string}) {
 
@@ -46,46 +47,39 @@ function CreateChallenge(props: {challengeUrl:string}) {
         setShowPredefinedChallenges( ! showPredefinedChallenges);
     }
 
-    // TODO update state when created
-    // passing saved challenges to CreateChallenge is really only used for prop drilling
-    // to do validation on new names to prevent name collisions.
-    // can pass along the TSQ key instead
-
-
     const queryClient = useQueryClient();
 
-    // TODO pass the query key at the use site instead of passing the data
-    const savedChallenges = queryClient.getQueryData<ChallengeData[]>([challengeUrl]) ?? [];
+    const { data: savedChallenges = emptyChallengeList } = useChallenges(challengeUrl);
+
 
     const uploadNewChallenge = useMutation({
         mutationFn: (vars: PostVariables<ChallengeDto>) => httpPost(vars.url, vars.body),
         onSuccess: (challenge: ChallengeDto) => {
+            // the object returned from the server is passed to the onSuccess function
 
             console.log("Challenge created successfully");
             setShowCreateSuccess(true);
             clearChallengeEdit();
 
-            // the object returned from the server is passed to the onSuccess function
-            // TODO challenge controller should return the created object
+            // TODO update state when created
+            // challenge controller should return the created object
             // it will have the id and created date and be able to be rendered when the new query data is set
-
-            // TODO add the response data to the query cache since the id should be in the response
-
-            // TODO if we do nothing with the promise does this still run?
-            // TODO should we use the refetchType where we use invalidateQueries elsewhere?
-            // TODO what's the default refetch type?
-            queryClient.invalidateQueries(  {
-                queryKey: [challengeUrl],
-                refetchType: 'all',
-            });
-
-            console.log("invalidated queries");
-
+            // add the response data to the query cache since the id should be in the response
             // TODO does this need to be "| undefined"? See also Tools, same question
             // queryClient.setQueryData([challengeUrl], (oldData: ChallengeDto[] | undefined) => [
             //     ...(oldData ?? []),
             //     challenge,
             // ]);
+
+            // TODO if we do nothing with the promise does this still run?
+            // TODO should we use the refetchType where we use invalidateQueries elsewhere?
+            // TODO what's the default refetch type?
+            queryClient.invalidateQueries({
+                queryKey: [challengeUrl],
+                refetchType: 'all',
+            }).then(r =>{});
+
+            console.log("invalidated queries");
         },
     });
 
@@ -96,10 +90,7 @@ function CreateChallenge(props: {challengeUrl:string}) {
         });
     };
 
-    console.log("Saved challenges")
-    console.log(savedChallenges)
-    console.log("Editable Challenge")
-    console.log(editableChallenge)
+    // TODO pass the query key instead of savedChallenges to ChallengeForm
 
     return (
         <>
@@ -115,10 +106,10 @@ function CreateChallenge(props: {challengeUrl:string}) {
                     <Button variant="secondary" className={"app-highlight w-100 mb-3"} onClick={swapModals}>
                         Select from a list
                     </Button>
-                    {/*<ChallengeForm editableChallenge={editableChallenge}*/}
-                    {/*               setEditableChallenge={setEditableChallenge}*/}
-                    {/*               setDataValid={setDataValid}*/}
-                    {/*               savedChallenges={savedChallenges} />*/}
+                    <ChallengeForm editableChallenge={editableChallenge}
+                                   setEditableChallenge={setEditableChallenge}
+                                   setDataValid={setDataValid}
+                                   savedChallenges={savedChallenges} />
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="d-flex flex-row">

@@ -11,6 +11,7 @@ import CreateChallenge from "./CreateChallenge";
 import {toChallengeList} from "./utility/Mapper";
 import {ChallengeData, ChallengeDetailDto, ChallengeList} from "./types/challenge.types";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
+import {useChallenges} from "./hooks/useChallenges.ts";
 
 function Challenge() {
 
@@ -33,19 +34,7 @@ function Challenge() {
 
     // TODO ChallengeList doesn't need to be parameterized, maybe it needed to be in the past
 
-    // TODO should this be httpGet()?
-    // and should we use httpGet in Tools?
-
-    const fetchChallenges = () => fetch(challengeUrl, GET)
-        .then((response) => response.json() as Promise<ChallengeDetailDto[]>);
-
-    const { data: savedChallenges = emptyChallengeList } = useQuery<ChallengeDetailDto[], Error, ChallengeList<ChallengeData>>({
-        queryKey: [challengeUrl],
-        queryFn: fetchChallenges,
-        placeholderData: [] as ChallengeDetailDto[],
-        staleTime: Infinity,
-        select: (data: ChallengeDetailDto[]) => toChallengeList(data),
-    });
+    const { data: savedChallenges = emptyChallengeList } = useChallenges(challengeUrl);
 
     return (
         <Container>

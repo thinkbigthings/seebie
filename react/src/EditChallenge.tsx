@@ -9,8 +9,13 @@ import {NavHeader} from "./App";
 import {useNavigate, useParams} from "react-router-dom";
 import WarningButton from "./component/WarningButton";
 import ChallengeForm from "./ChallengeForm";
-import {emptyChallengeDataArray, emptyEditableChallenge} from "./utility/Constants";
-import { toLocalChallengeData, toChallengeDto, toLocalChallengeDataList, toChallengeDetailDto} from "./utility/Mapper";
+import {emptyChallengeList, emptyEditableChallenge} from "./utility/Constants";
+import {
+    toLocalChallengeData,
+    toChallengeDto,
+    toChallengeDetailDto,
+    toChallengeList
+} from "./utility/Mapper";
 import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types";
 
 const removeChallengesWithId = (challengeList: ChallengeDetailDto[], challengeId: number) => {
@@ -36,7 +41,7 @@ function EditChallenge() {
     const [loaded, setLoaded] = useState(false);
     const [editableChallenge, setEditableChallenge] = useState(emptyEditableChallenge());
     const [dataValid, setDataValid] = useState(true);
-    const [savedChallenges, setSavedChallenges] = useState(emptyChallengeDataArray);
+    const [savedChallenges, setSavedChallenges] = useState(emptyChallengeList);
 
     const put = useApiPut();
     const callDelete = useApiDelete();
@@ -56,7 +61,7 @@ function EditChallenge() {
         fetch(allChallengesEndpoint, GET)
             .then((response) => response.json() as Promise<ChallengeDetailDto[]>)
             .then(challengeList => removeChallengesWithId(challengeList, numericChallengeId))
-            .then(toLocalChallengeDataList)
+            .then(toChallengeList)
             .then(setSavedChallenges)
             .catch(error => console.log(error));
     }, [allChallengesEndpoint]);

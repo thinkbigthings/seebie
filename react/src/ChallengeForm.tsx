@@ -7,7 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {ChallengeData} from "./types/challenge.types";
+import {ChallengeData, ChallengeList} from "./types/challenge.types";
 import {localDateToJsDate, jsDateToLocalDate} from "./utility/Mapper.ts";
 
 
@@ -21,7 +21,7 @@ function ChallengeForm(props:{
                             setEditableChallenge:React.Dispatch<React.SetStateAction<ChallengeData>>
                             editableChallenge:ChallengeData,
                             setDataValid:React.Dispatch<React.SetStateAction<boolean>>,
-                            savedChallenges:ChallengeData[]}
+                            savedChallenges:ChallengeList<ChallengeData>}
                         ) {
 
 
@@ -47,9 +47,14 @@ function ChallengeForm(props:{
             : true;
 
 
+        const flattenedChallenges = [] as ChallengeData[];
+        flattenedChallenges.push(...savedChallenges.completed);
+        flattenedChallenges.push(...savedChallenges.current);
+        flattenedChallenges.push(...savedChallenges.upcoming);
+
         const dateOrderValid = challenge.start.isBefore(challenge.finish);
-        const nameUnique = !savedChallenges.some(saved => saved.name === challenge.name);
-        const datesOverlap = savedChallenges.some(saved => overlaps(challenge, saved) );
+        const nameUnique = !flattenedChallenges.some(saved => saved.name === challenge.name);
+        const datesOverlap = flattenedChallenges.some(saved => overlaps(challenge, saved) );
 
         setDateOrderValid(dateOrderValid);
         setNameValid(nameValid);

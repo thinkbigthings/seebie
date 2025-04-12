@@ -58,11 +58,6 @@ function calculateProgress(challenge: ChallengeData): number {
     return Math.round((elapsedDuration / totalDuration) * 100);
 }
 
-const toLocalChallengeDataList = (challengeList: ChallengeDetailDto[]): ChallengeData[] => {
-    return challengeList.map(toLocalChallengeData);
-}
-
-
 const toChallengeList = (challengeList: ChallengeDetailDto[]): ChallengeList<ChallengeData> => {
 
     const challengeData = challengeList.map(toLocalChallengeData);
@@ -130,7 +125,7 @@ const toSleepDto = (sleep: SleepData): SleepDto => {
 }
 
 export {
-    toSelectableChallenges, toChallengeDto, toLocalChallengeData, toLocalChallengeDataList, toChallengeDetailDto,
+    toSelectableChallenges, toChallengeDto, toLocalChallengeData, toChallengeDetailDto,
     toLocalSleepData, toSleepDto, calculateProgress, toChallengeList, jsDateToLocalDate, localDateToJsDate, jsDateToLocalDateTime,
     localDateTimeToJsDate, localDateToString
 }
