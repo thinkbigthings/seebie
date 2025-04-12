@@ -11,7 +11,7 @@ import SuccessModal from "./component/SuccessModal";
 import {toChallengeDto} from "./utility/Mapper";
 import ChallengeForm from "./ChallengeForm";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {ChallengeDto} from "./types/challenge.types.ts";
+import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
 import {httpPost, PostVariables} from "./utility/apiClient.ts";
 import {useChallenges} from "./hooks/useChallenges.ts";
 
@@ -53,30 +53,14 @@ function CreateChallenge(props: {challengeUrl:string}) {
 
 
     const uploadNewChallenge = useMutation({
-        mutationFn: (vars: PostVariables<ChallengeDto>) => httpPost(vars.url, vars.body),
-        onSuccess: (challenge: ChallengeDto) => {
-            // the object returned from the server is passed to the onSuccess function
-
-            console.log("Challenge created successfully");
+        mutationFn: (vars: PostVariables<ChallengeDto>) => httpPost<ChallengeDto,ChallengeDetailDto>(vars.url, vars.body),
+        onSuccess: (newlyCreatedChallenge: ChallengeDetailDto) => {
             setShowCreateSuccess(true);
             clearChallengeEdit();
-
-            // TODO update state when created, controller returned the created object
-
-            // TODO does this need to be "| undefined"?
-            //  See also Tools, same question
-            // queryClient.setQueryData([challengeUrl], (oldData: ChallengeDto[] | undefined) => [
-            //     ...(oldData ?? []),
-            //     challenge,
-            // ]);
-
-            // TODO if we do nothing with the promise does this still run?
-            // TODO should we use the refetchType where we use invalidateQueries elsewhere?
-            //  what's the default refetchType?
-            queryClient.invalidateQueries({
-                queryKey: [challengeUrl],
-                refetchType: 'all',
-            }).then(r =>{});
+            queryClient.setQueryData([challengeUrl], (oldData: ChallengeDetailDto[]) => [
+                ...(oldData ?? []),
+                newlyCreatedChallenge,
+            ]);
         },
     });
 

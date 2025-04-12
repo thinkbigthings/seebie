@@ -29,11 +29,12 @@ const httpGet = async <T,>(url: string) => {
     return data as T;
 }
 
-const httpPost = async <T,>(url: string, body: T) => {
+
+const httpPost = async <T,R>(url: string, body: T) => {
     const requestMeta = buildRequestMeta('POST', JSON.stringify(body));
     const response = await fetch(url, requestMeta);
-    const data = await response.json();
-    return data as T;
+    const data = await response.json() as R;
+    return data as R;
 }
 
 const httpPut = async <T,>(url: string, body: Record<string, unknown>) => {

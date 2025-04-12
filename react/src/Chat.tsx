@@ -35,7 +35,7 @@ function Chat() {
     });
 
     const uploadMessageMutation = useMutation({
-        mutationFn: (variables: PostVariables<MessageDto>) => httpPost(variables.url, variables.body),
+        mutationFn: (variables: PostVariables<MessageDto>) => httpPost<MessageDto,MessageDto>(variables.url, variables.body),
         onSuccess: (message: MessageDto) => {
             setShowProcessingIcon(false);
             queryClient.setQueryData([chatUrl], (oldData: MessageDto[] | undefined) => [
