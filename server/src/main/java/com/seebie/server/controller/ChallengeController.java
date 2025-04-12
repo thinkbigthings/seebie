@@ -27,8 +27,8 @@ public class ChallengeController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @PostMapping("/user/{publicId}/challenge")
-    public void createChallenge(@PathVariable UUID publicId, @Valid @RequestBody ChallengeDto challenge) {
-        challengeService.saveNew(publicId, challenge);
+    public ChallengeDetailDto createChallenge(@PathVariable UUID publicId, @Valid @RequestBody ChallengeDto challenge) {
+        return challengeService.saveNew(publicId, challenge);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")

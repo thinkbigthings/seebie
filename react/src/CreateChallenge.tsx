@@ -61,11 +61,10 @@ function CreateChallenge(props: {challengeUrl:string}) {
             setShowCreateSuccess(true);
             clearChallengeEdit();
 
-            // TODO update state when created
-            // challenge controller should return the created object
-            // it will have the id and created date and be able to be rendered when the new query data is set
-            // add the response data to the query cache since the id should be in the response
-            // TODO does this need to be "| undefined"? See also Tools, same question
+            // TODO update state when created, controller returned the created object
+
+            // TODO does this need to be "| undefined"?
+            //  See also Tools, same question
             // queryClient.setQueryData([challengeUrl], (oldData: ChallengeDto[] | undefined) => [
             //     ...(oldData ?? []),
             //     challenge,
@@ -73,13 +72,11 @@ function CreateChallenge(props: {challengeUrl:string}) {
 
             // TODO if we do nothing with the promise does this still run?
             // TODO should we use the refetchType where we use invalidateQueries elsewhere?
-            // TODO what's the default refetch type?
+            //  what's the default refetchType?
             queryClient.invalidateQueries({
                 queryKey: [challengeUrl],
                 refetchType: 'all',
             }).then(r =>{});
-
-            console.log("invalidated queries");
         },
     });
 
