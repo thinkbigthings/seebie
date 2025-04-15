@@ -53,8 +53,6 @@ export const emptyEditableChallenge = ():ChallengeData => {
     };
 }
 
-export const emptyChallengeDataArray: ChallengeData[] = [];
-
 export const emptyChallengeList: ChallengeList<ChallengeData> = {
     current: [],
     upcoming: [],

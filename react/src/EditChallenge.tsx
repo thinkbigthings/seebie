@@ -1,28 +1,30 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 
 import Container from "react-bootstrap/Container";
-import useApiPut from "./hooks/useApiPut";
-import {GET} from "./utility/BasicHeaders";
 import Button from "react-bootstrap/Button";
 import useApiDelete from "./hooks/useApiDelete";
 import {NavHeader} from "./App";
 import {useNavigate, useParams} from "react-router-dom";
 import WarningButton from "./component/WarningButton";
 import ChallengeForm from "./ChallengeForm";
-import {emptyChallengeDataArray, emptyEditableChallenge} from "./utility/Constants";
-import { toLocalChallengeData, toChallengeDto, toLocalChallengeDataList, toChallengeDetailDto} from "./utility/Mapper";
-import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types";
+import {emptyChallengeList} from "./utility/Constants";
+import {flatten, toChallengeDto,} from "./utility/Mapper";
+import {useChallenges} from "./hooks/useChallenges.ts";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {httpPut, UploadVars} from "./utility/apiClient.ts";
+import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
 
-const removeChallengesWithId = (challengeList: ChallengeDetailDto[], challengeId: number) => {
-    return challengeList.filter(details => details.id !== challengeId);
+function ensure<T>(argument: T | undefined | null, message: string = 'This value was promised to be there.'): T {
+    if (argument === undefined || argument === null) {
+        throw new TypeError(message);
+    }
+    return argument;
 }
-
 
 function EditChallenge() {
 
-    const navigate = useNavigate();
-
     const {publicId, challengeId} = useParams();
+    const navigate = useNavigate();
 
     if (challengeId === undefined) {
         throw new Error("Challenge ID is required.");
@@ -30,43 +32,46 @@ function EditChallenge() {
 
     const numericChallengeId = parseInt(challengeId);
 
-    const allChallengesEndpoint = `/api/user/${publicId}/challenge`;
-    const challengeEndpoint = `/api/user/${publicId}/challenge/${challengeId}`;
+    const challengeUrl = `/api/user/${publicId}/challenge`;
+    const editChallengeUrl = `${challengeUrl}/${challengeId}`;
 
-    const [loaded, setLoaded] = useState(false);
-    const [editableChallenge, setEditableChallenge] = useState(emptyEditableChallenge());
     const [dataValid, setDataValid] = useState(true);
-    const [savedChallenges, setSavedChallenges] = useState(emptyChallengeDataArray);
 
-    const put = useApiPut();
-    const callDelete = useApiDelete();
+    // TODO pass in the TSQ key challenge url instead of the list
+    const { data: savedChallenges = emptyChallengeList } = useChallenges(challengeUrl);
+    const allChallenges = flatten(savedChallenges);
+    const maybeChallenge = allChallenges.find(challenge => challenge.id === numericChallengeId);
+    const existingChallenge = ensure(maybeChallenge);
+
+    const [editableChallenge, setEditableChallenge] = useState(existingChallenge);
 
 
-    useEffect(() => {
-        fetch(challengeEndpoint, GET)
-            .then(response => response.json() as Promise<ChallengeDto>)
-            .then(challenge => toChallengeDetailDto(challenge, numericChallengeId))
-            .then(toLocalChallengeData)
-            .then(setEditableChallenge)
-            .then(() => setLoaded(true))
-    }, [setEditableChallenge, challengeEndpoint]);
+    const queryClient = useQueryClient();
 
-    // load all challenges to check for validation
-    useEffect(() => {
-        fetch(allChallengesEndpoint, GET)
-            .then((response) => response.json() as Promise<ChallengeDetailDto[]>)
-            .then(challengeList => removeChallengesWithId(challengeList, numericChallengeId))
-            .then(toLocalChallengeDataList)
-            .then(setSavedChallenges)
-            .catch(error => console.log(error));
-    }, [allChallengesEndpoint]);
+    const updateChallenge = useMutation({
+        mutationFn: (vars: UploadVars<ChallengeDto>) => httpPut<ChallengeDto,ChallengeDetailDto>(vars.url, vars.body),
+        onSuccess: (updatedChallenge: ChallengeDetailDto) => {
+            queryClient.setQueryData([challengeUrl], (oldData: ChallengeDetailDto[]) => {
+                const updatedList = oldData.filter(challenge => challenge.id !== updatedChallenge.id);
+                return [ ...(updatedList ?? []), updatedChallenge ]
+            });
+
+            navigate(-1);
+        },
+    });
 
     const onSave = () => {
-        put(challengeEndpoint, toChallengeDto(editableChallenge)).then(() => navigate(-1));
+        updateChallenge.mutate({
+            url: editChallengeUrl,
+            body: toChallengeDto(editableChallenge)
+        });
     }
 
+    // TODO try httpDelete
+    const callDelete = useApiDelete();
+
     const deleteById = () => {
-        callDelete(challengeEndpoint).then(() => navigate(-1));
+        callDelete(editChallengeUrl).then(() => navigate(-1));
     }
 
     return (
@@ -79,12 +84,10 @@ function EditChallenge() {
             </NavHeader>
 
             <Container id="challengeFormWrapper" className="px-0">
-                {loaded
-                    ? <ChallengeForm editableChallenge={editableChallenge}
-                                    setEditableChallenge={setEditableChallenge}
-                                    setDataValid={setDataValid}
-                                    savedChallenges={savedChallenges} />
-                    : <div /> }
+                <ChallengeForm editableChallenge={editableChallenge}
+                                setEditableChallenge={setEditableChallenge}
+                                setDataValid={setDataValid}
+                                savedChallenges={savedChallenges} />
             </Container>
 
             <div className="d-flex flex-row">

@@ -58,11 +58,6 @@ function calculateProgress(challenge: ChallengeData): number {
     return Math.round((elapsedDuration / totalDuration) * 100);
 }
 
-const toLocalChallengeDataList = (challengeList: ChallengeDetailDto[]): ChallengeData[] => {
-    return challengeList.map(toLocalChallengeData);
-}
-
-
 const toChallengeList = (challengeList: ChallengeDetailDto[]): ChallengeList<ChallengeData> => {
 
     const challengeData = challengeList.map(toLocalChallengeData);
@@ -75,6 +70,14 @@ const toChallengeList = (challengeList: ChallengeDetailDto[]): ChallengeList<Cha
         upcoming: challengeData.filter(c => c.start.compareTo(now) > 0),
         completed: challengeData.filter(c => now.compareTo(c.finish) > 0)
     };
+}
+
+const flatten = (list: ChallengeList<ChallengeData>) => {
+    let flattenedChallenges : ChallengeData[] = [];
+    flattenedChallenges.push(...list.completed);
+    flattenedChallenges.push(...list.current);
+    flattenedChallenges.push(...list.upcoming);
+    return flattenedChallenges;
 }
 
 const toChallengeDetailDto = (dto: ChallengeDto, id: number): ChallengeDetailDto => {
@@ -130,7 +133,7 @@ const toSleepDto = (sleep: SleepData): SleepDto => {
 }
 
 export {
-    toSelectableChallenges, toChallengeDto, toLocalChallengeData, toLocalChallengeDataList, toChallengeDetailDto,
+    flatten, toSelectableChallenges, toChallengeDto, toLocalChallengeData, toChallengeDetailDto,
     toLocalSleepData, toSleepDto, calculateProgress, toChallengeList, jsDateToLocalDate, localDateToJsDate, jsDateToLocalDateTime,
     localDateTimeToJsDate, localDateToString
 }

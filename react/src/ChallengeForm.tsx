@@ -7,8 +7,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {ChallengeData} from "./types/challenge.types";
-import {localDateToJsDate, jsDateToLocalDate} from "./utility/Mapper.ts";
+import {ChallengeData, ChallengeList} from "./types/challenge.types";
+import {localDateToJsDate, jsDateToLocalDate, flatten} from "./utility/Mapper.ts";
 
 
 const overlaps = (c1: ChallengeData, c2: ChallengeData): boolean => {
@@ -21,10 +21,16 @@ function ChallengeForm(props:{
                             setEditableChallenge:React.Dispatch<React.SetStateAction<ChallengeData>>
                             editableChallenge:ChallengeData,
                             setDataValid:React.Dispatch<React.SetStateAction<boolean>>,
-                            savedChallenges:ChallengeData[]}
+                            savedChallenges:ChallengeList<ChallengeData>}
                         ) {
 
+
     const {setEditableChallenge, editableChallenge, setDataValid, savedChallenges} = props;
+
+    let flattenedChallenges = flatten(savedChallenges);
+    // If editing, we don't want it to conflict with its own name or dates
+    // so exclude challenge based on id, and for a new challenge the id is 0
+    flattenedChallenges = flattenedChallenges.filter(details => details.id !== editableChallenge.id);
 
     // validation of individual fields for validation feedback to the user
     const [dateOrderValid, setDateOrderValid] = useState(true);
@@ -45,10 +51,9 @@ function ChallengeForm(props:{
             ? (challenge.name !== '' && challenge.name.trim() === challenge.name)
             : true;
 
-
         const dateOrderValid = challenge.start.isBefore(challenge.finish);
-        const nameUnique = !savedChallenges.some(saved => saved.name === challenge.name);
-        const datesOverlap = savedChallenges.some(saved => overlaps(challenge, saved) );
+        const nameUnique = !flattenedChallenges.some(saved => saved.name === challenge.name);
+        const datesOverlap = flattenedChallenges.some(saved => overlaps(challenge, saved) );
 
         setDateOrderValid(dateOrderValid);
         setNameValid(nameValid);
@@ -137,7 +142,7 @@ function ChallengeForm(props:{
            </Form>
            <label className={"text-warning " + ((datesOverlap) ? 'visible' : 'invisible')}>
                <FontAwesomeIcon icon={faExclamationTriangle} className={"pe-1"}/>
-               This date range overlaps another challenge which is not recommended
+               This date range overlaps another challenge
            </label>
        </>
     );
