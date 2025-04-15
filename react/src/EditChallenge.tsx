@@ -56,7 +56,6 @@ function EditChallenge() {
                 return [ ...(updatedList ?? []), updatedChallenge ]
             });
 
-            // TODO what if the user navigated here directly and there is no previous url?
             navigate(-1);
         },
     });
