@@ -1,7 +1,6 @@
 // This custom hook is used to fetch challenge data from an API endpoint and
 // transform it into a format suitable for the UI. By encapsulating all query
-// logic—including the data fetching, caching, and mapping—in this hook, we ensure
-// that every component that consumes this data gets the same, consistent output.
+// logic in this hook, we ensure that every component that consumes this data gets the same output.
 // It also prevents duplication of code and minimizes the risk of divergence if
 // the query configuration ever needs to change.
 
@@ -14,7 +13,6 @@ import {GET} from "../utility/BasicHeaders.ts";
 // Custom hook that encapsulates the TanStack Query logic for fetching challenges.
 // The queryKey uses the challengeUrl to ensure the query is uniquely identified.
 export const useChallenges = (challengeUrl: string) => {
-
 
     // TODO should this be httpGet()?
     // and should we use httpGet in Tools?

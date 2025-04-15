@@ -2,33 +2,31 @@ import React, {useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import {useParams} from "react-router-dom";
-import {GET} from "./utility/BasicHeaders";
 import {Tab, Tabs} from "react-bootstrap";
 import { emptyChallengeList} from "./utility/Constants";
 import CollapsibleChallenge from "./component/CollapsibleChallenge";
 import useApiDelete from "./hooks/useApiDelete";
 import CreateChallenge from "./CreateChallenge";
-import {toChallengeList} from "./utility/Mapper";
-import {ChallengeData, ChallengeDetailDto, ChallengeList} from "./types/challenge.types";
-import {useQuery, useQueryClient} from "@tanstack/react-query";
+import {useQueryClient} from "@tanstack/react-query";
 import {useChallenges} from "./hooks/useChallenges.ts";
 
 function Challenge() {
 
     const {publicId} = useParams();
-    const callDelete = useApiDelete();
 
     // the user's current date is used to determine challenge completion status
     const challengeUrl = `/api/user/${publicId}/challenge`;
 
 
+    // TODO Replace useDelete with TSQ mutation, update state when deleted
+    // try httpDelete(), compare with useApiDelete()
+    // can we selectively remove from the TSQ cache? or should we invalidate the whole challenge cache?
 
-    // TODO Replace useDelete with TSQ mutation
-    // update state when deleted
     const queryClient = useQueryClient();
     const [deletedCount, setDeletedCount] = useState(0);
+    const callDelete = useApiDelete();
     const deleteChallenge = (challengeId: number) => {
-        const endpoint = `/api/user/${publicId}/challenge/${challengeId}`;
+        const endpoint = `${challengeUrl}/${challengeId}`;
         callDelete(endpoint).then(() => setDeletedCount(deletedCount + 1));
     }
 

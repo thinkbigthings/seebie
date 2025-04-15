@@ -23,25 +23,22 @@ function buildRequestMeta(method:HttpMethod='GET', body:string=''):RequestInit {
     return { headers, method };
 }
 
-const httpGet = async <T,>(url: string) => {
+const httpGet = async <R,>(url: string) => {
     const response = await fetch(url, buildRequestMeta());
-    const data = await response.json();
-    return data as T;
+    return await response.json() as R;
 }
 
 
 const httpPost = async <T,R>(url: string, body: T) => {
     const requestMeta = buildRequestMeta('POST', JSON.stringify(body));
     const response = await fetch(url, requestMeta);
-    const data = await response.json() as R;
-    return data as R;
+    return await response.json() as R
 }
 
-const httpPut = async <T,>(url: string, body: Record<string, unknown>) => {
+const httpPut = async <T,R>(url: string, body: T) => {
     const requestMeta = buildRequestMeta('PUT', JSON.stringify(body));
     const response = await fetch(url, requestMeta);
-    const data = await response.json();
-    return data as T;
+    return await response.json() as R;
 }
 
 const httpDelete = (url: string) => {

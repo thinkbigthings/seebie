@@ -8,7 +8,7 @@ import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {ChallengeData, ChallengeList} from "./types/challenge.types";
-import {localDateToJsDate, jsDateToLocalDate} from "./utility/Mapper.ts";
+import {localDateToJsDate, jsDateToLocalDate, flatten} from "./utility/Mapper.ts";
 
 
 const overlaps = (c1: ChallengeData, c2: ChallengeData): boolean => {
@@ -26,6 +26,11 @@ function ChallengeForm(props:{
 
 
     const {setEditableChallenge, editableChallenge, setDataValid, savedChallenges} = props;
+
+    let flattenedChallenges = flatten(savedChallenges);
+    // If editing, we don't want it to conflict with its own name or dates
+    // so exclude challenge based on id, and for a new challenge the id is 0
+    flattenedChallenges = flattenedChallenges.filter(details => details.id !== editableChallenge.id);
 
     // validation of individual fields for validation feedback to the user
     const [dateOrderValid, setDateOrderValid] = useState(true);
@@ -45,12 +50,6 @@ function ChallengeForm(props:{
         const nameValid = nameTouched
             ? (challenge.name !== '' && challenge.name.trim() === challenge.name)
             : true;
-
-
-        const flattenedChallenges = [] as ChallengeData[];
-        flattenedChallenges.push(...savedChallenges.completed);
-        flattenedChallenges.push(...savedChallenges.current);
-        flattenedChallenges.push(...savedChallenges.upcoming);
 
         const dateOrderValid = challenge.start.isBefore(challenge.finish);
         const nameUnique = !flattenedChallenges.some(saved => saved.name === challenge.name);
@@ -143,7 +142,7 @@ function ChallengeForm(props:{
            </Form>
            <label className={"text-warning " + ((datesOverlap) ? 'visible' : 'invisible')}>
                <FontAwesomeIcon icon={faExclamationTriangle} className={"pe-1"}/>
-               This date range overlaps another challenge which is not recommended
+               This date range overlaps another challenge
            </label>
        </>
     );

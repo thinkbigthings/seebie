@@ -72,6 +72,14 @@ const toChallengeList = (challengeList: ChallengeDetailDto[]): ChallengeList<Cha
     };
 }
 
+const flatten = (list: ChallengeList<ChallengeData>) => {
+    let flattenedChallenges : ChallengeData[] = [];
+    flattenedChallenges.push(...list.completed);
+    flattenedChallenges.push(...list.current);
+    flattenedChallenges.push(...list.upcoming);
+    return flattenedChallenges;
+}
+
 const toChallengeDetailDto = (dto: ChallengeDto, id: number): ChallengeDetailDto => {
     return {
         id: id,
@@ -125,7 +133,7 @@ const toSleepDto = (sleep: SleepData): SleepDto => {
 }
 
 export {
-    toSelectableChallenges, toChallengeDto, toLocalChallengeData, toChallengeDetailDto,
+    flatten, toSelectableChallenges, toChallengeDto, toLocalChallengeData, toChallengeDetailDto,
     toLocalSleepData, toSleepDto, calculateProgress, toChallengeList, jsDateToLocalDate, localDateToJsDate, jsDateToLocalDateTime,
     localDateTimeToJsDate, localDateToString
 }
