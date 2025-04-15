@@ -33,8 +33,8 @@ public class ChallengeController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @PutMapping("/user/{publicId}/challenge/{challengeId}")
-    public void updateChallenge(@Valid @RequestBody ChallengeDto challengeData, @PathVariable UUID publicId, @PathVariable Long challengeId) {
-        challengeService.update(publicId, challengeId, challengeData);
+    public ChallengeDetailDto updateChallenge(@Valid @RequestBody ChallengeDto challengeData, @PathVariable UUID publicId, @PathVariable Long challengeId) {
+        return challengeService.update(publicId, challengeId, challengeData);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")

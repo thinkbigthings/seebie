@@ -1,5 +1,5 @@
 
-interface PostVariables<T> {
+interface UploadVars<T> {
     url: string;
     body: T;
 }
@@ -38,12 +38,12 @@ const httpPost = async <T,R>(url: string, body: T) => {
 const httpPut = async <T,R>(url: string, body: T) => {
     const requestMeta = buildRequestMeta('PUT', JSON.stringify(body));
     const response = await fetch(url, requestMeta);
-    return await response.json() as R;
+    return await response.json() as R
 }
 
 const httpDelete = (url: string) => {
     return fetch(url, buildRequestMeta('DELETE'));
 }
 
-export type {PostVariables}
-export {httpGet, httpPost, httpDelete}
+export type {UploadVars}
+export {httpGet, httpPut, httpPost, httpDelete}

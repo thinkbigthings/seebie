@@ -12,7 +12,7 @@ import {toChallengeDto} from "./utility/Mapper";
 import ChallengeForm from "./ChallengeForm";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
-import {httpPost, PostVariables} from "./utility/apiClient.ts";
+import {httpPost, UploadVars} from "./utility/apiClient.ts";
 import {useChallenges} from "./hooks/useChallenges.ts";
 
 function CreateChallenge(props: {challengeUrl:string}) {
@@ -53,15 +53,14 @@ function CreateChallenge(props: {challengeUrl:string}) {
 
 
     const uploadNewChallenge = useMutation({
-        mutationFn: (vars: PostVariables<ChallengeDto>) => httpPost<ChallengeDto,ChallengeDetailDto>(vars.url, vars.body),
+        mutationFn: (vars: UploadVars<ChallengeDto>) => httpPost<ChallengeDto,ChallengeDetailDto>(vars.url, vars.body),
         onSuccess: (newlyCreatedChallenge: ChallengeDetailDto) => {
             setShowCreateSuccess(true);
             clearChallengeEdit();
-            queryClient.setQueryData([challengeUrl], (oldData: ChallengeDetailDto[]) => [
-                ...(oldData ?? []),
-                newlyCreatedChallenge,
-            ]);
-        },
+            queryClient.setQueryData([challengeUrl], (oldData: ChallengeDetailDto[]) => {
+                return [ ...(oldData ?? []), newlyCreatedChallenge ];
+            });
+        }
     });
 
     const saveEditableChallenge = () => {

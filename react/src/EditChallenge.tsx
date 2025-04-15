@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 
 import Container from "react-bootstrap/Container";
-import useApiPut from "./hooks/useApiPut";
 import Button from "react-bootstrap/Button";
 import useApiDelete from "./hooks/useApiDelete";
 import {NavHeader} from "./App";
@@ -11,6 +10,9 @@ import ChallengeForm from "./ChallengeForm";
 import {emptyChallengeList} from "./utility/Constants";
 import {flatten, toChallengeDto,} from "./utility/Mapper";
 import {useChallenges} from "./hooks/useChallenges.ts";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {httpPut, UploadVars} from "./utility/apiClient.ts";
+import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
 
 function ensure<T>(argument: T | undefined | null, message: string = 'This value was promised to be there.'): T {
     if (argument === undefined || argument === null) {
@@ -43,15 +45,31 @@ function EditChallenge() {
 
     const [editableChallenge, setEditableChallenge] = useState(existingChallenge);
 
-    // TODO try httpPut, httpDelete
-    // use mutation, can we selectively update the cache?
 
-    const put = useApiPut();
-    const callDelete = useApiDelete();
+    const queryClient = useQueryClient();
+
+    const updateChallenge = useMutation({
+        mutationFn: (vars: UploadVars<ChallengeDto>) => httpPut<ChallengeDto,ChallengeDetailDto>(vars.url, vars.body),
+        onSuccess: (updatedChallenge: ChallengeDetailDto) => {
+            queryClient.setQueryData([challengeUrl], (oldData: ChallengeDetailDto[]) => {
+                const updatedList = oldData.filter(challenge => challenge.id !== updatedChallenge.id);
+                return [ ...(updatedList ?? []), updatedChallenge ]
+            });
+
+            // TODO what if the user navigated here directly and there is no previous url?
+            navigate(-1);
+        },
+    });
 
     const onSave = () => {
-        put(editChallengeUrl, toChallengeDto(editableChallenge)).then(() => navigate(-1));
+        updateChallenge.mutate({
+            url: editChallengeUrl,
+            body: toChallengeDto(editableChallenge)
+        });
     }
+
+    // TODO try httpDelete
+    const callDelete = useApiDelete();
 
     const deleteById = () => {
         callDelete(editChallengeUrl).then(() => navigate(-1));

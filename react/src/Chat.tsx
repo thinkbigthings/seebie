@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import {useParams} from "react-router-dom";
-import {httpDelete, httpGet, httpPost, PostVariables} from "./utility/apiClient.ts";
+import {httpDelete, httpGet, httpPost, UploadVars} from "./utility/apiClient.ts";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {MessageDto, MessageType} from "./types/message.types.ts";
@@ -35,7 +35,7 @@ function Chat() {
     });
 
     const uploadMessageMutation = useMutation({
-        mutationFn: (variables: PostVariables<MessageDto>) => httpPost<MessageDto,MessageDto>(variables.url, variables.body),
+        mutationFn: (variables: UploadVars<MessageDto>) => httpPost<MessageDto,MessageDto>(variables.url, variables.body),
         onSuccess: (message: MessageDto) => {
             setShowProcessingIcon(false);
             queryClient.setQueryData([chatUrl], (oldData: MessageDto[] | undefined) => [
