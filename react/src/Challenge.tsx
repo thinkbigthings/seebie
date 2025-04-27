@@ -23,6 +23,7 @@ function Challenge() {
     // can we selectively remove from the TSQ cache? or should we invalidate the whole challenge cache?
 
     const queryClient = useQueryClient();
+
     const [deletedCount, setDeletedCount] = useState(0);
     const callDelete = useApiDelete();
     const deleteChallenge = (challengeId: number) => {

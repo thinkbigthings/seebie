@@ -1,0 +1,161 @@
+import React, {useEffect, useState} from 'react';
+import 'react-datepicker/dist/react-datepicker.css';
+import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
+import DatePicker from "react-datepicker";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import {ChallengeData} from "./types/challenge.types";
+import {localDateToJsDate, jsDateToLocalDate} from "./utility/Mapper.ts";
+
+
+const overlaps = (c1: ChallengeData, c2: ChallengeData): boolean => {
+    // Two intervals [c1.start, c1.finish] and [c2.start, c2.finish] overlap if and only if they are not disjoint.
+	// Intervals are disjoint if c1.finish < c2.start or c1.start > c2.finish.
+    return ! ( c1.finish.isBefore(c2.start) || c1.start.isAfter(c2.finish) );
+};
+
+function ChallengeFormTSQ(props:{
+                            savedChallenges:ChallengeData[]
+                            draftChallenge:ChallengeData,
+                            onValidityChanged: (valid: boolean) => void,
+                            onChallengeChanged: (latestDraft: ChallengeData) => void,
+                          }) {
+
+
+    const {savedChallenges, draftChallenge, onValidityChanged, onChallengeChanged} = props;
+
+
+    // validation of individual fields for validation feedback to the user
+    const [dateOrderValid, setDateOrderValid] = useState(true);
+    const [nameValid, setNameValid] = useState(true);
+    const [nameUnique, setNameUnique] = useState(true);
+
+    // this is a warning, so we don't disable the save button
+    const [datesOverlap, setDatesOverlap] = useState(false);
+
+    // Add a state variable to track user interaction with the name field
+    const [nameTouched, setNameTouched] = useState(false);
+
+
+    // TODO check saving dates are preserved
+
+    // TODO do this later?
+    //  navigate doesn't work if direct page loading,
+    //  should navigate to challenge home after save or cancel (can we check if navigate(-1) is available?)
+
+    const validateChallenge = (challenge: ChallengeData) => {
+
+        // name validation to consider if the user has interacted with the field
+        const newNameValid = nameTouched
+            ? (challenge.name !== '' && challenge.name.trim() === challenge.name)
+            : true;
+
+
+        const newDateOrderValid = challenge.start.isBefore(challenge.finish);
+        const newNameUnique = !savedChallenges.some(saved => saved.name === challenge.name);
+        const newDatesOverlap = savedChallenges.some(saved => overlaps(challenge, saved) );
+
+        const previousValidity = dateOrderValid && nameValid && nameUnique;
+        const newValidity = newDateOrderValid && newNameUnique && newNameValid;
+
+        setNameValid(newNameValid);
+        setDateOrderValid(newDateOrderValid);
+        setNameUnique(newNameUnique);
+        setDatesOverlap(newDatesOverlap);
+
+        if(previousValidity != newValidity) {
+            onValidityChanged(newValidity);
+        }
+    };
+
+
+    // useEffect to run validation on component mount and whenever editableChallenge changes
+    // This is so the validation is run when the form is populated from outside
+    // (e.g. when the user selects a predefined challenge)
+    // and not just when the user edits the form
+    useEffect(() => {
+        validateChallenge(draftChallenge);
+    }, [draftChallenge]);
+
+    const updateChallenge = (updateValues: Partial<ChallengeData> ) => {
+        const updatedChallenge:ChallengeData = {...draftChallenge, ...updateValues};
+        validateChallenge(updatedChallenge);
+        onChallengeChanged(updatedChallenge);
+    }
+
+
+    return (
+       <>
+           <Form>
+               <Container className="ps-0 pe-0">
+                   <label htmlFor="challengeName" className="form-label">Short Name</label>
+                   <Form.Control.Feedback type="invalid"
+                                          className={"d-inline ms-1 " + ((!nameUnique) ? 'visible' : 'invisible')}>
+                       This name is already used
+                   </Form.Control.Feedback>
+                   <Form.Control
+                       type="text"
+                       className="form-control"
+                       id="challengeName"
+                       placeholder=""
+                       value={draftChallenge.name}
+                       onChange={e => {
+                           setNameTouched(true);
+                           updateChallenge({name: e.target.value})}
+                       }
+                       isInvalid={!nameValid || !nameUnique}
+                   />
+               </Container>
+               <Form.Control.Feedback type="invalid"
+                                      className={"mh-24px d-block " + ((!nameValid) ? 'visible' : 'invisible')}>
+                   Can't be empty or have space at the ends
+               </Form.Control.Feedback>
+               <Container className="ps-0 mb-3 pe-0">
+                   <textarea rows={6} className="form-control" id="description" placeholder="Description"
+                             value={draftChallenge.description}
+                             onChange={e => updateChallenge({description: e.target.value})}/>
+               </Container>
+
+               <Container id="dateRangeId" className="p-0">
+                   <Row className={"pb-2"}>
+                       <Col md={6} className={"col-4 "}>
+                           <label htmlFor="startDate" className="form-label">Start Date</label>
+                       </Col>
+                       <Col md={6} className={"col-8 "}>
+                           <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
+                                       id="startDate" dateFormat="MMMM d, yyyy"
+                                       onChange={date => {if(date) updateChallenge({start: jsDateToLocalDate(date)})}}
+                                       selected={localDateToJsDate(draftChallenge.start)}/>
+                       </Col>
+                   </Row>
+                   <Row className={"pb-2"}>
+                       <Col md={6} className={"col-4 "}>
+                           <label htmlFor="endDate" className="form-label">End Date</label>
+                       </Col>
+                       <Col md={6} className={"col-8 "}>
+                           <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
+                                       id="startDate" dateFormat="MMMM d, yyyy"
+                                       onChange={date => {if(date) updateChallenge({finish: jsDateToLocalDate(date)})}}
+                                       selected={localDateToJsDate(draftChallenge.finish)}/>
+                       </Col>
+                   </Row>
+                   <Row>
+                       <Form.Control.Feedback type="invalid"
+                                              className={"mh-24px d-block " + ((!dateOrderValid) ? 'visible' : 'invisible')}>
+                           End date must be after start date
+                       </Form.Control.Feedback>
+                   </Row>
+               </Container>
+           </Form>
+           <label className={"text-warning " + ((datesOverlap) ? 'visible' : 'invisible')}>
+               <FontAwesomeIcon icon={faExclamationTriangle} className={"pe-1"}/>
+               This date range overlaps another challenge
+           </label>
+       </>
+    );
+}
+
+export default ChallengeFormTSQ;

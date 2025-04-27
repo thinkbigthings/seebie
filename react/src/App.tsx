@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {Suspense, useState} from 'react';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -148,20 +148,22 @@ function AuthenticatedApp() {
             <Container className="d-flex">
 
                 <SideNav hasAdmin={hasAdmin()} publicId={currentUser.publicId}/>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/users/:publicId/sleep/list" element={<SleepList createdCount={createdCount} />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/users/:publicId/challenge" element={<Challenge />} />
-                    <Route path="/users/:publicId/sleep/chart" element={<SleepChart createdCount={createdCount} />} />
-                    <Route path="/users/:publicId/histogram" element={<Histogram createdCount = {createdCount} />} />
-                    <Route path="/users" element={<UserList/>} />
-                    <Route path="/users/:publicId/edit" element={<EditUser />} />
-                    <Route path="/users/:publicId/sleep/:sleepId/edit" element={<EditSleep />} />
-                    <Route path="/users/:publicId/challenge/:challengeId/edit" element={<EditChallenge />} />
-                    <Route path="/users/:publicId/tools" element={<Tools />} />
-                    <Route path="/users/:publicId/chat" element={<Chat />} />
-                </Routes>
+                <Suspense fallback={<div>Loading...</div>}>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/users/:publicId/sleep/list" element={<SleepList createdCount={createdCount} />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/users/:publicId/challenge" element={<Challenge />} />
+                        <Route path="/users/:publicId/sleep/chart" element={<SleepChart createdCount={createdCount} />} />
+                        <Route path="/users/:publicId/histogram" element={<Histogram createdCount = {createdCount} />} />
+                        <Route path="/users" element={<UserList/>} />
+                        <Route path="/users/:publicId/edit" element={<EditUser />} />
+                        <Route path="/users/:publicId/sleep/:sleepId/edit" element={<EditSleep />} />
+                        <Route path="/users/:publicId/challenge/:challengeId/edit" element={<EditChallenge />} />
+                        <Route path="/users/:publicId/tools" element={<Tools />} />
+                        <Route path="/users/:publicId/chat" element={<Chat />} />
+                    </Routes>
+                </Suspense>
             </Container>
 
         </HashRouter>

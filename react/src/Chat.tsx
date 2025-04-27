@@ -87,8 +87,9 @@ function Chat() {
             <NavHeader title="Chat">
                 <InfoModalButton
                     className={"me-1"}
-                    titleText={"Chat History"}
-                    modalText={"Chat history is only available for the last 7 days"} />
+                    titleText={"Chat About Sleep"}
+                    modalText={"Talk with an AI counsellor about how to improve your sleep. " +
+                        "Chat history is only available for the last 7 days"} />
                 <WarningButton buttonText="Delete" onConfirm={deleteChat}>
                     This deletes the entire conversation and cannot be undone. Proceed?
                 </WarningButton>

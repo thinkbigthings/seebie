@@ -1,60 +1,76 @@
 import React, {useState} from 'react';
-
-import Container from "react-bootstrap/Container";
-import Button from "react-bootstrap/Button";
-import useApiDelete from "./hooks/useApiDelete";
-import {NavHeader} from "./App";
 import {useNavigate, useParams} from "react-router-dom";
-import WarningButton from "./component/WarningButton";
-import ChallengeForm from "./ChallengeForm";
-import {emptyChallengeList} from "./utility/Constants";
-import {flatten, toChallengeDto,} from "./utility/Mapper";
-import {useChallenges} from "./hooks/useChallenges.ts";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {GET} from "./utility/BasicHeaders.ts";
+import {ChallengeData, ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
+import {useMutation, useQueryClient, useSuspenseQuery} from "@tanstack/react-query";
+import {toChallengeDetailDto, toChallengeDto, toLocalChallengeData} from "./utility/Mapper.ts";
+import Container from "react-bootstrap/Container";
+import {NavHeader} from "./App.tsx";
+import WarningButton from "./component/WarningButton.tsx";
+import ChallengeFormTSQ from "./ChallengeFormTSQ.tsx";
+import Button from 'react-bootstrap/esm/Button';
 import {httpPut, UploadVars} from "./utility/apiClient.ts";
-import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
+import useApiDelete from "./hooks/useApiDelete.ts";
 
 function ensure<T>(argument: T | undefined | null, message: string = 'This value was promised to be there.'): T {
     if (argument === undefined || argument === null) {
         throw new TypeError(message);
     }
-    return argument;
+    return argument as T;
 }
 
 function EditChallenge() {
 
-    const {publicId, challengeId} = useParams();
+    let {publicId, challengeId} = useParams();
+
+    const numericChallengeId = parseInt(ensure(challengeId));
+
     const navigate = useNavigate();
 
-    if (challengeId === undefined) {
-        throw new Error("Challenge ID is required.");
-    }
-
-    const numericChallengeId = parseInt(challengeId);
-
     const challengeUrl = `/api/user/${publicId}/challenge`;
-    const editChallengeUrl = `${challengeUrl}/${challengeId}`;
+    const challengeDetailUrl = `${challengeUrl}/${numericChallengeId}`;
+
+    const fetchChallenges = () => fetch(challengeUrl, GET)
+        .then((response) => response.json() as Promise<ChallengeDetailDto[]>);
+
+    const {data: savedChallenges} = useSuspenseQuery<ChallengeDetailDto[]>({
+        queryKey: [challengeUrl],
+        queryFn: fetchChallenges
+    });
+
+    const validationChallenges = savedChallenges
+        .filter(challenge => challenge.id !== numericChallengeId)
+        .map(challenge => toLocalChallengeData(challenge)
+    );
+
+    const fetchChallenge = () => fetch(challengeDetailUrl, GET)
+        .then((response) => response.json() as Promise<ChallengeDto>);
+
+    const {data} = useSuspenseQuery<ChallengeDto>({
+        queryKey: [challengeDetailUrl],
+        queryFn: fetchChallenge
+    });
+
+
+    let loadedChallenge = toLocalChallengeData(toChallengeDetailDto(data, numericChallengeId));
+    const [draftChallenge, setDraftChallenge] = useState<ChallengeData>(loadedChallenge);
 
     const [dataValid, setDataValid] = useState(true);
-
-    // TODO pass in the TSQ key challenge url instead of the list
-    const { data: savedChallenges = emptyChallengeList } = useChallenges(challengeUrl);
-    const allChallenges = flatten(savedChallenges);
-    const maybeChallenge = allChallenges.find(challenge => challenge.id === numericChallengeId);
-    const existingChallenge = ensure(maybeChallenge);
-
-    const [editableChallenge, setEditableChallenge] = useState(existingChallenge);
-
 
     const queryClient = useQueryClient();
 
     const updateChallenge = useMutation({
         mutationFn: (vars: UploadVars<ChallengeDto>) => httpPut<ChallengeDto,ChallengeDetailDto>(vars.url, vars.body),
         onSuccess: (updatedChallenge: ChallengeDetailDto) => {
+
             queryClient.setQueryData([challengeUrl], (oldData: ChallengeDetailDto[]) => {
                 const updatedList = oldData.filter(challenge => challenge.id !== updatedChallenge.id);
                 return [ ...(updatedList ?? []), updatedChallenge ]
             });
+
+            queryClient.setQueryData([challengeDetailUrl], (oldData: ChallengeDetailDto) => {
+                return toChallengeDto(draftChallenge);
+            })
 
             navigate(-1);
         },
@@ -62,8 +78,8 @@ function EditChallenge() {
 
     const onSave = () => {
         updateChallenge.mutate({
-            url: editChallengeUrl,
-            body: toChallengeDto(editableChallenge)
+            url: challengeDetailUrl,
+            body: toChallengeDto(draftChallenge)
         });
     }
 
@@ -71,31 +87,34 @@ function EditChallenge() {
     const callDelete = useApiDelete();
 
     const deleteById = () => {
-        callDelete(editChallengeUrl).then(() => navigate(-1));
+        callDelete(challengeDetailUrl).then(() => navigate(-1));
     }
 
     return (
-        <Container>
+        <>
+            <Container>
 
-            <NavHeader title="Challenge">
-                <WarningButton buttonText="Delete" onConfirm={deleteById}>
-                    This deletes the current sleep challenge and cannot be undone. Proceed?
-                </WarningButton>
-            </NavHeader>
+                <NavHeader title="Challenge">
+                    <WarningButton buttonText="Delete" onConfirm={deleteById}>
+                        This deletes the current sleep challenge and cannot be undone. Proceed?
+                    </WarningButton>
+                </NavHeader>
 
-            <Container id="challengeFormWrapper" className="px-0">
-                <ChallengeForm editableChallenge={editableChallenge}
-                                setEditableChallenge={setEditableChallenge}
-                                setDataValid={setDataValid}
-                                savedChallenges={savedChallenges} />
+                <Container id="challengeFormWrapper" className="px-0">
+                    <ChallengeFormTSQ savedChallenges={validationChallenges}
+                                      draftChallenge={draftChallenge}
+                                      onValidityChanged={setDataValid}
+                                      onChallengeChanged={setDraftChallenge} />
+
+                </Container>
+
+                <div className="d-flex flex-row">
+                    <Button className="me-3" variant="primary" onClick={onSave} disabled={ ! dataValid} >Save</Button>
+                    <Button  variant="secondary" onClick={() => navigate(-1)}>Cancel</Button>
+                </div>
+
             </Container>
-
-            <div className="d-flex flex-row">
-                <Button className="me-3" variant="primary" onClick={onSave} disabled={ ! dataValid} >Save</Button>
-                <Button  variant="secondary" onClick={() => navigate(-1)}>Cancel</Button>
-            </div>
-
-        </Container>
+        </>
     );
 }
 
