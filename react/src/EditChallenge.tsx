@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
-import {GET} from "./utility/BasicHeaders.ts";
 import {ChallengeData, ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
 import {useMutation, useQueryClient, useSuspenseQuery} from "@tanstack/react-query";
 import {toChallengeDetailDto, toChallengeDto, toLocalChallengeData} from "./utility/Mapper.ts";
@@ -9,7 +8,7 @@ import {NavHeader} from "./App.tsx";
 import WarningButton from "./component/WarningButton.tsx";
 import ChallengeFormTSQ from "./ChallengeFormTSQ.tsx";
 import Button from 'react-bootstrap/esm/Button';
-import {httpDelete, httpPut, UploadVars} from "./utility/apiClient.ts";
+import {httpDelete, httpGet, httpPut, UploadVars} from "./utility/apiClient.ts";
 
 function ensure<T>(argument: T | undefined | null, message: string = 'This value was promised to be there.'): T {
     if (argument === undefined || argument === null) {
@@ -29,24 +28,20 @@ function EditChallenge() {
     const challengeUrl = `/api/user/${publicId}/challenge`;
     const challengeDetailUrl = `${challengeUrl}/${numericChallengeId}`;
 
-    const fetchChallenges = () => fetch(challengeUrl, GET)
-        .then((response) => response.json() as Promise<ChallengeDetailDto[]>);
 
     const {data: savedChallenges} = useSuspenseQuery<ChallengeDetailDto[]>({
         queryKey: [challengeUrl],
-        queryFn: fetchChallenges
+        queryFn: () => httpGet<ChallengeDetailDto[]>(challengeUrl)
     });
 
     const validationChallenges = savedChallenges
         .filter(challenge => challenge.id !== numericChallengeId)
         .map(challenge => toLocalChallengeData(challenge));
 
-    const fetchChallenge = () => fetch(challengeDetailUrl, GET)
-        .then((response) => response.json() as Promise<ChallengeDto>);
 
     const {data} = useSuspenseQuery<ChallengeDto>({
         queryKey: [challengeDetailUrl],
-        queryFn: fetchChallenge
+        queryFn: () => httpGet<ChallengeDto>(challengeDetailUrl)
     });
 
 
