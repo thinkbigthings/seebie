@@ -6,14 +6,13 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import CollapsibleContent from "./component/CollapsibleContent";
-import {emptyChallengeList, emptyEditableChallenge, NameDescription, PREDEFINED_CHALLENGES} from "./utility/Constants";
+import {emptyEditableChallenge, NameDescription, PREDEFINED_CHALLENGES} from "./utility/Constants";
 import SuccessModal from "./component/SuccessModal";
-import {toChallengeDto} from "./utility/Mapper";
+import {toChallengeDto, toChallengeList} from "./utility/Mapper";
 import ChallengeForm from "./ChallengeForm";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {useMutation, useQueryClient, useSuspenseQuery} from "@tanstack/react-query";
 import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
-import {httpPost, UploadVars} from "./utility/apiClient.ts";
-import {useChallenges} from "./hooks/useChallenges.ts";
+import {httpGet, httpPost, UploadVars} from "./utility/apiClient.ts";
 
 function CreateChallenge(props: {challengeUrl:string}) {
 
@@ -49,8 +48,12 @@ function CreateChallenge(props: {challengeUrl:string}) {
 
     const queryClient = useQueryClient();
 
-    const { data: savedChallenges = emptyChallengeList } = useChallenges(challengeUrl);
+    const {data} = useSuspenseQuery<ChallengeDetailDto[]>({
+        queryKey: [challengeUrl],
+        queryFn: () => httpGet<ChallengeDetailDto[]>(challengeUrl)
+    });
 
+    const savedChallenges = toChallengeList(data);
 
     const uploadNewChallenge = useMutation({
         mutationFn: (vars: UploadVars<ChallengeDto>) => httpPost<ChallengeDto,ChallengeDetailDto>(vars.url, vars.body),

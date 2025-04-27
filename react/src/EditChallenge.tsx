@@ -9,8 +9,7 @@ import {NavHeader} from "./App.tsx";
 import WarningButton from "./component/WarningButton.tsx";
 import ChallengeFormTSQ from "./ChallengeFormTSQ.tsx";
 import Button from 'react-bootstrap/esm/Button';
-import {httpPut, UploadVars} from "./utility/apiClient.ts";
-import useApiDelete from "./hooks/useApiDelete.ts";
+import {httpDelete, httpPut, UploadVars} from "./utility/apiClient.ts";
 
 function ensure<T>(argument: T | undefined | null, message: string = 'This value was promised to be there.'): T {
     if (argument === undefined || argument === null) {
@@ -40,8 +39,7 @@ function EditChallenge() {
 
     const validationChallenges = savedChallenges
         .filter(challenge => challenge.id !== numericChallengeId)
-        .map(challenge => toLocalChallengeData(challenge)
-    );
+        .map(challenge => toLocalChallengeData(challenge));
 
     const fetchChallenge = () => fetch(challengeDetailUrl, GET)
         .then((response) => response.json() as Promise<ChallengeDto>);
@@ -83,11 +81,26 @@ function EditChallenge() {
         });
     }
 
-    // TODO useMutation for delete, remove from list cache and detail cache, try httpDelete
-    const callDelete = useApiDelete();
+
+    const deleteChallenge = useMutation({
+        mutationFn: (url: string) => httpDelete(url),
+        onSuccess: (response) => {
+
+            // remove the deleted challenge from the list of challenges
+            queryClient.setQueryData([challengeUrl], (oldData: ChallengeDetailDto[]) => {
+                return oldData.filter(challenge => challenge.id !== numericChallengeId);
+            });
+
+            // remove the delete challenge from the specific challenge detail cache
+            queryClient.invalidateQueries({queryKey: [response.url]})
+                .then(()=>{});
+
+            navigate(-1);
+        },
+    });
 
     const deleteById = () => {
-        callDelete(challengeDetailUrl).then(() => navigate(-1));
+        deleteChallenge.mutate(challengeDetailUrl);
     }
 
     return (

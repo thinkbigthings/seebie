@@ -1,39 +1,41 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import {useParams} from "react-router-dom";
 import {Tab, Tabs} from "react-bootstrap";
-import { emptyChallengeList} from "./utility/Constants";
 import CollapsibleChallenge from "./component/CollapsibleChallenge";
-import useApiDelete from "./hooks/useApiDelete";
 import CreateChallenge from "./CreateChallenge";
-import {useQueryClient} from "@tanstack/react-query";
-import {useChallenges} from "./hooks/useChallenges.ts";
+import {ChallengeDetailDto} from "./types/challenge.types.ts";
+import {useMutation, useQueryClient, useSuspenseQuery} from "@tanstack/react-query";
+import {toChallengeList} from "./utility/Mapper.ts";
+import {httpDelete, httpGet} from "./utility/apiClient.ts";
 
 function Challenge() {
 
     const {publicId} = useParams();
 
-    // the user's current date is used to determine challenge completion status
     const challengeUrl = `/api/user/${publicId}/challenge`;
-
-
-    // TODO Replace useDelete with TSQ mutation, update state when deleted
-    // try httpDelete(), compare with useApiDelete()
-    // can we selectively remove from the TSQ cache? or should we invalidate the whole challenge cache?
 
     const queryClient = useQueryClient();
 
-    const [deletedCount, setDeletedCount] = useState(0);
-    const callDelete = useApiDelete();
+    const deleteMutation = useMutation({
+        mutationFn: (url: string) => httpDelete(url),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: [challengeUrl]}).then(() => {});
+        }
+    });
+
     const deleteChallenge = (challengeId: number) => {
-        const endpoint = `${challengeUrl}/${challengeId}`;
-        callDelete(endpoint).then(() => setDeletedCount(deletedCount + 1));
+        deleteMutation.mutate(`${challengeUrl}/${challengeId}`);
     }
 
-    // TODO ChallengeList doesn't need to be parameterized, maybe it needed to be in the past
 
-    const { data: savedChallenges = emptyChallengeList } = useChallenges(challengeUrl);
+    const {data} = useSuspenseQuery<ChallengeDetailDto[]>({
+        queryKey: [challengeUrl],
+        queryFn: () => httpGet<ChallengeDetailDto[]>(challengeUrl)
+    });
+
+    const savedChallenges = toChallengeList(data);
 
     return (
         <Container>

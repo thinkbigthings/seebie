@@ -23,6 +23,7 @@ interface ChallengeDetailDto {
     challenge: ChallengeDto
 }
 
+// TODO ChallengeList doesn't need to be parameterized, maybe it needed to be in the past
 interface ChallengeList<T> {
     current: T[];
     upcoming: T[];
