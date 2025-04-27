@@ -83,7 +83,7 @@ function EditChallenge() {
         });
     }
 
-    // TODO try httpDelete
+    // TODO useMutation for delete, remove from list cache and detail cache, try httpDelete
     const callDelete = useApiDelete();
 
     const deleteById = () => {

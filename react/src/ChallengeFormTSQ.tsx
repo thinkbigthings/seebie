@@ -39,13 +39,6 @@ function ChallengeFormTSQ(props:{
     // Add a state variable to track user interaction with the name field
     const [nameTouched, setNameTouched] = useState(false);
 
-
-    // TODO check saving dates are preserved
-
-    // TODO do this later?
-    //  navigate doesn't work if direct page loading,
-    //  should navigate to challenge home after save or cancel (can we check if navigate(-1) is available?)
-
     const validateChallenge = (challenge: ChallengeData) => {
 
         // name validation to consider if the user has interacted with the field
