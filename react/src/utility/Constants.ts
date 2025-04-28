@@ -46,7 +46,7 @@ export const emptyEditableChallenge = ():ChallengeData => {
 
     return {
         id: 0,
-        name: "",
+        name: "Sleep Hygiene Challenge",
         description: "",
         start: startLocalDate,
         finish: finishLocalDate,

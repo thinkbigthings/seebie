@@ -24,8 +24,7 @@ function CreateChallenge(props: {challengeUrl:string}) {
     const [draftChallenge, setDraftChallenge] = useState(emptyEditableChallenge());
 
     // validation of the overall form, so we know whether to enable the save button
-    // this is set as invalid to start so the name can be blank before showing validation messages
-    const [dataValid, setDataValid] = useState(false);
+    const [dataValid, setDataValid] = useState(true);
 
     const clearChallengeEdit = () => {
         setShowCreateChallenge(false);

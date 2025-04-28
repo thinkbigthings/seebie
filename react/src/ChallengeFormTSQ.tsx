@@ -27,45 +27,36 @@ function ChallengeFormTSQ(props:{
 
     const {savedChallenges, draftChallenge, onValidityChanged, onChallengeChanged} = props;
 
-
-    // validation of individual fields for validation feedback to the user
-    const [dateOrderValid, setDateOrderValid] = useState(true);
-    const [nameValid, setNameValid] = useState(true);
-    const [nameUnique, setNameUnique] = useState(true);
-
     // this is a warning, so we don't disable the save button
     const [datesOverlap, setDatesOverlap] = useState(false);
 
-    // Add a state variable to track user interaction with the name field
-    const [nameTouched, setNameTouched] = useState(false);
+    // validation of individual fields for validation feedback to the user
+    const [dateOrderValid, setDateOrderValid] = useState(true);
+    const [nameSpacesValid, setNameSpacesValid] = useState(true);
+    const [nameUnique, setNameUnique] = useState(true);
 
     const validateChallenge = (challenge: ChallengeData) => {
 
-        // name validation to consider if the user has interacted with the field
-        const newNameValid = nameTouched
-            ? (challenge.name !== '' && challenge.name.trim() === challenge.name)
-            : true;
-
-
-        const newDateOrderValid = challenge.start.isBefore(challenge.finish);
-        const newNameUnique = !savedChallenges.some(saved => saved.name === challenge.name);
+        // warnings
         const newDatesOverlap = savedChallenges.some(saved => overlaps(challenge, saved) );
-
-        const previousValidity = dateOrderValid && nameValid && nameUnique;
-        const newValidity = newDateOrderValid && newNameUnique && newNameValid;
-
-        setNameValid(newNameValid);
-        setDateOrderValid(newDateOrderValid);
-        setNameUnique(newNameUnique);
         setDatesOverlap(newDatesOverlap);
 
-        if(previousValidity != newValidity) {
-            onValidityChanged(newValidity);
-        }
+        // errors
+        const newNameSpacesValid = (challenge.name !== '' && challenge.name.trim() === challenge.name);
+        const newNameUnique = !savedChallenges.some(saved => saved.name === challenge.name);
+        const newDateOrderValid = challenge.start.isBefore(challenge.finish);
+
+        const previousValidity = dateOrderValid && nameSpacesValid && nameUnique;
+        const newValidity = newDateOrderValid && newNameSpacesValid && newNameUnique;
+
+        setNameSpacesValid(newNameSpacesValid && newNameUnique);
+        setDateOrderValid(newDateOrderValid);
+        setNameUnique(newNameUnique);
+
+        onValidityChanged(newValidity);
     };
 
-
-    // useEffect to run validation on component mount and whenever editableChallenge changes
+    // useEffect to run validation on component mount and whenever draft changes
     // This is so the validation is run when the form is populated from outside
     // (e.g. when the user selects a predefined challenge)
     // and not just when the user edits the form
@@ -96,14 +87,13 @@ function ChallengeFormTSQ(props:{
                        placeholder=""
                        value={draftChallenge.name}
                        onChange={e => {
-                           setNameTouched(true);
                            updateChallenge({name: e.target.value})}
                        }
-                       isInvalid={!nameValid || !nameUnique}
+                       isInvalid={!nameSpacesValid || !nameUnique}
                    />
                </Container>
                <Form.Control.Feedback type="invalid"
-                                      className={"mh-24px d-block " + ((!nameValid) ? 'visible' : 'invisible')}>
+                                      className={"mh-24px d-block " + (!nameSpacesValid ? 'visible' : 'invisible')}>
                    Can't be empty or have space at the ends
                </Form.Control.Feedback>
                <Container className="ps-0 mb-3 pe-0">
