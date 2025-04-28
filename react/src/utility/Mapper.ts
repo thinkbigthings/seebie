@@ -27,7 +27,7 @@ const localDateTimeToJsDate = (date: LocalDateTime): Date => {
     return convert(date).toDate();
 }
 
-const toSelectableChallenges = (challengeList: ChallengeList<ChallengeData>, defaultChallenge: ChallengeData) => {
+const toSelectableChallenges = (challengeList: ChallengeList, defaultChallenge: ChallengeData) => {
 
     let selectableChallenges = [...challengeList.current, ...challengeList.completed];
 
@@ -58,7 +58,7 @@ function calculateProgress(challenge: ChallengeData): number {
     return Math.round((elapsedDuration / totalDuration) * 100);
 }
 
-const toChallengeList = (challengeList: ChallengeDetailDto[]): ChallengeList<ChallengeData> => {
+const toChallengeList = (challengeList: ChallengeDetailDto[]): ChallengeList => {
 
     const challengeData = challengeList.map(toLocalChallengeData);
     const now = LocalDate.now();
