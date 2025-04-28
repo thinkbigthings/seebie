@@ -8,11 +8,11 @@ import Alert from "react-bootstrap/Alert";
 import CollapsibleContent from "./component/CollapsibleContent";
 import {emptyEditableChallenge, NameDescription, PREDEFINED_CHALLENGES} from "./utility/Constants";
 import SuccessModal from "./component/SuccessModal";
-import {toChallengeDto, toChallengeList} from "./utility/Mapper";
-import ChallengeForm from "./ChallengeForm";
+import {toChallengeDto, toLocalChallengeData} from "./utility/Mapper";
 import {useMutation, useQueryClient, useSuspenseQuery} from "@tanstack/react-query";
 import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
 import {httpGet, httpPost, UploadVars} from "./utility/apiClient.ts";
+import ChallengeFormTSQ from "./ChallengeFormTSQ.tsx";
 
 function CreateChallenge(props: {challengeUrl:string}) {
 
@@ -21,7 +21,7 @@ function CreateChallenge(props: {challengeUrl:string}) {
     const [showCreateSuccess, setShowCreateSuccess] = useState(false);
     const [showCreateChallenge, setShowCreateChallenge] = useState(false);
     const [showPredefinedChallenges, setShowPredefinedChallenges] = useState(false);
-    const [editableChallenge, setEditableChallenge] = useState(emptyEditableChallenge());
+    const [draftChallenge, setDraftChallenge] = useState(emptyEditableChallenge());
 
     // validation of the overall form, so we know whether to enable the save button
     // this is set as invalid to start so the name can be blank before showing validation messages
@@ -29,15 +29,15 @@ function CreateChallenge(props: {challengeUrl:string}) {
 
     const clearChallengeEdit = () => {
         setShowCreateChallenge(false);
-        setEditableChallenge(emptyEditableChallenge());
+        setDraftChallenge(emptyEditableChallenge());
         setDataValid(true);
     }
 
     const onSelectChallenge = (selectedChallenge: NameDescription) => {
-        let updatedChallenge = {...editableChallenge};
+        let updatedChallenge = {...draftChallenge};
         updatedChallenge.name = selectedChallenge.name;
         updatedChallenge.description = selectedChallenge.description;
-        setEditableChallenge(updatedChallenge);
+        setDraftChallenge(updatedChallenge);
         swapModals();
     }
 
@@ -48,12 +48,13 @@ function CreateChallenge(props: {challengeUrl:string}) {
 
     const queryClient = useQueryClient();
 
-    const {data} = useSuspenseQuery<ChallengeDetailDto[]>({
+    const {data: savedChallenges} = useSuspenseQuery<ChallengeDetailDto[]>({
         queryKey: [challengeUrl],
         queryFn: () => httpGet<ChallengeDetailDto[]>(challengeUrl)
     });
 
-    const savedChallenges = toChallengeList(data);
+    const validationChallenges = savedChallenges
+        .map(challenge => toLocalChallengeData(challenge));
 
     const uploadNewChallenge = useMutation({
         mutationFn: (vars: UploadVars<ChallengeDto>) => httpPost<ChallengeDto,ChallengeDetailDto>(vars.url, vars.body),
@@ -69,7 +70,7 @@ function CreateChallenge(props: {challengeUrl:string}) {
     const saveEditableChallenge = () => {
         uploadNewChallenge.mutate({
             url: challengeUrl,
-            body: toChallengeDto(editableChallenge)
+            body: toChallengeDto(draftChallenge)
         });
     };
 
@@ -89,10 +90,10 @@ function CreateChallenge(props: {challengeUrl:string}) {
                     <Button variant="secondary" className={"app-highlight w-100 mb-3"} onClick={swapModals}>
                         Select from a list
                     </Button>
-                    <ChallengeForm editableChallenge={editableChallenge}
-                                   setEditableChallenge={setEditableChallenge}
-                                   setDataValid={setDataValid}
-                                   savedChallenges={savedChallenges} />
+                    <ChallengeFormTSQ savedChallenges={validationChallenges}
+                                      draftChallenge={draftChallenge}
+                                      onValidityChanged={setDataValid}
+                                      onChallengeChanged={setDraftChallenge} />
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="d-flex flex-row">

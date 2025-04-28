@@ -113,7 +113,6 @@ function EditChallenge() {
                                       draftChallenge={draftChallenge}
                                       onValidityChanged={setDataValid}
                                       onChallengeChanged={setDraftChallenge} />
-
                 </Container>
 
                 <div className="d-flex flex-row">
