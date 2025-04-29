@@ -47,7 +47,7 @@ public class ChallengeService {
     }
 
     @Transactional(readOnly = true)
-    public ChallengeDto retrieve(UUID publicId, Long challengeId) {
+    public ChallengeDetailDto retrieve(UUID publicId, Long challengeId) {
         return challengeRepo.findDtoBy(publicId, challengeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Challenge not found"));
     }

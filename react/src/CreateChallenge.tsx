@@ -73,8 +73,6 @@ function CreateChallenge(props: {challengeUrl:string}) {
         });
     };
 
-    // TODO pass the query key instead of savedChallenges to ChallengeForm
-
     return (
         <>
             <Button variant="success" disabled={false} onClick={() => setShowCreateChallenge(true)}>

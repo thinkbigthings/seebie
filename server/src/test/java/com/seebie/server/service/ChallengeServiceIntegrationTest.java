@@ -32,7 +32,7 @@ class ChallengeServiceIntegrationTest extends IntegrationTest {
         var savedChallenge = challengeService.saveNew(publicId, originalChallenge);
 
         // test retrieve
-        ChallengeDto found = challengeService.retrieve(publicId, savedChallenge.id());
+        var found = challengeService.retrieve(publicId, savedChallenge.id());
 
         assertEquals(originalChallenge, found);
 

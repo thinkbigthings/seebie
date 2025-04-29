@@ -39,7 +39,7 @@ public class ChallengeController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @GetMapping("/user/{publicId}/challenge/{challengeId}")
-    public ChallengeDto getChallenge(@PathVariable UUID publicId, @PathVariable Long challengeId) {
+    public ChallengeDetailDto getChallenge(@PathVariable UUID publicId, @PathVariable Long challengeId) {
         return challengeService.retrieve(publicId, challengeId);
     }
 

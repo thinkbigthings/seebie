@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
-import {ChallengeData, ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
+import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
 import {useMutation, useQueryClient, useSuspenseQuery} from "@tanstack/react-query";
-import {toChallengeDetailDto, toChallengeDto, toLocalChallengeData} from "./utility/Mapper.ts";
+import {toChallengeDto, toLocalChallengeData} from "./utility/Mapper.ts";
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App.tsx";
 import WarningButton from "./component/WarningButton.tsx";
@@ -39,14 +39,12 @@ function EditChallenge() {
         .map(challenge => toLocalChallengeData(challenge));
 
 
-    const {data} = useSuspenseQuery<ChallengeDto>({
+    const {data} = useSuspenseQuery<ChallengeDetailDto>({
         queryKey: [challengeDetailUrl],
-        queryFn: () => httpGet<ChallengeDto>(challengeDetailUrl)
+        queryFn: () => httpGet<ChallengeDetailDto>(challengeDetailUrl)
     });
 
-
-    let loadedChallenge = toLocalChallengeData(toChallengeDetailDto(data, numericChallengeId));
-    const [draftChallenge, setDraftChallenge] = useState<ChallengeData>(loadedChallenge);
+    const [draftChallenge, setDraftChallenge] = useState(toLocalChallengeData(data));
 
     const [dataValid, setDataValid] = useState(true);
 
@@ -62,7 +60,7 @@ function EditChallenge() {
             });
 
             queryClient.setQueryData([challengeDetailUrl], (oldData: ChallengeDetailDto) => {
-                return toChallengeDto(draftChallenge);
+                return updatedChallenge;
             })
 
             navigate(-1);
