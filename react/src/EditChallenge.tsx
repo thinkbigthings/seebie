@@ -28,17 +28,6 @@ function EditChallenge() {
     const challengeUrl = `/api/user/${publicId}/challenge`;
     const challengeDetailUrl = `${challengeUrl}/${numericChallengeId}`;
 
-
-    const {data: savedChallenges} = useSuspenseQuery<ChallengeDetailDto[]>({
-        queryKey: [challengeUrl],
-        queryFn: () => httpGet<ChallengeDetailDto[]>(challengeUrl)
-    });
-
-    const validationChallenges = savedChallenges
-        .filter(challenge => challenge.id !== numericChallengeId)
-        .map(challenge => toLocalChallengeData(challenge));
-
-
     const {data} = useSuspenseQuery<ChallengeDetailDto>({
         queryKey: [challengeDetailUrl],
         queryFn: () => httpGet<ChallengeDetailDto>(challengeDetailUrl)
@@ -107,7 +96,7 @@ function EditChallenge() {
                 </NavHeader>
 
                 <Container id="challengeFormWrapper" className="px-0">
-                    <ChallengeFormTSQ savedChallenges={validationChallenges}
+                    <ChallengeFormTSQ challengeUrl={challengeUrl}
                                       draftChallenge={draftChallenge}
                                       onValidityChanged={setDataValid}
                                       onChallengeChanged={setDraftChallenge} />

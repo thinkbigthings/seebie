@@ -7,8 +7,10 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {ChallengeData} from "./types/challenge.types";
-import {localDateToJsDate, jsDateToLocalDate} from "./utility/Mapper.ts";
+import {ChallengeData, ChallengeDetailDto} from "./types/challenge.types";
+import {localDateToJsDate, jsDateToLocalDate, toLocalChallengeData} from "./utility/Mapper.ts";
+import {useSuspenseQuery} from "@tanstack/react-query";
+import {httpGet} from "./utility/apiClient.ts";
 
 
 const overlaps = (c1: ChallengeData, c2: ChallengeData): boolean => {
@@ -18,14 +20,24 @@ const overlaps = (c1: ChallengeData, c2: ChallengeData): boolean => {
 };
 
 function ChallengeFormTSQ(props:{
-                            savedChallenges:ChallengeData[]
+                            challengeUrl:string
                             draftChallenge:ChallengeData,
                             onValidityChanged: (valid: boolean) => void,
                             onChallengeChanged: (latestDraft: ChallengeData) => void,
                           }) {
 
 
-    const {savedChallenges, draftChallenge, onValidityChanged, onChallengeChanged} = props;
+    const {challengeUrl, draftChallenge, onValidityChanged, onChallengeChanged} = props;
+
+    // select affects the returned data value but does not affect what gets stored in the query cache
+    // filter out the current challenge (a new challenge will have id 0 and not remove anything)
+    const {data: validationChallenges} = useSuspenseQuery<ChallengeDetailDto[], Error, ChallengeData[]>({
+        queryKey: [challengeUrl],
+        queryFn: () => httpGet<ChallengeDetailDto[]>(challengeUrl),
+        select: data => data
+            .filter(challenge => challenge.id !== draftChallenge.id)
+            .map(challenge => toLocalChallengeData(challenge))
+    });
 
     // this is a warning, so we don't disable the save button
     const [datesOverlap, setDatesOverlap] = useState(false);
@@ -38,18 +50,17 @@ function ChallengeFormTSQ(props:{
     const validateChallenge = (challenge: ChallengeData) => {
 
         // warnings
-        const newDatesOverlap = savedChallenges.some(saved => overlaps(challenge, saved) );
+        const newDatesOverlap = validationChallenges.some(saved => overlaps(challenge, saved) );
         setDatesOverlap(newDatesOverlap);
 
         // errors
         const newNameSpacesValid = (challenge.name !== '' && challenge.name.trim() === challenge.name);
-        const newNameUnique = !savedChallenges.some(saved => saved.name === challenge.name);
+        const newNameUnique = !validationChallenges.some(saved => saved.name === challenge.name);
         const newDateOrderValid = challenge.start.isBefore(challenge.finish);
 
-        const previousValidity = dateOrderValid && nameSpacesValid && nameUnique;
         const newValidity = newDateOrderValid && newNameSpacesValid && newNameUnique;
 
-        setNameSpacesValid(newNameSpacesValid && newNameUnique);
+        setNameSpacesValid(newNameSpacesValid);
         setDateOrderValid(newDateOrderValid);
         setNameUnique(newNameUnique);
 

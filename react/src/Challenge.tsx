@@ -5,7 +5,7 @@ import {useParams} from "react-router-dom";
 import {Tab, Tabs} from "react-bootstrap";
 import CollapsibleChallenge from "./component/CollapsibleChallenge";
 import CreateChallenge from "./CreateChallenge";
-import {ChallengeDetailDto} from "./types/challenge.types.ts";
+import {ChallengeDetailDto, ChallengeList} from "./types/challenge.types.ts";
 import {useMutation, useQueryClient, useSuspenseQuery} from "@tanstack/react-query";
 import {toChallengeList} from "./utility/Mapper.ts";
 import {httpDelete, httpGet} from "./utility/apiClient.ts";
@@ -29,13 +29,11 @@ function Challenge() {
         deleteMutation.mutate(`${challengeUrl}/${challengeId}`);
     }
 
-
-    const {data} = useSuspenseQuery<ChallengeDetailDto[]>({
+    const {data: savedChallenges} = useSuspenseQuery<ChallengeDetailDto[], Error, ChallengeList>({
         queryKey: [challengeUrl],
-        queryFn: () => httpGet<ChallengeDetailDto[]>(challengeUrl)
+        queryFn: () => httpGet<ChallengeDetailDto[]>(challengeUrl),
+        select: toChallengeList
     });
-
-    const savedChallenges = toChallengeList(data);
 
     return (
         <Container>

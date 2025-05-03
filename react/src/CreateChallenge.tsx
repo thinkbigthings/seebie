@@ -8,10 +8,10 @@ import Alert from "react-bootstrap/Alert";
 import CollapsibleContent from "./component/CollapsibleContent";
 import {emptyEditableChallenge, NameDescription, PREDEFINED_CHALLENGES} from "./utility/Constants";
 import SuccessModal from "./component/SuccessModal";
-import {toChallengeDto, toLocalChallengeData} from "./utility/Mapper";
-import {useMutation, useQueryClient, useSuspenseQuery} from "@tanstack/react-query";
+import {toChallengeDto} from "./utility/Mapper";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
-import {httpGet, httpPost, UploadVars} from "./utility/apiClient.ts";
+import {httpPost, UploadVars} from "./utility/apiClient.ts";
 import ChallengeFormTSQ from "./ChallengeFormTSQ.tsx";
 
 function CreateChallenge(props: {challengeUrl:string}) {
@@ -47,14 +47,6 @@ function CreateChallenge(props: {challengeUrl:string}) {
 
     const queryClient = useQueryClient();
 
-    const {data: savedChallenges} = useSuspenseQuery<ChallengeDetailDto[]>({
-        queryKey: [challengeUrl],
-        queryFn: () => httpGet<ChallengeDetailDto[]>(challengeUrl)
-    });
-
-    const validationChallenges = savedChallenges
-        .map(challenge => toLocalChallengeData(challenge));
-
     const uploadNewChallenge = useMutation({
         mutationFn: (vars: UploadVars<ChallengeDto>) => httpPost<ChallengeDto,ChallengeDetailDto>(vars.url, vars.body),
         onSuccess: (newlyCreatedChallenge: ChallengeDetailDto) => {
@@ -87,7 +79,7 @@ function CreateChallenge(props: {challengeUrl:string}) {
                     <Button variant="secondary" className={"app-highlight w-100 mb-3"} onClick={swapModals}>
                         Select from a list
                     </Button>
-                    <ChallengeFormTSQ savedChallenges={validationChallenges}
+                    <ChallengeFormTSQ challengeUrl={challengeUrl}
                                       draftChallenge={draftChallenge}
                                       onValidityChanged={setDataValid}
                                       onChallengeChanged={setDraftChallenge} />

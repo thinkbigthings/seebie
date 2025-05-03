@@ -72,13 +72,6 @@ const toChallengeList = (challengeList: ChallengeDetailDto[]): ChallengeList => 
     };
 }
 
-const toChallengeDetailDto = (dto: ChallengeDto, id: number): ChallengeDetailDto => {
-    return {
-        id: id,
-        challenge: dto
-    }
-}
-
 const toLocalChallengeData = (challengeDetails: ChallengeDetailDto): ChallengeData => {
 
     const challenge: ChallengeDto = challengeDetails.challenge;
@@ -125,7 +118,7 @@ const toSleepDto = (sleep: SleepData): SleepDto => {
 }
 
 export {
-    toSelectableChallenges, toChallengeDto, toLocalChallengeData, toChallengeDetailDto,
+    toSelectableChallenges, toChallengeDto, toLocalChallengeData,
     toLocalSleepData, toSleepDto, calculateProgress, toChallengeList, jsDateToLocalDate, localDateToJsDate, jsDateToLocalDateTime,
     localDateTimeToJsDate, localDateToString
 }
