@@ -38,7 +38,7 @@ function Chat() {
         mutationFn: (variables: UploadVars<MessageDto>) => httpPost<MessageDto,MessageDto>(variables.url, variables.body),
         onSuccess: (message: MessageDto) => {
             setShowProcessingIcon(false);
-            queryClient.setQueryData([chatUrl], (oldData: MessageDto[] | undefined) => [
+            queryClient.setQueryData([chatUrl], (oldData: MessageDto[]) => [
                 ...(oldData ?? []),
                 message,
             ]);
@@ -51,7 +51,7 @@ function Chat() {
 
         const userPrompt: MessageDto = { content: prompt.trim(), type: MessageType.USER };
 
-        queryClient.setQueryData([chatUrl], (oldData: MessageDto[] | undefined) => [
+        queryClient.setQueryData([chatUrl], (oldData: MessageDto[]) => [
             ...(oldData ?? []),
             userPrompt,
         ]);
