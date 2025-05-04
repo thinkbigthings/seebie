@@ -6,7 +6,7 @@ import {toChallengeDto, toLocalChallengeData} from "./utility/Mapper.ts";
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App.tsx";
 import WarningButton from "./component/WarningButton.tsx";
-import ChallengeFormTSQ from "./ChallengeFormTSQ.tsx";
+import ChallengeForm from "./ChallengeForm.tsx";
 import Button from 'react-bootstrap/esm/Button';
 import {httpDelete, httpGet, httpPut, UploadVars} from "./utility/apiClient.ts";
 
@@ -96,10 +96,10 @@ function EditChallenge() {
                 </NavHeader>
 
                 <Container id="challengeFormWrapper" className="px-0">
-                    <ChallengeFormTSQ challengeUrl={challengeUrl}
-                                      draftChallenge={draftChallenge}
-                                      onValidityChanged={setDataValid}
-                                      onChallengeChanged={setDraftChallenge} />
+                    <ChallengeForm challengeUrl={challengeUrl}
+                                   draftChallenge={draftChallenge}
+                                   onValidityChanged={setDataValid}
+                                   onChallengeChanged={setDraftChallenge} />
                 </Container>
 
                 <div className="d-flex flex-row">

@@ -12,7 +12,7 @@ import {toChallengeDto} from "./utility/Mapper";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
 import {httpPost, UploadVars} from "./utility/apiClient.ts";
-import ChallengeFormTSQ from "./ChallengeFormTSQ.tsx";
+import ChallengeForm from "./ChallengeForm.tsx";
 
 function CreateChallenge(props: {challengeUrl:string}) {
 
@@ -79,10 +79,10 @@ function CreateChallenge(props: {challengeUrl:string}) {
                     <Button variant="secondary" className={"app-highlight w-100 mb-3"} onClick={swapModals}>
                         Select from a list
                     </Button>
-                    <ChallengeFormTSQ challengeUrl={challengeUrl}
-                                      draftChallenge={draftChallenge}
-                                      onValidityChanged={setDataValid}
-                                      onChallengeChanged={setDraftChallenge} />
+                    <ChallengeForm challengeUrl={challengeUrl}
+                                   draftChallenge={draftChallenge}
+                                   onValidityChanged={setDataValid}
+                                   onChallengeChanged={setDraftChallenge} />
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="d-flex flex-row">

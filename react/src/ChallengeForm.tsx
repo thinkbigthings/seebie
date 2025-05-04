@@ -19,7 +19,7 @@ const overlaps = (c1: ChallengeData, c2: ChallengeData): boolean => {
     return ! ( c1.finish.isBefore(c2.start) || c1.start.isAfter(c2.finish) );
 };
 
-function ChallengeFormTSQ(props:{
+function ChallengeForm(props:{
                             challengeUrl:string
                             draftChallenge:ChallengeData,
                             onValidityChanged: (valid: boolean) => void,
@@ -152,4 +152,4 @@ function ChallengeFormTSQ(props:{
     );
 }
 
-export default ChallengeFormTSQ;
+export default ChallengeForm;
