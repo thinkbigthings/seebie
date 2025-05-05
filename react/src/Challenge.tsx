@@ -20,9 +20,7 @@ function Challenge() {
 
     const deleteMutation = useMutation({
         mutationFn: (url: string) => httpDelete(url),
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: [challengeUrl]}).then(() => {});
-        }
+        onSuccess: () => queryClient.invalidateQueries({queryKey: [challengeUrl]})
     });
 
     const deleteChallenge = (challengeId: number) => {

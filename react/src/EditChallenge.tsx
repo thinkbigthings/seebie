@@ -74,8 +74,7 @@ function EditChallenge() {
             });
 
             // remove the delete challenge from the specific challenge detail cache
-            queryClient.invalidateQueries({queryKey: [response.url]})
-                .then(()=>{});
+            queryClient.invalidateQueries({queryKey: [response.url]});
 
             navigate(-1);
         },
