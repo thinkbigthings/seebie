@@ -27,19 +27,19 @@ public class ChallengeController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @PostMapping("/user/{publicId}/challenge")
-    public void createChallenge(@PathVariable UUID publicId, @Valid @RequestBody ChallengeDto challenge) {
-        challengeService.saveNew(publicId, challenge);
+    public ChallengeDetailDto createChallenge(@PathVariable UUID publicId, @Valid @RequestBody ChallengeDto challenge) {
+        return challengeService.saveNew(publicId, challenge);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @PutMapping("/user/{publicId}/challenge/{challengeId}")
-    public void updateChallenge(@Valid @RequestBody ChallengeDto challengeData, @PathVariable UUID publicId, @PathVariable Long challengeId) {
-        challengeService.update(publicId, challengeId, challengeData);
+    public ChallengeDetailDto updateChallenge(@Valid @RequestBody ChallengeDto challengeData, @PathVariable UUID publicId, @PathVariable Long challengeId) {
+        return challengeService.update(publicId, challengeId, challengeData);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
     @GetMapping("/user/{publicId}/challenge/{challengeId}")
-    public ChallengeDto getChallenge(@PathVariable UUID publicId, @PathVariable Long challengeId) {
+    public ChallengeDetailDto getChallenge(@PathVariable UUID publicId, @PathVariable Long challengeId) {
         return challengeService.retrieve(publicId, challengeId);
     }
 

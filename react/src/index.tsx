@@ -8,12 +8,6 @@ import {App} from './App';
 const rootElement: HTMLElement = document.getElementById('root') !;
 const root = ReactDOM.createRoot(rootElement);
 
-// if you use TypeScript, add non-null (!) assertion operator
-// const root = createRoot(rootElement!);
-
 root.render(
         <App />
 );
-
-// ReactDOM.render(<App />, document.getElementById('root'));
-

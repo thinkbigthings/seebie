@@ -9,8 +9,6 @@ import com.seebie.server.mapper.entitytodto.UserMapper;
 import com.seebie.server.repository.NotificationRepository;
 import com.seebie.server.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,12 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 
 @Service
 public class UserService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
     private final UserMapper toUserRecord = new UserMapper();
 
@@ -39,20 +36,14 @@ public class UserService {
 
     @Transactional
     public void updatePassword(UUID publicId, String newPassword) {
-
-        userRepo.findByPublicId(publicId)
-                .ifPresentOrElse(
-                    user -> user.setPassword(passwordEncoder.encode(newPassword)),
-                    () -> { throw new EntityNotFoundException("No user found: " + publicId); }
-                );
+        var user = userRepo.findByPublicId(publicId).orElseThrow(notFound(publicId));
+        user.setPassword(passwordEncoder.encode(newPassword));
     }
 
     @Transactional
     public com.seebie.server.dto.User updateUser(UUID publicId, PersonalInfo userData) {
 
-        var user = userRepo.findByPublicId(publicId)
-                .orElseThrow(() -> new EntityNotFoundException("No user found: " + publicId) );
-
+        var user = userRepo.findByPublicId(publicId).orElseThrow(notFound(publicId));
         user.withUserData(userData.displayName(), userData.notificationsEnabled());
 
         return toUserRecord.apply(user);
@@ -80,10 +71,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public com.seebie.server.dto.User getUser(UUID publicId) {
-
-        return userRepo.findByPublicId(publicId)
-                .map(toUserRecord)
-                .orElseThrow(() -> new EntityNotFoundException("no user found for " + publicId));
+        return userRepo.findByPublicId(publicId).map(toUserRecord).orElseThrow(notFound(publicId));
     }
 
     @Transactional(readOnly = true)
@@ -92,5 +80,9 @@ public class UserService {
         return userRepo.findByEmail(email)
                 .map(toUserRecord)
                 .orElseThrow(() -> new EntityNotFoundException("no user found for " + email));
+    }
+
+    public static Supplier<EntityNotFoundException> notFound(UUID publicId) {
+        return () -> new EntityNotFoundException("No user found: " + publicId);
     }
 }

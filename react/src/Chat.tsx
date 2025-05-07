@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App";
 import {useParams} from "react-router-dom";
-import {httpDelete, httpGet, httpPost, PostVariables} from "./utility/apiClient.ts";
+import {httpDelete, httpGet, httpPost, UploadVars} from "./utility/apiClient.ts";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {MessageDto, MessageType} from "./types/message.types.ts";
@@ -16,9 +16,6 @@ import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 function Chat() {
 
     const {publicId} = useParams();
-    if (publicId === undefined) {
-        throw new Error("Public ID is required in the url");
-    }
 
     const chatUrl = `/api/user/${publicId}/chat`
 
@@ -35,10 +32,10 @@ function Chat() {
     });
 
     const uploadMessageMutation = useMutation({
-        mutationFn: (variables: PostVariables) => httpPost<MessageDto>(variables.url, variables.body),
+        mutationFn: (variables: UploadVars<MessageDto>) => httpPost<MessageDto,MessageDto>(variables.url, variables.body),
         onSuccess: (message: MessageDto) => {
             setShowProcessingIcon(false);
-            queryClient.setQueryData([chatUrl], (oldData: MessageDto[] | undefined) => [
+            queryClient.setQueryData([chatUrl], (oldData: MessageDto[]) => [
                 ...(oldData ?? []),
                 message,
             ]);
@@ -51,7 +48,7 @@ function Chat() {
 
         const userPrompt: MessageDto = { content: prompt.trim(), type: MessageType.USER };
 
-        queryClient.setQueryData([chatUrl], (oldData: MessageDto[] | undefined) => [
+        queryClient.setQueryData([chatUrl], (oldData: MessageDto[]) => [
             ...(oldData ?? []),
             userPrompt,
         ]);
@@ -87,8 +84,9 @@ function Chat() {
             <NavHeader title="Chat">
                 <InfoModalButton
                     className={"me-1"}
-                    titleText={"Chat History"}
-                    modalText={"Chat history is only available for the last 7 days"} />
+                    titleText={"Chat About Sleep"}
+                    modalText={"Talk with an AI counsellor about how to improve your sleep. " +
+                        "Chat history is only available for the last 7 days"} />
                 <WarningButton buttonText="Delete" onConfirm={deleteChat}>
                     This deletes the entire conversation and cannot be undone. Proceed?
                 </WarningButton>

@@ -3,54 +3,42 @@ import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import {useParams} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
-import useApiPost from "./hooks/useApiPost";
 import CollapsibleContent from "./component/CollapsibleContent";
 import {emptyEditableChallenge, NameDescription, PREDEFINED_CHALLENGES} from "./utility/Constants";
 import SuccessModal from "./component/SuccessModal";
 import {toChallengeDto} from "./utility/Mapper";
-import ChallengeForm from "./ChallengeForm";
-import {ChallengeData} from "./types/challenge.types";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
+import {httpPost, UploadVars} from "./utility/apiClient.ts";
+import ChallengeForm from "./ChallengeForm.tsx";
 
-function CreateChallenge(props: {onCreated:()=>void, savedChallenges:ChallengeData[]}) {
+interface CreateChallengeProps { challengeUrl: string }
 
-    const {onCreated, savedChallenges} = props;
+function CreateChallenge(props:CreateChallengeProps) {
 
-    const {publicId} = useParams();
-
-    const challengeEndpoint = `/api/user/${publicId}/challenge`;
+    const {challengeUrl} = props;
 
     const [showCreateSuccess, setShowCreateSuccess] = useState(false);
     const [showCreateChallenge, setShowCreateChallenge] = useState(false);
     const [showPredefinedChallenges, setShowPredefinedChallenges] = useState(false);
-    const [editableChallenge, setEditableChallenge] = useState(emptyEditableChallenge());
+    const [draftChallenge, setDraftChallenge] = useState(emptyEditableChallenge());
 
     // validation of the overall form, so we know whether to enable the save button
-    // this is set as invalid to start so the name can be blank before showing validation messages
-    const [dataValid, setDataValid] = useState(false);
-
-    const post = useApiPost();
-
-    const saveData = () => {
-        post(challengeEndpoint, toChallengeDto(editableChallenge))
-        .then(clearChallengeEdit)
-        .then(() => setShowCreateSuccess(true))
-        .then(onCreated);
-    }
+    const [dataValid, setDataValid] = useState(true);
 
     const clearChallengeEdit = () => {
         setShowCreateChallenge(false);
-        setEditableChallenge(emptyEditableChallenge());
+        setDraftChallenge(emptyEditableChallenge());
         setDataValid(true);
     }
 
     const onSelectChallenge = (selectedChallenge: NameDescription) => {
-        let updatedChallenge = {...editableChallenge};
+        let updatedChallenge = {...draftChallenge};
         updatedChallenge.name = selectedChallenge.name;
         updatedChallenge.description = selectedChallenge.description;
-        setEditableChallenge(updatedChallenge);
+        setDraftChallenge(updatedChallenge);
         swapModals();
     }
 
@@ -58,6 +46,26 @@ function CreateChallenge(props: {onCreated:()=>void, savedChallenges:ChallengeDa
         setShowCreateChallenge( ! showCreateChallenge);
         setShowPredefinedChallenges( ! showPredefinedChallenges);
     }
+
+    const queryClient = useQueryClient();
+
+    const uploadNewChallenge = useMutation({
+        mutationFn: (vars: UploadVars<ChallengeDto>) => httpPost<ChallengeDto,ChallengeDetailDto>(vars.url, vars.body),
+        onSuccess: (newlyCreatedChallenge: ChallengeDetailDto) => {
+            setShowCreateSuccess(true);
+            clearChallengeEdit();
+            queryClient.setQueryData([challengeUrl], (oldData: ChallengeDetailDto[]) => {
+                return [ ...(oldData ?? []), newlyCreatedChallenge ];
+            });
+        }
+    });
+
+    const saveEditableChallenge = () => {
+        uploadNewChallenge.mutate({
+            url: challengeUrl,
+            body: toChallengeDto(draftChallenge)
+        });
+    };
 
     return (
         <>
@@ -73,14 +81,14 @@ function CreateChallenge(props: {onCreated:()=>void, savedChallenges:ChallengeDa
                     <Button variant="secondary" className={"app-highlight w-100 mb-3"} onClick={swapModals}>
                         Select from a list
                     </Button>
-                    <ChallengeForm editableChallenge={editableChallenge}
-                                   setEditableChallenge={setEditableChallenge}
-                                   setDataValid={setDataValid}
-                                   savedChallenges={savedChallenges} />
+                    <ChallengeForm challengeUrl={challengeUrl}
+                                   draftChallenge={draftChallenge}
+                                   onValidityChanged={setDataValid}
+                                   onChallengeChanged={setDraftChallenge} />
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="d-flex flex-row">
-                        <Button className="me-3" variant="success" onClick={saveData}
+                        <Button className="me-3" variant="success" onClick={saveEditableChallenge}
                                 disabled={!dataValid}>Save</Button>
                         <Button className="" variant="secondary" onClick={clearChallengeEdit}>Cancel</Button>
                     </div>

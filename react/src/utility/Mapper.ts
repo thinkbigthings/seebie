@@ -3,6 +3,13 @@ import {ChallengeDto, ChallengeDetailDto, ChallengeList, ChallengeData} from "..
 
 import {ChronoUnit, convert, DateTimeFormatter, LocalDate, LocalDateTime, nativeJs} from "@js-joda/core"
 
+function ensure<T>(argument: T | undefined | null, message: string = 'This value was promised to be there.'): T {
+    if (argument === undefined || argument === null) {
+        throw new TypeError(message);
+    }
+    return argument as T;
+}
+
 const localDateTimeToString = (date: LocalDateTime): string => {
     return date.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 }
@@ -27,7 +34,7 @@ const localDateTimeToJsDate = (date: LocalDateTime): Date => {
     return convert(date).toDate();
 }
 
-const toSelectableChallenges = (challengeList: ChallengeList<ChallengeData>, defaultChallenge: ChallengeData) => {
+const toSelectableChallenges = (challengeList: ChallengeList, defaultChallenge: ChallengeData) => {
 
     let selectableChallenges = [...challengeList.current, ...challengeList.completed];
 
@@ -58,12 +65,7 @@ function calculateProgress(challenge: ChallengeData): number {
     return Math.round((elapsedDuration / totalDuration) * 100);
 }
 
-const toLocalChallengeDataList = (challengeList: ChallengeDetailDto[]): ChallengeData[] => {
-    return challengeList.map(toLocalChallengeData);
-}
-
-
-const toChallengeList = (challengeList: ChallengeDetailDto[]): ChallengeList<ChallengeData> => {
+const toChallengeList = (challengeList: ChallengeDetailDto[]): ChallengeList => {
 
     const challengeData = challengeList.map(toLocalChallengeData);
     const now = LocalDate.now();
@@ -75,13 +77,6 @@ const toChallengeList = (challengeList: ChallengeDetailDto[]): ChallengeList<Cha
         upcoming: challengeData.filter(c => c.start.compareTo(now) > 0),
         completed: challengeData.filter(c => now.compareTo(c.finish) > 0)
     };
-}
-
-const toChallengeDetailDto = (dto: ChallengeDto, id: number): ChallengeDetailDto => {
-    return {
-        id: id,
-        challenge: dto
-    }
 }
 
 const toLocalChallengeData = (challengeDetails: ChallengeDetailDto): ChallengeData => {
@@ -130,7 +125,7 @@ const toSleepDto = (sleep: SleepData): SleepDto => {
 }
 
 export {
-    toSelectableChallenges, toChallengeDto, toLocalChallengeData, toLocalChallengeDataList, toChallengeDetailDto,
+    ensure, toSelectableChallenges, toChallengeDto, toLocalChallengeData,
     toLocalSleepData, toSleepDto, calculateProgress, toChallengeList, jsDateToLocalDate, localDateToJsDate, jsDateToLocalDateTime,
     localDateTimeToJsDate, localDateToString
 }

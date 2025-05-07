@@ -91,7 +91,7 @@ function Tools() {
         mutationFn: (variables: UploadFileVariables) => uploadFileFunction<RecordCount>(variables),
         onSuccess: (data: RecordCount) => {
             onUploadSuccess(data);
-            queryClient.setQueryData([sleepCountUrl], (oldData: RecordCount | undefined) => ({
+            queryClient.setQueryData([sleepCountUrl], (oldData: RecordCount) => ({
                 numRecords: data.numRecords + (oldData?.numRecords ?? 0),
             }));
         },

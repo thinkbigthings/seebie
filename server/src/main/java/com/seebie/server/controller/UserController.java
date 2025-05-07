@@ -52,7 +52,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || #publicId == authentication.principal.publicId")
-    @RequestMapping("/user/{publicId}/personalInfo")
+    @PutMapping("/user/{publicId}/personalInfo")
     public User updateUser(@Valid @RequestBody PersonalInfo userData, @PathVariable UUID publicId) {
 
         return userService.updateUser(publicId, userData);

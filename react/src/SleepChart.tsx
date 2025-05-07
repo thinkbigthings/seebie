@@ -69,10 +69,6 @@ function SleepChart(props:{createdCount:number}) {
 
     const {publicId} = useParams();
 
-    if (publicId === undefined) {
-        throw new Error("Public ID is required in the url");
-    }
-
     const {createdCount} = props;
 
     let [range, setRange] = useState(createRange(30));

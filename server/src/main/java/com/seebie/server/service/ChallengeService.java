@@ -3,6 +3,7 @@ package com.seebie.server.service;
 import com.seebie.server.dto.ChallengeDto;
 import com.seebie.server.dto.ChallengeDetailDto;
 import com.seebie.server.mapper.dtotoentity.UnsavedChallengeListMapper;
+import com.seebie.server.mapper.entitytodto.ChallengeMapper;
 import com.seebie.server.repository.ChallengeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ public class ChallengeService {
 
     private ChallengeRepository challengeRepo;
     private UnsavedChallengeListMapper toEntity;
+    private ChallengeMapper toDto = new ChallengeMapper();
 
     public ChallengeService(ChallengeRepository challengeRepo, UnsavedChallengeListMapper toEntity) {
         this.challengeRepo = challengeRepo;
@@ -30,20 +32,22 @@ public class ChallengeService {
         // The computed value for timeAsleep isn't calculated until the transaction is closed
         // so the entity does not have the correct value here.
         var entity = challengeRepo.save(toEntity.toUnsavedEntity(publicId, challenge));
-        return new ChallengeDetailDto(entity.getId(), entity.getName(), entity.getDescription(), entity.getStart(), entity.getFinish());
+        return toDto.apply(entity);
     }
 
     @Transactional
-    public void update(UUID publicId, Long challengeId, ChallengeDto dto) {
+    public ChallengeDetailDto update(UUID publicId, Long challengeId, ChallengeDto dto) {
 
         var entity = challengeRepo.findByUser(publicId, challengeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Challenge not found"));
 
         entity.setChallengeData(dto.name(), dto.description(), dto.start(), dto.finish());
+
+        return toDto.apply(entity);
     }
 
     @Transactional(readOnly = true)
-    public ChallengeDto retrieve(UUID publicId, Long challengeId) {
+    public ChallengeDetailDto retrieve(UUID publicId, Long challengeId) {
         return challengeRepo.findDtoBy(publicId, challengeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Challenge not found"));
     }

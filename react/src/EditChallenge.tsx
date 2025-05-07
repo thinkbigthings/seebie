@@ -1,98 +1,106 @@
-import React, {useEffect, useState} from 'react';
-
-import Container from "react-bootstrap/Container";
-import useApiPut from "./hooks/useApiPut";
-import {GET} from "./utility/BasicHeaders";
-import Button from "react-bootstrap/Button";
-import useApiDelete from "./hooks/useApiDelete";
-import {NavHeader} from "./App";
+import React, {useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
-import WarningButton from "./component/WarningButton";
-import ChallengeForm from "./ChallengeForm";
-import {emptyChallengeDataArray, emptyEditableChallenge} from "./utility/Constants";
-import { toLocalChallengeData, toChallengeDto, toLocalChallengeDataList, toChallengeDetailDto} from "./utility/Mapper";
-import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types";
-
-const removeChallengesWithId = (challengeList: ChallengeDetailDto[], challengeId: number) => {
-    return challengeList.filter(details => details.id !== challengeId);
-}
-
+import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
+import {useMutation, useQueryClient, useSuspenseQuery} from "@tanstack/react-query";
+import {ensure, toChallengeDto, toLocalChallengeData} from "./utility/Mapper.ts";
+import Container from "react-bootstrap/Container";
+import {NavHeader} from "./App.tsx";
+import WarningButton from "./component/WarningButton.tsx";
+import ChallengeForm from "./ChallengeForm.tsx";
+import Button from 'react-bootstrap/esm/Button';
+import {httpDelete, httpGet, httpPut, UploadVars} from "./utility/apiClient.ts";
 
 function EditChallenge() {
 
+    let {publicId, challengeId} = useParams();
+
+    const numericChallengeId = parseInt(ensure(challengeId), 10);
+
     const navigate = useNavigate();
 
-    const {publicId, challengeId} = useParams();
+    const challengeUrl = `/api/user/${publicId}/challenge`;
+    const challengeDetailUrl = `${challengeUrl}/${numericChallengeId}`;
 
-    if (challengeId === undefined) {
-        throw new Error("Challenge ID is required.");
-    }
+    const {data} = useSuspenseQuery<ChallengeDetailDto>({
+        queryKey: [challengeDetailUrl],
+        queryFn: () => httpGet<ChallengeDetailDto>(challengeDetailUrl)
+    });
 
-    const numericChallengeId = parseInt(challengeId);
+    const [draftChallenge, setDraftChallenge] = useState(toLocalChallengeData(data));
 
-    const allChallengesEndpoint = `/api/user/${publicId}/challenge`;
-    const challengeEndpoint = `/api/user/${publicId}/challenge/${challengeId}`;
-
-    const [loaded, setLoaded] = useState(false);
-    const [editableChallenge, setEditableChallenge] = useState(emptyEditableChallenge());
     const [dataValid, setDataValid] = useState(true);
-    const [savedChallenges, setSavedChallenges] = useState(emptyChallengeDataArray);
 
-    const put = useApiPut();
-    const callDelete = useApiDelete();
+    const queryClient = useQueryClient();
 
+    const updateChallenge = useMutation({
+        mutationFn: (vars: UploadVars<ChallengeDto>) => httpPut<ChallengeDto,ChallengeDetailDto>(vars.url, vars.body),
+        onSuccess: (updatedChallenge: ChallengeDetailDto) => {
 
-    useEffect(() => {
-        fetch(challengeEndpoint, GET)
-            .then(response => response.json() as Promise<ChallengeDto>)
-            .then(challenge => toChallengeDetailDto(challenge, numericChallengeId))
-            .then(toLocalChallengeData)
-            .then(setEditableChallenge)
-            .then(() => setLoaded(true))
-    }, [setEditableChallenge, challengeEndpoint]);
+            queryClient.setQueryData([challengeUrl], (oldData: ChallengeDetailDto[]) => {
+                const updatedList = oldData.filter(challenge => challenge.id !== updatedChallenge.id);
+                return [ ...(updatedList ?? []), updatedChallenge ]
+            });
 
-    // load all challenges to check for validation
-    useEffect(() => {
-        fetch(allChallengesEndpoint, GET)
-            .then((response) => response.json() as Promise<ChallengeDetailDto[]>)
-            .then(challengeList => removeChallengesWithId(challengeList, numericChallengeId))
-            .then(toLocalChallengeDataList)
-            .then(setSavedChallenges)
-            .catch(error => console.log(error));
-    }, [allChallengesEndpoint]);
+            queryClient.setQueryData([challengeDetailUrl], (oldData: ChallengeDetailDto) => {
+                return updatedChallenge;
+            })
+
+            navigate(-1);
+        },
+    });
 
     const onSave = () => {
-        put(challengeEndpoint, toChallengeDto(editableChallenge)).then(() => navigate(-1));
+        updateChallenge.mutate({
+            url: challengeDetailUrl,
+            body: toChallengeDto(draftChallenge)
+        });
     }
 
+
+    const deleteChallenge = useMutation({
+        mutationFn: (url: string) => httpDelete(url),
+        onSuccess: (response) => {
+
+            // remove the deleted challenge from the list of challenges
+            queryClient.setQueryData([challengeUrl], (oldData: ChallengeDetailDto[]) => {
+                return oldData.filter(challenge => challenge.id !== numericChallengeId);
+            });
+
+            // remove the delete challenge from the specific challenge detail cache
+            queryClient.invalidateQueries({queryKey: [response.url]});
+
+            navigate(-1);
+        },
+    });
+
     const deleteById = () => {
-        callDelete(challengeEndpoint).then(() => navigate(-1));
+        deleteChallenge.mutate(challengeDetailUrl);
     }
 
     return (
-        <Container>
+        <>
+            <Container>
 
-            <NavHeader title="Challenge">
-                <WarningButton buttonText="Delete" onConfirm={deleteById}>
-                    This deletes the current sleep challenge and cannot be undone. Proceed?
-                </WarningButton>
-            </NavHeader>
+                <NavHeader title="Challenge">
+                    <WarningButton buttonText="Delete" onConfirm={deleteById}>
+                        This deletes the current sleep challenge and cannot be undone. Proceed?
+                    </WarningButton>
+                </NavHeader>
 
-            <Container id="challengeFormWrapper" className="px-0">
-                {loaded
-                    ? <ChallengeForm editableChallenge={editableChallenge}
-                                    setEditableChallenge={setEditableChallenge}
-                                    setDataValid={setDataValid}
-                                    savedChallenges={savedChallenges} />
-                    : <div /> }
+                <Container id="challengeFormWrapper" className="px-0">
+                    <ChallengeForm challengeUrl={challengeUrl}
+                                   draftChallenge={draftChallenge}
+                                   onValidityChanged={setDataValid}
+                                   onChallengeChanged={setDraftChallenge} />
+                </Container>
+
+                <div className="d-flex flex-row">
+                    <Button className="me-3" variant="primary" onClick={onSave} disabled={!dataValid} >Save</Button>
+                    <Button variant="secondary" onClick={() => navigate(-1)}>Cancel</Button>
+                </div>
+
             </Container>
-
-            <div className="d-flex flex-row">
-                <Button className="me-3" variant="primary" onClick={onSave} disabled={ ! dataValid} >Save</Button>
-                <Button  variant="secondary" onClick={() => navigate(-1)}>Cancel</Button>
-            </div>
-
-        </Container>
+        </>
     );
 }
 

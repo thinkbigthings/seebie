@@ -7,8 +7,10 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {ChallengeData} from "./types/challenge.types";
-import {localDateToJsDate, jsDateToLocalDate} from "./utility/Mapper.ts";
+import {ChallengeData, ChallengeDetailDto} from "./types/challenge.types";
+import {localDateToJsDate, jsDateToLocalDate, toLocalChallengeData} from "./utility/Mapper.ts";
+import {useSuspenseQuery} from "@tanstack/react-query";
+import {httpGet} from "./utility/apiClient.ts";
 
 
 const overlaps = (c1: ChallengeData, c2: ChallengeData): boolean => {
@@ -17,58 +19,67 @@ const overlaps = (c1: ChallengeData, c2: ChallengeData): boolean => {
     return ! ( c1.finish.isBefore(c2.start) || c1.start.isAfter(c2.finish) );
 };
 
-function ChallengeForm(props:{
-                            setEditableChallenge:React.Dispatch<React.SetStateAction<ChallengeData>>
-                            editableChallenge:ChallengeData,
-                            setDataValid:React.Dispatch<React.SetStateAction<boolean>>,
-                            savedChallenges:ChallengeData[]}
-                        ) {
+interface ChallengeFormProps {
+    challengeUrl:string,
+    draftChallenge:ChallengeData,
+    onValidityChanged: (valid: boolean) => void,
+    onChallengeChanged: (latestDraft: ChallengeData) => void,
+}
 
-    const {setEditableChallenge, editableChallenge, setDataValid, savedChallenges} = props;
+function ChallengeForm(props:ChallengeFormProps) {
 
-    // validation of individual fields for validation feedback to the user
-    const [dateOrderValid, setDateOrderValid] = useState(true);
-    const [nameValid, setNameValid] = useState(true);
-    const [nameUnique, setNameUnique] = useState(true);
+    const {challengeUrl, draftChallenge, onValidityChanged, onChallengeChanged} = props;
+
+    // select affects the returned data value but does not affect what gets stored in the query cache
+    // filter out the current challenge (a new challenge will have id 0 and not remove anything)
+    const {data: validationChallenges} = useSuspenseQuery<ChallengeDetailDto[], Error, ChallengeData[]>({
+        queryKey: [challengeUrl],
+        queryFn: () => httpGet<ChallengeDetailDto[]>(challengeUrl),
+        select: data => data
+            .filter(challenge => challenge.id !== draftChallenge.id)
+            .map(challenge => toLocalChallengeData(challenge))
+    });
 
     // this is a warning, so we don't disable the save button
     const [datesOverlap, setDatesOverlap] = useState(false);
 
-    // Add a state variable to track user interaction with the name field
-    const [nameTouched, setNameTouched] = useState(false);
-
+    // validation of individual fields for validation feedback to the user
+    const [dateOrderValid, setDateOrderValid] = useState(true);
+    const [nameSpacesValid, setNameSpacesValid] = useState(true);
+    const [nameUnique, setNameUnique] = useState(true);
 
     const validateChallenge = (challenge: ChallengeData) => {
 
-        // name validation to consider if the user has interacted with the field
-        const nameValid = nameTouched
-            ? (challenge.name !== '' && challenge.name.trim() === challenge.name)
-            : true;
+        // warnings
+        const newDatesOverlap = validationChallenges.some(saved => overlaps(challenge, saved) );
+        setDatesOverlap(newDatesOverlap);
 
+        // errors
+        const newNameSpacesValid = (challenge.name !== '' && challenge.name.trim() === challenge.name);
+        const newNameUnique = !validationChallenges.some(saved => saved.name === challenge.name);
+        const newDateOrderValid = challenge.start.isBefore(challenge.finish);
 
-        const dateOrderValid = challenge.start.isBefore(challenge.finish);
-        const nameUnique = !savedChallenges.some(saved => saved.name === challenge.name);
-        const datesOverlap = savedChallenges.some(saved => overlaps(challenge, saved) );
+        const newValidity = newDateOrderValid && newNameSpacesValid && newNameUnique;
 
-        setDateOrderValid(dateOrderValid);
-        setNameValid(nameValid);
-        setNameUnique(nameUnique);
-        setDatesOverlap(datesOverlap);
-        setDataValid(dateOrderValid && nameValid && nameUnique);
+        setNameSpacesValid(newNameSpacesValid);
+        setDateOrderValid(newDateOrderValid);
+        setNameUnique(newNameUnique);
+
+        onValidityChanged(newValidity);
     };
 
-    // useEffect to run validation on component mount and whenever editableChallenge changes
+    // useEffect to run validation on component mount and whenever draft changes
     // This is so the validation is run when the form is populated from outside
     // (e.g. when the user selects a predefined challenge)
     // and not just when the user edits the form
     useEffect(() => {
-        validateChallenge(editableChallenge);
-    }, [editableChallenge]);
+        validateChallenge(draftChallenge);
+    }, [draftChallenge]);
 
     const updateChallenge = (updateValues: Partial<ChallengeData> ) => {
-        const updatedChallenge:ChallengeData = {...editableChallenge, ...updateValues};
-        setEditableChallenge(updatedChallenge);
+        const updatedChallenge:ChallengeData = {...draftChallenge, ...updateValues};
         validateChallenge(updatedChallenge);
+        onChallengeChanged(updatedChallenge);
     }
 
 
@@ -86,22 +97,22 @@ function ChallengeForm(props:{
                        className="form-control"
                        id="challengeName"
                        placeholder=""
-                       value={editableChallenge.name}
-                       onChange={e => {
-                           setNameTouched(true);
-                           updateChallenge({name: e.target.value})}
-                       }
-                       isInvalid={!nameValid || !nameUnique}
-                   />
+                       value={draftChallenge.name}
+                       onChange={e => updateChallenge({name: e.target.value})}
+                       isInvalid={!nameSpacesValid || !nameUnique} />
                </Container>
                <Form.Control.Feedback type="invalid"
-                                      className={"mh-24px d-block " + ((!nameValid) ? 'visible' : 'invisible')}>
+                                      className={"mh-24px d-block " + (!nameSpacesValid ? 'visible' : 'invisible')}>
                    Can't be empty or have space at the ends
                </Form.Control.Feedback>
                <Container className="ps-0 mb-3 pe-0">
-                   <textarea rows={6} className="form-control" id="description" placeholder="Description"
-                             value={editableChallenge.description}
-                             onChange={e => updateChallenge({description: e.target.value})}/>
+                   <Form.Control
+                       as="textarea"
+                       rows={6}
+                       id="description"
+                       placeholder="Description"
+                       value={draftChallenge.description}
+                       onChange={e => updateChallenge({description: e.target.value})} />
                </Container>
 
                <Container id="dateRangeId" className="p-0">
@@ -113,7 +124,7 @@ function ChallengeForm(props:{
                            <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
                                        id="startDate" dateFormat="MMMM d, yyyy"
                                        onChange={date => {if(date) updateChallenge({start: jsDateToLocalDate(date)})}}
-                                       selected={localDateToJsDate(editableChallenge.start)}/>
+                                       selected={localDateToJsDate(draftChallenge.start)}/>
                        </Col>
                    </Row>
                    <Row className={"pb-2"}>
@@ -122,9 +133,9 @@ function ChallengeForm(props:{
                        </Col>
                        <Col md={6} className={"col-8 "}>
                            <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
-                                       id="startDate" dateFormat="MMMM d, yyyy"
+                                       id="endDate" dateFormat="MMMM d, yyyy"
                                        onChange={date => {if(date) updateChallenge({finish: jsDateToLocalDate(date)})}}
-                                       selected={localDateToJsDate(editableChallenge.finish)}/>
+                                       selected={localDateToJsDate(draftChallenge.finish)}/>
                        </Col>
                    </Row>
                    <Row>
@@ -137,7 +148,7 @@ function ChallengeForm(props:{
            </Form>
            <label className={"text-warning " + ((datesOverlap) ? 'visible' : 'invisible')}>
                <FontAwesomeIcon icon={faExclamationTriangle} className={"pe-1"}/>
-               This date range overlaps another challenge which is not recommended
+               This date range overlaps another challenge
            </label>
        </>
     );

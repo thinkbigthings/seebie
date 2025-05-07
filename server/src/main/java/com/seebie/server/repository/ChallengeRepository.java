@@ -22,12 +22,12 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     List<ChallengeDetailDto> findAllByUser(UUID publicId);
 
     @Query("""
-            SELECT new com.seebie.server.dto.ChallengeDto(e.name, e.description, e.start, e.finish)
+            SELECT new com.seebie.server.dto.ChallengeDetailDto(e.id, e.name, e.description, e.start, e.finish)
             FROM Challenge e
             WHERE e.user.publicId=:publicId
             AND e.id=:challengeId
             """)
-    Optional<ChallengeDto> findDtoBy(UUID publicId, Long challengeId);
+    Optional<ChallengeDetailDto> findDtoBy(UUID publicId, Long challengeId);
 
     @Query("""
             SELECT e

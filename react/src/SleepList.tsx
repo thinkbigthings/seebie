@@ -21,10 +21,6 @@ function SleepList(props:{createdCount: number}) {
 
     const {publicId} = useParams();
 
-    if (publicId === undefined) {
-        throw new Error("Public ID is required in the url");
-    }
-
     const {createdCount} = props;
 
     const sleepUrl = `/api/user/${publicId}/sleep`

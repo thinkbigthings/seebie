@@ -46,16 +46,14 @@ export const emptyEditableChallenge = ():ChallengeData => {
 
     return {
         id: 0,
-        name: "",
+        name: "Create your sleep hygiene challenge",
         description: "",
         start: startLocalDate,
         finish: finishLocalDate,
     };
 }
 
-export const emptyChallengeDataArray: ChallengeData[] = [];
-
-export const emptyChallengeList: ChallengeList<ChallengeData> = {
+export const emptyChallengeList: ChallengeList = {
     current: [],
     upcoming: [],
     completed: []

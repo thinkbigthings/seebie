@@ -23,10 +23,10 @@ interface ChallengeDetailDto {
     challenge: ChallengeDto
 }
 
-interface ChallengeList<T> {
-    current: T[];
-    upcoming: T[];
-    completed: T[];
+interface ChallengeList {
+    current: ChallengeData[];
+    upcoming: ChallengeData[];
+    completed: ChallengeData[];
 }
 
 export type { ChallengeData, ChallengeDto, ChallengeDetailDto, ChallengeList }
