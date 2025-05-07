@@ -40,28 +40,28 @@ function Challenge() {
                 <CreateChallenge challengeUrl={challengeUrl} />
             </NavHeader>
 
-            <Container className="container mt-3 px-0">
+            <Container className="mt-3 px-0">
                 <Tabs defaultActiveKey="current" id="challenge-tabs">
                     <Tab eventKey="current" title="Current">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
-                            {savedChallenges.current.map((challenge, index) =>
-                                <CollapsibleChallenge key={index} challenge={challenge}
+                            {savedChallenges.current.map(challenge =>
+                                <CollapsibleChallenge key={challenge.id} challenge={challenge}
                                                       onDelete={() => deleteChallenge(challenge.id)} />
                             )}
                         </Container>
                     </Tab>
                     <Tab eventKey="completed" title="Completed">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
-                            {savedChallenges.completed.map((challenge, index) =>
-                                <CollapsibleChallenge key={index} challenge={challenge}
+                            {savedChallenges.completed.map(challenge =>
+                                <CollapsibleChallenge key={challenge.id} challenge={challenge}
                                                       onDelete={() => deleteChallenge(challenge.id)} />
                             )}
                         </Container>
                     </Tab>
                     <Tab eventKey="upcoming" title="Future">
                         <Container className="px-0 overflow-y-scroll h-70vh ">
-                            {savedChallenges.upcoming.map((challenge, index) =>
-                                <CollapsibleChallenge key={index} challenge={challenge}
+                            {savedChallenges.upcoming.map(challenge =>
+                                <CollapsibleChallenge key={challenge.id} challenge={challenge}
                                                       onDelete={() => deleteChallenge(challenge.id)} />
                             )}
                         </Container>

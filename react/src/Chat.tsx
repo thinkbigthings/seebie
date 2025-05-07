@@ -16,9 +16,6 @@ import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 function Chat() {
 
     const {publicId} = useParams();
-    if (publicId === undefined) {
-        throw new Error("Public ID is required in the url");
-    }
 
     const chatUrl = `/api/user/${publicId}/chat`
 

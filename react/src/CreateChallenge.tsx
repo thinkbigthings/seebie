@@ -14,7 +14,9 @@ import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
 import {httpPost, UploadVars} from "./utility/apiClient.ts";
 import ChallengeForm from "./ChallengeForm.tsx";
 
-function CreateChallenge(props: {challengeUrl:string}) {
+interface CreateChallengeProps { challengeUrl: string }
+
+function CreateChallenge(props:CreateChallengeProps) {
 
     const {challengeUrl} = props;
 

@@ -19,13 +19,14 @@ const overlaps = (c1: ChallengeData, c2: ChallengeData): boolean => {
     return ! ( c1.finish.isBefore(c2.start) || c1.start.isAfter(c2.finish) );
 };
 
-function ChallengeForm(props:{
-                            challengeUrl:string
-                            draftChallenge:ChallengeData,
-                            onValidityChanged: (valid: boolean) => void,
-                            onChallengeChanged: (latestDraft: ChallengeData) => void,
-                          }) {
+interface ChallengeFormProps {
+    challengeUrl:string,
+    draftChallenge:ChallengeData,
+    onValidityChanged: (valid: boolean) => void,
+    onChallengeChanged: (latestDraft: ChallengeData) => void,
+}
 
+function ChallengeForm(props:ChallengeFormProps) {
 
     const {challengeUrl, draftChallenge, onValidityChanged, onChallengeChanged} = props;
 
@@ -97,20 +98,21 @@ function ChallengeForm(props:{
                        id="challengeName"
                        placeholder=""
                        value={draftChallenge.name}
-                       onChange={e => {
-                           updateChallenge({name: e.target.value})}
-                       }
-                       isInvalid={!nameSpacesValid || !nameUnique}
-                   />
+                       onChange={e => updateChallenge({name: e.target.value})}
+                       isInvalid={!nameSpacesValid || !nameUnique} />
                </Container>
                <Form.Control.Feedback type="invalid"
                                       className={"mh-24px d-block " + (!nameSpacesValid ? 'visible' : 'invisible')}>
                    Can't be empty or have space at the ends
                </Form.Control.Feedback>
                <Container className="ps-0 mb-3 pe-0">
-                   <textarea rows={6} className="form-control" id="description" placeholder="Description"
-                             value={draftChallenge.description}
-                             onChange={e => updateChallenge({description: e.target.value})}/>
+                   <Form.Control
+                       as="textarea"
+                       rows={6}
+                       id="description"
+                       placeholder="Description"
+                       value={draftChallenge.description}
+                       onChange={e => updateChallenge({description: e.target.value})} />
                </Container>
 
                <Container id="dateRangeId" className="p-0">
@@ -131,7 +133,7 @@ function ChallengeForm(props:{
                        </Col>
                        <Col md={6} className={"col-8 "}>
                            <DatePicker className={"form-control " + ((!dateOrderValid) ? 'border-danger' : '')}
-                                       id="startDate" dateFormat="MMMM d, yyyy"
+                                       id="endDate" dateFormat="MMMM d, yyyy"
                                        onChange={date => {if(date) updateChallenge({finish: jsDateToLocalDate(date)})}}
                                        selected={localDateToJsDate(draftChallenge.finish)}/>
                        </Col>

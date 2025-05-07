@@ -19,10 +19,6 @@ function EditSleep() {
 
     const {publicId, sleepId} = useParams();
 
-    if (publicId === undefined) {
-        throw new Error("Public ID is required in the url");
-    }
-
     const sleepEndpoint = `/api/user/${publicId}/sleep/${sleepId}`;
 
     const [loaded, setLoaded] = useState(false);

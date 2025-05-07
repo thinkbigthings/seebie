@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import {ChallengeDetailDto, ChallengeDto} from "./types/challenge.types.ts";
 import {useMutation, useQueryClient, useSuspenseQuery} from "@tanstack/react-query";
-import {toChallengeDto, toLocalChallengeData} from "./utility/Mapper.ts";
+import {ensure, toChallengeDto, toLocalChallengeData} from "./utility/Mapper.ts";
 import Container from "react-bootstrap/Container";
 import {NavHeader} from "./App.tsx";
 import WarningButton from "./component/WarningButton.tsx";
@@ -10,18 +10,11 @@ import ChallengeForm from "./ChallengeForm.tsx";
 import Button from 'react-bootstrap/esm/Button';
 import {httpDelete, httpGet, httpPut, UploadVars} from "./utility/apiClient.ts";
 
-function ensure<T>(argument: T | undefined | null, message: string = 'This value was promised to be there.'): T {
-    if (argument === undefined || argument === null) {
-        throw new TypeError(message);
-    }
-    return argument as T;
-}
-
 function EditChallenge() {
 
     let {publicId, challengeId} = useParams();
 
-    const numericChallengeId = parseInt(ensure(challengeId));
+    const numericChallengeId = parseInt(ensure(challengeId), 10);
 
     const navigate = useNavigate();
 
@@ -102,8 +95,8 @@ function EditChallenge() {
                 </Container>
 
                 <div className="d-flex flex-row">
-                    <Button className="me-3" variant="primary" onClick={onSave} disabled={ ! dataValid} >Save</Button>
-                    <Button  variant="secondary" onClick={() => navigate(-1)}>Cancel</Button>
+                    <Button className="me-3" variant="primary" onClick={onSave} disabled={!dataValid} >Save</Button>
+                    <Button variant="secondary" onClick={() => navigate(-1)}>Cancel</Button>
                 </div>
 
             </Container>
