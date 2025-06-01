@@ -1,5 +1,15 @@
 
 app:
+  notification:
+    scan-frequency-minutes: 60
+    trigger-after:
+      sleep-log: 30h
+      last-notified: 24h
+  security:
+    remember-me:
+      token-validity: 30d
+      scan-frequency-minutes: 60
+      # key: xxxxxxxxxxxxxxxx # do not set here, this is sensitive information
   ai:
     system:
       prompt: |
@@ -8,7 +18,103 @@ app:
         and issues that can affect sleep such as anxiety.
         If the conversation starts to be about anything other than things that could reasonably affect sleep,
         please gently guide the conversation back to a sleep related conversation.
-        You are friendly and personable. You  do not respond will numbered or bulleted lists,
+        You are friendly and personable. You  do not respond with numbered or bulleted lists,
         you only ever respond only with a response that is a conversational 1 to 5 sentences.
         You address the most impactful issues first, and proceed through potential issues one by one.
         Begin by asking for my name, and as the conversation continues ask questions about my sleep hygiene.
+
+server:
+  port: 9000
+  shutdown: graceful
+  tomcat:
+    threads:
+      max: 50
+      min-spare: 1
+    accept-count: 200
+
+# actuator settings
+management:
+  info:
+    git:
+      enabled: true
+      mode: full
+  endpoints:
+    web:
+      exposure:
+        include: health,info,beans
+      discovery:
+        enabled: true
+  health:
+    mail:
+      enabled: false
+
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+  # Handling of HTTP requests may take longer while any deferred initialization occurs
+  # Failures that would normally occur at startup will now not occur until later
+  # So this can be true for dev and false for qa/perf/prod
+  main:
+    lazy-initialization: false
+    web-application-type: servlet
+  flyway:
+    enabled: true
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      # these properties allow for batch inserts
+      hibernate:
+        query:
+          fail
+        jdbc:
+          batch_size: 50
+        order_updates: true
+        # TODO what happened to spring.jpa.properties.hibernate.order_inserts=true ?
+
+        # TODO what happened to spring.jpa.properties.hibernate.query.fail_on_pagination_over_collection_fetch=true
+        # I had this because activating this setting will report HHH000104 warning an exception of type:
+        # org.hibernate.HibernateException: firstResult/maxResults specified with collection fetch.
+        # In memory pagination was about to be applied. Failing because 'Fail on pagination over
+        # collection fetch' is enabled.
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      # TODO did we get this syntax right?
+      #  spring.mail.properties.mail.smtp.auth=true
+      #  spring.mail.properties.mail.smtp.starttls.enable=true
+    # spring.mail.publicId=xxxxxxxxxxxxxxxx # do not set here, this is sensitive information
+    # spring.mail.password=xxxxxxxxxxxxxxxx # do not set here, this is sensitive information
+  session:
+    jdbc:
+      table-name: SPRING_SESSION
+      initialize-schema: never
+      # cleanup-cron # default runs every minute
+    timeout: 12h
+  # lower temperature 0.5 is good for fact-based advice, o1 requires 1.0
+  # default n is 1, but let's be explicit
+  ai:
+    openai:
+      chat:
+        options:
+          model: o1-mini
+          temperature: 1.0
+          n: 1
+
+
+
+# see what spring boot is doing
+#logging.level.org.springframework.web=DEBUG
+#logging.level.org.springframework.http.converter.json=DEBUG
+#logging.level.org.springframework.security=DEBUG
+#logging.level.org.springframework.security.web.csrf.CsrfFilter=DEBUG
+#logging.level.org.springframework.boot.autoconfigure=DEBUG
+#logging.level.org.springframework.security.web.FilterChainProxy=DEBUG
+#logging.level.org.springframework.web.FilterChainProxy=DEBUG
+#logging.level.org.hibernate.SQL=DEBUG
+#logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE

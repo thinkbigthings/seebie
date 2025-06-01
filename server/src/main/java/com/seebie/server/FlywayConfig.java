@@ -16,7 +16,7 @@ import java.util.HashMap;
  * And by running updates and migrations through a staging process which would quickly uncover misconfigurations.
  *
  * Possible future improvements:
- *  put flyway properties directly in application.properties, read them into config record, inject here, and set props
+ *  put flyway properties directly in application.yml, read them into config record, inject here, and set props
  *  set flyway enabled programmatically based on profile, so it would require a code change to mix it up.
  *
  * It would be ideal to have migrations in a separate subproject.

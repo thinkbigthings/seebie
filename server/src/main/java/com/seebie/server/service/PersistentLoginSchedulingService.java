@@ -9,15 +9,14 @@ import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This class and all its components are only used by tests.
- * They're in src/main with the idea that they could be used by an admin feature to manage sessions
- * but that has never been implemented, and it could be fine to move to src/test
+ * Spring Security does not automatically delete expired remember-me tokens from the database or storage.
+ * They remain unless you implement a cleanup process or manually remove them.
  */
 @Service
 public class PersistentLoginSchedulingService {
 
-    private PersistentLoginExpirationService expirationService;
-    private Duration rememberMeTimeout;
+    private final PersistentLoginExpirationService expirationService;
+    private final Duration rememberMeTimeout;
 
     public PersistentLoginSchedulingService(PersistentLoginExpirationService expirationService, AppProperties appProperties) {
         this.expirationService = expirationService;
@@ -27,7 +26,7 @@ public class PersistentLoginSchedulingService {
     /**
      * Transactional method must be called from a separate class from the Scheduled method.
      */
-    @Scheduled(fixedRateString="${app.notification.scanFrequencyMinutes}", timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedRateString="${app.security.remember-me.scan-frequency-minutes}", timeUnit = TimeUnit.MINUTES)
     public void callDeleteExpiredRememberMeTokens() {
         var timedOut = Instant.now().minus(rememberMeTimeout);
         expirationService.deleteExpiredRememberMeTokens(timedOut);

@@ -185,7 +185,7 @@ public class TestData {
                 new AppProperties.Security(
                         new AppProperties.Security.RememberMe(ofDays(rememberMeTokenValidityDays), randomUUID().toString(), 60)),
                 new AppProperties.Notification(
-                        new AppProperties.Notification.TriggerAfter(ofMinutes(1), ofMinutes(1))),
+                        new AppProperties.Notification.TriggerAfter(ofMinutes(1), ofMinutes(1)), 1),
                 new AppProperties.AI(
                         new AppProperties.AI.System(""))
 

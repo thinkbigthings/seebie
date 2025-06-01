@@ -12,7 +12,7 @@ import java.time.Duration;
 @ConfigurationProperties(prefix="app")
 public record AppProperties(@NotNull Security security, @NotNull Notification notification, @NotNull AI ai) {
 
-    public record Notification(@NotNull TriggerAfter triggerAfter) {
+    public record Notification(@NotNull TriggerAfter triggerAfter, @NotNull int scanFrequencyMinutes) {
         public record TriggerAfter(@NotNull Duration lastNotified, @NotNull Duration sleepLog) {}
     }
 

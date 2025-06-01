@@ -58,7 +58,7 @@ public class NotificationMessageService {
      * between the end of the last invocation and the start of the next.
      * That way we avoid overlapping executions.
      */
-    @Scheduled(fixedRateString="${app.notification.scanFrequencyMinutes}", timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedRateString="${app.notification.scan-frequency-minutes}", timeUnit = TimeUnit.MINUTES)
     public void runOnSchedule() {
 
         LOG.debug("Email notifications scan is starting...");
