@@ -19,6 +19,7 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mail.MailSender;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -38,6 +39,7 @@ import java.util.UUID;
         "spring.session.timeout=1s",
         "spring.mail.username=test-only"
 })
+@ActiveProfiles("test")
 public class IntegrationTest {
 
     @Autowired
