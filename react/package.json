@@ -43,7 +43,7 @@
     "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "^18.2.24",
     "@vitejs/plugin-basic-ssl": "^1.0.1",
-    "react-router-dom": "^6.15.0",
+    "react-router-dom": "^6.30.3",
     "typescript": "^5.4.4"
   }
 }
